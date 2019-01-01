@@ -1,2 +1,3 @@
 # x4-station-calc
-X4 Station Caculator
+X4:Foundnation Station Caculator
+Requires python3 with pyqt5 module.

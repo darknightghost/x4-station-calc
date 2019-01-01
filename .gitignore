@@ -1,0 +1,8 @@
+*.pyc
+.idea/*
+tags
+*~
+*.swp
+.directory
+.config
+__pycache__/*

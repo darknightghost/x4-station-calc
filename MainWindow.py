@@ -18,6 +18,7 @@ import PyQt5
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
+from PyQt5.QtWidgets import QFileDialog
 
 import StringTable
 import pathlib
@@ -32,6 +33,7 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.__load_window()
         self.__opened = False
+        self.__path = None
 
         #Language
         try:
@@ -48,8 +50,18 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(StringTable.get_string("TITLE_MAIN_WINDOW"))
         desktop = QApplication.desktop()
-        self.resize(desktop.width() * 3 / 4, desktop.height() * 3 / 4)
-        self.move(desktop.width() / 8, desktop.height() / 8)
+        try:
+            self.resize(self.__config["width"], self.__config["height"])
+
+        except KeyError:
+            self.resize(desktop.width() * 3 / 4, desktop.height() * 3 / 4)
+
+        try:
+            self.move(self.__config["x"], self.__config["y"])
+
+        except KeyError:
+            self.move(desktop.width() / 8, desktop.height() / 8)
+
         self.__init_file_menu()
         self.__init_setting_menu()
         self.__init_view_menu()
@@ -136,6 +148,10 @@ class MainWindow(QMainWindow):
         self.__view_menu.addAction(self.__view_module_info_menu)
 
     def __save_window(self):
+        self.__config["width"] = self.width()
+        self.__config["height"] = self.height()
+        self.__config["x"] = self.x()
+        self.__config["y"] = self.y()
         s = json.dumps(self.__config)
         with open(str(self.CONFIG_PATH), "w") as f:
             f.write(s)
@@ -156,16 +172,46 @@ class MainWindow(QMainWindow):
             StringTable.get_string("INFO_EFFECT_NEXT_LAUNCH"))
 
     def on_menu_file_new(self, state):
-        pass
+        self.open_station(None)
 
     def on_menu_file_open(self, state):
-        pass
+        try:
+            open_path = self.__config["openPath"]
+
+        except KeyError:
+            open_path = "."
+
+        filename, file_type = QFileDialog.getOpenFileName(
+            self, StringTable.get_string("TITLE_OPEN_FILE"), open_path,
+            StringTable.get_string("TYPE_FILE"))
+
+        if file_type != "":
+            self.__config["openPath"] = str(
+                pathlib.Path(filename).absolute().parent)
+            self.open_station(filename)
 
     def on_menu_file_save(self, state):
-        pass
+        if self.__path == None:
+            self.on_menu_file_saveas(state)
+
+        else:
+            self.save_station(self.__path)
 
     def on_menu_file_saveas(self, state):
-        pass
+        try:
+            savepath = self.__config["openPath"]
+
+        except KeyError:
+            save_path = "."
+
+        filename, file_type = QFileDialog.getSaveFileName(
+            self, StringTable.get_string("TITLE_SAVE_FILE"), save_path,
+            StringTable.get_string("TYPE_FILE"))
+
+        if file_type != "":
+            self.__config["openPath"] = str(
+                pathlib.Path(filename).absolute().parent)
+            self.save_station(filename)
 
     def on_menu_file_close(self, state):
         self.close_station()
@@ -181,6 +227,9 @@ class MainWindow(QMainWindow):
 
     #Methods
     def open_station(self, path):
+        pass
+
+    def save_station(self, path):
         pass
 
     def close_station(self):

@@ -89,6 +89,20 @@ __STRING_TABLE = {
         "zh_CN": "模块信息(&M)"
     },
 
+    #File dialog
+    "TITLE_OPEN_FILE": {
+        "en_US": "Load save",
+        "zh_CN": "加载存档"
+    },
+    "TITLE_SAVE_FILE": {
+        "en_US": "Save As",
+        "zh_CN": "另存为"
+    },
+    "TYPE_FILE": {
+        "en_US": "X4 stations (*.x4station)",
+        "zh_CN": "x4空间站存档 (*.x4station)"
+    },
+
     #Informations
     "INFO_EFFECT_NEXT_LAUNCH": {
         "en_US": "The modification will take effect after the next launch.",

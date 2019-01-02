@@ -16,3 +16,7 @@
 
 import PyQt5
 from PyQt5.QtWidgets import QWidget
+
+
+class WorkSpaceWidget(QWidget):
+    pass

@@ -16,3 +16,7 @@
 
 import PyQt5
 from PyQt5.QtWidgets import QDockWidget
+
+
+class ModuleListWidget(QDockWidget):
+    pass

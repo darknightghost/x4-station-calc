@@ -44,6 +44,10 @@ __STRING_TABLE = {
         "en_US": "&File",
         "zh_CN": "文件(&F)"
     },
+    "MENU_FILE_NEW": {
+        "en_US": "&New",
+        "zh_CN": "新建(&N)"
+    },
     "MENU_FILE_OPEN": {
         "en_US": "&Open",
         "zh_CN": "打开(&O)"
@@ -59,6 +63,10 @@ __STRING_TABLE = {
     "MENU_FILE_CLOSE": {
         "en_US": "&Close",
         "zh_CN": "关闭(&C)"
+    },
+    "MENU_FILE_EXIT": {
+        "en_US": "&Exit",
+        "zh_CN": "退出(&E)"
     },
     "MENU_SETTING": {
         "en_US": "&Settings",

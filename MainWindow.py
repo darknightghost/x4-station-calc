@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.__load_window()
+        self.__opened = False
 
         #Language
         try:
@@ -57,26 +58,44 @@ class MainWindow(QMainWindow):
     def __init_file_menu(self):
         self.__file_menu = QMenu(StringTable.get_string("MENU_FILE"))
         self.menuBar().addMenu(self.__file_menu)
+        self.__file_new_action = QAction(
+            StringTable.get_string("MENU_FILE_NEW"))
+        self.__file_new_action.triggered.connect(self.on_menu_file_new)
+        self.__file_menu.addAction(self.__file_new_action)
+
         self.__file_open_action = QAction(
             StringTable.get_string("MENU_FILE_OPEN"))
         self.__file_open_action.triggered.connect(self.on_menu_file_open)
         self.__file_menu.addAction(self.__file_open_action)
 
         self.__file_menu.addSeparator()
+
         self.__file_save_action = QAction(
             StringTable.get_string("MENU_FILE_SAVE"))
         self.__file_save_action.triggered.connect(self.on_menu_file_save)
+        self.__file_save_action.setEnabled(False)
         self.__file_menu.addAction(self.__file_save_action)
+
         self.__file_save_as_action = QAction(
             StringTable.get_string("MENU_FILE_SAVE_AS"))
         self.__file_save_as_action.triggered.connect(self.on_menu_file_saveas)
+        self.__file_save_as_action.setEnabled(False)
         self.__file_menu.addAction(self.__file_save_as_action)
 
         self.__file_menu.addSeparator()
+
         self.__file_close_action = QAction(
             StringTable.get_string("MENU_FILE_CLOSE"))
         self.__file_close_action.triggered.connect(self.on_menu_file_close)
         self.__file_menu.addAction(self.__file_close_action)
+
+        self.__file_menu.addSeparator()
+
+        self.__file_exit_action = QAction(
+            StringTable.get_string("MENU_FILE_EXIT"))
+        self.__file_exit_action.triggered.connect(self.on_menu_file_exit)
+        self.__file_close_action.setEnabled(False)
+        self.__file_menu.addAction(self.__file_exit_action)
 
     def __init_setting_menu(self):
         self.__setting_menu = QMenu(StringTable.get_string("MENU_SETTING"))
@@ -104,10 +123,16 @@ class MainWindow(QMainWindow):
 
         self.__view_module_list_menu = QAction(
             StringTable.get_string("MENU_VIEW_MODULE_LIST"))
+        self.__view_module_list_menu.setCheckable(True)
+        self.__view_module_list_menu.setChecked(False)
+        self.__view_module_list_menu.setEnabled(False)
         self.__view_menu.addAction(self.__view_module_list_menu)
 
         self.__view_module_info_menu = QAction(
             StringTable.get_string("MENU_VIEW_MODULE_INFO"))
+        self.__view_module_info_menu.setCheckable(True)
+        self.__view_module_info_menu.setChecked(False)
+        self.__view_module_info_menu.setEnabled(False)
         self.__view_menu.addAction(self.__view_module_info_menu)
 
     def __save_window(self):
@@ -130,6 +155,9 @@ class MainWindow(QMainWindow):
             self, StringTable.get_string("TITLE_INFO"),
             StringTable.get_string("INFO_EFFECT_NEXT_LAUNCH"))
 
+    def on_menu_file_new(self, state):
+        pass
+
     def on_menu_file_open(self, state):
         pass
 
@@ -140,6 +168,10 @@ class MainWindow(QMainWindow):
         pass
 
     def on_menu_file_close(self, state):
+        self.close_station()
+
+    def on_menu_file_exit(self, state):
+        self.close_station()
         self.close()
 
     #Events
@@ -150,3 +182,10 @@ class MainWindow(QMainWindow):
     #Methods
     def open_station(self, path):
         pass
+
+    def close_station(self):
+        pass
+
+
+class ActionAttachWidget:
+    pass

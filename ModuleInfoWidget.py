@@ -15,4 +15,15 @@
 '''
 
 import PyQt5
-from PyQt5.QtWidgets import QDockWidget
+from PyQt5.QtWidgets import QDockWidget, QTreeWidget
+
+import StringTable
+
+
+class ModuleInfoWidget(QDockWidget):
+    def __init__(self, parent=None):
+        super()(parent)
+        self.__tree_view = QTreeWidget(self)
+        self.__tree_view.setHeaderHidden(True)
+        self.setWidget(self.__tree_view)
+        self.setWindowTitle(StringTable.get_string("TITLE_MODULE_LIST"))

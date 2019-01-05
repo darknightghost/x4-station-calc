@@ -127,6 +127,13 @@ def locale():
     return __LOCALE
 
 
+def default_locale():
+    '''
+        Get default locale.
+    '''
+    return __DEFAULT
+
+
 def local_dict():
     '''
         Get locales and names.

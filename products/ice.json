@@ -1,0 +1,9 @@
+{
+    "id": "PRODUCT_ICE",
+    "storage": "Solid",
+    "volume": 1,
+    "name": {
+        "en_US": "Ice",
+        "zh_CN": "冰"
+    }
+}

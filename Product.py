@@ -25,10 +25,82 @@ __PRODUCTS = {}
 
 
 def __initialize():
-    products_dir = pathlib.Path(__file__).parent / "factions"
-    for fname in factions_dir.glob("*.json"):
-        with open(str(fname)) as f:
+    products_dir = pathlib.Path(__file__).parent / "products"
+    for pname in products_dir.glob("*.json"):
+        with open(str(pname)) as f:
             data = json.loads(f.read())
-            faction = Faction(data)
-            __FACTIONS[faction.id()] = faction
+            product = Product(data)
+            __PRODUCTS[product.id()] = product
 
+
+def product(id):
+    '''
+        Get product by id.
+    '''
+    return __PRODUCTS[id]
+
+
+def products():
+    '''
+        Get all products.
+    '''
+    ret = []
+    for id in __PRODUCTS.keys():
+        ret.append(__PRODUCTS[id])
+
+    return ret
+
+
+class Product:
+    def __init__(self, data):
+        self.__id = data["id"]
+        self.__storage = data["storage"]
+        self.__volume = int(data["volume"])
+        self.__name = data["name"].copy()
+
+    def id(self):
+        '''
+            Get Product id
+        '''
+        return self.__id
+
+    def name(self):
+        '''
+            Get product name.
+        '''
+        try:
+            return self.__name[StringTable.locale()]
+
+        except KeyError:
+            return self.__name[StringTable.default_locale()]
+
+    def storage(self):
+        '''
+            Get storage type.
+        '''
+        return self.__storage
+
+    def volume(self):
+        '''
+            Get volume.
+        '''
+        return self.__volume
+
+    def __str__(self):
+        return "{\n" \
+                "    id = %s,\n" \
+                "    name = %s\n" \
+                "    storage = %s\n" \
+                "    volume = %s\n" \
+                "}"%(self.id(), self.name(), self.storage(), self.volume())
+
+
+__initialize()
+
+if __name__ == '__main__':
+    print("[")
+    for p in __PRODUCTS:
+        for l in (str(__PRODUCTS[p]) + ",").split("\n"):
+            print("    %s" % (l.replace("\n", "")))
+
+    print("]")

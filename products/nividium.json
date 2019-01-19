@@ -1,1 +1,9 @@
-{"id": "PRODUCT_NIVIDIUM", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Nividium", "zh_CN": "N矿"}}
+{
+    "id": "PRODUCT_NIVIDIUM",
+    "storage": "Solid",
+    "volume": 10,
+    "name": {
+        "en_US": "Nividium",
+        "zh_CN": "N矿"
+    }
+}

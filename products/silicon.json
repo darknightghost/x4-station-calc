@@ -1,1 +1,9 @@
-{"id": "PRODUCT_SILICON", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Silicon", "zh_CN": "硅"}}
+{
+    "id": "PRODUCT_SILICON",
+    "storage": "Solid",
+    "volume": 10,
+    "name": {
+        "en_US": "Silicon",
+        "zh_CN": "硅"
+    }
+}

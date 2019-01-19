@@ -1,1 +1,9 @@
-{"id": "PRODUCT_HELIUM", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Helium", "zh_CN": "氦"}}
+{
+    "id": "PRODUCT_HELIUM",
+    "storage": "Liquid",
+    "volume": 6,
+    "name": {
+        "en_US": "Helium",
+        "zh_CN": "氦"
+    }
+}

@@ -1,1 +1,9 @@
-{"id": "PRODUCT_SPICES", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Spices", "zh_CN": "香料"}}
+{
+    "id": "PRODUCT_SPICES",
+    "storage": "Container",
+    "volume": 3,
+    "name": {
+        "en_US": "Spices",
+        "zh_CN": "香料"
+    }
+}

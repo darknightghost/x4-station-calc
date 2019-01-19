@@ -1,1 +1,9 @@
-{"id": "PRODUCT_METHANE", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Methane", "zh_CN": "甲烷"}}
+{
+    "id": "PRODUCT_METHANE",
+    "storage": "Container",
+    "volume": 6,
+    "name": {
+        "en_US": "Methane",
+        "zh_CN": "甲烷"
+    }
+}

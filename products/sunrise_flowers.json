@@ -1,1 +1,9 @@
-{"id": "PRODUCT_SUNRISE_FLOWERS", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Sunrise Flowers", "zh_CN": "日出花"}}
+{
+    "id": "PRODUCT_SUNRISE_FLOWERS",
+    "storage": "Container",
+    "volume": 5,
+    "name": {
+        "en_US": "Sunrise Flowers",
+        "zh_CN": "日出花"
+    }
+}

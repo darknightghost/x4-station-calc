@@ -1,1 +1,9 @@
-{"id": "PRODUCT_ORE", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Ore", "zh_CN": "金属矿石"}}
+{
+    "id": "PRODUCT_ORE",
+    "storage": "Solid",
+    "volume": 10,
+    "name": {
+        "en_US": "Ore",
+        "zh_CN": "金属矿石"
+    }
+}

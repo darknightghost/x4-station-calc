@@ -1,1 +1,9 @@
-{"id": "PRODUCT_SHIELD_COMPONENTS", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Shield Components", "zh_CN": "护盾部件"}}
+{
+    "id": "PRODUCT_SHIELD_COMPONENTS",
+    "storage": "Container",
+    "volume": 10,
+    "name": {
+        "en_US": "Shield Components",
+        "zh_CN": "护盾部件"
+    }
+}

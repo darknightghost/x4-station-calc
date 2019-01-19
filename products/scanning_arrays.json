@@ -1,1 +1,9 @@
-{"id": "PRODUCT_SCANNING_ARRAYS", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Scanning Arrays", "zh_CN": "扫描阵列"}}
+{
+    "id": "PRODUCT_SCANNING_ARRAYS",
+    "storage": "Container",
+    "volume": 38,
+    "name": {
+        "en_US": "Scanning Arrays",
+        "zh_CN": "扫描阵列"
+    }
+}

@@ -27,6 +27,7 @@ __PRODUCTS = {}
 def __initialize():
     products_dir = pathlib.Path(__file__).parent / "products"
     for pname in products_dir.glob("*.json"):
+        print("Loading data file \"%s\"..." % (str(pname)))
         with open(str(pname)) as f:
             data = json.loads(f.read())
             product = Product(data)
@@ -57,6 +58,10 @@ class Product:
         self.__storage = data["storage"]
         self.__volume = int(data["volume"])
         self.__name = data["name"].copy()
+
+        if self.__storage not in ("Solid", "Container", "Liquid"):
+            raise ValueError("Illegale cargo type \"%s\" in product \"%s\"." \
+                %(self.__storage, self.name()))
 
     def id(self):
         '''

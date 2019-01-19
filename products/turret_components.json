@@ -1,1 +1,9 @@
-{"id": "PRODUCT_TURRET_COMPONENTS", "storage": "Solid|Container|Liquid", "volume": 8, "name": {"en_US": "Turret Components", "zh_CN": "炮塔部件"}}
+{
+    "id": "PRODUCT_TURRET_COMPONENTS",
+    "storage": "Container",
+    "volume": 20,
+    "name": {
+        "en_US": "Turret Components",
+        "zh_CN": "炮塔部件"
+    }
+}

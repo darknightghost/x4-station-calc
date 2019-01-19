@@ -13,4 +13,4 @@ if [[ $? -ne 0 ]]; then
 	fi
 fi
 
-${MAIN_DIR}/main.py $0
+${MAIN_DIR}/main.pyw $0

@@ -1,7 +1,7 @@
 {
     "id": "PRODUCT_WARTER",
     "storage": "Liquid",
-    "volume": 1,
+    "volume": 6,
     "name": {
         "en_US": "Water",
         "zh_CN": "水"

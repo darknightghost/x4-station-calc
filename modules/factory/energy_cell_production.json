@@ -1,0 +1,14 @@
+{
+    "id": "MODULE_ENERGY_CELL_PRODUCTION",
+    "type": "Factory",
+    "resources": [],
+    "products": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 12000
+    }],
+    "turret": 4,
+    "name": {
+        "en_US": "Energy Cell Production",
+        "zh_CN": "能量电池产线"
+    }
+}

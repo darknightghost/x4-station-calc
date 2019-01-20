@@ -1,0 +1,23 @@
+{
+    "id":
+    "MODULE_GRAPHENE_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 1200
+    }, {
+        "id": "PRODUCT_METHANE",
+        "amount": 4800
+    }],
+    "products": [{
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 1650
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Graphene Production",
+        "zh_CN": "石墨产线"
+    }
+}

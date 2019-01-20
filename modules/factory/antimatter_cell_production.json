@@ -1,0 +1,23 @@
+{
+    "id":
+    "MODULE_ANTIMATTER_CELL_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 3000
+    }, {
+        "id": "PRODUCT_HYDROGEN",
+        "amount": 9600
+    }],
+    "products": [{
+        "id": "PRODUCT_ANTIMATTER_CELLS",
+        "amount": 3300
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Antimatter Cell Production",
+        "zh_CN": "反物质单元产线"
+    }
+}

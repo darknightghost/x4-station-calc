@@ -1,1 +1,26 @@
-{"id": "MODULE_ADVANCED_COMPOSITE_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Advanced Composite Production", "zh_CN": "先进复合材料产线"}}
+{
+    "id":
+    "MODULE_ADVANCED_COMPOSITE_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 600
+    }, {
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 960
+    }, {
+        "id": "PRODUCT_REFINED_METALS",
+        "amount": 960
+    }],
+    "products": [{
+        "id": "PRODUCT_ADVANCED_COMPOSITES",
+        "amount": 720
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Advanced Composite Production",
+        "zh_CN": "先进复合材料产线"
+    }
+}

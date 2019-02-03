@@ -1,1 +1,26 @@
-{"id": "MODULE_ANTIMATTER_CONVERTER_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Antimatter Converter Production", "zh_CN": "反物质转换器产线"}}
+{
+    "id":
+    "MODULE_ANTIMATTER_CONVERTER_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ADVANCED_COMPOSITES",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 960
+    }, {
+        "id": "PRODUCT_MICROCHIPS",
+        "amount": 360
+    }],
+    "products": [{
+        "id": "PRODUCT_ANTIMATTER_CONVERTERS",
+        "amount": 1800
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Antimatter Converter Production",
+        "zh_CN": "反物质转换器产线"
+    }
+}

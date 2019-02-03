@@ -1,1 +1,23 @@
-{"id": "MODULE_MICROCHIP_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Microchip Production", "zh_CN": "微芯片产线"}}
+{
+    "id":
+    "MODULE_MICROCHIP_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 300
+    }, {
+        "id": "PRODUCT_SILICON_WAFERS",
+        "amount": 1200
+    }],
+    "products": [{
+        "id": "PRODUCT_MICROCHIPS",
+        "amount": 480
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Microchip Production",
+        "zh_CN": "微芯片产线"
+    }
+}

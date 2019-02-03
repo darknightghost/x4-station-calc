@@ -1,1 +1,25 @@
-{"id": "MODULE_TELADI_HULL_PART_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Teladi Hull Part Production", "zh_CN": "Teladi船体部件产线"}}
+{
+    "id": "MODULE_TELADI_HULL_PART_PRODUCTION",
+    "type": "Factory",
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 320
+    }, {
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 160
+    }, {
+        "id": "PRODUCT_TELADIANIUM",
+        "amount": 816
+    }],
+    "products": [{
+        "id": "PRODUCT_HULL_PARTS",
+        "amount": 880
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Teladi Hull Part Production",
+        "zh_CN": "Teladi船体部件产线"
+    }
+}

@@ -1,1 +1,26 @@
-{"id": "MODULE_FIELD_COIL_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Field Coil Production", "zh_CN": "励磁线圈产线"}}
+{
+    "id":
+    "MODULE_FIELD_COIL_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 360
+    }, {
+        "id": "PRODUCT_PLASMA_CONDUCTORS",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_QUANTUM_TUBES",
+        "amount": 258
+    }],
+    "products": [{
+        "id": "PRODUCT_FIELD_COILS",
+        "amount": 1200
+    }],
+    "turret":
+    9,
+    "name": {
+        "en_US": "Field Coil Production",
+        "zh_CN": "励磁线圈产线"
+    }
+}

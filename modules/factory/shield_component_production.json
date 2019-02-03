@@ -1,1 +1,26 @@
-{"id": "MODULE_SHIELD_COMPONENT_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Shield Component Production", "zh_CN": "护盾部件产线"}}
+{
+    "id":
+    "MODULE_SHIELD_COMPONENT_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 210
+    }, {
+        "id": "PRODUCT_PLASMA_CONDUCTORS",
+        "amount": 60
+    }, {
+        "id": "PRODUCT_QUANTUM_TUBES",
+        "amount": 60
+    }],
+    "products": [{
+        "id": "PRODUCT_SHIELD_COMPONENTS",
+        "amount": 660
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Shield Component Production",
+        "zh_CN": "护盾部件产线"
+    }
+}

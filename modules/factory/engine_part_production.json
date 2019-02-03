@@ -1,1 +1,26 @@
-{"id": "MODULE_ENGINE_PART_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Engine Part Production", "zh_CN": "引擎部件产线"}}
+{
+    "id":
+    "MODULE_ENGINE_PART_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ANTIMATTER_CELLS",
+        "amount": 320
+    }, {
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_REFINED_METALS",
+        "amount": 384
+    }],
+    "products": [{
+        "id": "PRODUCT_ENGINE_PARTS",
+        "amount": 480
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Engine Part Production",
+        "zh_CN": "引擎部件产线"
+    }
+}

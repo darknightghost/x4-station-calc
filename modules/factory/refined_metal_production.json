@@ -1,1 +1,23 @@
-{"id": "MODULE_REFINED_METAL_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Refined Metal Production", "zh_CN": "精炼金属产线"}}
+{
+    "id":
+    "MODULE_REFINED_METAL_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 2160
+    }, {
+        "id": "PRODUCT_ORE",
+        "amount": 5760
+    }],
+    "products": [{
+        "id": "PRODUCT_REFINED_METALS",
+        "amount": 2400
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Refined Metal Production",
+        "zh_CN": "精炼金属产线"
+    }
+}

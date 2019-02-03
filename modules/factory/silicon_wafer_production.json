@@ -1,1 +1,23 @@
-{"id": "MODULE_SILICON_WAFER_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Silicon Wafer Production", "zh_CN": "硅晶片产线"}}
+{
+    "id":
+    "MODULE_SILICON_WAFER_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 1800
+    }, {
+        "id": "PRODUCT_SILICON",
+        "amount": 4800
+    }],
+    "products": [{
+        "id": "PRODUCT_SILICON_WAFERS",
+        "amount": 2400
+    }],
+    "turret":
+    9,
+    "name": {
+        "en_US": "Silicon Wafer Production",
+        "zh_CN": "硅晶片产线"
+    }
+}

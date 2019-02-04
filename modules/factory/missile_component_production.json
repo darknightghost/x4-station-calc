@@ -3,6 +3,7 @@
     "MODULE_MISSILE_COMPONENT_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_ADVANCED_COMPOSITES",
         "amount": 8

@@ -3,6 +3,7 @@
     "MODULE_TELADIANIUM_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_TELADI"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 1350

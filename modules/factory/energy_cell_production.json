@@ -1,6 +1,7 @@
 {
     "id": "MODULE_ENERGY_CELL_PRODUCTION",
     "type": "Factory",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
     "resources": [],
     "products": [{
         "id": "PRODUCT_ENERGY_CELLS",

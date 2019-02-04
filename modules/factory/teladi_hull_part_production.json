@@ -2,6 +2,7 @@
     "id": "MODULE_TELADI_HULL_PART_PRODUCTION",
     "type": "Factory",
     "Factory",
+    "factions": ["FACTION_TELADI"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 320

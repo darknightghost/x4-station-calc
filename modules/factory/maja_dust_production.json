@@ -3,6 +3,7 @@
     "MODULE_MAJA_DUST_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 240

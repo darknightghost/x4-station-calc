@@ -3,6 +3,7 @@
     "MODULE_SMART_CHIP_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_SMART_CHIPS",
         "amount": 480

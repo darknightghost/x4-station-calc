@@ -3,6 +3,7 @@
     "MODULE_WHEAT_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON"],
     "resources": [{
         "id": "PRODUCT_WHEAT",
         "amount": 360

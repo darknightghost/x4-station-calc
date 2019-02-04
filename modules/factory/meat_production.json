@@ -3,6 +3,7 @@
     "MODULE_MEAT_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 320

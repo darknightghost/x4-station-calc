@@ -3,6 +3,7 @@
     "MODULE_(TELADI_ENGINE_PART_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_TELADI"],
     "resources": [{
         "id": "PRODUCT_ANTIMATTER_CELLS",
         "amount": 320

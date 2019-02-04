@@ -3,6 +3,7 @@
     "MODULE_PARANID_MEDICAL_SUPPLY_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 480

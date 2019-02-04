@@ -3,6 +3,7 @@
     "MODULE_SHIELD_COMPONENT_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 210

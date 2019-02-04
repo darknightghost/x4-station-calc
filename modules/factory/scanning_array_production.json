@@ -3,6 +3,7 @@
     "MODULE_SCANNING_ARRAY_PRODUCTION",
     "type":
     "Factory",
+    "factions": ["FACTION_ARGON", "FACTION_PARANID"],
     "resources": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 360

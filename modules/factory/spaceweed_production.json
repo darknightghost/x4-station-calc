@@ -1,1 +1,26 @@
-{"id": "MODULE_SPACEWEED_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Spaceweed Production", "zh_CN": "太空烟草产线"}}
+{
+    "id":
+    "MODULE_SPACEWEED_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 840
+    }, {
+        "id": "PRODUCT_SPICES",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_SWAMP_PLANT",
+        "amount": 720
+    }],
+    "products": [{
+        "id": "PRODUCT_SPACEWEED",
+        "amount": 1350
+    }],
+    "turret":
+    8,
+    "name": {
+        "en_US": "Spaceweed Production",
+        "zh_CN": "太空烟草产线"
+    }
+}

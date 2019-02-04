@@ -1,1 +1,23 @@
-{"id": "MODULE_MEAT_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Meat Production", "zh_CN": "肉产线"}}
+{
+    "id":
+    "MODULE_MEAT_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 320
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 800
+    }],
+    "products": [{
+        "id": "PRODUCT_MEAT",
+        "amount": 1760
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Meat Production",
+        "zh_CN": "肉产线"
+    }
+}

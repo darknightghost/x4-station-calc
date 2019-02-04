@@ -1,1 +1,29 @@
-{"id": "MODULE_PARANID_MEDICAL_SUPPLY_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Paranid Medical Supply Production", "zh_CN": "Paranid医疗物资产线"}}
+{
+    "id":
+    "MODULE_PARANID_MEDICAL_SUPPLY_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 480
+    }, {
+        "id": "PRODUCT_SPICES",
+        "amount": 360
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 720
+    }, {
+        "id": "PRODUCT_SOJA_BEANS",
+        "amount": 120
+    }],
+    "products": [{
+        "id": "PRODUCT_MEDICAL_SUPPLIES",
+        "amount": 1440
+    }],
+    "turret":
+    10,
+    "name": {
+        "en_US": "Paranid Medical Supply Production",
+        "zh_CN": "Paranid医疗物资产线"
+    }
+}

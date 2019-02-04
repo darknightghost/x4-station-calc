@@ -1,1 +1,23 @@
-{"id": "MODULE_MAJA_SNAIL_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Maja Snail Production", "zh_CN": "艳耀蜗牛产线"}}
+{
+    "id":
+    "MODULE_MAJA_SNAIL_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 320
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 800
+    }],
+    "products": [{
+        "id": "PRODUCT_MAJA_SNAILS",
+        "amount": 1392
+    }],
+    "turret":
+    8,
+    "name": {
+        "en_US": "Maja Snail Production",
+        "zh_CN": "艳耀蜗牛产线"
+    }
+}

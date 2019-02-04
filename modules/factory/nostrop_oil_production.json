@@ -1,1 +1,29 @@
-{"id": "MODULE_NOSTROP_OIL_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Nostrop Oil Production", "zh_CN": "滋养油产线"}}
+{
+    "id":
+    "MODULE_NOSTROP_OIL_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 480
+    }, {
+        "id": "PRODUCT_SPICES",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_SUNRISE_FLOWERS",
+        "amount": 480
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 480
+    }],
+    "products": [{
+        "id": "PRODUCT_NOSTROP_OIL",
+        "amount": 3840
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Nostrop Oil Production",
+        "zh_CN": "滋养油产线"
+    }
+}

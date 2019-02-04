@@ -1,1 +1,23 @@
-{"id": "MODULE_WHEAT_PRODUCTION", "type": "Factory", "resources": [], "products": [], "name": {"en_US": "Wheat Production", "zh_CN": "小麦产线"}}
+{
+    "id":
+    "MODULE_WHEAT_PRODUCTION",
+    "type":
+    "Factory",
+    "resources": [{
+        "id": "PRODUCT_WHEAT",
+        "amount": 360
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 960
+    }],
+    "products": [{
+        "id": "PRODUCT_WHEAT",
+        "amount": 3240
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Wheat Production",
+        "zh_CN": "小麦产线"
+    }
+}

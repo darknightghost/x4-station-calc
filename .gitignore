@@ -6,3 +6,4 @@ tags
 .directory
 .config
 __pycache__/*
+.runtime/*

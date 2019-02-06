@@ -19,7 +19,10 @@
 
 import pathlib
 import json
+
 import StringTable
+import Common
+from Common import *
 
 __PRODUCTS = {}
 
@@ -34,6 +37,7 @@ def __initialize():
             __PRODUCTS[product.id()] = product
 
 
+@TypeChecker(str)
 def product(id):
     '''
         Get product by id.
@@ -53,6 +57,11 @@ def products():
 
 
 class Product:
+    '''
+        Product.
+    '''
+
+    @TypeChecker(object, dict)
     def __init__(self, data):
         self.__id = data["id"]
         self.__storage = data["storage"]
@@ -103,6 +112,9 @@ class Product:
 __initialize()
 
 if __name__ == '__main__':
+    '''
+        Test.
+    '''
     print("[")
     for p in __PRODUCTS:
         for l in (str(__PRODUCTS[p]) + ",").split("\n"):

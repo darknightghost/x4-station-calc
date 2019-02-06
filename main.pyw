@@ -14,10 +14,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import platform
+import time
+
+if int(platform.python_version().split(".")[0]) != 3:
+    print("Python3 is required!")
+    exit(-1)
+
 import sys
 
-import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget
+try:
+    import PyQt5
+    from PyQt5.QtWidgets import QApplication, QWidget
+except ImportError:
+    print("PyQt5 is required!")
+    exit(-1)
 
 import MainWindow
 MainWindow = MainWindow.MainWindow

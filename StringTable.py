@@ -17,6 +17,9 @@
     UI strings.
 '''
 
+import Common
+from Common import *
+
 __LOCALE = "en_US"
 __DEFAULT = "en_US"
 __LOCALES = {"en_US": "English(American)", "zh_CN": "简体中文"}
@@ -111,6 +114,7 @@ __STRING_TABLE = {
 }
 
 
+@TypeChecker(str)
 def set_locale(locale):
     '''
         Set locale..
@@ -141,6 +145,7 @@ def local_dict():
     return __LOCALES.copy()
 
 
+@TypeChecker(str)
 def get_string(key):
     '''
         Get String from string table.

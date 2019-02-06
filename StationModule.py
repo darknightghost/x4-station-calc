@@ -14,89 +14,78 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 '''
-    Factions.
+    Station modules.
 '''
 
 import pathlib
 import json
 
 import StringTable
+import Faction
+
 import Common
 from Common import *
 
-__FACTIONS = {}
+__STATION_MODULES = {}
+__TYPE_NAME_ID = {}
 
 
-def __initialize():
-    factions_dir = pathlib.Path(__file__).parent / "factions"
-    for fname in factions_dir.glob("*.json"):
-        with open(str(fname)) as f:
-            data = json.loads(f.read())
-            faction = Faction(data)
-            __FACTIONS[faction.id()] = faction
-
-
-@TypeChecker(str)
-def faction(id):
+class StationModule:
     '''
-        Get faction object.
-    '''
-    return __FACTIONS[id]
-
-
-def factions():
-    '''
-        Get all factions.
-    '''
-    ret = []
-    for f in __FACTIONS:
-        ret.append(__FACTIONS[f])
-
-    return ret
-
-
-class Faction:
-    '''
-        Faction.
+        Base class of all station modules.
     '''
 
     @TypeChecker(object, dict)
     def __init__(self, data):
         self.__id = data["id"]
+        self.__type = data["type"]
+
+        if self.__type not in __TYPE_NAME_ID.keys():
+            raise KeyError(
+                "Unknow station-module-type \"%s\"." % (self.__type))
+
+        self.__factions = data["factions"].copy()
+
+        for f in self.__factions:
+            Faction.faction(f)
+
+        self.__turretNum = int(data["turret"])
         self.__name = data["name"].copy()
 
     def id(self):
         '''
-            Get Faction id
+            Get module id.
         '''
         return self.__id
 
+    def type(self):
+        '''
+            Get module type.
+        '''
+        return self.__type
+
+    def faction(self):
+        '''
+            Get list of factions.
+        '''
+        ret = []
+        for f in self.__factions:
+            ret.append(Faction.faction(f))
+
+        return ret
+
+    def turretNum(self):
+        '''
+            Get number of turret.
+        '''
+        return self.__turretNum
+
     def name(self):
         '''
-            Get faction name.
+            Get module name.
         '''
         try:
             return self.__name[StringTable.locale()]
 
         except KeyError:
             return self.__name[StringTable.default_locale()]
-
-    def __str__(self):
-        return "{\n" \
-                "    id = %s,\n" \
-                "    name = %s\n" \
-                "}"%(self.id(), self.name())
-
-
-__initialize()
-
-if __name__ == '__main__':
-    '''
-        Test.
-    '''
-    print("[")
-    for f in __FACTIONS:
-        for l in (str(__FACTIONS[f]) + ",").split("\n"):
-            print("    %s" % (l.replace("\n", "")))
-
-    print("]")

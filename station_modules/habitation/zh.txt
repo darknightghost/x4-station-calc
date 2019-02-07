@@ -1,0 +1,9 @@
+Argon S 居住区
+Argon M 居住区
+Argon L 居住区
+Paranid S 穹顶
+Paranid M 穹顶
+Paranid L 穹顶
+Teladi S 生物群落
+Teladi M 生物群落
+Teladi L 生物群落

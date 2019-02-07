@@ -1,0 +1,27 @@
+{
+    "id":
+    "MODULE_PLASMA_CONDUCTOR_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 240
+    }, {
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 384
+    }, {
+        "id": "PRODUCT_SUPERFLUID_COOLANT",
+        "amount": 560
+    }],
+    "products": [{
+        "id": "PRODUCT_PLASMA_CONDUCTORS",
+        "amount": 200
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Plasma Conductor Production",
+        "zh_CN": "等离子导体产线"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "id":
+    "MODULE_SUPERFLUID_COOLANT_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 900
+    }, {
+        "id": "PRODUCT_HELIUM",
+        "amount": 4800
+    }],
+    "products": [{
+        "id": "PRODUCT_SUPERFLUID_COOLANT",
+        "amount": 1650
+    }],
+    "turret":
+    10,
+    "name": {
+        "en_US": "Superfluid Coolant Production",
+        "zh_CN": "超流体冷却剂产线"
+    }
+}

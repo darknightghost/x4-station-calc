@@ -1,0 +1,27 @@
+{
+    "id":
+    "MODULE_TELADI_ADVANCED_COMPOSITE_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_TELADI"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 600
+    }, {
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 960
+    }, {
+        "id": "PRODUCT_TELADIANIUM",
+        "amount": 696
+    }],
+    "products": [{
+        "id": "PRODUCT_ADVANCED_COMPOSITES",
+        "amount": 720
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Teladi Advanced Composite Production",
+        "zh_CN": "Teladi先进复合材料产线"
+    }
+}

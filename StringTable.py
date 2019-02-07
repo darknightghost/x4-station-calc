@@ -110,6 +110,40 @@ __STRING_TABLE = {
     "INFO_EFFECT_NEXT_LAUNCH": {
         "en_US": "The modification will take effect after the next launch.",
         "zh_CN": "修改将在下次启动后生效."
+    },
+
+    #Station types
+    "STATION_TYPE_PRODUCTION": {
+        "en_US": "Production Modules",
+        "zh_CN": "生产模块"
+    },
+    "STATION_TYPE_STORAGE": {
+        "en_US": "Storage Modules",
+        "zh_CN": "仓储模块"
+    },
+    "STATION_TYPE_DEFENCE": {
+        "en_US": "Defence Modules",
+        "zh_CN": "防御模块"
+    },
+    "STATION_TYPE_HABITATION": {
+        "en_US": "Habitation Modules",
+        "zh_CN": "居住模块",
+    },
+    "STATION_TYPE_DOCK": {
+        "en_US": "Dock Modules",
+        "zh_CN": "停靠模块",
+    },
+    "STATION_TYPE_OTHER": {
+        "en_US": "Other Modules",
+        "zh_CN": "其他模块",
+    },
+    "STATION_TYPE_VENTURE": {
+        "en_US": "Venture Modules",
+        "zh_CN": "远征模块",
+    },
+    "STATION_TYPE_BUILD": {
+        "en_US": "Build Modules",
+        "zh_CN": "建造模块",
     }
 }
 

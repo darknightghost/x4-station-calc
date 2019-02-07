@@ -1,0 +1,27 @@
+{
+    "id":
+    "MODULE_QUANTUM_TUBE_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 200
+    }, {
+        "id": "PRODUCT_GRAPHENE",
+        "amount": 580
+    }, {
+        "id": "PRODUCT_SUPERFLUID_COOLANT",
+        "amount": 150
+    }],
+    "products": [{
+        "id": "PRODUCT_QUANTUM_TUBES",
+        "amount": 550
+    }],
+    "turret":
+    8,
+    "name": {
+        "en_US": "Quantum Tube Production",
+        "zh_CN": "量子管产线"
+    }
+}

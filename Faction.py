@@ -28,8 +28,8 @@ __FACTIONS = {}
 
 
 def __initialize():
-    factions_dir = pathlib.Path(__file__).parent / "factions"
-    for fname in factions_dir.glob("*.json"):
+    factionsDir = pathlib.Path(__file__).parent / "factions"
+    for fname in factionsDir.glob("*.json"):
         with open(str(fname)) as f:
             data = json.loads(f.read())
             faction = Faction(data)
@@ -96,7 +96,6 @@ if __name__ == '__main__':
     '''
     print("[")
     for f in __FACTIONS:
-        for l in (str(__FACTIONS[f]) + ",").split("\n"):
-            print("    %s" % (l.replace("\n", "")))
+        print(addIndent(str(__FACTIONS[f]) + ","))
 
     print("]")

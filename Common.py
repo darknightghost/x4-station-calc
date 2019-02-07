@@ -53,3 +53,16 @@ def TypeChecker(*type_args, **type_kwargs):
         return wrapper
 
     return decorator
+
+
+@TypeChecker(str, str)
+def addIndent(s, indent=" " * 4):
+    '''
+        Add indent.
+    '''
+    lines = s.split("\n")
+    ret = ""
+    for l in lines:
+        ret += "%s%s\n" % (indent, l)
+
+    return ret[:-1]

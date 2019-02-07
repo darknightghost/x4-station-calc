@@ -1,0 +1,27 @@
+{
+    "id":
+    "MODULE_ADVANCED_ELECTRONICS_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 300
+    }, {
+        "id": "PRODUCT_MICROCHIPS",
+        "amount": 220
+    }, {
+        "id": "PRODUCT_QUANTUM_TUBES",
+        "amount": 100
+    }],
+    "products": [{
+        "id": "PRODUCT_ADVANCED_ELECTRONICS",
+        "amount": 300
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Advanced Electronics Production",
+        "zh_CN": "先进电子设备产线"
+    }
+}

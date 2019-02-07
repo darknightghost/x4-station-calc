@@ -28,8 +28,8 @@ __PRODUCTS = {}
 
 
 def __initialize():
-    products_dir = pathlib.Path(__file__).parent / "products"
-    for pname in products_dir.glob("*.json"):
+    productsDir = pathlib.Path(__file__).parent / "products"
+    for pname in productsDir.glob("*.json"):
         print("Loading data file \"%s\"..." % (str(pname)))
         with open(str(pname)) as f:
             data = json.loads(f.read())
@@ -103,8 +103,8 @@ class Product:
     def __str__(self):
         return "{\n" \
                 "    id = %s,\n" \
-                "    name = %s\n" \
-                "    storage = %s\n" \
+                "    name = %s,\n" \
+                "    storage = %s,\n" \
                 "    volume = %s\n" \
                 "}"%(self.id(), self.name(), self.storage(), self.volume())
 
@@ -117,7 +117,6 @@ if __name__ == '__main__':
     '''
     print("[")
     for p in __PRODUCTS:
-        for l in (str(__PRODUCTS[p]) + ",").split("\n"):
-            print("    %s" % (l.replace("\n", "")))
+        print(addIndent(str(__PRODUCTS[p]) + ","))
 
     print("]")

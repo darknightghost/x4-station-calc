@@ -1,0 +1,24 @@
+{
+    "id":
+    "MODULE_SWAMP_PLANT_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_TELADI"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 320
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 800
+    }],
+    "products": [{
+        "id": "PRODUCT_SWAMP_PLANT",
+        "amount": 960
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Swamp Plant Production",
+        "zh_CN": "沼泽植物产线"
+    }
+}

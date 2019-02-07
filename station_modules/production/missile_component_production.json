@@ -1,0 +1,27 @@
+{
+    "id":
+    "MODULE_MISSILE_COMPONENT_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ADVANCED_COMPOSITES",
+        "amount": 8
+    }, {
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 80
+    }, {
+        "id": "PRODUCT_HULL_PARTS",
+        "amount": 8
+    }],
+    "products": [{
+        "id": "PRODUCT_MISSILE_COMPONENTS",
+        "amount": 1320
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Missile Component Production",
+        "zh_CN": "导弹部件产线"
+    }
+}

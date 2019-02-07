@@ -1,0 +1,30 @@
+{
+    "id":
+    "MODULE_CLAYTRONICS_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "resources": [{
+        "id": "PRODUCT_ANTIMATTER_CELLS",
+        "amount": 400
+    }, {
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 560
+    }, {
+        "id": "PRODUCT_MICROCHIPS",
+        "amount": 640
+    }, {
+        "id": "PRODUCT_QUANTUM_TUBES",
+        "amount": 400
+    }],
+    "products": [{
+        "id": "PRODUCT_CLAYTRONICS",
+        "amount": 480
+    }],
+    "turret":
+    12,
+    "name": {
+        "en_US": "Claytronics Production",
+        "zh_CN": "纳米计算机产线"
+    }
+}

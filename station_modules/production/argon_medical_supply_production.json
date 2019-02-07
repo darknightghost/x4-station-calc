@@ -1,0 +1,30 @@
+{
+    "id":
+    "MODULE_ARGON_MEDICAL_SUPPLY_PRODUCTION",
+    "type":
+    "Production",
+    "factions": ["FACTION_ARGON"],
+    "resources": [{
+        "id": "PRODUCT_ENERGY_CELLS",
+        "amount": 480
+    }, {
+        "id": "PRODUCT_SPICES",
+        "amount": 360
+    }, {
+        "id": "PRODUCT_WATER",
+        "amount": 720
+    }, {
+        "id": "PRODUCT_WHEAT",
+        "amount": 264
+    }],
+    "products": [{
+        "id": "PRODUCT_MEDICAL_SUPPLIES",
+        "amount": 1440
+    }],
+    "turret":
+    10,
+    "name": {
+        "en_US": "Argon Medical Supply Production",
+        "zh_CN": "Argon医疗物资产线"
+    }
+}

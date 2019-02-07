@@ -250,6 +250,7 @@ if __name__ == '__main__':
     '''
         Test.
     '''
+    testSetLocale()
     print("[")
     for s in __STATION_MODULES:
         print(addIndent(str(__STATION_MODULES[s]) + ","))

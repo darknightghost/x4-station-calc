@@ -115,6 +115,7 @@ if __name__ == '__main__':
     '''
         Test.
     '''
+    testSetLocale()
     print("[")
     for p in __PRODUCTS:
         print(addIndent(str(__PRODUCTS[p]) + ","))

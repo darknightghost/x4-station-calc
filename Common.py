@@ -19,6 +19,7 @@
 
 import inspect
 import functools
+import StringTable
 
 
 def TypeChecker(*type_args, **type_kwargs):
@@ -66,3 +67,9 @@ def addIndent(s, indent=" " * 4):
         ret += "%s%s\n" % (indent, l)
 
     return ret[:-1]
+
+
+def testSetLocale():
+    import sys
+    if len(sys.argv) > 1:
+        StringTable.set_locale(sys.argv[1])

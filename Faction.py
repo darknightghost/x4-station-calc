@@ -94,6 +94,7 @@ if __name__ == '__main__':
     '''
         Test.
     '''
+    testSetLocale()
     print("[")
     for f in __FACTIONS:
         print(addIndent(str(__FACTIONS[f]) + ","))

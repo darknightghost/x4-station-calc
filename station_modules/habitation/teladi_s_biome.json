@@ -1,0 +1,22 @@
+{
+    "id":
+    "TELADI_S_BIOME",
+    "type":
+    "Habitation",
+    "factions": ["FACTION_TELADI"],
+    "turret":
+    0,
+    "workforce_capacity":
+    250,
+    "food": [{
+        "id": "PRODUCT_NOSTROP_OIL",
+        "amount": 143
+    }, {
+        "id": "PRODUCT_MEDICAL_SUPPLIES",
+        "amount": 169
+    }],
+    "name": {
+        "en_US": "Teladi S Biome",
+        "zh_CN": "Teladi S 生物群落"
+    }
+}

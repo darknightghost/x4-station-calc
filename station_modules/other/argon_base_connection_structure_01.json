@@ -1,0 +1,10 @@
+{
+    "id": "ARGON_BASE_CONNECTION_STRUCTURE_01",
+    "type": "Other",
+    "factions": ["FACTION_ARGON"],
+    "turret": 0,
+    "name": {
+        "en_US": "Argon Base Connection Structure 01",
+        "zh_CN": "Argon 基础连接结构 01"
+    }
+}

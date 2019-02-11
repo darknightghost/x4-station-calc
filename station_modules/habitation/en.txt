@@ -1,9 +1,0 @@
-Argon S Habitat
-Argon M Habitat
-Argon L Habitat
-Paranid S Dome
-Paranid M Dome
-Paranid L Dome
-Teladi S Biome
-Teladi M Biome
-Teladi L Biome

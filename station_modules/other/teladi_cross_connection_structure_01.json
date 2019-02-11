@@ -1,0 +1,10 @@
+{
+    "id": "TELADI_CROSS_CONNECTION_STRUCTURE_01",
+    "type": "Other",
+    "factions": ["FACTION_TELADI"],
+    "turret": 0,
+    "name": {
+        "en_US": "Teladi Cross Connection Structure 01",
+        "zh_CN": "Teladi 交叉连接结构 01"
+    }
+}

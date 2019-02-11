@@ -1,0 +1,14 @@
+{
+    "id": "PARANID_3-DOCK_T_PIER",
+    "type": "Dock",
+    "factions": ["FACTION_PARANID"],
+    "turret": 0,
+    "ship_storage": 0,
+    "s_docking": 0,
+    "m_docking": 0,
+    "l_xl_docking": 3,
+    "name": {
+        "en_US": "Paranid 3-Dock T Pier",
+        "zh_CN": "Paranid T型-3x泊位 码头"
+    }
+}

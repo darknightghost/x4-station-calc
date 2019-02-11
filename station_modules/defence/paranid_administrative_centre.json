@@ -1,0 +1,12 @@
+{
+    "id": "PARANID_ADMINISTRATIVE_CENTRE",
+    "type": "Defence",
+    "factions": ["FACTION_PARANID"],
+    "turret": 0,
+    "s_launch_tubes": 12,
+    "m_launch_tubes": 4,
+    "name": {
+        "en_US": "Paranid Administrative Centre",
+        "zh_CN": "Paranid 管理中心"
+    }
+}

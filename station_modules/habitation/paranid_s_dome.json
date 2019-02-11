@@ -1,0 +1,22 @@
+{
+    "id":
+    "PARANID_S_DOME",
+    "type":
+    "Habitation",
+    "factions": ["FACTION_PARANID"],
+    "turret":
+    0,
+    "workforce_capacity":
+    333,
+    "food": [{
+        "id": "PRODUCT_SOJA_HUSK",
+        "amount": 238
+    }, {
+        "id": "PRODUCT_MEDICAL_SUPPLIES",
+        "amount": 225
+    }],
+    "name": {
+        "en_US": "Paranid S Dome",
+        "zh_CN": "Paranid S 穹顶"
+    }
+}

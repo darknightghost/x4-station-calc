@@ -1,0 +1,22 @@
+{
+    "id":
+    "ARGON_L_HABITAT",
+    "type":
+    "Habitation",
+    "factions": ["FACTION_ARGON"],
+    "turret":
+    0,
+    "workforce_capacity":
+    1000,
+    "food": [{
+        "id": "PRODUCT_FOOD_RATIONS",
+        "amount": 1125
+    }, {
+        "id": "PRODUCT_MEDICAL_SUPPLIES",
+        "amount": 675
+    }],
+    "name": {
+        "en_US": "Argon L Habitat",
+        "zh_CN": "Argon L 居住区"
+    }
+}

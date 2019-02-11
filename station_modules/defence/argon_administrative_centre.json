@@ -1,0 +1,12 @@
+{
+    "id": "ARGON_ADMINISTRATIVE_CENTRE",
+    "type": "Defence",
+    "factions": ["FACTION_ARGON"],
+    "turret": 0,
+    "s_launch_tubes": 12,
+    "m_launch_tubes": 4,
+    "name": {
+        "en_US": "Argon Administrative Centre",
+        "zh_CN": "Argon 管理中心"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "PARANID_M_LIQUID_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_PARANID"],
+    "turret": 8,
+    "storage_type": "Liquid",
+    "storage_capacity": 500000,
+    "name": {
+        "en_US": "Paranid M Liquid Storage",
+        "zh_CN": "Paranid M 液体仓储"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "ARGON_L_LIQUID_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_ARGON"],
+    "turret": 16,
+    "storage_type": "Liquid",
+    "storage_capacity": 1000000,
+    "name": {
+        "en_US": "Argon L Liquid Storage",
+        "zh_CN": "Argon L 液体仓储"
+    }
+}

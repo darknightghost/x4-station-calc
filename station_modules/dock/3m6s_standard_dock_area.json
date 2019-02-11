@@ -1,0 +1,14 @@
+{
+    "id": "3M6S_STANDARD_DOCK_AREA",
+    "type": "Dock",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "turret": 0,
+    "ship_storage": 50,
+    "s_docking": 6,
+    "m_docking": 3,
+    "l_xl_docking": 0,
+    "name": {
+        "en_US": "3M6S Standard Dock Area",
+        "zh_CN": "3M6S 标准 停机坪"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "TELADI_S_CONTAINER_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_TELADI"],
+    "turret": 10,
+    "storage_type": "Container",
+    "storage_capacity": 25000,
+    "name": {
+        "en_US": "Teladi S Container Storage",
+        "zh_CN": "Teladi S 集装仓储"
+    }
+}

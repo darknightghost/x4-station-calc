@@ -1,0 +1,12 @@
+{
+    "id": "ARGON_BRIDGE_DEFENCE_PLATFORM",
+    "type": "Defence",
+    "factions": ["FACTION_ARGON"],
+    "turret": 16,
+    "s_launch_tubes": 0,
+    "m_launch_tubes": 0,
+    "name": {
+        "en_US": "Argon Bridge Defence Platform",
+        "zh_CN": "Argon 桥型防御平台"
+    }
+}

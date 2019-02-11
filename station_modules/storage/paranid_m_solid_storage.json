@@ -1,0 +1,12 @@
+{
+    "id": "PARANID_M_SOLID_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_PARANID"],
+    "turret": 8,
+    "storage_type": "Solid",
+    "storage_capacity": 500000,
+    "name": {
+        "en_US": "Paranid M Solid Storage",
+        "zh_CN": "Paranid M 固体仓储"
+    }
+}

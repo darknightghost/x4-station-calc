@@ -1,0 +1,12 @@
+{
+    "id": "TELADI_DISC_DEFENCE_PLATFORM",
+    "type": "Defence",
+    "factions": ["FACTION_TELADI"],
+    "turret": 18,
+    "s_launch_tubes": 0,
+    "m_launch_tubes": 0,
+    "name": {
+        "en_US": "Teladi Disc Defence Platform",
+        "zh_CN": "Teladi 碟型防御平台"
+    }
+}

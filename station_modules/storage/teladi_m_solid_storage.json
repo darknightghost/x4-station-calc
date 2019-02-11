@@ -1,0 +1,12 @@
+{
+    "id": "TELADI_M_SOLID_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_TELADI"],
+    "turret": 12,
+    "storage_type": "Solid",
+    "storage_capacity": 500000,
+    "name": {
+        "en_US": "Teladi M Solid Storage",
+        "zh_CN": "Teladi M 固体仓储"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "ARGON_M_CONTAINER_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_ARGON"],
+    "turret": 8,
+    "storage_type": "Container",
+    "storage_capacity": 100000,
+    "name": {
+        "en_US": "Argon M Container Storage",
+        "zh_CN": "Argon M 集装仓储"
+    }
+}

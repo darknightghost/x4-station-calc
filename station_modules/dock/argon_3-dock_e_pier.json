@@ -1,0 +1,14 @@
+{
+    "id": "ARGON_3-DOCK_E_PIER",
+    "type": "Dock",
+    "factions": ["FACTION_ARGON"],
+    "turret": 0,
+    "ship_storage": 0,
+    "s_docking": 0,
+    "m_docking": 0,
+    "l_xl_docking": 3,
+    "name": {
+        "en_US": "Argon 3-Dock E Pier",
+        "zh_CN": "Argon E型-3x泊位 码头"
+    }
+}

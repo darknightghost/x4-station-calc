@@ -1,0 +1,10 @@
+{
+    "id": "PARANID_VERTICAL_CONNECTION_STRUCTURE_01",
+    "type": "Other",
+    "factions": ["FACTION_PARANID"],
+    "turret": 0,
+    "name": {
+        "en_US": "Paranid Vertical Connection Structure 01",
+        "zh_CN": "Paranid 垂直连接结构 01"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "TELADI_M_LIQUID_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_TELADI"],
+    "turret": 12,
+    "storage_type": "Liquid",
+    "storage_capacity": 500000,
+    "name": {
+        "en_US": "Teladi M Liquid Storage",
+        "zh_CN": "Teladi M 液体仓储"
+    }
+}

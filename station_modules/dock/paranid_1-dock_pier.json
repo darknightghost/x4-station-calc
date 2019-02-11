@@ -1,0 +1,14 @@
+{
+    "id": "PARANID_1-DOCK_PIER",
+    "type": "Dock",
+    "factions": ["FACTION_PARANID"],
+    "turret": 0,
+    "ship_storage": 0,
+    "s_docking": 0,
+    "m_docking": 0,
+    "l_xl_docking": 1,
+    "name": {
+        "en_US": "Paranid 1-Dock Pier",
+        "zh_CN": "Paranid 1x大型泊位 码头"
+    }
+}

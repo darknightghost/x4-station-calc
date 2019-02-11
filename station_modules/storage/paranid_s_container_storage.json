@@ -1,0 +1,12 @@
+{
+    "id": "PARANID_S_CONTAINER_STORAGE",
+    "type": "Storage",
+    "factions": ["FACTION_PARANID"],
+    "turret": 8,
+    "storage_type": "Container",
+    "storage_capacity": 25000,
+    "name": {
+        "en_US": "Paranid S Container Storage",
+        "zh_CN": "Paranid S 集装仓储"
+    }
+}

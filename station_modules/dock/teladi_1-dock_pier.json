@@ -1,0 +1,14 @@
+{
+    "id": "TELADI_1-DOCK_PIER",
+    "type": "Dock",
+    "factions": ["FACTION_TELADI"],
+    "turret": 0,
+    "ship_storage": 0,
+    "s_docking": 0,
+    "m_docking": 0,
+    "l_xl_docking": 1,
+    "name": {
+        "en_US": "Teladi 1-Dock Pier",
+        "zh_CN": "Teladi 1x大型泊位 码头"
+    }
+}

@@ -41,15 +41,23 @@ __STRING_TABLE = {
         "en_US": "Failed to parse \"%s\" :\n%s",
         "zh_CN": "解析文件\"%s\"失败 :\n%s"
     },
-    "ILLEGAL_JSON_FORMAT":{
+    "ILLEGAL_JSON_FORMAT": {
         "en_US": "Illegal json format.",
         "zh_CN": "Json格式非法."
-    }
+    },
+    "FILE_NOT_SAVE": {
+        "en_US": "Last change has not been saved, save it now?.",
+        "zh_CN": "有尚未保存的修改, 是否保存?"
+    },
 
     #Titles
     "TITLE_MAIN_WINDOW": {
         "en_US": "X4 Station Calculator",
         "zh_CN": "X4 空间站模块计算工具"
+    },
+    "TITLE_MAIN_WINDOW_OPENED": {
+        "en_US": "X4 Station Calculator - %s",
+        "zh_CN": "X4 空间站模块计算工具 - %s"
     },
     "TITLE_MODULE_LIST": {
         "en_US": "Station Modules",
@@ -62,6 +70,10 @@ __STRING_TABLE = {
     "TITLE_INFO": {
         "en_US": "Info",
         "zh_CN": "提示"
+    },
+    "TITLE_ERROR": {
+        "en_US": "Error",
+        "zh_CN": "错误"
     },
 
     #Menu

@@ -27,7 +27,14 @@ import Common
 from Common import *
 
 
-class StationParseException(Exception):
+class StationFileException(Exception):
+    '''
+        Base exception class.
+    '''
+    pass
+
+
+class StationParseException(StationFileException):
     '''
         Exception when failed to parse station file.
     '''
@@ -39,7 +46,7 @@ class StationParseException(Exception):
                                                                   reason))
 
 
-class StationFileReadException(Exception):
+class StationFileReadException(StationFileException):
     '''
         Exception when failed to read station file.
     '''
@@ -50,7 +57,7 @@ class StationFileReadException(Exception):
             StringTable.getString("FAILED_READ_STATION_FILE") % (path))
 
 
-class StationFileWriteException(Exception):
+class StationFileWriteException(StationFileException):
     '''
         Exception when failed to write station file.
     '''
@@ -66,11 +73,12 @@ class StationModules:
         Modules in station.
     '''
 
-    def __init__(self, data, amount=1):
+    def __init__(self, data, amount=1, parent=None):
         '''
             StationModules(data)       -> stationModules
             StationModules(id, amount) -> stationModules
         '''
+        self.__parent = parent
         if isinstance(data, dict):
             self.__initByData(data)
 
@@ -92,6 +100,13 @@ class StationModules:
         self.__stationModule = StationModule.stationModule(sid)
         self.__amount = amount
 
+    def setParent(self, parent):
+        '''
+            Set parent.
+        '''
+        self.__parent = parent
+        self.__setParentDirty()
+
     def stationModule(self):
         '''
             Get station module.
@@ -109,6 +124,7 @@ class StationModules:
             Increase amount.
         '''
         self.__amount += 1
+        self.__setParentDirty()
 
     def decrease(self):
         '''
@@ -116,6 +132,7 @@ class StationModules:
         '''
         if self.__amount > 1:
             self.__amount -= 1
+            self.__setParentDirty()
 
     @TypeChecker(object, int)
     def setAmount(self, amount):
@@ -124,6 +141,7 @@ class StationModules:
         '''
         if amount > 0:
             self.__amount = amount
+            self.__setParentDirty()
 
         else:
             raise ValueError("Amount must bigger than 0.")
@@ -133,6 +151,13 @@ class StationModules:
             Get json dict.
         '''
         return {"id": self.__stationModule.id(), "amount": self.__amount}
+
+    def __setParentDirty(self):
+        '''
+            Make parent dirty.
+        '''
+        if self.__parent != None:
+            self.__parent.setDirty()
 
 
 class Station:
@@ -169,9 +194,11 @@ class Station:
             #New file
             self.__name = StringTable.getString("NEW_FILE_NAME")
             self.__stationModules = []
+            self.__dirty = True
 
         else:
             #Load file
+            self.__dirty = False
             try:
                 f = open(path)
                 s = f.read()
@@ -198,71 +225,107 @@ class Station:
             except Exception:
                 raise StationParseException(path, traceback.format_exc())
 
-        def path(self):
-            '''
-                Get path.
-            '''
-            return self.__path
+    def path(self):
+        '''
+            Get path.
+        '''
+        return self.__path
 
-        @TypeChecker(object, str)
-        def setPath(self, path):
-            '''
-                Set path.
-            '''
-            self.__path = path
+    @TypeChecker(object, str)
+    def setPath(self, path):
+        '''
+            Set path.
+        '''
+        self.__path = path
 
-        def name(self):
-            '''
-                Get station name.
-            '''
-            return self.__name
+    def name(self):
+        '''
+            Get station name.
+        '''
+        return self.__name
 
-        @TypeChecker(object, str)
-        def setName(self, name):
-            '''
-                Set station name.
-            '''
-            self.__name = name
+    @TypeChecker(object, str)
+    def setName(self, name):
+        '''
+            Set station name.
+        '''
+        self.__name = name
 
-        def stationModules(self):
-            '''
-                Get station modules.
-            '''
-            return self.__stationModules
+    def isDirty(self):
+        '''
+            Check if the file is dirty.
+        '''
+        return self.__dirty
 
-        def save(self):
-            '''
-                Save file.
-            '''
-            #Make json
-            modules = []
-            for m in self.__stationModules:
-                modules.append(m.toDict())
+    def setDirty(self):
+        '''
+            Make file dirty.
+        '''
+        self.__dirty = True
 
-            s = json.dumps({
-                "name": self.__name,
-                "modules": modules
-            },
-                           ensure_ascii=False)
+    def save(self):
+        '''
+            Save file.
+        '''
+        #Make json
+        modules = []
+        for m in self.__stationModules:
+            modules.append(m.toDict())
 
-            #Write json
-            try:
-                f = open(self.__path, "w")
-                f.write(s)
-                f.close()
-            except Exception:
-                raise StationFileWriteException(self.__path)
+        s = json.dumps({
+            "name": self.__name,
+            "modules": modules
+        },
+                       ensure_ascii=False)
 
-        def __iter__(self):
-            return self.__stationModules.__iter__()
+        #Write json
+        try:
+            f = open(self.__path, "w")
+            f.write(s)
+            f.close()
+        except Exception:
+            raise StationFileWriteException(self.__path)
 
-        @TypeChecker(object, int)
-        def __getitem__(self, index):
-            return self.__stationModules.__getitem__(index)
+        self.__dirty = False
 
-        @TypeChecker(object, int, StationModules)
-        def __setitem__(self, index, value):
-            self.__stationModules.__setitem__(index, value)
+    @TypeChecker(object, StationModules)
+    def append(self, item):
+        '''
+            Append item.
+        '''
+        item.setParent(self)
+        self.__stationModules.append(item)
 
-        def __delitem__(self, index):
-            self.__stationModules.__delitem__(index)
+    @TypeChecker(object, StationModules)
+    def remove(self, item):
+        '''
+            Remove item.
+        '''
+        item.setParent(None)
+        self.__stationModules.remove(item)
+        self.setDirty()
+
+    def __iter__(self):
+        return self.__stationModules.__iter__()
+
+    @TypeChecker(object, int)
+    def __getitem__(self, index):
+        return self.__stationModules[index]
+
+    @TypeChecker(object, int, StationModules)
+    def __setitem__(self, index, value):
+        value.setParent(self)
+        self.__stationModules[index] = value
+
+    def __delitem__(self, index):
+        self.__stationModules[index].setParent(None)
+        del self.__stationModules[index]
+        self.setDirty()
+
+    def __iadd__(self, l):
+        for m in l:
+            if not isinstance(m, StationModules):
+                raise TypeError(
+                    "Type of item should be %s." % (str(StationModules)))
+            m.setParent(self)
+            self.__stationModules.append(m)

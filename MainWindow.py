@@ -18,6 +18,8 @@ import PyQt5
 import PyQt5.QtCore
 import PyQt5.QtGui
 from PyQt5.QtCore import QEvent
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDockWidget
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
@@ -28,6 +30,7 @@ import json
 import locale
 
 import StringTable
+import Station
 import Common
 from Common import *
 
@@ -102,8 +105,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.__loadWindow()
-        self.__opened = False
-        self.__path = None
+        self.__station = None
 
         #Language
         try:
@@ -141,11 +143,13 @@ class MainWindow(QMainWindow):
         self.__fileMenu = QMenu(StringTable.getString("MENU_FILE"))
         self.menuBar().addMenu(self.__fileMenu)
         self.__fileNewAction = QAction(StringTable.getString("MENU_FILE_NEW"))
+        self.__fileNewAction.setShortcut(QKeySequence.New)
         self.__fileNewAction.triggered.connect(self.onMenuFileNew)
         self.__fileMenu.addAction(self.__fileNewAction)
 
         self.__fileOpenAction = QAction(
             StringTable.getString("MENU_FILE_OPEN"))
+        self.__fileOpenAction.setShortcut(QKeySequence.Open)
         self.__fileOpenAction.triggered.connect(self.onMenuFileOpen)
         self.__fileMenu.addAction(self.__fileOpenAction)
 
@@ -153,12 +157,14 @@ class MainWindow(QMainWindow):
 
         self.__fileSaveAction = QAction(
             StringTable.getString("MENU_FILE_SAVE"))
+        self.__fileSaveAction.setShortcut(QKeySequence.Save)
         self.__fileSaveAction.triggered.connect(self.onMenuFileSave)
         self.__fileSaveAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileSaveAction)
 
         self.__fileSaveAsAction = QAction(
             StringTable.getString("MENU_FILE_SAVE_AS"))
+        self.__fileSaveAsAction.setShortcut(QKeySequence.SaveAs)
         self.__fileSaveAsAction.triggered.connect(self.onMenuFileSaveAs)
         self.__fileSaveAsAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileSaveAsAction)
@@ -167,6 +173,7 @@ class MainWindow(QMainWindow):
 
         self.__fileCloseAction = QAction(
             StringTable.getString("MENU_FILE_CLOSE"))
+        self.__fileCloseAction.setShortcut(QKeySequence.Close)
         self.__fileCloseAction.triggered.connect(self.onMenuFileClose)
         self.__fileMenu.addAction(self.__fileCloseAction)
 
@@ -174,6 +181,7 @@ class MainWindow(QMainWindow):
 
         self.__fileExitAction = QAction(
             StringTable.getString("MENU_FILE_EXIT"))
+        self.__fileExitAction.setShortcut(QKeySequence.Quit)
         self.__fileExitAction.triggered.connect(self.onMenuFileExit)
         self.__fileCloseAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileExitAction)
@@ -238,9 +246,20 @@ class MainWindow(QMainWindow):
             StringTable.getString("INFO_EFFECT_NEXT_LAUNCH"))
 
     def onMenuFileNew(self, state):
+        #Close opened station
+        if self.__station != None:
+            if not self.closeStation():
+                return
+
         self.openStation(None)
 
     def onMenuFileOpen(self, state):
+        #Close opened station
+        if self.__station != None:
+            if not self.closeStation():
+                return
+
+        #Open
         try:
             open_path = self.__config["openPath"]
 
@@ -257,15 +276,15 @@ class MainWindow(QMainWindow):
             self.openStation(filename)
 
     def onMenuFileSave(self, state):
-        if self.__path == None:
+        if self.__station.path() == None:
             self.onMenuFileSaveAs(state)
 
         else:
-            self.saveStation(self.__path)
+            self.saveStation()
 
     def onMenuFileSaveAs(self, state):
         try:
-            savepath = self.__config["openPath"]
+            save_path = self.__config["openPath"]
 
         except KeyError:
             save_path = "."
@@ -277,28 +296,83 @@ class MainWindow(QMainWindow):
         if file_type != "":
             self.__config["openPath"] = str(
                 pathlib.Path(filename).absolute().parent)
-            self.saveStation(filename)
+            self.__station.setPath(filename)
+            self.saveStation()
 
     def onMenuFileClose(self, state):
         self.closeStation()
 
     def onMenuFileExit(self, state):
-        self.closeStation()
         self.close()
 
     #Events
     def closeEvent(self, event):
+        if self.__station != None:
+            if not self.closeStation():
+                event.ignore()
+                return
+
         self.__saveWindow()
         super().closeEvent(event)
 
     #Methods
-    @TypeChecker(QMainWindow, str)
+    @TypeChecker(QMainWindow, (str, type(None)))
     def openStation(self, path):
-        pass
+        #Open new station
+        try:
+            self.__station = Station.Station(path)
+        except Station.StationFileException as e:
+            QMessageBox.critical(self, StringTable.getString("TITLE_ERROR"),
+                                 str(e))
 
-    @TypeChecker(QMainWindow, str)
-    def saveStation(self, path):
-        pass
+        #Enable menus
+        self.__fileSaveAction.setEnabled(True)
+        self.__fileSaveAsAction.setEnabled(True)
+        self.__fileCloseAction.setEnabled(True)
+
+        #Set title
+        self.setWindowTitle(
+            StringTable.getString("TITLE_MAIN_WINDOW_OPENED") %
+            (self.__station.name()))
+
+    def saveStation(self):
+        try:
+            self.__station.save()
+
+        except Station.StationFileException as e:
+            QMessageBox.critical(self, StringTable.getString("TITLE_ERROR"),
+                                 str(e))
 
     def closeStation(self):
-        pass
+        if self.__station == None:
+            return True
+
+        if self.__station.isDirty():
+            #Ask to save file.
+            result = QMessageBox.question(
+                self, StringTable.getString("TITLE_INFO"),
+                StringTable.getString("FILE_NOT_SAVE"),
+                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+
+            if result == QMessageBox.Yes:
+                #Save file
+                self.onMenuFileSave(None)
+                if self.__station.isDirty():
+                    return False
+
+            elif result != QMessageBox.No:
+                return False
+
+        #Close
+        del self.__station
+        self.__station = None
+
+        #Disable menu
+        self.__fileSaveAction.setEnabled(False)
+        self.__fileSaveAsAction.setEnabled(False)
+        self.__fileCloseAction.setEnabled(False)
+
+        #Set title
+        self.setWindowTitle(StringTable.getString("TITLE_MAIN_WINDOW"))
+
+        return True

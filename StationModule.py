@@ -50,12 +50,38 @@ def __initialize():
                 __STATION_MODULES[m.id()] = m
 
 
+def stationTypes():
+    '''
+        Get list of station types.
+    '''
+    return list(__STATION_MODULE_TYPE.keys())
+
+
 @TypeChecker(str)
 def typeName(t):
     '''
         Get name of type.
     '''
-    return StringTable.get_string(__STATION_MODULE_TYPE[t][0])
+    return StringTable.getString(__STATION_MODULE_TYPE[t][0])
+
+
+@TypeChecker(str)
+def stationModule(sid):
+    '''
+        Get station module by id.
+    '''
+    return __STATION_MODULES[sid]
+
+
+def stationModules():
+    '''
+        Get station modules.
+    '''
+    ret = []
+    for k in __STATION_MODULES.keys():
+        ret.append(__STATION_MODULES[k])
+
+    return ret
 
 
 @TypeChecker(str, str, type)
@@ -164,7 +190,7 @@ class __StationModule:
             return self.__name[StringTable.locale()]
 
         except KeyError:
-            return self.__name[StringTable.default_locale()]
+            return self.__name[StringTable.defaultLocale()]
 
     def __str__(self):
         factionsStr = "[\n"

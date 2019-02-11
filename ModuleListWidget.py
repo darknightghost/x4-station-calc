@@ -17,6 +17,8 @@
 import PyQt5
 from PyQt5.QtWidgets import QDockWidget
 
+import MainWindow
 
-class ModuleListWidget(QDockWidget):
+
+class ModuleListWidget(MainWindow.QDockWidgetAttachAction):
     pass

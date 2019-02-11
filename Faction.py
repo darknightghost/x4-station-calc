@@ -79,7 +79,7 @@ class Faction:
             return self.__name[StringTable.locale()]
 
         except KeyError:
-            return self.__name[StringTable.default_locale()]
+            return self.__name[StringTable.defaultLocale()]
 
     def __str__(self):
         return "{\n" \

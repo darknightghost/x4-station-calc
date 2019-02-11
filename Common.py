@@ -72,4 +72,4 @@ def addIndent(s, indent=" " * 4):
 def testSetLocale():
     import sys
     if len(sys.argv) > 1:
-        StringTable.set_locale(sys.argv[1])
+        StringTable.setLocale(sys.argv[1])

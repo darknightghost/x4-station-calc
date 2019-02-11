@@ -24,6 +24,28 @@ __LOCALE = "en_US"
 __DEFAULT = "en_US"
 __LOCALES = {"en_US": "English(American)", "zh_CN": "简体中文"}
 __STRING_TABLE = {
+    #Record File
+    "NEW_FILE_NAME": {
+        "en_US": "New station",
+        "zh_CN": "新空间站"
+    },
+    "FAILED_READ_STATION_FILE": {
+        "en_US": "Failed to read \"%s\".",
+        "zh_CN": "读取文件\"%s\"失败."
+    },
+    "FAILED_WRITE_STATION_FILE": {
+        "en_US": "Failed to write \"%s\".",
+        "zh_CN": "写入文件\"%s\"失败."
+    },
+    "FAILED_PARSE_STATION_FILE": {
+        "en_US": "Failed to parse \"%s\" :\n%s",
+        "zh_CN": "解析文件\"%s\"失败 :\n%s"
+    },
+    "ILLEGAL_JSON_FORMAT":{
+        "en_US": "Illegal json format.",
+        "zh_CN": "Json格式非法."
+    }
+
     #Titles
     "TITLE_MAIN_WINDOW": {
         "en_US": "X4 Station Calculator",
@@ -149,7 +171,7 @@ __STRING_TABLE = {
 
 
 @TypeChecker(str)
-def set_locale(locale):
+def setLocale(locale):
     '''
         Set locale..
     '''
@@ -165,14 +187,14 @@ def locale():
     return __LOCALE
 
 
-def default_locale():
+def defaultLocale():
     '''
         Get default locale.
     '''
     return __DEFAULT
 
 
-def local_dict():
+def localeDict():
     '''
         Get locales and names.
     '''
@@ -180,7 +202,7 @@ def local_dict():
 
 
 @TypeChecker(str)
-def get_string(key):
+def getString(key):
     '''
         Get String from string table.
     '''

@@ -15,40 +15,110 @@
 '''
 
 import PyQt5
+import PyQt5.QtCore
+import PyQt5.QtGui
+from PyQt5.QtCore import QEvent
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDockWidget
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
 from PyQt5.QtWidgets import QFileDialog
 
-import StringTable
 import pathlib
 import json
 import locale
+
+import StringTable
+import Common
+from Common import *
+
+
+class QActionAttachWidget(QAction):
+    '''
+        QAction used to control show or hide of a QDockWidgetAttachAction.
+    '''
+
+    @TypeChecker(QAction, str, bool)
+    def __init__(self, title, checked):
+        super().__init__(title)
+        self.__attachedWidget = None
+        self.toggled.connect(self.onToggle)
+        self.changed.connect(self.onChanged)
+        self.setCheckable(True)
+        self.setChecked(checked)
+
+    @TypeChecker(QAction, QDockWidget)
+    def attach(self, widget):
+        '''
+            Attach to a widget.
+        '''
+        self.__attachedWidget = widget
+        self.__attachedWidget.onAttach(self)
+        self.__attachedWidget.setVisible(self.isChecked())
+        self.__attachedWidget.setEnabled(self.isEnabled())
+
+    @TypeChecker(QAction, bool)
+    def onToggle(self, checked):
+        if self.__attachedWidget != None:
+            if self.__attachedWidget.isVisible() != checked:
+                self.__attachedWidget.setVisible(checked)
+
+    def onChanged(self):
+        '''
+            Set enable status.
+        '''
+        if self.__attachedWidget != None:
+            if self.__attachedWidget.isEnabled() != self.isEnabled():
+                self.__attachedWidget.setEnabled(self.isEnabled())
+
+
+class QDockWidgetAttachAction(QDockWidget):
+    '''
+        QDockWidget whose visibility is controled by a QActionAttachWidget.
+    '''
+
+    def __init__(self, parent):
+        self.__attachedAction = None
+
+    @TypeChecker(QDockWidget, bool)
+    def visibilityChanged(self, visible):
+        if self.__attachedAction != None:
+            if visibility != self.__attachedAction.isChecked():
+                self.__attachedAction.setChecked(visibility)
+
+    @TypeChecker(QDockWidget, QEvent)
+    def changeEvent(self, event):
+        if event.type() == QEvent.EnabledChange:
+            if self.__attachedAction != None:
+                if self.__attachedAction.isEnabled() != self.isEnabled():
+                    self.__attachedAction.setEnabled(self.isEnabled())
+
+        super().changeEvent(event)
 
 
 class MainWindow(QMainWindow):
     CONFIG_PATH = pathlib.Path(__file__).parent / ".config"
 
+    @TypeChecker(QMainWindow, QWidget)
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.__load_window()
+        self.__loadWindow()
         self.__opened = False
         self.__path = None
 
         #Language
         try:
-            StringTable.set_locale(self.__config["locale"])
+            StringTable.setLocale(self.__config["locale"])
 
         except KeyError:
             sys_locale = locale.getdefaultlocale()[0]
             try:
-                StringTable.set_locale(sys_locale)
+                StringTable.setLocale(sys_locale)
             except KeyError:
                 pass
 
             self.__config["locale"] = StringTable.locale()
 
-        self.setWindowTitle(StringTable.get_string("TITLE_MAIN_WINDOW"))
+        self.setWindowTitle(StringTable.getString("TITLE_MAIN_WINDOW"))
         desktop = QApplication.desktop()
         try:
             self.resize(self.__config["width"], self.__config["height"])
@@ -62,92 +132,87 @@ class MainWindow(QMainWindow):
         except KeyError:
             self.move(desktop.width() / 8, desktop.height() / 8)
 
-        self.__init_file_menu()
-        self.__init_setting_menu()
-        self.__init_view_menu()
+        self.__initFileMenu()
+        self.__initSettingMenu()
+        self.__initViewMenu()
 
     #Initialize menus
-    def __init_file_menu(self):
-        self.__file_menu = QMenu(StringTable.get_string("MENU_FILE"))
-        self.menuBar().addMenu(self.__file_menu)
-        self.__file_new_action = QAction(
-            StringTable.get_string("MENU_FILE_NEW"))
-        self.__file_new_action.triggered.connect(self.on_menu_file_new)
-        self.__file_menu.addAction(self.__file_new_action)
+    def __initFileMenu(self):
+        self.__fileMenu = QMenu(StringTable.getString("MENU_FILE"))
+        self.menuBar().addMenu(self.__fileMenu)
+        self.__fileNewAction = QAction(StringTable.getString("MENU_FILE_NEW"))
+        self.__fileNewAction.triggered.connect(self.onMenuFileNew)
+        self.__fileMenu.addAction(self.__fileNewAction)
 
-        self.__file_open_action = QAction(
-            StringTable.get_string("MENU_FILE_OPEN"))
-        self.__file_open_action.triggered.connect(self.on_menu_file_open)
-        self.__file_menu.addAction(self.__file_open_action)
+        self.__fileOpenAction = QAction(
+            StringTable.getString("MENU_FILE_OPEN"))
+        self.__fileOpenAction.triggered.connect(self.onMenuFileOpen)
+        self.__fileMenu.addAction(self.__fileOpenAction)
 
-        self.__file_menu.addSeparator()
+        self.__fileMenu.addSeparator()
 
-        self.__file_save_action = QAction(
-            StringTable.get_string("MENU_FILE_SAVE"))
-        self.__file_save_action.triggered.connect(self.on_menu_file_save)
-        self.__file_save_action.setEnabled(False)
-        self.__file_menu.addAction(self.__file_save_action)
+        self.__fileSaveAction = QAction(
+            StringTable.getString("MENU_FILE_SAVE"))
+        self.__fileSaveAction.triggered.connect(self.onMenuFileSave)
+        self.__fileSaveAction.setEnabled(False)
+        self.__fileMenu.addAction(self.__fileSaveAction)
 
-        self.__file_save_as_action = QAction(
-            StringTable.get_string("MENU_FILE_SAVE_AS"))
-        self.__file_save_as_action.triggered.connect(self.on_menu_file_saveas)
-        self.__file_save_as_action.setEnabled(False)
-        self.__file_menu.addAction(self.__file_save_as_action)
+        self.__fileSaveAsAction = QAction(
+            StringTable.getString("MENU_FILE_SAVE_AS"))
+        self.__fileSaveAsAction.triggered.connect(self.onMenuFileSaveAs)
+        self.__fileSaveAsAction.setEnabled(False)
+        self.__fileMenu.addAction(self.__fileSaveAsAction)
 
-        self.__file_menu.addSeparator()
+        self.__fileMenu.addSeparator()
 
-        self.__file_close_action = QAction(
-            StringTable.get_string("MENU_FILE_CLOSE"))
-        self.__file_close_action.triggered.connect(self.on_menu_file_close)
-        self.__file_menu.addAction(self.__file_close_action)
+        self.__fileCloseAction = QAction(
+            StringTable.getString("MENU_FILE_CLOSE"))
+        self.__fileCloseAction.triggered.connect(self.onMenuFileClose)
+        self.__fileMenu.addAction(self.__fileCloseAction)
 
-        self.__file_menu.addSeparator()
+        self.__fileMenu.addSeparator()
 
-        self.__file_exit_action = QAction(
-            StringTable.get_string("MENU_FILE_EXIT"))
-        self.__file_exit_action.triggered.connect(self.on_menu_file_exit)
-        self.__file_close_action.setEnabled(False)
-        self.__file_menu.addAction(self.__file_exit_action)
+        self.__fileExitAction = QAction(
+            StringTable.getString("MENU_FILE_EXIT"))
+        self.__fileExitAction.triggered.connect(self.onMenuFileExit)
+        self.__fileCloseAction.setEnabled(False)
+        self.__fileMenu.addAction(self.__fileExitAction)
 
-    def __init_setting_menu(self):
-        self.__setting_menu = QMenu(StringTable.get_string("MENU_SETTING"))
-        self.menuBar().addMenu(self.__setting_menu)
-        self.__setting_language_menu = QMenu(
-            StringTable.get_string("MENU_SETTING_LANGUAGE"))
-        self.__setting_menu.addMenu(self.__setting_language_menu)
+    def __initSettingMenu(self):
+        self.__settingMenu = QMenu(StringTable.getString("MENU_SETTING"))
+        self.menuBar().addMenu(self.__settingMenu)
+        self.__settingLanguageMenu = QMenu(
+            StringTable.getString("MENU_SETTING_LANGUAGE"))
+        self.__settingMenu.addMenu(self.__settingLanguageMenu)
 
         #Languages
-        self.__language_action_group = QActionGroup(self)
-        languages = StringTable.local_dict()
+        self.__languageActionGroup = QActionGroup(self)
+        languages = StringTable.localeDict()
         for l in languages.keys():
-            action = QAction(languages[l], self.__language_action_group)
+            action = QAction(languages[l], self.__languageActionGroup)
             setattr(action, "locale", l)
             action.setCheckable(True)
             action.setChecked(l == StringTable.locale())
-            self.__setting_language_menu.addAction(action)
+            self.__settingLanguageMenu.addAction(action)
 
-        self.__language_action_group.triggered[QAction].connect(
-            self.on_change_locale)
+        self.__languageActionGroup.triggered[QAction].connect(
+            self.onChangeLocale)
 
-    def __init_view_menu(self):
-        self.__view_menu = QMenu(StringTable.get_string("MENU_VIEW"))
-        self.menuBar().addMenu(self.__view_menu)
+    def __initViewMenu(self):
+        self.__viewMenu = QMenu(StringTable.getString("MENU_VIEW"))
+        self.menuBar().addMenu(self.__viewMenu)
 
-        self.__view_module_list_menu = QAction(
-            StringTable.get_string("MENU_VIEW_MODULE_LIST"))
-        self.__view_module_list_menu.setCheckable(True)
-        self.__view_module_list_menu.setChecked(False)
-        self.__view_module_list_menu.setEnabled(False)
-        self.__view_menu.addAction(self.__view_module_list_menu)
+        self.__viewModuleListMenu = QActionAttachWidget(
+            StringTable.getString("MENU_VIEW_MODULE_LIST"), False)
+        self.__viewModuleListMenu.setEnabled(False)
+        self.__viewMenu.addAction(self.__viewModuleListMenu)
 
-        self.__view_module_info_menu = QAction(
-            StringTable.get_string("MENU_VIEW_MODULE_INFO"))
-        self.__view_module_info_menu.setCheckable(True)
-        self.__view_module_info_menu.setChecked(False)
-        self.__view_module_info_menu.setEnabled(False)
-        self.__view_menu.addAction(self.__view_module_info_menu)
+        self.__viewModuleInfoMenu = QActionAttachWidget(
+            StringTable.getString("MENU_VIEW_MODULE_INFO"), False)
+        self.__viewModuleInfoMenu.setEnabled(False)
+        self.__viewMenu.addAction(self.__viewModuleInfoMenu)
 
-    def __save_window(self):
+    def __saveWindow(self):
         self.__config["width"] = self.width()
         self.__config["height"] = self.height()
         self.__config["x"] = self.x()
@@ -156,7 +221,7 @@ class MainWindow(QMainWindow):
         with open(str(self.CONFIG_PATH), "w") as f:
             f.write(s)
 
-    def __load_window(self):
+    def __loadWindow(self):
         if self.CONFIG_PATH.exists():
             with open(str(self.CONFIG_PATH)) as f:
                 self.__config = json.loads(f.read())
@@ -165,16 +230,17 @@ class MainWindow(QMainWindow):
             self.__config = {}
 
     #Slots
-    def on_change_locale(self, action):
+    @TypeChecker(QMainWindow, QAction)
+    def onChangeLocale(self, action):
         self.__config["locale"] = action.locale
         QMessageBox.information(
-            self, StringTable.get_string("TITLE_INFO"),
-            StringTable.get_string("INFO_EFFECT_NEXT_LAUNCH"))
+            self, StringTable.getString("TITLE_INFO"),
+            StringTable.getString("INFO_EFFECT_NEXT_LAUNCH"))
 
-    def on_menu_file_new(self, state):
-        self.open_station(None)
+    def onMenuFileNew(self, state):
+        self.openStation(None)
 
-    def on_menu_file_open(self, state):
+    def onMenuFileOpen(self, state):
         try:
             open_path = self.__config["openPath"]
 
@@ -182,22 +248,22 @@ class MainWindow(QMainWindow):
             open_path = "."
 
         filename, file_type = QFileDialog.getOpenFileName(
-            self, StringTable.get_string("TITLE_OPEN_FILE"), open_path,
-            StringTable.get_string("TYPE_FILE"))
+            self, StringTable.getString("TITLE_OPEN_FILE"), open_path,
+            StringTable.getString("TYPE_FILE"))
 
         if file_type != "":
             self.__config["openPath"] = str(
                 pathlib.Path(filename).absolute().parent)
-            self.open_station(filename)
+            self.openStation(filename)
 
-    def on_menu_file_save(self, state):
+    def onMenuFileSave(self, state):
         if self.__path == None:
-            self.on_menu_file_saveas(state)
+            self.onMenuFileSaveAs(state)
 
         else:
-            self.save_station(self.__path)
+            self.saveStation(self.__path)
 
-    def on_menu_file_saveas(self, state):
+    def onMenuFileSaveAs(self, state):
         try:
             savepath = self.__config["openPath"]
 
@@ -205,36 +271,34 @@ class MainWindow(QMainWindow):
             save_path = "."
 
         filename, file_type = QFileDialog.getSaveFileName(
-            self, StringTable.get_string("TITLE_SAVE_FILE"), save_path,
-            StringTable.get_string("TYPE_FILE"))
+            self, StringTable.getString("TITLE_SAVE_FILE"), save_path,
+            StringTable.getString("TYPE_FILE"))
 
         if file_type != "":
             self.__config["openPath"] = str(
                 pathlib.Path(filename).absolute().parent)
-            self.save_station(filename)
+            self.saveStation(filename)
 
-    def on_menu_file_close(self, state):
-        self.close_station()
+    def onMenuFileClose(self, state):
+        self.closeStation()
 
-    def on_menu_file_exit(self, state):
-        self.close_station()
+    def onMenuFileExit(self, state):
+        self.closeStation()
         self.close()
 
     #Events
     def closeEvent(self, event):
-        self.__save_window()
+        self.__saveWindow()
         super().closeEvent(event)
 
     #Methods
-    def open_station(self, path):
+    @TypeChecker(QMainWindow, str)
+    def openStation(self, path):
         pass
 
-    def save_station(self, path):
+    @TypeChecker(QMainWindow, str)
+    def saveStation(self, path):
         pass
 
-    def close_station(self):
+    def closeStation(self):
         pass
-
-
-class ActionAttachWidget:
-    pass

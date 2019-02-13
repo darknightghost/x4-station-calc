@@ -20,6 +20,8 @@
 import pathlib
 import json
 import traceback
+import os
+from distutils.version import StrictVersion
 
 import StationModule
 import Station
@@ -70,7 +72,7 @@ class StationFileWriteException(StationFileException):
 
 class StationModules:
     '''
-        Modules in station.
+        Station modules in group.
     '''
 
     def __init__(self, data, amount=1, parent=None):
@@ -159,6 +161,151 @@ class StationModules:
         if self.__parent != None:
             self.__parent.setDirty()
 
+    def __hash__(self):
+        return self.stationModule().__hash__()
+
+    def __iadd__(self, item):
+        if isinstance(item, int):
+            if item < 0:
+                raise ValueError("\"item\" must bigger than 0.")
+            self.__amount += item
+            self.__setParentDirty()
+
+        elif isinstance(self, StationModules):
+            self.__amount += item.amount()
+            self.__setParentDirty()
+
+        else:
+            raise TypeError("\"item\" must be StationModules or int.")
+
+
+class StationModulesGroup:
+    '''
+        Station module group.
+    '''
+
+    def __init__(self, data, parent=None):
+        '''
+            StationModulesGroup(data)       -> stationModulesGroup
+            StationModulesGroup()           -> stationModulesGroup
+        '''
+        self.__parent = parent
+        if isinstance(data, dict):
+            self.__initByData(data)
+
+        else:
+            self.__initWithoutData()
+
+    @TypeChecker(object, dict)
+    def __initByData(self, data):
+        self.__name = data["name"]
+        self.__stationModules = []
+        self.__stationModuleIndex = {}
+        for m in data["modules"]:
+            m = StationModules(m, parent=self)
+            try:
+                self.__stationModuleIndex[m.stationModule] += m
+
+            except KeyError:
+                self.__stationModules.append(m)
+                self.__stationModuleIndex[m.stationModule()] = m
+
+    def __initWithoutData(self):
+        self.__name = StringTable.getString("NEW_GROUP_NAME")
+        self.__stationModules = []
+        self.__stationModuleIndex = {}
+
+    def setParent(self, parent):
+        '''
+            Set parent.
+        '''
+        self.__parent = parent
+        self.__setParentDirty()
+
+    def name(self):
+        '''
+            Get name.
+        '''
+        return self.__name
+
+    @TypeChecker(object, str)
+    def setName(self, name):
+        '''
+            Set name.
+        '''
+        self.__name = name
+        self.__setParentDirty()
+
+    def setDirty(self):
+        '''
+            Make file dirty.
+        '''
+        self.__setParentDirty()
+
+    def toDict(self):
+        '''
+            To dictionary.
+        '''
+        modules = []
+        for m in self.__stationModules:
+            modules.append(m.toDict())
+
+        return {"name": self.name(), "modules": modules}
+
+    def __setParentDirty(self):
+        '''
+            Make parent dirty.
+        '''
+        if self.__parent != None:
+            self.__parent.setDirty()
+
+    @TypeChecker(object, StationModules)
+    def append(self, item):
+        '''
+            Append item.
+        '''
+        item.setParent(self)
+        try:
+            self.__stationModuleIndex[item.stationModule()] += item
+
+        except KeyError:
+            self.__stationModules.append(item)
+            self.__setParentDirty()
+
+    @TypeChecker(object, StationModules)
+    def remove(self, item):
+        '''
+            Remove item.
+        '''
+        item.setParent(None)
+        self.__stationModules.remove(item)
+        self.__setParentDirty()
+
+    def __iter__(self):
+        return self.__stationModules.__iter__()
+
+    @TypeChecker(object, int)
+    def __getitem__(self, index):
+        return self.__stationModules[index]
+
+    @TypeChecker(object, int, StationModules)
+    def __setitem__(self, index, value):
+        value.setParent(self)
+        self.__stationModules[index] = value
+
+    def __delitem__(self, index):
+        self.__stationModules[index].setParent(None)
+        del self.__stationModules[index]
+        self.__setParentDirty()
+
+    def __iadd__(self, l):
+        for m in l:
+            if not isinstance(m, StationModules):
+                raise TypeError(
+                    "Type of item should be %s." % (str(StationModules)))
+            m.setParent(self)
+            self.__stationModules.append(m)
+
 
 class Station:
     '''
@@ -166,19 +313,60 @@ class Station:
 
         File format:
         {
-            "name" : "station name",
-            "modules" : [
+            "groups" : [
                 {
-                    "id": "MODULE_ID_1",
-                    "amount" : 4
+                    "name" : "group1",
+                    "modules" : [
+                        {
+                            "id": "MODULE_ID_1",
+                            "amount" : 4
+                        },
+                        {
+                            "id": "MODULE_ID_2",
+                            "amount" : 2
+                        },
+                        {
+                            "id": "MODULE_ID_3",
+                            "amount" : 7
+                        },
+                        ...
+                    ]
                 },
                 {
-                    "id": "MODULE_ID_2",
-                    "amount" : 2
+                    "name" : "group2",
+                    "modules" : [
+                        {
+                            "id": "MODULE_ID_1",
+                            "amount" : 4
+                        },
+                        {
+                            "id": "MODULE_ID_2",
+                            "amount" : 2
+                        },
+                        {
+                            "id": "MODULE_ID_3",
+                            "amount" : 7
+                        },
+                        ...
+                    ]
                 },
                 {
-                    "id": "MODULE_ID_3",
-                    "amount" : 7
+                    "name" : "group3",
+                    "modules" : [
+                        {
+                            "id": "MODULE_ID_1",
+                            "amount" : 4
+                        },
+                        {
+                            "id": "MODULE_ID_2",
+                            "amount" : 2
+                        },
+                        {
+                            "id": "MODULE_ID_3",
+                            "amount" : 7
+                        },
+                        ...
+                    ]
                 },
                 ...
             ]
@@ -192,8 +380,7 @@ class Station:
 
         if path == None:
             #New file
-            self.__name = StringTable.getString("NEW_FILE_NAME")
-            self.__stationModules = []
+            self.__stationModulesGroups = []
             self.__dirty = True
 
         else:
@@ -208,6 +395,7 @@ class Station:
 
             f.close()
 
+            #Parse json
             try:
                 data = json.loads(s)
 
@@ -215,12 +403,24 @@ class Station:
                 raise StationParseException(
                     path, StringTable.getString("ILLEGAL_JSON_FORMAT"))
 
-            self.__stationModules = []
+            #Check version
             try:
-                self.__name = data["name"]
-                self.__stationModules = []
-                for d in data["modules"]:
-                    self.__stationModules.append(StationModules(d))
+                version = StrictVersion(data["version"])
+
+            except Exception:
+                raise StationParseException(path, traceback.format_exc())
+
+            if version > VERSION:
+                raise StationParseException(
+                    path,
+                    StringTable.getString("VERSION_TOO_LOW") % (str(version)))
+
+            #Load data
+            self.__stationModulesGroups = []
+            try:
+                self.__stationModulesGroups = []
+                for d in data["groups"]:
+                    self.__stationModulesGroups.append(StationModules(d))
 
             except Exception:
                 raise StationParseException(path, traceback.format_exc())
@@ -242,14 +442,11 @@ class Station:
         '''
             Get station name.
         '''
-        return self.__name
+        if self.__path == None:
+            return StringTable.getString("NEW_FILE_NAME")
 
-    @TypeChecker(object, str)
-    def setName(self, name):
-        '''
-            Set station name.
-        '''
-        self.__name = name
+        else:
+            return os.path.splitext(os.path.basename(self.__path))[0]
 
     def isDirty(self):
         '''
@@ -269,14 +466,11 @@ class Station:
         '''
         #Make json
         modules = []
-        for m in self.__stationModules:
+        for m in self.__stationModulesGroups:
             modules.append(m.toDict())
 
-        s = json.dumps({
-            "name": self.__name,
-            "modules": modules
-        },
-                       ensure_ascii=False)
+        stationDict = {"version": str(RECORD_VERSION), "groups": modules}
+        s = json.dumps(stationDict, ensure_ascii=False)
 
         #Write json
         try:
@@ -288,44 +482,44 @@ class Station:
 
         self.__dirty = False
 
-    @TypeChecker(object, StationModules)
+    @TypeChecker(object, StationModulesGroup)
     def append(self, item):
         '''
             Append item.
         '''
         item.setParent(self)
-        self.__stationModules.append(item)
+        self.__stationModulesGroups.append(item)
 
-    @TypeChecker(object, StationModules)
+    @TypeChecker(object, StationModulesGroup)
     def remove(self, item):
         '''
             Remove item.
         '''
         item.setParent(None)
-        self.__stationModules.remove(item)
-        self.setDirty()
+        self.__stationModulesGroups.remove(item)
 
     def __iter__(self):
-        return self.__stationModules.__iter__()
+        return self.__stationModulesGroups.__iter__()
 
     @TypeChecker(object, int)
     def __getitem__(self, index):
-        return self.__stationModules[index]
+        return self.__stationModulesGroups[index]
 
-    @TypeChecker(object, int, StationModules)
+    @TypeChecker(object, int, StationModulesGroup)
     def __setitem__(self, index, value):
         value.setParent(self)
-        self.__stationModules[index] = value
+        self.__stationModulesGroups[index] = value
 
     def __delitem__(self, index):
-        self.__stationModules[index].setParent(None)
-        del self.__stationModules[index]
+        self.__stationModulesGroups[index].setParent(None)
+        del self.__stationModulesGroups[index]
         self.setDirty()
 
     def __iadd__(self, l):
         for m in l:
-            if not isinstance(m, StationModules):
+            if not isinstance(m, StationModulesGroup):
                 raise TypeError(
-                    "Type of item should be %s." % (str(StationModules)))
+                    "Type of item should be %s." % (str(StationModulesGroup)))
             m.setParent(self)
-            self.__stationModules.append(m)
+            self.__stationModulesGroups.append(m)
+            self.setDirty()

@@ -15,8 +15,20 @@
 '''
 
 import PyQt5
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
+import DockWidget
+import Common
+from Common import *
 
 
-class WorkSpaceWidget(QWidget):
-    pass
+class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
+    '''
+        List of modules.
+    '''
+
+    def __init__(self, parent=None):
+        super().__init__(QWidget(), parent)
+        self.setWindowTitle(StringTable.getString("TITLE_MODULE_LIST"))

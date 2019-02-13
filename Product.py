@@ -108,6 +108,9 @@ class Product:
                 "    volume = %s\n" \
                 "}"%(self.id(), self.name(), self.storage(), self.volume())
 
+    def __hash__(self):
+        return self.id().__hash__()
+
 
 __initialize()
 

@@ -35,9 +35,13 @@ MainWindow = MainWindow.MainWindow
 
 
 def main():
+    stationPath = None
+    if len(sys.argv) > 1:
+        stationPath = sys.argv[1]
+
     app = QApplication(sys.argv)
 
-    w = MainWindow()
+    w = MainWindow(None, stationPath)
     w.show()
 
     return app.exec_()

@@ -19,7 +19,12 @@
 
 import inspect
 import functools
+from distutils.version import StrictVersion
+
 import StringTable
+
+VERSION = StrictVersion("0.0.1")
+RECORD_VERSION = StrictVersion("0.0.1")
 
 
 def TypeChecker(*type_args, **type_kwargs):

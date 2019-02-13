@@ -87,6 +87,9 @@ class Faction:
                 "    name = %s\n" \
                 "}"%(self.id(), self.name())
 
+    def __hash__(self):
+        return self.id().__hash__()
+
 
 __initialize()
 

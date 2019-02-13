@@ -15,15 +15,9 @@
 '''
 
 import PyQt5
-import PyQt5.QtCore
-import PyQt5.QtGui
-from PyQt5.QtCore import QEvent
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QShortcut
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDockWidget
-from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 import pathlib
 import json
@@ -34,78 +28,21 @@ import Station
 import Common
 from Common import *
 
-
-class QActionAttachWidget(QAction):
-    '''
-        QAction used to control show or hide of a QDockWidgetAttachAction.
-    '''
-
-    @TypeChecker(QAction, str, bool)
-    def __init__(self, title, checked):
-        super().__init__(title)
-        self.__attachedWidget = None
-        self.toggled.connect(self.onToggle)
-        self.changed.connect(self.onChanged)
-        self.setCheckable(True)
-        self.setChecked(checked)
-
-    @TypeChecker(QAction, QDockWidget)
-    def attach(self, widget):
-        '''
-            Attach to a widget.
-        '''
-        self.__attachedWidget = widget
-        self.__attachedWidget.onAttach(self)
-        self.__attachedWidget.setVisible(self.isChecked())
-        self.__attachedWidget.setEnabled(self.isEnabled())
-
-    @TypeChecker(QAction, bool)
-    def onToggle(self, checked):
-        if self.__attachedWidget != None:
-            if self.__attachedWidget.isVisible() != checked:
-                self.__attachedWidget.setVisible(checked)
-
-    def onChanged(self):
-        '''
-            Set enable status.
-        '''
-        if self.__attachedWidget != None:
-            if self.__attachedWidget.isEnabled() != self.isEnabled():
-                self.__attachedWidget.setEnabled(self.isEnabled())
-
-
-class QDockWidgetAttachAction(QDockWidget):
-    '''
-        QDockWidget whose visibility is controled by a QActionAttachWidget.
-    '''
-
-    def __init__(self, parent):
-        self.__attachedAction = None
-
-    @TypeChecker(QDockWidget, bool)
-    def visibilityChanged(self, visible):
-        if self.__attachedAction != None:
-            if visibility != self.__attachedAction.isChecked():
-                self.__attachedAction.setChecked(visibility)
-
-    @TypeChecker(QDockWidget, QEvent)
-    def changeEvent(self, event):
-        if event.type() == QEvent.EnabledChange:
-            if self.__attachedAction != None:
-                if self.__attachedAction.isEnabled() != self.isEnabled():
-                    self.__attachedAction.setEnabled(self.isEnabled())
-
-        super().changeEvent(event)
+import WorkSpaceWidget
+import ModuleListWidget
+import InfoWidget
+import DockWidget
 
 
 class MainWindow(QMainWindow):
     CONFIG_PATH = pathlib.Path(__file__).parent / ".config"
 
-    @TypeChecker(QMainWindow, QWidget)
-    def __init__(self, parent=None):
+    @TypeChecker(QMainWindow, (QWidget, type(None)), (str, type(None)))
+    def __init__(self, parent=None, stationPath=None):
         super().__init__(parent)
         self.__loadWindow()
         self.__station = None
+        self.setCentralWidget(QWidget(self))
 
         #Language
         try:
@@ -137,6 +74,11 @@ class MainWindow(QMainWindow):
         self.__initFileMenu()
         self.__initSettingMenu()
         self.__initViewMenu()
+        self.__initWidgets()
+
+        #Open file
+        if stationPath != None:
+            self.openStation(stationPath)
 
     #Initialize menus
     def __initFileMenu(self):
@@ -210,21 +152,103 @@ class MainWindow(QMainWindow):
         self.__viewMenu = QMenu(StringTable.getString("MENU_VIEW"))
         self.menuBar().addMenu(self.__viewMenu)
 
-        self.__viewModuleListMenu = QActionAttachWidget(
+        self.__viewModuleListMenu = DockWidget.QActionAttachWidget(
             StringTable.getString("MENU_VIEW_MODULE_LIST"), False)
-        self.__viewModuleListMenu.setEnabled(False)
+        self.__viewModuleListMenu.setEnabled(True)
         self.__viewMenu.addAction(self.__viewModuleListMenu)
 
-        self.__viewModuleInfoMenu = QActionAttachWidget(
-            StringTable.getString("MENU_VIEW_MODULE_INFO"), False)
-        self.__viewModuleInfoMenu.setEnabled(False)
-        self.__viewMenu.addAction(self.__viewModuleInfoMenu)
+        self.__viewInfoMenu = DockWidget.QActionAttachWidget(
+            StringTable.getString("MENU_VIEW_INFO"), False)
+        self.__viewInfoMenu.setEnabled(True)
+        self.__viewMenu.addAction(self.__viewInfoMenu)
+
+    def __initWidgets(self):
+        self.__infoWidget = self.__initSingleDockWidget(
+            InfoWidget.InfoWidget, self.__viewInfoMenu,
+            Qt.BottomDockWidgetArea, "info_widget")
+        self.__moduleListWidget = self.__initSingleDockWidget(
+            ModuleListWidget.ModuleListWidget, self.__viewModuleListMenu,
+            Qt.LeftDockWidgetArea, "module_list_widget")
+
+    @TypeChecker(QMainWindow, type(DockWidget.QDockWidgetAttachAction),
+                 DockWidget.QActionAttachWidget, int, str)
+    def __initSingleDockWidget(self, cls, action, defaultArea, node):
+        #Load config
+        try:
+            dockArea = self.__config[node]["dock_area"]
+
+        except KeyError:
+            dockArea = defaultArea
+
+        try:
+            visible = self.__config[node]["visible"]
+
+        except KeyError:
+            visible = True
+
+        try:
+            floating = self.__config[node]["floating"]
+        except KeyError:
+            floating = False
+
+        try:
+            x = self.__config[node]["x"]
+            y = self.__config[node]["y"]
+            w = self.__config[node]["w"]
+            h = self.__config[node]["h"]
+            setModuleListSize = True
+
+        except KeyError:
+            setModuleListSize = False
+
+        if dockArea == Qt.NoDockWidgetArea:
+            dockArea = defaultArea
+
+        #Create widget
+        widget = cls(self)
+        self.addDockWidget(dockArea, widget)
+        widget.setFloating(floating)
+        if setModuleListSize:
+            if floating:
+                widget.setGeometry(x, y, w, h)
+
+            elif dockArea in (Qt.LeftDockWidgetArea, Qt.RightDockWidgetArea):
+                self.resizeDocks((widget, ), (w, ), Qt.Horizontal)
+
+            elif dockArea in (Qt.TopDockWidgetArea, Qt.BottomDockWidgetArea):
+                self.resizeDocks((widget, ), (h, ), Qt.Horizontal)
+
+        action.attach(widget)
+        widget.setVisible(visible)
+
+        return widget
+
+    def __saveSigleDockWidget(self, widget, node):
+        self.__config[node] = {}
+        self.__config[node]["dock_area"] = self.dockWidgetArea(widget)
+        self.__config[node]["floating"] = widget.isFloating()
+        self.__config[node]["visible"] = widget.isVisible()
+        geo = widget.geometry()
+        self.__config[node]["x"] = geo.x()
+        self.__config[node]["y"] = geo.y()
+        self.__config[node]["w"] = geo.width()
+        self.__config[node]["h"] = geo.height()
 
     def __saveWindow(self):
+        #Main widow
         self.__config["width"] = self.width()
         self.__config["height"] = self.height()
         self.__config["x"] = self.x()
         self.__config["y"] = self.y()
+
+        #ModuleListWidget
+        self.__saveSigleDockWidget(self.__moduleListWidget,
+                                   "module_list_widget")
+
+        #InfoWidget
+        self.__saveSigleDockWidget(self.__infoWidget, "info_widget")
+
+        #Save
         s = json.dumps(self.__config)
         with open(str(self.CONFIG_PATH), "w") as f:
             f.write(s)
@@ -242,7 +266,7 @@ class MainWindow(QMainWindow):
     def onChangeLocale(self, action):
         self.__config["locale"] = action.locale
         QMessageBox.information(
-            self, StringTable.getString("TITLE_INFO"),
+            self, StringTable.getString("TITLE_MSG_INFO"),
             StringTable.getString("INFO_EFFECT_NEXT_LAUNCH"))
 
     def onMenuFileNew(self, state):
@@ -306,6 +330,7 @@ class MainWindow(QMainWindow):
         self.close()
 
     #Events
+    @TypeChecker(QMainWindow, QCloseEvent)
     def closeEvent(self, event):
         if self.__station != None:
             if not self.closeStation():
@@ -313,6 +338,7 @@ class MainWindow(QMainWindow):
                 return
 
         self.__saveWindow()
+        self.__moduleListWidget.die()
         super().closeEvent(event)
 
     #Methods
@@ -322,13 +348,26 @@ class MainWindow(QMainWindow):
         try:
             self.__station = Station.Station(path)
         except Station.StationFileException as e:
-            QMessageBox.critical(self, StringTable.getString("TITLE_ERROR"),
+            QMessageBox.critical(self,
+                                 StringTable.getString("TITLE_MSG_ERROR"),
                                  str(e))
+            return
 
         #Enable menus
         self.__fileSaveAction.setEnabled(True)
         self.__fileSaveAsAction.setEnabled(True)
         self.__fileCloseAction.setEnabled(True)
+
+        #Enable widgets
+        self.__moduleListWidget.setEnabled(True)
+
+        #Create central widget
+        s = self.centralWidget()
+        self.setCentralWidget(
+            WorkSpaceWidget.WorkSpaceWidget(self, self.__station))
+        s.close()
+        del s
+        self.centralWidget().show()
 
         #Set title
         self.setWindowTitle(
@@ -336,12 +375,19 @@ class MainWindow(QMainWindow):
             (self.__station.name()))
 
     def saveStation(self):
+        #Save
         try:
             self.__station.save()
 
         except Station.StationFileException as e:
-            QMessageBox.critical(self, StringTable.getString("TITLE_ERROR"),
+            QMessageBox.critical(self,
+                                 StringTable.getString("TITLE_MSG_ERROR"),
                                  str(e))
+
+        #Set title
+        self.setWindowTitle(
+            StringTable.getString("TITLE_MAIN_WINDOW_OPENED") %
+            (self.__station.name()))
 
     def closeStation(self):
         if self.__station == None:
@@ -350,7 +396,7 @@ class MainWindow(QMainWindow):
         if self.__station.isDirty():
             #Ask to save file.
             result = QMessageBox.question(
-                self, StringTable.getString("TITLE_INFO"),
+                self, StringTable.getString("TITLE_MSG_INFO"),
                 StringTable.getString("FILE_NOT_SAVE"),
                 QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
 
@@ -364,6 +410,10 @@ class MainWindow(QMainWindow):
                 return False
 
         #Close
+        s = self.centralWidget()
+        self.setCentralWidget(QWidget(self))
+        s.close()
+        del s
         del self.__station
         self.__station = None
 
@@ -371,6 +421,9 @@ class MainWindow(QMainWindow):
         self.__fileSaveAction.setEnabled(False)
         self.__fileSaveAsAction.setEnabled(False)
         self.__fileCloseAction.setEnabled(False)
+
+        #Disable widgets
+        self.__moduleListWidget.setEnabled(False)
 
         #Set title
         self.setWindowTitle(StringTable.getString("TITLE_MAIN_WINDOW"))

@@ -15,10 +15,28 @@
 '''
 
 import PyQt5
-from PyQt5.QtWidgets import QDockWidget
+from PyQt5.QtWidgets import QWidget
 
-import MainWindow
+import Station
+import Common
+from Common import *
+
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 
 
-class ModuleListWidget(MainWindow.QDockWidgetAttachAction):
-    pass
+class WorkSpaceWidget(QWidget):
+    '''
+        Workspace.
+    '''
+
+    @TypeChecker(QWidget, QMainWindow, Station.Station)
+    def __init__(self, parent, station):
+        super().__init__(parent)
+        self.__station = station
+        self.updateData()
+
+    def updateData(self):
+        '''
+            Update data.
+        '''
+        self.setWindowTitle(self.__station.name())

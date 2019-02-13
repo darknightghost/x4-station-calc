@@ -29,6 +29,10 @@ __STRING_TABLE = {
         "en_US": "New station",
         "zh_CN": "新空间站"
     },
+    "NEW_GROUP_NAME": {
+        "en_US": "New group",
+        "zh_CN": "新分组"
+    },
     "FAILED_READ_STATION_FILE": {
         "en_US": "Failed to read \"%s\".",
         "zh_CN": "读取文件\"%s\"失败."
@@ -44,6 +48,10 @@ __STRING_TABLE = {
     "ILLEGAL_JSON_FORMAT": {
         "en_US": "Illegal json format.",
         "zh_CN": "Json格式非法."
+    },
+    "VERSION_TOO_LOW": {
+        "en_US": "The file requires version over %s.",
+        "zh_CN": "该文件需要版本大于%s."
     },
     "FILE_NOT_SAVE": {
         "en_US": "Last change has not been saved, save it now?.",
@@ -63,15 +71,15 @@ __STRING_TABLE = {
         "en_US": "Station Modules",
         "zh_CN": "空间站模块"
     },
-    "TITLE_MODULE_INFO": {
-        "en_US": "Module Info",
-        "zh_CN": "模块信息"
-    },
     "TITLE_INFO": {
+        "en_US": "Info",
+        "zh_CN": "信息"
+    },
+    "TITLE_MSG_INFO": {
         "en_US": "Info",
         "zh_CN": "提示"
     },
-    "TITLE_ERROR": {
+    "TITLE_MSG_ERROR": {
         "en_US": "Error",
         "zh_CN": "错误"
     },
@@ -121,9 +129,9 @@ __STRING_TABLE = {
         "en_US": "&Station Modules",
         "zh_CN": "空间站模块(&S)"
     },
-    "MENU_VIEW_MODULE_INFO": {
-        "en_US": "&Module Info",
-        "zh_CN": "模块信息(&M)"
+    "MENU_VIEW_INFO": {
+        "en_US": "&Info",
+        "zh_CN": "信息(&I)"
     },
 
     #File dialog

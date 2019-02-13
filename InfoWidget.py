@@ -15,17 +15,21 @@
 '''
 
 import PyQt5
-from PyQt5.QtWidgets import QTreeWidget
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 import StringTable
+import Common
+from Common import *
 
-import MainWindow
+import DockWidget
 
 
-class InfoWidget(MainWindow.QDockWidgetAttachAction):
+class InfoWidget(DockWidget.QDockWidgetAttachAction):
     def __init__(self, parent=None):
-        super()(parent)
+        super().__init__(QWidget(), parent)
         self.__tree_view = QTreeWidget(self)
         self.__tree_view.setHeaderHidden(True)
         self.setWidget(self.__tree_view)
-        self.setWindowTitle(StringTable.getString("TITLE_MODULE_LIST"))
+        self.setWindowTitle(StringTable.getString("TITLE_INFO"))

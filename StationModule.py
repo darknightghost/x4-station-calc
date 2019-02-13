@@ -210,6 +210,9 @@ class __StationModule:
                         self.turretNum()
                     )
 
+    def __hash__(self):
+        return self.id().__hash__()
+
 
 class DefenceModule(__StationModule):
     '''

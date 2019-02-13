@@ -43,6 +43,10 @@ class MainWindow(QMainWindow):
         self.__loadWindow()
         self.__station = None
         self.setCentralWidget(QWidget(self))
+        #self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowSystemMenuHint
+        #                    | Qt.WindowTitleHint
+        #                    | Qt.WindowMinMaxButtonsHint
+        #                    | Qt.WindowCloseButtonHint)
 
         #Language
         try:

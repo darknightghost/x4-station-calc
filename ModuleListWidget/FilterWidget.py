@@ -19,24 +19,15 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import Station
+import StationModule
 import Common
 from Common import *
 
 
-class WorkSpaceWidget(QWidget):
-    '''
-        Workspace.
-    '''
-
-    @TypeChecker(QWidget, QMainWindow, Station.Station)
-    def __init__(self, parent, station):
+class FilterWidget(QWidget):
+    def __init__(self, parent):
         super().__init__(parent)
-        self.__station = station
-        self.updateData()
 
-    def updateData(self):
-        '''
-            Update data.
-        '''
-        self.setWindowTitle(self.__station.name())
+    @TypeChecker(QWidget, StationModule.StationModule)
+    def filter(self, m):
+        return True

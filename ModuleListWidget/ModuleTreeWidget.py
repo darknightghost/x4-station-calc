@@ -19,24 +19,29 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import Station
+import StationModule
+import StringTable
 import Common
 from Common import *
 
 
-class WorkSpaceWidget(QWidget):
+class ModuleTreeWidget(QTreeWidget):
     '''
-        Workspace.
+        List of station modules.
     '''
 
-    @TypeChecker(QWidget, QMainWindow, Station.Station)
-    def __init__(self, parent, station):
+    @TypeChecker(QTreeWidget, object, QWidget)
+    def __init__(self, filter, parent):
+        '''
+            ModuleTreeWidget(filter_function, parent)   -> widget
+            
+            @TypeChecker(StationModule.StationModule)
+            def filter_function(m):
+                return True
+        '''
         super().__init__(parent)
-        self.__station = station
-        self.updateData()
+        if not callable(filter):
+            raise TypeError("\"filter\" must be callable.")
 
-    def updateData(self):
-        '''
-            Update data.
-        '''
-        self.setWindowTitle(self.__station.name())
+        self.__filter = filter
+        self.header().setVisible(False)

@@ -67,10 +67,6 @@ __STRING_TABLE = {
         "en_US": "X4 Station Calculator - %s",
         "zh_CN": "X4 空间站模块计算工具 - %s"
     },
-    "TITLE_MODULE_LIST": {
-        "en_US": "Station Modules",
-        "zh_CN": "空间站模块"
-    },
     "TITLE_INFO": {
         "en_US": "Info",
         "zh_CN": "信息"
@@ -186,7 +182,13 @@ __STRING_TABLE = {
     "STATION_TYPE_BUILD": {
         "en_US": "Build Modules",
         "zh_CN": "建造模块",
-    }
+    },
+
+    #ModuleListWidget
+    "TITLE_MODULE_LIST": {
+        "en_US": "Station Modules",
+        "zh_CN": "空间站模块"
+    },
 }
 
 

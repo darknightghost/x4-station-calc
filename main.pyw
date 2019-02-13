@@ -25,21 +25,27 @@ import sys
 
 try:
     import PyQt5
-    from PyQt5.QtWidgets import QApplication, QWidget
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
 except ImportError:
     print("PyQt5 is required!")
     exit(-1)
 
 import MainWindow
+import Common
+from Common import *
 MainWindow = MainWindow.MainWindow
 
 
 def main():
     stationPath = None
-    if len(sys.argv) > 1:
-        stationPath = sys.argv[1]
 
     app = QApplication(sys.argv)
+    QApplication.setApplicationName("x4-station-caculator")
+    QApplication.setApplicationVersion(str(VERSION))
+    parser = QCommandLineParser()
+    #app.setStyle(QStyleFactory.create("WindowsXP"))
 
     w = MainWindow(None, stationPath)
     w.show()

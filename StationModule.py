@@ -126,7 +126,7 @@ class StationProductInfo:
                         self.amount())
 
 
-class __StationModule:
+class StationModule:
     '''
         Base class of all station modules.
     '''
@@ -214,7 +214,7 @@ class __StationModule:
         return self.id().__hash__()
 
 
-class DefenceModule(__StationModule):
+class DefenceModule(StationModule):
     '''
         Defence module.
     '''
@@ -258,7 +258,7 @@ class DefenceModule(__StationModule):
 __registStationModule("Defence", "STATION_TYPE_DEFENCE", DefenceModule)
 
 
-class DockModule(__StationModule):
+class DockModule(StationModule):
     '''
         Dock module.
     '''
@@ -326,7 +326,7 @@ class DockModule(__StationModule):
 __registStationModule("Dock", "STATION_TYPE_DOCK", DockModule)
 
 
-class HabitationModule(__StationModule):
+class HabitationModule(StationModule):
     ''' 
         Habitation modules.
     '''
@@ -378,7 +378,7 @@ __registStationModule("Habitation", "STATION_TYPE_HABITATION",
                       HabitationModule)
 
 
-class OtherModule(__StationModule):
+class OtherModule(StationModule):
     '''
         Other modules.
     '''
@@ -400,7 +400,7 @@ class OtherModule(__StationModule):
 __registStationModule("Other", "STATION_TYPE_OTHER", OtherModule)
 
 
-class ProductionModule(__StationModule):
+class ProductionModule(StationModule):
     '''
         Production modules.
     '''
@@ -456,7 +456,7 @@ __registStationModule("Production", "STATION_TYPE_PRODUCTION",
                       ProductionModule)
 
 
-class StorageModule(__StationModule):
+class StorageModule(StationModule):
     '''
         Storage modules.
     '''

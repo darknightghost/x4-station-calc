@@ -17,6 +17,11 @@
     Station file.
 '''
 
+import PyQt5
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
 import pathlib
 import json
 import traceback
@@ -154,6 +159,12 @@ class StationModules:
         '''
         return {"id": self.__stationModule.id(), "amount": self.__amount}
 
+    def json(self):
+        '''
+            Pack to json.
+        '''
+        return json.dumps(self.toDict(), ensure_ascii=False)
+
     def __setParentDirty(self):
         '''
             Make parent dirty.
@@ -251,6 +262,12 @@ class StationModulesGroup:
             modules.append(m.toDict())
 
         return {"name": self.name(), "modules": modules}
+
+    def json(self):
+        '''
+            Pack to json.
+        '''
+        return json.dumps(self.toDict(), ensure_ascii=False)
 
     def __setParentDirty(self):
         '''

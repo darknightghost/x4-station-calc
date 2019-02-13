@@ -23,6 +23,11 @@ import DockWidget
 import Common
 from Common import *
 
+import ModuleListWidget
+from ModuleListWidget.ButtonBarWidget import *
+from ModuleListWidget.FilterWidget import *
+from ModuleListWidget.ModuleTreeWidget import *
+
 
 class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
     '''
@@ -32,3 +37,16 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
     def __init__(self, parent=None):
         super().__init__(QWidget(), parent)
         self.setWindowTitle(StringTable.getString("TITLE_MODULE_LIST"))
+
+        #Widgets
+        layout = QHBoxLayout(self.widget())
+
+        self.__buttonBarWidget = ButtonBarWidget(self)
+        layout.addWidget(self.__buttonBarWidget)
+
+        self.__filterWidget = FilterWidget(self)
+        layout.addWidget(self.__filterWidget)
+
+        self.__moduleTreeWidget = ModuleTreeWidget(self.__filterWidget.filter,
+                                                   self)
+        layout.addWidget(self.__moduleTreeWidget)

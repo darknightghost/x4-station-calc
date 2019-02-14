@@ -58,7 +58,7 @@ class ModuleTreeWidget(QTreeWidget):
             def filter_function(m):
                 return True
         '''
-        #INitialize widget
+        #Initialize widget
         super().__init__(parent)
         if not callable(filter):
             raise TypeError("\"filter\" must be callable.")

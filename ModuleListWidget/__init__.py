@@ -39,7 +39,7 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         self.setWindowTitle(StringTable.getString("TITLE_MODULE_LIST"))
 
         #Widgets
-        layout = QHBoxLayout(self.widget())
+        layout = QVBoxLayout(self.widget())
 
         self.__buttonBarWidget = ButtonBarWidget(self)
         layout.addWidget(self.__buttonBarWidget)

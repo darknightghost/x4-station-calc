@@ -25,6 +25,25 @@ import Common
 from Common import *
 
 
+class QTreeWidgetStationModuleItem(QTreeWidgetItem):
+    '''
+        Item with station module.
+    '''
+
+    @TypeChecker(QTreeWidgetItem, StationModule.StationModule, QTreeWidgetItem)
+    def __init__(self, stationModule, parent):
+        super().__init__(parent)
+        self.__stationModule = stationModule
+        self.setText(0, self.__stationModule.name())
+        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+
+    def stationModule(self):
+        '''
+            Get station module.
+        '''
+        return self.__stationModule
+
+
 class ModuleTreeWidget(QTreeWidget):
     '''
         List of station modules.
@@ -39,9 +58,28 @@ class ModuleTreeWidget(QTreeWidget):
             def filter_function(m):
                 return True
         '''
+        #INitialize widget
         super().__init__(parent)
         if not callable(filter):
             raise TypeError("\"filter\" must be callable.")
 
         self.__filter = filter
         self.header().setVisible(False)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+        #Load data
+        self.__loadStationModules()
+
+    def __loadStationModules(self):
+        d = {}
+        for t in StationModule.stationTypes():
+            #Category
+            categoryNode = QTreeWidgetItem(self)
+            categoryNode.setText(0, StationModule.typeName(t))
+            categoryNode.setFlags(Qt.ItemIsEnabled)
+            self.addTopLevelItem(categoryNode)
+            d[t] = categoryNode
+
+        #Station modules
+        for m in StationModule.stationModules():
+            QTreeWidgetStationModuleItem(m, d[m.type()])

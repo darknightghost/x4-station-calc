@@ -61,7 +61,7 @@ __STRING_TABLE = {
     #Titles
     "TITLE_MAIN_WINDOW": {
         "en_US": "X4 Station Calculator",
-        "zh_CN": "X4 空间站模块计算工具"
+        "zh_CN": "X4空间站模块计算工具"
     },
     "TITLE_MAIN_WINDOW_OPENED": {
         "en_US": "X4 Station Calculator - %s",

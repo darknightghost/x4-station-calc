@@ -213,6 +213,9 @@ class StationModule:
     def __hash__(self):
         return self.id().__hash__()
 
+    def __eq__(self, m):
+        return self.id() == m.id()
+
 
 class DefenceModule(StationModule):
     '''

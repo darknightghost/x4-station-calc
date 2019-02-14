@@ -111,6 +111,9 @@ class Product:
     def __hash__(self):
         return self.id().__hash__()
 
+    def __eq__(self, p):
+        return self.id() == p.id()
+
 
 __initialize()
 

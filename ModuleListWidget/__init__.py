@@ -53,3 +53,5 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         self.__moduleTreeWidget = ModuleTreeWidget(self.__filterWidget.filter,
                                                    self)
         layout.addWidget(self.__moduleTreeWidget)
+        self.__filterWidget.refreshTreeView.connect(
+            self.__moduleTreeWidget.filterStationModules)

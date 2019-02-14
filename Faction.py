@@ -90,6 +90,9 @@ class Faction:
     def __hash__(self):
         return self.id().__hash__()
 
+    def __eq__(self, f):
+        return self.id() == f.id()
+
 
 __initialize()
 

@@ -83,3 +83,13 @@ class ModuleTreeWidget(QTreeWidget):
         #Station modules
         for m in StationModule.stationModules():
             QTreeWidgetStationModuleItem(m, d[m.type()])
+
+    def filterStationModules(self):
+        i = QTreeWidgetItemIterator(self)
+        while i.value():
+            item = i.value()
+            if isinstance(item, QTreeWidgetStationModuleItem):
+                #Filter item
+                item.setHidden(not self.__filter(item.stationModule()))
+
+            i += 1

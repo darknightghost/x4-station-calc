@@ -190,20 +190,20 @@ __STRING_TABLE = {
         "zh_CN": "空间站模块"
     },
     "BTN_SHOW_FILTER": {
-        "en_US": "&Show Filter",
-        "zh_CN": "显示过滤选项(&S)"
+        "en_US": "Sh&ow Filter",
+        "zh_CN": "显示过滤选项(&O)"
     },
     "BTN_HIDE_FILTER": {
         "en_US": "&Hide Filter",
         "zh_CN": "隐藏过滤选项(&H)"
     },
     "BTN_ADD_TO_STATION": {
-        "en_US": "&Add to Station",
-        "zh_CN": "添加到空间站(&A)"
+        "en_US": "A&dd to Station",
+        "zh_CN": "添加到空间站(&D)"
     },
     "CHK_BY_FACTION": {
-        "en_US": "By &Faction",
-        "zh_CN": "按种族(&F)"
+        "en_US": "By Fa&ction",
+        "zh_CN": "按种族(&C)"
     },
     "CHK_BY_PRODUCT": {
         "en_US": "By &Product",

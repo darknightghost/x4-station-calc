@@ -45,7 +45,10 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         layout.addWidget(self.__buttonBarWidget)
 
         self.__filterWidget = FilterWidget(self)
+        self.__filterWidget.setVisible(False)
         layout.addWidget(self.__filterWidget)
+        self.__buttonBarWidget.changeFilterVisible.connect(
+            self.__filterWidget.setVisible)
 
         self.__moduleTreeWidget = ModuleTreeWidget(self.__filterWidget.filter,
                                                    self)

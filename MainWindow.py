@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
         self.__loadWindow()
         self.__station = None
         self.setCentralWidget(QWidget(self))
+        self.centralWidget().setEnabled(False)
         #self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowSystemMenuHint
         #                    | Qt.WindowTitleHint
         #                    | Qt.WindowMinMaxButtonsHint
@@ -416,6 +417,7 @@ class MainWindow(QMainWindow):
         #Close
         s = self.centralWidget()
         self.setCentralWidget(QWidget(self))
+        self.centralWidget().setEnabled(False)
         s.close()
         del s
         del self.__station

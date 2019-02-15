@@ -25,11 +25,20 @@ from Common import *
 
 import DockWidget
 
+import InfoWidget
+from InfoWidget.InfoTreeWidget import *
+
 
 class InfoWidget(DockWidget.QDockWidgetAttachAction):
     def __init__(self, parent=None):
         super().__init__(QWidget(), parent)
-        self.__tree_view = QTreeWidget(self)
-        self.__tree_view.setHeaderHidden(True)
-        self.setWidget(self.__tree_view)
+        self.__treeView = InfoTreeWidget(self)
+        self.setWidget(self.__treeView)
         self.setWindowTitle(StringTable.getString("TITLE_INFO"))
+
+    @TypeChecker(QTreeWidget, list)
+    def updateData(self, data):
+        '''
+            Update data.
+        '''
+        self.__treeView.update(data)

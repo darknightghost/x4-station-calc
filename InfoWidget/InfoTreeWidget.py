@@ -57,6 +57,12 @@ class InfoItem:
         '''
         return self.__value
 
+    def canBeDblClick(self):
+        '''
+            Can be double clicked or not.
+        '''
+        return self.__onDblClick != None
+
     def __call__(self):
         if self.__onDblClick == None:
             return None
@@ -77,6 +83,12 @@ class InfoTreeWidgetItem(QTreeWidgetItem):
 
         else:
             super().__init__(parent, [item.name(), item.value()])
+
+        flags = Qt.ItemIsEnabled
+        if item.canBeDblClick():
+            flags |= Qt.ItemIsSelectable
+
+        self.setFlags(flags)
 
         self.__item = item
 

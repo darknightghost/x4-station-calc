@@ -21,6 +21,7 @@ import pathlib
 import json
 
 import StringTable
+import InfoWidget
 import Common
 from Common import *
 
@@ -99,6 +100,21 @@ class Product:
             Get volume.
         '''
         return self.__volume
+
+    def info(self):
+        return [
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_NAME"), self.name()),
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_STORAGE_TYPE"), {
+                    "Solid": StringTable.getString("STR_SOLID"),
+                    "Container": StringTable.getString("STR_CONTAINER"),
+                    "Liquid": StringTable.getString("STR_LIQUID")
+                }[self.storage()]),
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_VOLUME"),
+                "%d m³" % (self.volume())),
+        ]
 
     def __str__(self):
         return "{\n" \

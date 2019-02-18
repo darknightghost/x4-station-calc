@@ -23,6 +23,7 @@ import json
 import StringTable
 import Faction
 import Product
+import InfoWidget
 
 import Common
 from Common import *
@@ -118,6 +119,11 @@ class StationProductInfo:
         '''
         return self.__amount
 
+    def info(self):
+        return InfoWidget.InfoItem(self.product().name(),
+                                   "%d/h" % (self.amount()),
+                                   self.product().info)
+
     def __str__(self):
         return "{\n" \
                 "    product name = %s\n" \
@@ -210,6 +216,28 @@ class StationModule:
                         self.turretNum()
                     )
 
+    def info(self):
+        factionsStr = ""
+        for f in self.factions():
+            factionsStr += " %s, " % (f.name())
+
+        factionsStr = factionsStr[:-2]
+        ret = [
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_NAME"), self.name()),
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_STATION_MODULE_TYPE"),
+                self.typeName()),
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_FACTION"), factionsStr)
+        ]
+        if self.turretNum() > 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_TURRET_NUM"),
+                    str(self.turretNum())))
+        return ret
+
     def __hash__(self):
         return self.id().__hash__()
 
@@ -239,7 +267,7 @@ class DefenceModule(StationModule):
         '''
         return self.__sLaunchTubes
 
-    def sLaunchTubes(self):
+    def mLaunchTubes(self):
         '''
             Get number of m launch tubes.
         '''
@@ -255,6 +283,22 @@ class DefenceModule(StationModule):
                         commonStr,
                         self.__sLaunchTubes,
                         self.__mLaunchTubes)
+
+    def info(self):
+        ret = super().info()
+        if self.sLaunchTubes() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_S_LAUNCE_TUBE"),
+                    str(self.sLaunchTubes())))
+
+        if self.mLaunchTubes() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_M_LAUNCE_TUBE"),
+                    str(self.mLaunchTubes())))
+
+        return ret
 
 
 #Regist type
@@ -273,16 +317,16 @@ class DockModule(StationModule):
         if not isinstance(self.__shipStorage, int):
             raise TypeError("Value of ship_storage should be an integer.")
 
-        self.__sDocking = data["s_docking"]
-        if not isinstance(self.__sDocking, int):
+        self.__sDock = data["s_docking"]
+        if not isinstance(self.__sDock, int):
             raise TypeError("Value of s_docking should be an integer.")
 
-        self.__mDocking = data["m_docking"]
-        if not isinstance(self.__mDocking, int):
+        self.__mDock = data["m_docking"]
+        if not isinstance(self.__mDock, int):
             raise TypeError("Value of m_docking should be an integer.")
 
-        self.__lXLDocking = data["l_xl_docking"]
-        if not isinstance(self.__lXLDocking, int):
+        self.__lXLDock = data["l_xl_docking"]
+        if not isinstance(self.__lXLDock, int):
             raise TypeError("Value of l_xl_docking should be an integer.")
 
     def shipStorage(self):
@@ -291,38 +335,64 @@ class DockModule(StationModule):
         '''
         return self.__shipStorage
 
-    def sDocking(self):
+    def sDock(self):
         '''
             Get number of s docking.
         '''
-        return self.__sDocking
+        return self.__sDock
 
-    def mDocking(self):
+    def mDock(self):
         '''
             Get number of m docking.
         '''
-        return self.__mDocking
+        return self.__mDock
 
-    def lXLDocking(self):
+    def lXLDock(self):
         '''
             Get number of L/XL docking.
         '''
-        return self.__lXLDocking
+        return self.__lXLDock
 
     def __str__(self):
         commonStr = addIndent(super().__str__())
         return "{\n" \
                 "%s,\n" \
                 "    number of ship storage = %d,\n" \
-                "    number of S docking = %d,\n" \
-                "    number of M docking = %d,\n" \
-                "    number of L/XL ldocking = %d\n" \
+                "    number of S dock = %d,\n" \
+                "    number of M dock = %d,\n" \
+                "    number of L/XL ldock = %d\n" \
                 "}" % (
                         commonStr,
                         self.__shipStorage,
-                        self.__sDocking,
-                        self.__mDocking,
-                        self.__lXLDocking)
+                        self.__sDock,
+                        self.__mDock,
+                        self.__lXLDock)
+
+    def info(self):
+        ret = super().info()
+        if self.shipStorage() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_SHIP_STORAGE"),
+                    str(self.shipStorage())))
+
+        if self.sDock() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_S_DOCK"), str(self.sDock())))
+
+        if self.mDock() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_M_DOCK"), str(self.mDock())))
+
+        if self.lXLDock() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_L_XL_DOCK"),
+                    str(self.lXLDock())))
+
+        return ret
 
 
 #Regist type
@@ -374,6 +444,22 @@ class HabitationModule(StationModule):
                         commonStr,
                         self.workforceCapacity(),
                         foodsStr)
+
+    def info(self):
+        ret = super().info()
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_WORKFORCE_CAPACITY"),
+                str(self.workforceCapacity())))
+
+        foods = []
+        for f in self.foods():
+            foods.append(f.info())
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_SUPPLY_REQUIRED"), foods))
+
+        return ret
 
 
 #Regist type
@@ -453,6 +539,29 @@ class ProductionModule(StationModule):
                         resourcesStr,
                         productsStr)
 
+    def info(self):
+        ret = super().info()
+
+        #Products
+        products = []
+        for p in self.products():
+            products.append(p.info())
+
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_PRODUCTS"), products))
+
+        #Resources
+        resources = []
+        for r in self.resources():
+            resources.append(r.info())
+
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_RESOURCES"), resources))
+
+        return ret
+
 
 #Regist type
 __registStationModule("Production", "STATION_TYPE_PRODUCTION",
@@ -504,6 +613,22 @@ class StorageModule(StationModule):
                         commonStr,
                         self.storageType(),
                         self.storageCapacity())
+
+    def info(self):
+        ret = super().info()
+
+        #Products
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_STORAGE_TYPE"), self.storageType()))
+
+        #Resources
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_STORAGE_CAPACITY"),
+                "%dm³" % (self.storageCapacity())))
+
+        return ret
 
 
 #Regist type

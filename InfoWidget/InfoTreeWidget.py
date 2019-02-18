@@ -68,15 +68,15 @@ class InfoItem:
 class InfoTreeWidgetItem(QTreeWidgetItem):
     @TypeChecker(QTreeWidgetItem, InfoItem, (QTreeWidget, QTreeWidgetItem))
     def __init__(self, item, parent):
-        if isinstance(d.value(), list):
-            super().__init__(parent, [d.name()])
+        if isinstance(item.value(), list):
+            super().__init__(parent, [item.name()])
             #Load children
             for c in item.value():
-                InfoTreeWidget(c, self)
+                InfoTreeWidgetItem(c, self)
             self.setExpanded(True)
 
         else:
-            super().__init__(parent, [d.name(), d.value()])
+            super().__init__(parent, [item.name(), item.value()])
 
         self.__item = item
 
@@ -96,6 +96,7 @@ class InfoTreeWidget(QTreeWidget):
         self.addChild = self.addTopLevelItem
         self.setHeaderHidden(True)
         self.setColumnCount(2)
+        self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.itemDoubleClicked.connect(self.__onItemDoubleClicked)
 
     @TypeChecker(QTreeWidget, list)
@@ -103,11 +104,9 @@ class InfoTreeWidget(QTreeWidget):
         '''
             Update data.
         '''
-        if parent == None:
-            parent = self
-
+        self.clear()
         for i in data:
-            InfoTreeWidget(i, self)
+            InfoTreeWidgetItem(i, self)
 
     @TypeChecker(QTreeWidget, InfoTreeWidgetItem, int)
     def __onItemDoubleClicked(self, item, column):

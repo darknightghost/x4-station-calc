@@ -213,6 +213,100 @@ __STRING_TABLE = {
         "en_US": "By &Keywords",
         "zh_CN": "按关键字(&K)"
     },
+
+    #InfoWidget
+    "TITLE_INFO_WIDGET": {
+        "en_US": "Info",
+        "zh_CN": "信息"
+    },
+    "STR_NAME": {
+        "en_US": "Name",
+        "zh_CN": "名称"
+    },
+    "STR_STORAGE_TYPE": {
+        "en_US": "Storage Type",
+        "zh_CN": "仓储类型"
+    },
+    "STR_VOLUME": {
+        "en_US": "Volume",
+        "zh_CN": "体积"
+    },
+    "STR_SOLID": {
+        "en_US": "Solid",
+        "zh_CN": "固体"
+    },
+    "STR_LIQUID": {
+        "en_US": "Liquid",
+        "zh_CN": "液体"
+    },
+    "STR_CONTAINER": {
+        "en_US": "Container",
+        "zh_CN": "集装"
+    },
+    "STR_STATION_MODULE_TYPE": {
+        "en_US": "Station Module Type",
+        "zh_CN": "空间站模块类型"
+    },
+    "STR_FACTION": {
+        "en_US": "Faction",
+        "zh_CN": "种族"
+    },
+    "STR_TURRET_NUM": {
+        "en_US": "Number of turret",
+        "zh_CN": "炮塔数量"
+    },
+    "STR_S_LAUNCE_TUBE": {
+        "en_US": "S Launch Tube",
+        "zh_CN": "S级发射管"
+    },
+    "STR_M_LAUNCE_TUBE": {
+        "en_US": "M Launch Tube",
+        "zh_CN": "M级发射管"
+    },
+    "STR_SHIP_STORAGE": {
+        "en_US": "Ship Storage",
+        "zh_CN": "飞船仓储"
+    },
+    "STR_S_DOCK": {
+        "en_US": "S Docks",
+        "zh_CN": "S级港口"
+    },
+    "STR_M_DOCK": {
+        "en_US": "M Docks",
+        "zh_CN": "M级港口"
+    },
+    "STR_L_XL_DOCK": {
+        "en_US": "L/XL Docks",
+        "zh_CN": "L/XL级泊位"
+    },
+    "STR_WORKFORCE_CAPACITY": {
+        "en_US": "Workforce Capacity",
+        "zh_CN": "劳动力数量"
+    },
+    "STR_SUPPLY_REQUIRED": {
+        "en_US": "Maxium Supply Required",
+        "zh_CN": "最大所需补给"
+    },
+    "STR_PRODUCTS": {
+        "en_US": "Products",
+        "zh_CN": "产品"
+    },
+    "STR_RESOURCES": {
+        "en_US": "Resources",
+        "zh_CN": "资源"
+    },
+    "STR_STORAGE_TYPE": {
+        "en_US": "Storage Type",
+        "zh_CN": "仓储类型"
+    },
+    "STR_STORAGE_CAPACITY": {
+        "en_US": "Storage Capacity",
+        "zh_CN": "仓储容量"
+    },
+    #"": {
+    #    "en_US": "",
+    #    "zh_CN": ""
+    #},
 }
 
 

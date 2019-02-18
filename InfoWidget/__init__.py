@@ -34,10 +34,35 @@ class InfoWidget(DockWidget.QDockWidgetAttachAction):
         super().__init__(QWidget(), parent)
         self.__treeView = InfoTreeWidget(self)
         self.setWidget(self.__treeView)
-        self.setWindowTitle(StringTable.getString("TITLE_INFO"))
+        self.setWindowTitle(StringTable.getString("TITLE_INFO_WIDGET"))
+        self.__history = []
 
-    @TypeChecker(QTreeWidget, list)
-    def updateData(self, data):
+    @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
+    def setData(self, data):
+        '''
+            Update to new data and clean history.
+        '''
+        self.__history = [data]
+        self.__updateData(data)
+
+    @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
+    def nextData(self, data):
+        '''
+            Update to next data.
+        '''
+        self.__history.append(data)
+        self.__updateData(data)
+
+    def prevData(self):
+        '''
+            Update to prev data.
+        '''
+        if len(self.__history) > 1:
+            self.__history.pop()
+            self.__updateData(self.__history[-1])
+
+    @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
+    def __updateData(self, data):
         '''
             Update data.
         '''

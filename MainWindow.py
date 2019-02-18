@@ -175,6 +175,9 @@ class MainWindow(QMainWindow):
             ModuleListWidget.ModuleListWidget, self.__viewModuleListMenu,
             Qt.LeftDockWidgetArea, "module_list_widget")
 
+        self.__moduleListWidget.moduleDblClicked.connect(
+            self.__infoWidget.setData)
+
     @TypeChecker(QMainWindow, type(DockWidget.QDockWidgetAttachAction),
                  DockWidget.QActionAttachWidget, int, str)
     def __initSingleDockWidget(self, cls, action, defaultArea, node):

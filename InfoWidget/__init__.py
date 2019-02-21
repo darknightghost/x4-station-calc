@@ -32,10 +32,33 @@ from InfoWidget.InfoTreeWidget import *
 class InfoWidget(DockWidget.QDockWidgetAttachAction):
     def __init__(self, parent=None):
         super().__init__(QWidget(), parent)
+        self.setWidget(QWidget(self))
+        self.__layout = QGridLayout(self.widget())
+        self.widget().setLayout(self.__layout)
+
+        #Button
+        self.__btnPrev = QPushButton("←")
+        self.__layout.addWidget(self.__btnPrev, 0, 0)
+
+        def btnResizeEvent(event):
+            width = event.size().height()
+            self.__btnPrev.setMaximumWidth(width)
+            self.__btnPrev.setMinimumWidth(width)
+
+        setattr(self.__btnPrev, "resizeEvent", btnResizeEvent)
+
+        #Space
+        self.__layout.setColumnStretch(1, 0)
+
+        #Tree widget
         self.__treeView = InfoTreeWidget(self)
-        self.setWidget(self.__treeView)
+        self.__layout.addWidget(self.__treeView, 1, 0, 2, 0)
         self.setWindowTitle(StringTable.getString("TITLE_INFO_WIDGET"))
+
         self.__history = []
+        self.__treeView.nextItem.connect(self.onNextData)
+        self.__btnPrev.clicked.connect(self.prevData)
+        self.__btnPrev.setEnabled(False)
 
     @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
     def setData(self, data):
@@ -43,15 +66,17 @@ class InfoWidget(DockWidget.QDockWidgetAttachAction):
             Update to new data and clean history.
         '''
         self.__history = [data]
+        self.__btnPrev.setEnabled(False)
         self.__updateData(data)
 
     @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
-    def nextData(self, data):
+    def onNextData(self, data):
         '''
             Update to next data.
         '''
         self.__history.append(data)
         self.__updateData(data)
+        self.__btnPrev.setEnabled(True)
 
     def prevData(self):
         '''
@@ -60,6 +85,9 @@ class InfoWidget(DockWidget.QDockWidgetAttachAction):
         if len(self.__history) > 1:
             self.__history.pop()
             self.__updateData(self.__history[-1])
+
+        if len(self.__history) <= 1:
+            self.__btnPrev.setEnabled(False)
 
     @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
     def __updateData(self, data):

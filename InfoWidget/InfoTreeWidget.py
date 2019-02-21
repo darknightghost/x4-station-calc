@@ -100,6 +100,7 @@ class InfoTreeWidget(QTreeWidget):
     '''
         Information view.
     '''
+    nextItem = pyqtSignal(list)
 
     @TypeChecker(QTreeWidget, QDockWidget)
     def __init__(self, parent):
@@ -124,4 +125,4 @@ class InfoTreeWidget(QTreeWidget):
     def __onItemDoubleClicked(self, item, column):
         ret = item()
         if ret != None:
-            self.update(ret)
+            self.nextItem.emit(ret)

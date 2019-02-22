@@ -19,40 +19,19 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import Station
 import Common
 from Common import *
-
-import WorkSpaceWidget
-from WorkSpaceWidget.ModulesItem import *
-from WorkSpaceWidget.SummaryItem import *
+import StringTable
 
 
-class WorkSpaceWidget(QTreeWidget):
-    '''
-        Workspace.
-    '''
+class SummaryItem(QTreeWidgetItem):
     updateData = pyqtSignal()
 
-    @TypeChecker(QTreeWidget, QMainWindow, Station.Station)
-    def __init__(self, parent, station):
+    @TypeChecker(QTreeWidgetItem, QTreeWidget)
+    def __init__(self, parent):
         super().__init__(parent)
-        self.__station = station
-        self.header().setVisible(False)
+        self.setText(0, StringTable.getString("STR_SUMMARY"))
+        self.setFlags(Qt.ItemIsEnabled)
 
-        self.__modulesItem = ModulesItem(self)
-        self.updateData.connect(self.__modulesItem.onUpdateData)
-        self.addTopLevelItem(self.__modulesItem)
-
-        self.__summaryItem = SummaryItem(self)
-        self.updateData.connect(self.__summaryItem.onUpdateData)
-        self.addTopLevelItem(self.__summaryItem)
-
-        self.updateData.connect(self.__onUpdateData)
-        self.updateData.emit()
-
-    def __onUpdateData(self):
-        '''
-            Update data.
-        '''
-        self.setWindowTitle(self.__station.name())
+    def onUpdateData(self):
+        pass

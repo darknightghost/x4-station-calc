@@ -303,6 +303,16 @@ __STRING_TABLE = {
         "en_US": "Storage Capacity",
         "zh_CN": "仓储容量"
     },
+
+    #WorkSpace
+    "STR_STATION_MODULES": {
+        "en_US": "Station Modules",
+        "zh_CN": "空间站模块"
+    },
+    "STR_SUMMARY": {
+        "en_US": "Summary",
+        "zh_CN": "总计"
+    },
     #"": {
     #    "en_US": "",
     #    "zh_CN": ""

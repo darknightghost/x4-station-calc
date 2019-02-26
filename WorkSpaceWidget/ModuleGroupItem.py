@@ -23,16 +23,24 @@ import Common
 from Common import *
 import StringTable
 
+import Station
 
-class SummaryItem(QTreeWidgetItem):
+
+class ModuleGroupItem(QTreeWidgetItem):
+    '''
+        Station module group.
+    '''
     updateData = pyqtSignal()
 
-    @TypeChecker(QTreeWidgetItem, QTreeWidget)
-    def __init__(self, parent):
+    @TypeChecker(QTreeWidgetItem, Station.StationModulesGroup, QTreeWidgetItem)
+    def __init__(self, item, parent):
         super().__init__(parent)
-        self.setText(0, StringTable.getString("STR_SUMMARY"))
-        self.setFlags(Qt.ItemIsEnabled)
-        self.setExpanded(True)
+        self.__item = item
+        self.setText(0, item.name())
+        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable
+                      | Qt.ItemIsEditable)
 
-    def onUpdateData(self):
-        pass
+    @TypeChecker(QTreeWidgetItem, QTreeWidgetItem, int)
+    def onChanged(self, item, column):
+        if self.text(0) != self.__item.name():
+            self.__item.setName(self.text(0))

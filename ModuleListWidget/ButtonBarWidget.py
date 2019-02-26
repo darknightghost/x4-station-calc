@@ -39,7 +39,8 @@ class ButtonBarWidget(QWidget):
         self.__layout.setContentsMargins(margins)
 
         #Show/Hide filter
-        self.__btnShowFilter = QPushButton(StringTable.getString("BTN_SHOW_FILTER"),self)
+        self.__btnShowFilter = QPushButton(
+            StringTable.getString("BTN_SHOW_FILTER"), self)
         self.__btnShowFilter.clicked.connect(self.__onShowHideFilterClicked)
         self.__layout.addWidget(self.__btnShowFilter)
         self.__showFilter = False
@@ -48,13 +49,21 @@ class ButtonBarWidget(QWidget):
         self.__layout.addStretch()
 
         #Add to station
-        self.__btnAddToStation = QPushButton(StringTable.getString("BTN_ADD_TO_STATION"),self)
+        self.__btnAddToStation = QPushButton(
+            StringTable.getString("BTN_ADD_TO_STATION"), self)
+        self.__btnAddToStation.setEnabled(False)
         self.__btnAddToStation.clicked.connect(self.__onAddToStationClicked)
         self.__layout.addWidget(self.__btnAddToStation)
 
+    @TypeChecker(QWidget, bool)
+    def setAddButtonEnabled(self, state):
+        '''
+            Set enable status of add station module button.
+        '''
+        self.__btnAddToStation.setEnabled(state)
+
     def __onAddToStationClicked(self):
         self.addToStation.emit()
-
 
     def __onShowHideFilterClicked(self):
         self.__showFilter = not self.__showFilter

@@ -44,10 +44,6 @@ class MainWindow(QMainWindow):
         self.__station = None
         self.setCentralWidget(QWidget(self))
         self.centralWidget().setEnabled(False)
-        #self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowSystemMenuHint
-        #                    | Qt.WindowTitleHint
-        #                    | Qt.WindowMinMaxButtonsHint
-        #                    | Qt.WindowCloseButtonHint)
 
         #Language
         try:
@@ -77,6 +73,7 @@ class MainWindow(QMainWindow):
             self.move(desktop.width() / 8, desktop.height() / 8)
 
         self.__initFileMenu()
+        self.__initEditMenu()
         self.__initSettingMenu()
         self.__initViewMenu()
         self.__initWidgets()
@@ -133,6 +130,50 @@ class MainWindow(QMainWindow):
         self.__fileCloseAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileExitAction)
 
+    def __initEditMenu(self):
+        self.__editMenu = QMenu(StringTable.getString("MENU_EDIT"))
+        self.menuBar().addMenu(self.__editMenu)
+
+        self.__editNewGroupAction = QAction(
+            StringTable.getString("MENU_EDIT_NEW_GROUP"))
+        self.__editMenu.addAction(self.__editNewGroupAction)
+        self.__editNewGroupAction.setEnabled(False)
+
+        self.__editMenu.addSeparator()
+
+        self.__editUndoAction = QAction(
+            StringTable.getString("MENU_EDIT_UNDO"))
+        self.__editMenu.addAction(self.__editUndoAction)
+        self.__editUndoAction.setEnabled(False)
+
+        self.__editRedoAction = QAction(
+            StringTable.getString("MENU_EDIT_REDO"))
+        self.__editMenu.addAction(self.__editRedoAction)
+        self.__editRedoAction.setEnabled(False)
+
+        self.__editMenu.addSeparator()
+
+        self.__editCutAction = QAction(StringTable.getString("MENU_EDIT_CUT"))
+        self.__editMenu.addAction(self.__editCutAction)
+        self.__editCutAction.setEnabled(False)
+
+        self.__editCopyAction = QAction(
+            StringTable.getString("MENU_EDIT_COPY"))
+        self.__editMenu.addAction(self.__editCopyAction)
+        self.__editCopyAction.setEnabled(False)
+
+        self.__editPasteAction = QAction(
+            StringTable.getString("MENU_EDIT_PASTE"))
+        self.__editMenu.addAction(self.__editPasteAction)
+        self.__editPasteAction.setEnabled(False)
+
+        self.__editMenu.addSeparator()
+
+        self.__editRemoveAction = QAction(
+            StringTable.getString("MENU_EDIT_REMOVE"))
+        self.__editMenu.addAction(self.__editRemoveAction)
+        self.__editRemoveAction.setEnabled(False)
+
     def __initSettingMenu(self):
         self.__settingMenu = QMenu(StringTable.getString("MENU_SETTING"))
         self.menuBar().addMenu(self.__settingMenu)
@@ -175,7 +216,7 @@ class MainWindow(QMainWindow):
             ModuleListWidget.ModuleListWidget, self.__viewModuleListMenu,
             Qt.LeftDockWidgetArea, "module_list_widget")
 
-        self.__moduleListWidget.moduleDblClicked.connect(
+        self.__moduleListWidget.moduleClicked.connect(
             self.__infoWidget.setData)
 
     @TypeChecker(QMainWindow, type(DockWidget.QDockWidgetAttachAction),
@@ -366,9 +407,6 @@ class MainWindow(QMainWindow):
         self.__fileSaveAsAction.setEnabled(True)
         self.__fileCloseAction.setEnabled(True)
 
-        #Enable widgets
-        self.__moduleListWidget.setEnabled(True)
-
         #Create central widget
         s = self.centralWidget()
         self.setCentralWidget(
@@ -376,6 +414,26 @@ class MainWindow(QMainWindow):
         s.close()
         del s
         self.centralWidget().show()
+
+        self.centralWidget().moduleClicked.connect(self.__infoWidget.setData)
+        self.centralWidget().changeEnableAddState.connect(
+            self.__moduleListWidget.setAddButtonEnabled)
+        self.centralWidget().changeAddGroupState.connect(
+            self.__editNewGroupAction.setEnabled)
+        self.centralWidget().changeUndoState.connect(
+            self.__editUndoAction.setEnabled)
+        self.centralWidget().changeRedoState.connect(
+            self.__editRedoAction.setEnabled)
+        self.centralWidget().changeCopyState.connect(
+            self.__editCutAction.setEnabled)
+        self.centralWidget().changeCopyState.connect(
+            self.__editCopyAction.setEnabled)
+        self.centralWidget().changePasteState.connect(
+            self.__editPasteAction.setEnabled)
+        self.centralWidget().changeRemovePasteState.connect(
+            self.__editRemoveAction.setEnabled)
+
+        self.centralWidget().initMenuState()
 
         #Set title
         self.setWindowTitle(
@@ -419,20 +477,21 @@ class MainWindow(QMainWindow):
 
         #Close
         s = self.centralWidget()
+        sz = s.size()
         self.setCentralWidget(QWidget(self))
         self.centralWidget().setEnabled(False)
         s.close()
         del s
         del self.__station
+        self.centralWidget().show()
+        self.centralWidget().resize(sz)
         self.__station = None
 
         #Disable menu
         self.__fileSaveAction.setEnabled(False)
         self.__fileSaveAsAction.setEnabled(False)
         self.__fileCloseAction.setEnabled(False)
-
-        #Disable widgets
-        self.__moduleListWidget.setEnabled(False)
+        self.__moduleListWidget.setAddButtonEnabled(False)
 
         #Set title
         self.setWindowTitle(StringTable.getString("TITLE_MAIN_WINDOW"))

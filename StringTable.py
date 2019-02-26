@@ -109,6 +109,38 @@ __STRING_TABLE = {
         "en_US": "&Exit",
         "zh_CN": "退出(&E)"
     },
+    "MENU_EDIT": {
+        "en_US": "&Edit",
+        "zh_CN": "编辑(&E)"
+    },
+    "MENU_EDIT_NEW_GROUP": {
+        "en_US": "&New Group",
+        "zh_CN": "新建分组(&N)"
+    },
+    "MENU_EDIT_UNDO": {
+        "en_US": "&Undo",
+        "zh_CN": "撤销(&U)"
+    },
+    "MENU_EDIT_REDO": {
+        "en_US": "&Redo",
+        "zh_CN": "恢复(&R)"
+    },
+    "MENU_EDIT_CUT": {
+        "en_US": "&Cut",
+        "zh_CN": "剪切(&C)"
+    },
+    "MENU_EDIT_COPY": {
+        "en_US": "C&opy",
+        "zh_CN": "复制(&O)"
+    },
+    "MENU_EDIT_PASTE": {
+        "en_US": "&Paste",
+        "zh_CN": "粘贴(&P)"
+    },
+    "MENU_EDIT_REMOVE": {
+        "en_US": "R&emove",
+        "zh_CN": "删除(&E)"
+    },
     "MENU_SETTING": {
         "en_US": "&Settings",
         "zh_CN": "设置(&S)"

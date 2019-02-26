@@ -48,7 +48,7 @@ class ModuleTreeWidget(QTreeWidget):
     '''
         List of station modules.
     '''
-    moduleDblClicked = pyqtSignal(list)
+    moduleClicked = pyqtSignal(list)
 
     @TypeChecker(QTreeWidget, object, QWidget)
     def __init__(self, filter, parent):
@@ -68,7 +68,7 @@ class ModuleTreeWidget(QTreeWidget):
         self.header().setVisible(False)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
-        self.itemDoubleClicked.connect(self.__onItemDoubleClicked)
+        self.itemClicked.connect(self.__onItemClicked)
 
         #Load data
         self.__loadStationModules()
@@ -98,6 +98,6 @@ class ModuleTreeWidget(QTreeWidget):
             i += 1
 
     @TypeChecker(QTreeWidget, QTreeWidgetItem, int)
-    def __onItemDoubleClicked(self, item, column):
+    def __onItemClicked(self, item, column):
         if isinstance(item, QTreeWidgetStationModuleItem):
-            self.moduleDblClicked.emit(item.stationModule().info())
+            self.moduleClicked.emit(item.stationModule().info())

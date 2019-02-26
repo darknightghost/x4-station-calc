@@ -34,7 +34,7 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
     '''
         List of modules.
     '''
-    moduleDblClicked = pyqtSignal(list)
+    moduleClicked = pyqtSignal(list)
 
     def __init__(self, parent=None):
         super().__init__(QWidget(), parent)
@@ -55,15 +55,21 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         self.__moduleTreeWidget = ModuleTreeWidget(self.__filterWidget.filter,
                                                    self)
         layout.addWidget(self.__moduleTreeWidget)
-        self.__moduleTreeWidget.moduleDblClicked.connect(
-            self.onModuleDblClicked)
+        self.__moduleTreeWidget.moduleClicked.connect(self.onModuleClicked)
 
         self.__filterWidget.refreshTreeView.connect(
             self.__moduleTreeWidget.filterStationModules)
 
     @TypeChecker(DockWidget.QDockWidgetAttachAction, list)
-    def onModuleDblClicked(self, infos):
+    def onModuleClicked(self, infos):
         for i in infos:
             if not isinstance(i, InfoWidget.InfoItem):
                 raise TypeError("Illegal info type.")
-        self.moduleDblClicked.emit(infos)
+        self.moduleClicked.emit(infos)
+
+    @TypeChecker(DockWidget.QDockWidgetAttachAction, bool)
+    def setAddButtonEnabled(self, state):
+        '''
+            Set enable status of add station module button.
+        '''
+        self.__buttonBarWidget.setAddButtonEnabled(state)

@@ -23,16 +23,35 @@ import Common
 from Common import *
 import StringTable
 
+import WorkSpaceWidget
 
-class SummaryItem(QTreeWidgetItem):
-    updateData = pyqtSignal()
 
-    @TypeChecker(QTreeWidgetItem, QTreeWidget)
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setText(0, StringTable.getString("STR_SUMMARY"))
-        self.setFlags(Qt.ItemIsEnabled)
-        self.setExpanded(True)
+class Operation:
+    def __init__(self):
+        self.__widget = None
 
-    def onUpdateData(self):
-        pass
+    @TypeChecker(object, WorkSpaceWidget.WorkSpaceWidget)
+    def setWorkspace(self, workspace):
+        '''
+            Set workspace widget.
+        '''
+        self.__workSpace = workspace
+        self.onSetWorkspace()
+
+    def onSetWorkspace(self):
+        '''
+            Called when workspace changed.
+        '''
+        raise NotImplementedError()
+
+    def do(self):
+        '''
+            Do operation, return True if success.
+        '''
+        raise NotImplementedError()
+
+    def undo(self):
+        '''
+            Undo operation.
+        '''
+        raise NotImplementedError()

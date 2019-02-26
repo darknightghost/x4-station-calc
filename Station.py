@@ -195,7 +195,7 @@ class StationModulesGroup:
         Station module group.
     '''
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data=None, parent=None):
         '''
             StationModulesGroup(data)       -> stationModulesGroup
             StationModulesGroup()           -> stationModulesGroup
@@ -397,7 +397,7 @@ class Station:
 
         if path == None:
             #New file
-            self.__stationModulesGroups = []
+            self.__stationModulesGroups = [StationModulesGroup()]
             self.__dirty = True
 
         else:
@@ -436,8 +436,9 @@ class Station:
             self.__stationModulesGroups = []
             try:
                 self.__stationModulesGroups = []
-                for d in data["groups"]:
-                    self.__stationModulesGroups.append(StationModules(d))
+                for g in data["groups"]:
+                    self.__stationModulesGroups.append(
+                        StationModulesGroup(g, parent=self))
 
             except Exception:
                 raise StationParseException(path, traceback.format_exc())

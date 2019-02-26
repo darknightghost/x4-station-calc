@@ -23,6 +23,9 @@ import Common
 from Common import *
 import StringTable
 
+import WorkSpaceWidget
+from WorkSpaceWidget.ModuleGroupItem import *
+
 
 class ModulesItem(QTreeWidgetItem):
     updateData = pyqtSignal()
@@ -32,6 +35,9 @@ class ModulesItem(QTreeWidgetItem):
         super().__init__(parent)
         self.setText(0, StringTable.getString("STR_STATION_MODULES"))
         self.setFlags(Qt.ItemIsEnabled)
+        self.__loadData(parent)
+        self.setExpanded(True)
 
-    def onUpdateData(self):
-        pass
+    def __loadData(self, parent):
+        for g in parent.station():
+            self.addChild(ModuleGroupItem(g, self))

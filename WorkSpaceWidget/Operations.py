@@ -27,6 +27,10 @@ import WorkSpaceWidget
 
 
 class Operation:
+    '''
+        Base class of station operations.
+    '''
+
     def __init__(self):
         self.__widget = None
 
@@ -55,3 +59,7 @@ class Operation:
             Undo operation.
         '''
         raise NotImplementedError()
+
+
+class AddModuleOperation(Operation):
+    pass

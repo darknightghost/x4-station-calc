@@ -37,15 +37,8 @@ class InfoWidget(DockWidget.QDockWidgetAttachAction):
         self.widget().setLayout(self.__layout)
 
         #Button
-        self.__btnPrev = QPushButton("←")
+        self.__btnPrev = QSquareButton("←")
         self.__layout.addWidget(self.__btnPrev, 0, 0)
-
-        def btnResizeEvent(event):
-            width = event.size().height()
-            self.__btnPrev.setMaximumWidth(width)
-            self.__btnPrev.setMinimumWidth(width)
-
-        setattr(self.__btnPrev, "resizeEvent", btnResizeEvent)
 
         #Space
         self.__layout.setColumnStretch(1, 0)

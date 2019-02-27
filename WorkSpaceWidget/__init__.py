@@ -51,7 +51,9 @@ class WorkSpaceWidget(QTreeWidget):
         super().__init__(parent)
         self.__station = station
         self.header().setVisible(False)
+        self.setColumnCount(2)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
 
         self.itemChanged.connect(self.__onItemChanged)
         self.itemSelectionChanged.connect(self.__onItemSelectionChanged)

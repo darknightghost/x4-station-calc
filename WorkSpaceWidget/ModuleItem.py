@@ -26,68 +26,62 @@ import StringTable
 import Station
 
 
+class ModuleItemWidget(QWidget):
+    #Signals
+    moveUp = pyqtSignal()
+    moveDown = pyqtSignal()
+    remove = pyqtSignal()
+
+    @TypeChecker(QWidget, Station.StationModules)
+    def __init__(self, item):
+        super().__init__()
+        self.__item = item
+        self.__layout = QHBoxLayout(self)
+        self.setLayout(self.__layout)
+
+        self.__layout.addStretch()
+
+        self.__spinboxAmount = QSpinBox(self)
+        self.__spinboxAmount.setMinimum(1)
+        self.__spinboxAmount.valueChanged.connect(self.__onAmountChanged)
+        self.__layout.addWidget(self.__spinboxAmount)
+
+        self.__btnUp = QSquareButton("↑", self)
+        self.__layout.addWidget(self.__btnUp)
+        self.__btnUp.clicked.connect(self.__onMoveUp)
+
+        self.__btnDown = QSquareButton("↓", self)
+        self.__layout.addWidget(self.__btnDown)
+        self.__btnDown.clicked.connect(self.__onMoveDown)
+
+        self.__btnRemove = QSquareButton("×", self)
+        self.__layout.addWidget(self.__btnRemove)
+        self.__btnRemove.clicked.connect(self.__onRemove)
+
+        self.__layout.addStretch()
+
+    @TypeChecker(QWidget, int)
+    def __onAmountChanged(self, n):
+        self.__item.setAmount(n)
+        self.__loadAmount
+
+    def __loadAmount(self):
+        self.__spinboxAmount.setValue(self.__item.amount())
+
+    def __onMoveUp(self):
+        self.moveUp.emit()
+
+    def __onMoveDown(self):
+        self.moveDown.emit()
+
+    def __onRemove(self):
+        self.remove.emit()
+
+
 class ModuleItem(QTreeWidgetItem):
     '''
         Station module group.
     '''
-
-    class ModuleItemWidget(QWidget):
-        #Signals
-        moveUp = pyqtSignal()
-        moveDown = pyqtSignal()
-        remove = pyqtSignal()
-
-        @TypeChecker(QWidget, Station.StationModules, QTreeWidgetItem)
-        def __init__(self, item, parent):
-            super().__init__(parent.treeWidget())
-            self.__item = item
-            self.__layout = QHBoxLayout(self)
-            self.setLayout(self.__layout)
-
-            self.__spinboxAmount = QSpinBox(self)
-            self.__spinboxAmount.setMinimum(1)
-            self.__spinboxAmount.valueChanged.connect(self.__onAmountChanged)
-            self.__layout.addWidget(self.__spinboxAmount)
-
-            def btnResizeEvent(event):
-                width = event.size().height()
-                self.__btnPrev.setMaximumWidth(width)
-                self.__btnPrev.setMinimumWidth(width)
-
-            self.__btnUp = QPushButton("↑", self)
-            setattr(self.__btnUp, "resizeEvent", btnResizeEvent)
-            self.__layout.addWidget(self.__btnUp)
-            self.__btnUp.clicked.connect(self.__onMoveUp)
-
-            self.__btnDown = QPushButton("↓", self)
-            setattr(self.__btnDown, "resizeEvent", btnResizeEvent)
-            self.__layout.addWidget(self.__btnDown)
-            self.__btnDown.clicked.connect(self.__onMoveDown)
-
-            self.__btnRemove = QPushButton("×", self)
-            setattr(self.__btnRemove, "resizeEvent", btnResizeEvent)
-            self.__layout.addWidget(self.__btnRemove)
-            self.__btnRemove.clicked.connect(self.__onRemove)
-
-            self.__layout.addStretch()
-
-        @TypeChecker(QWidget, int)
-        def __onAmountChanged(self, n):
-            self.__item.setAmount(n)
-            self.__loadAmount
-
-        def __loadAmount(self):
-            self.__spinboxAmount.setValue(self.__item.amount())
-
-        def __onMoveUp(self):
-            self.moveUp.emit()
-
-        def __onMoveDown(self):
-            self.moveDown.emit()
-
-        def __onRemove(self):
-            self.remove.emit()
-
     #Signals
     updateData = pyqtSignal()
 
@@ -95,7 +89,8 @@ class ModuleItem(QTreeWidgetItem):
     def __init__(self, item, parent):
         super().__init__(parent)
         self.__item = item
-        self.setText(0, item.name())
+        self.setText(0, item.stationModule().name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-        self.__itemWidget = self.ModuleItemWidget(item, self)
+        self.__itemWidget = ModuleItemWidget(item)
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
+        self.__itemWidget.show()

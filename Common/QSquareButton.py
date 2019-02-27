@@ -19,36 +19,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import Common
-from Common import *
-import StringTable
 
-import Station
-import WorkSpaceWidget
+class QSquareButton(QPushButton):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-from WorkSpaceWidget.ModuleItem import *
-
-
-class ModuleGroupItem(QTreeWidgetItem):
-    '''
-        Station module group.
-    '''
-    updateData = pyqtSignal()
-
-    @TypeChecker(QTreeWidgetItem, Station.StationModulesGroup, QTreeWidgetItem)
-    def __init__(self, item, parent):
-        super().__init__(parent)
-        self.__item = item
-        self.setText(0, item.name())
-        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable
-                      | Qt.ItemIsEditable)
-
-        for m in item:
-            ModuleItem(m, self)
-
-        self.setExpanded(True)
-
-    @TypeChecker(QTreeWidgetItem, QTreeWidgetItem, int)
-    def onChanged(self, item, column):
-        if self.text(0) != self.__item.name():
-            self.__item.setName(self.text(0))
+    def resizeEvent(self, event):
+        width = event.size().height()
+        self.setMaximumWidth(width)
+        self.setMinimumWidth(width)

@@ -294,8 +294,8 @@ class StationModulesGroup:
         '''
             Remove item.
         '''
-        item.setParent(None)
         self.__stationModules.remove(item)
+        item.setParent(None)
         self.__setParentDirty()
 
     def __iter__(self):
@@ -513,8 +513,8 @@ class Station:
         '''
             Remove item.
         '''
-        item.setParent(None)
         self.__stationModulesGroups.remove(item)
+        item.setParent(None)
 
     def __iter__(self):
         return self.__stationModulesGroups.__iter__()

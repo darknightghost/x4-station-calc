@@ -26,6 +26,10 @@ import StringTable
 VERSION = StrictVersion("0.0.1")
 RECORD_VERSION = StrictVersion("0.0.1")
 
+import Common
+
+from Common.QSquareButton import *
+
 
 def TypeChecker(*type_args, **type_kwargs):
     '''

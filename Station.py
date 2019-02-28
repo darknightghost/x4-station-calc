@@ -165,6 +165,12 @@ class StationModules:
         '''
         return json.dumps(self.toDict(), ensure_ascii=False)
 
+    def copy(self):
+        '''
+            Copy a new instance.
+        '''
+        return type(self)(self.toDict())
+
     def __setParentDirty(self):
         '''
             Make parent dirty.
@@ -297,6 +303,12 @@ class StationModulesGroup:
         self.__stationModules.remove(item)
         item.setParent(None)
         self.__setParentDirty()
+
+    def copy(self):
+        '''
+            Copy a new instance.
+        '''
+        return type(self)(self.toDict())
 
     def __iter__(self):
         return self.__stationModules.__iter__()

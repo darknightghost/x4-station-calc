@@ -29,12 +29,15 @@ from ModuleListWidget.ButtonBarWidget import *
 from ModuleListWidget.FilterWidget import *
 from ModuleListWidget.ModuleTreeWidget import *
 
+import WorkSpaceWidget
+
 
 class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
     '''
         List of modules.
     '''
     moduleClicked = pyqtSignal(list)
+    operation = pyqtSignal(WorkSpaceWidget.Operation)
 
     def __init__(self, parent=None):
         super().__init__(QWidget(), parent)
@@ -51,6 +54,7 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         layout.addWidget(self.__filterWidget)
         self.__buttonBarWidget.changeFilterVisible.connect(
             self.__filterWidget.setVisible)
+        self.__buttonBarWidget.addToStation.connect(self.addToStation)
 
         self.__moduleTreeWidget = ModuleTreeWidget(self.__filterWidget.filter,
                                                    self)
@@ -73,3 +77,13 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
             Set enable status of add station module button.
         '''
         self.__buttonBarWidget.setAddButtonEnabled(state)
+
+    def addToStation(self):
+        selected = self.__moduleTreeWidget.selectedItems()
+        moduleList = []
+        for i in selected:
+            if isinstance(i, QTreeWidgetStationModuleItem):
+                moduleList.append(i.stationModule())
+
+        op = WorkSpaceWidget.AddModuleOperation(moduleList)
+        self.operation.emit(op)

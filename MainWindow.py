@@ -432,6 +432,8 @@ class MainWindow(QMainWindow):
             self.__editPasteAction.setEnabled)
         self.centralWidget().changeRemovePasteState.connect(
             self.__editRemoveAction.setEnabled)
+        self.__moduleListWidget.operation.connect(
+            self.centralWidget().doOperation)
 
         self.centralWidget().initMenuState()
 

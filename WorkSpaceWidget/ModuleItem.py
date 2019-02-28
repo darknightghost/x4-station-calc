@@ -94,3 +94,9 @@ class ModuleItem(QTreeWidgetItem):
         self.__itemWidget = ModuleItemWidget(item)
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
         self.__itemWidget.show()
+
+    def item(self):
+        '''
+            Get Item.
+        '''
+        return self.__item

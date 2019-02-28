@@ -23,7 +23,16 @@ import Common
 from Common import *
 import StringTable
 
+import Station
+import StationModule
+
 import WorkSpaceWidget
+
+from WorkSpaceWidget.ModulesItem import *
+from WorkSpaceWidget.ModuleItem import *
+from WorkSpaceWidget.ModuleGroupItem import *
+from WorkSpaceWidget.SummaryItem import *
+from WorkSpaceWidget.Operations import *
 
 
 class Operation:
@@ -32,23 +41,25 @@ class Operation:
     '''
 
     def __init__(self):
-        self.__widget = None
+        self._workSpace = None
 
-    @TypeChecker(object, WorkSpaceWidget.WorkSpaceWidget)
     def setWorkspace(self, workspace):
         '''
             Set workspace widget.
         '''
-        self.__workSpace = workspace
-        self.onSetWorkspace()
-
-    def onSetWorkspace(self):
-        '''
-            Called when workspace changed.
-        '''
-        raise NotImplementedError()
+        self._workSpace = workspace
 
     def do(self):
+        '''
+            Do operation, return True if success.
+        '''
+        if self._workSpace == None:
+            return False
+
+        else:
+            return self.onDo() == True
+
+    def onDo(self):
         '''
             Do operation, return True if success.
         '''
@@ -58,8 +69,65 @@ class Operation:
         '''
             Undo operation.
         '''
+        if self._workSpace == None:
+            return False
+
+        else:
+            return self.onUndo() == True
+
+    def onUndo(self):
+        '''
+            Undo operation.
+        '''
         raise NotImplementedError()
 
 
 class AddModuleOperation(Operation):
-    pass
+    '''
+        Add station module.
+    '''
+
+    @TypeChecker(Operation, list)
+    def __init__(self, modules):
+        super().__init__()
+        self.__modules = modules
+
+        self.__groupItem = None
+        self.__moduleItems = None
+
+        for m in self.__modules:
+            if not isinstance(m, StationModule.StationModule):
+                raise TypeError(
+                    "Type of module should be \"StationModule.StationModule\"."
+                )
+
+    def onDo(self):
+        '''
+            Do operation, return True if success.
+        '''
+        #Check status
+        seleceted = self._workSpace.selectedItems()
+        if len(seleceted) != 1:
+            return False
+
+        seleceted = seleceted[0]
+        if not isinstance(seleceted, ModuleGroupItem):
+            return False
+
+        #Do operation
+        self.__groupItem = seleceted
+        self.__moduleItems = []
+        for m in self.__modules:
+            self.__moduleItems.append(self.__groupItem.addStationModule(m))
+
+        return True
+
+    def onUndo(self):
+        '''
+            Undo operation.
+        '''
+        if None in (self.__groupItem, self.__moduleItems):
+            return False
+
+        for m in self.__moduleItems:
+            self.__groupItem.removeStationModule(m)

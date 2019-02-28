@@ -24,6 +24,7 @@ from Common import *
 import StringTable
 
 import Station
+import StationModule
 import WorkSpaceWidget
 
 from WorkSpaceWidget.ModuleItem import *
@@ -47,6 +48,25 @@ class ModuleGroupItem(QTreeWidgetItem):
             ModuleItem(m, self)
 
         self.setExpanded(True)
+
+    @TypeChecker(QTreeWidgetItem, StationModule.StationModule)
+    def addStationModule(self, m):
+        '''
+            Add station module.
+        '''
+        m = Station.StationModules(m.id())
+        self.__item.append(m)
+
+        return ModuleItem(m, self)
+
+    @TypeChecker(QTreeWidgetItem, ModuleItem)
+    def removeStationModule(self, m):
+        '''
+            Remove station module.
+        '''
+        item = m.item()
+        self.removeChild(self, m)
+        self.__item.remove(item)
 
     @TypeChecker(QTreeWidgetItem, QTreeWidgetItem, int)
     def onChanged(self, item, column):

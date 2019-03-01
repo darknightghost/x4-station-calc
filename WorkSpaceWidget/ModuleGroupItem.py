@@ -49,15 +49,28 @@ class ModuleGroupItem(QTreeWidgetItem):
 
         self.setExpanded(True)
 
-    @TypeChecker(QTreeWidgetItem, StationModule.StationModule)
+    @TypeChecker(QTreeWidgetItem, (StationModule.StationModule, ModuleItem))
     def addStationModule(self, m):
         '''
             Add station module.
         '''
-        m = Station.StationModules(m.id())
-        self.__item.append(m)
+        if isinstance(m, StationModule.StationModule):
+            m = Station.StationModules(m.id())
+            self.__item.append(m)
 
-        return ModuleItem(m, self)
+            return ModuleItem(m, self)
+
+        else:
+            self.__item.append(m.item())
+            self.addChild(m)
+            m.onAdd()
+            return m
+
+    def item(self):
+        '''
+            Get item.
+        '''
+        return self.__item
 
     @TypeChecker(QTreeWidgetItem, ModuleItem)
     def removeStationModule(self, m):
@@ -65,10 +78,22 @@ class ModuleGroupItem(QTreeWidgetItem):
             Remove station module.
         '''
         item = m.item()
-        self.removeChild(self, m)
+        self.removeChild(m)
         self.__item.remove(item)
+
+    def setName(self, name):
+        '''
+            Set group name.
+        '''
+        self.__item.setName(name)
+        self.setText(0, name)
 
     @TypeChecker(QTreeWidgetItem, QTreeWidgetItem, int)
     def onChanged(self, item, column):
         if self.text(0) != self.__item.name():
-            self.__item.setName(self.text(0))
+            op = ChangeGroupNameOperation(self, self.__item.name(),
+                                          self.text(0))
+            self.treeWidget().doOperation(op)
+
+
+from WorkSpaceWidget.Operations import *

@@ -416,14 +416,23 @@ class MainWindow(QMainWindow):
         self.centralWidget().show()
 
         self.centralWidget().moduleClicked.connect(self.__infoWidget.setData)
+
         self.centralWidget().changeEnableAddState.connect(
             self.__moduleListWidget.setAddButtonEnabled)
+
         self.centralWidget().changeAddGroupState.connect(
             self.__editNewGroupAction.setEnabled)
+        self.__editNewGroupAction.triggered.connect(
+            self.centralWidget().addGroup)
+
         self.centralWidget().changeUndoState.connect(
             self.__editUndoAction.setEnabled)
+        self.__editUndoAction.triggered.connect(self.centralWidget().undo)
+
         self.centralWidget().changeRedoState.connect(
             self.__editRedoAction.setEnabled)
+        self.__editRedoAction.triggered.connect(self.centralWidget().redo)
+
         self.centralWidget().changeCopyState.connect(
             self.__editCutAction.setEnabled)
         self.centralWidget().changeCopyState.connect(

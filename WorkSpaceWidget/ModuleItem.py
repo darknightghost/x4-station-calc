@@ -38,6 +38,12 @@ class ModuleItemWidget(QWidget):
         self.__item = item
         self.__layout = QHBoxLayout(self)
         self.setLayout(self.__layout)
+        margins = self.__layout.contentsMargins()
+        margins.setLeft(0)
+        margins.setRight(0)
+        margins.setTop(0)
+        margins.setBottom(0)
+        self.__layout.setContentsMargins(margins)
 
         self.__layout.addStretch()
 
@@ -91,12 +97,20 @@ class ModuleItem(QTreeWidgetItem):
         self.__item = item
         self.setText(0, item.stationModule().name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-        self.__itemWidget = ModuleItemWidget(item)
-        self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
-        self.__itemWidget.show()
+        self.onAdd()
 
     def item(self):
         '''
             Get Item.
         '''
         return self.__item
+
+    def onAdd(self):
+        self.__itemWidget = ModuleItemWidget(self.__item)
+        self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
+        self.__itemWidget.show()
+
+    @TypeChecker(QTreeWidgetItem, int)
+    def onClicked(self, column):
+        self.treeWidget().moduleClicked.emit(
+            self.__item.stationModule().info())

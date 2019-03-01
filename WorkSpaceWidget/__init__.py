@@ -57,6 +57,7 @@ class WorkSpaceWidget(QTreeWidget):
 
         self.itemChanged.connect(self.__onItemChanged)
         self.itemSelectionChanged.connect(self.__onItemSelectionChanged)
+        self.itemClicked.connect(self.__onItemClicked)
 
         self.__modulesItem = ModulesItem(self)
         self.addTopLevelItem(self.__modulesItem)
@@ -91,7 +92,9 @@ class WorkSpaceWidget(QTreeWidget):
         '''
             Do operation.
         '''
-        op.setWorkspace(self)
+        if not op.setWorkspace(self):
+            return
+
         if op.do():
             self.__operationDone.append(op)
             self.__operationUndone = []
@@ -117,6 +120,33 @@ class WorkSpaceWidget(QTreeWidget):
             self.__operationUndone.append(op)
             self.__updateUndoRedo()
 
+    def addGroup(self):
+        '''
+            Add new Group.
+        '''
+        op = NewGroupOperation()
+        self.doOperation(op)
+
+    @TypeChecker(QTreeWidget, (type(None), ModuleGroupItem))
+    def operationAddGroup(self, g=None):
+        '''
+            Add new group.
+        '''
+        if g == None:
+            g = Station.StationModulesGroup()
+            self.__station.append(g)
+            return ModuleGroupItem(g, self.__modulesItem)
+
+        else:
+            self.__station.append(g.item())
+            self.__modulesItem.addChild(g)
+            return g
+
+    @TypeChecker(QTreeWidget, ModuleGroupItem)
+    def operationRemoveGroup(self, g):
+        self.__station.remove(g.item())
+        self.__modulesItem.removeChild(g)
+
     def __updateUndoRedo(self):
         self.changeUndoState.emit(False if len(self.__operationDone) ==
                                   0 else True)
@@ -133,6 +163,11 @@ class WorkSpaceWidget(QTreeWidget):
     def __onItemChanged(self, item, column):
         if hasattr(item, "onChanged"):
             item.onChanged(item, column)
+
+    @TypeChecker(QTreeWidget, QTreeWidgetItem, int)
+    def __onItemClicked(self, item, column):
+        if hasattr(item, "onClicked"):
+            item.onClicked(column)
 
     def __onItemSelectionChanged(self):
         selected = self.selectedItems()

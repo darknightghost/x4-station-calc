@@ -48,6 +48,13 @@ class Operation:
             Set workspace widget.
         '''
         self._workSpace = workspace
+        return self.onSetWorkspace()
+
+    def onSetWorkspace(self):
+        '''
+            Set workspace widget.
+        '''
+        return True
 
     def do(self):
         '''
@@ -82,6 +89,61 @@ class Operation:
         raise NotImplementedError()
 
 
+class ChangeGroupNameOperation(Operation):
+    '''
+        Change group name.
+    '''
+
+    @TypeChecker(Operation, ModuleGroupItem, str, str)
+    def __init__(self, groupItem, oldName, newName):
+        self.__groupItem = groupItem
+        self.__oldName = oldName
+        self.__newName = newName
+
+    def onDo(self):
+        '''
+            Do operation, return True if success.
+        '''
+        self.__groupItem.setName(self.__newName)
+        return True
+
+    def onUndo(self):
+        '''
+            Undo operation.
+        '''
+        self.__groupItem.setName(self.__oldName)
+        return True
+
+
+class NewGroupOperation(Operation):
+    '''
+        Add new group.
+    '''
+
+    @TypeChecker(Operation)
+    def __init__(self):
+        self.__group = None
+
+    def onDo(self):
+        '''
+            Do operation, return True if success.
+        '''
+        if self.__group == None:
+            self.__group = self._workSpace.operationAddGroup()
+
+        else:
+            self._workSpace.operationAddGroup(self.__group)
+
+        return True
+
+    def onUndo(self):
+        '''
+            Undo operation.
+        '''
+        self._workSpace.operationRemoveGroup(self.__group)
+        return True
+
+
 class AddModuleOperation(Operation):
     '''
         Add station module.
@@ -101,9 +163,9 @@ class AddModuleOperation(Operation):
                     "Type of module should be \"StationModule.StationModule\"."
                 )
 
-    def onDo(self):
+    def onSetWorkspace(self):
         '''
-            Do operation, return True if success.
+            Set workspace widget.
         '''
         #Check status
         seleceted = self._workSpace.selectedItems()
@@ -116,11 +178,24 @@ class AddModuleOperation(Operation):
 
         #Do operation
         self.__groupItem = seleceted
-        self.__moduleItems = []
-        for m in self.__modules:
-            self.__moduleItems.append(self.__groupItem.addStationModule(m))
+        self.__moduleItems = None
 
         return True
+
+    def onDo(self):
+        '''
+            Do operation, return True if success.
+        '''
+        if self.__moduleItems == None:
+            self.__moduleItems = []
+            for m in self.__modules:
+                self.__moduleItems.append(self.__groupItem.addStationModule(m))
+
+            return True
+
+        else:
+            for m in self.__moduleItems:
+                self.__groupItem.addStationModule(m)
 
     def onUndo(self):
         '''

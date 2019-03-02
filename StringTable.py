@@ -345,6 +345,14 @@ __STRING_TABLE = {
         "en_US": "Summary",
         "zh_CN": "总计"
     },
+    "STR_SUMMARY_EACH_GROUP": {
+        "en_US": "Summary Each Group",
+        "zh_CN": "各组统计"
+    },
+    "STR_SUMMARY_TOTAL": {
+        "en_US": "Total",
+        "zh_CN": "总计"
+    },
     #"": {
     #    "en_US": "",
     #    "zh_CN": ""

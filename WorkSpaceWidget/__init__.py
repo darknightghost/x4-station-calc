@@ -28,7 +28,7 @@ import WorkSpaceWidget
 from WorkSpaceWidget.ModulesItem import *
 from WorkSpaceWidget.ModuleItem import *
 from WorkSpaceWidget.ModuleGroupItem import *
-from WorkSpaceWidget.SummaryItem import *
+from WorkSpaceWidget.SummarysItem import *
 from WorkSpaceWidget.Operations import *
 
 
@@ -36,8 +36,8 @@ class WorkSpaceWidget(QTreeWidget):
     '''
         Workspace.
     '''
-    updateData = pyqtSignal()
     moduleClicked = pyqtSignal(list)
+    updateTotal = pyqtSignal()
     changeEnableAddState = pyqtSignal(bool)
     changeAddGroupState = pyqtSignal(bool)
     changeUndoState = pyqtSignal(bool)
@@ -62,12 +62,8 @@ class WorkSpaceWidget(QTreeWidget):
         self.__modulesItem = ModulesItem(self)
         self.addTopLevelItem(self.__modulesItem)
 
-        self.__summaryItem = SummaryItem(self)
-        self.updateData.connect(self.__summaryItem.onUpdateData)
-        self.addTopLevelItem(self.__summaryItem)
-
-        self.updateData.connect(self.__onUpdateData)
-        self.updateData.emit()
+        self.__summarysItem = SummarysItem(self)
+        self.addTopLevelItem(self.__summarysItem)
 
         self.__operationDone = []
         self.__operationUndone = []
@@ -153,12 +149,6 @@ class WorkSpaceWidget(QTreeWidget):
         self.changeRedoState.emit(False if len(self.__operationUndone) ==
                                   0 else True)
 
-    def __onUpdateData(self):
-        '''
-            Update data.
-        '''
-        self.setWindowTitle(self.__station.name())
-
     @TypeChecker(QTreeWidget, QTreeWidgetItem, int)
     def __onItemChanged(self, item, column):
         if hasattr(item, "onChanged"):
@@ -222,6 +212,7 @@ class WorkSpaceWidget(QTreeWidget):
 
     @TypeChecker(QTreeWidget, QCloseEvent)
     def closeEvent(self, event):
+        #Disable all actions
         self.changeEnableAddState.emit(False)
         self.changeAddGroupState.emit(False)
         self.changeUndoState.emit(False)
@@ -229,3 +220,8 @@ class WorkSpaceWidget(QTreeWidget):
         self.changeCopyState.emit(False)
         self.changePasteState.emit(False)
         self.changeRemovePasteState.emit(False)
+
+    @TypeChecker(QTreeWidget, QContextMenuEvent)
+    def contextMenuEvent(self, event):
+        #Popup menu.
+        self.parent().editMenu().exec(event.globalPos())

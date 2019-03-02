@@ -101,6 +101,7 @@ class FilterWidget(QWidget):
         for p in Product.products():
             self.__comboProduct.addItem(p.name(), p)
 
+    #Slots
     @TypeChecker(QWidget, int)
     def __checkStateChanged(self, state):
         self.refreshTreeView.emit()

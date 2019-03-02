@@ -31,7 +31,7 @@ import WorkSpaceWidget
 from WorkSpaceWidget.ModulesItem import *
 from WorkSpaceWidget.ModuleItem import *
 from WorkSpaceWidget.ModuleGroupItem import *
-from WorkSpaceWidget.SummaryItem import *
+from WorkSpaceWidget.SummarysItem import *
 from WorkSpaceWidget.Operations import *
 
 
@@ -64,7 +64,11 @@ class Operation:
             return False
 
         else:
-            return self.onDo() == True
+            if self.onDo():
+                return True
+
+            else:
+                return False
 
     def onDo(self):
         '''
@@ -80,7 +84,11 @@ class Operation:
             return False
 
         else:
-            return self.onUndo() == True
+            if self.onUndo():
+                return True
+
+            else:
+                return False
 
     def onUndo(self):
         '''

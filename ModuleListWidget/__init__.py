@@ -37,6 +37,7 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
         List of modules.
     '''
     moduleClicked = pyqtSignal(list)
+    updateData = pyqtSignal()
     operation = pyqtSignal(WorkSpaceWidget.Operation)
 
     def __init__(self, parent=None):

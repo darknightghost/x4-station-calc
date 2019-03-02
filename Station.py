@@ -75,17 +75,19 @@ class StationFileWriteException(StationFileException):
             StringTable.getString("FAILED_WRITE_STATION_FILE") % (path))
 
 
-class StationModules:
+class StationModules(QObject):
     '''
         Station modules in group.
     '''
+    #amountChanged(stationModules, oldNum, newNum)
+    amountChanged = pyqtSignal(QObject, int, int)
 
     def __init__(self, data, amount=1, parent=None):
         '''
             StationModules(data)       -> stationModules
             StationModules(id, amount) -> stationModules
         '''
-        self.__parent = parent
+        super().__init__(parent)
         if isinstance(data, dict):
             self.__initByData(data)
 
@@ -111,7 +113,7 @@ class StationModules:
         '''
             Set parent.
         '''
-        self.__parent = parent
+        super().setParent(parent)
         self.__setParentDirty()
 
     def stationModule(self):
@@ -130,16 +132,13 @@ class StationModules:
         '''
             Increase amount.
         '''
-        self.__amount += 1
-        self.__setParentDirty()
+        self.setAmount(self.__amount + 1)
 
     def decrease(self):
         '''
             Decrease amount.
         '''
-        if self.__amount > 1:
-            self.__amount -= 1
-            self.__setParentDirty()
+        self.setAmount(self.__amount - 1)
 
     @TypeChecker(object, int)
     def setAmount(self, amount):
@@ -147,8 +146,10 @@ class StationModules:
             Set amount.
         '''
         if amount > 0:
+            oldAmount = self.__amount
             self.__amount = amount
             self.__setParentDirty()
+            self.amountChanged.emit(self, oldAmount, amount)
 
         else:
             raise ValueError("Amount must bigger than 0.")
@@ -175,8 +176,8 @@ class StationModules:
         '''
             Make parent dirty.
         '''
-        if self.__parent != None:
-            self.__parent.setDirty()
+        if self.parent() != None:
+            self.parent().setDirty()
 
     def __hash__(self):
         return self.stationModule().__hash__()
@@ -185,28 +186,32 @@ class StationModules:
         if isinstance(item, int):
             if item < 0:
                 raise ValueError("\"item\" must bigger than 0.")
-            self.__amount += item
-            self.__setParentDirty()
+            self.setAmount(self.__amount + item)
 
         elif isinstance(self, StationModules):
-            self.__amount += item.amount()
-            self.__setParentDirty()
+            self.setAmount(self.__amount + item.amount())
 
         else:
             raise TypeError("\"item\" must be StationModules or int.")
 
 
-class StationModulesGroup:
+class StationModulesGroup(QObject):
     '''
         Station module group.
     '''
+    #addModules(group, modules)
+    addModules = pyqtSignal(QObject, StationModules)
+    #removeModules(group, modules)
+    removeModules = pyqtSignal(QObject, StationModules)
+    #nameChanged(group)
+    nameChanged = pyqtSignal(QObject)
 
     def __init__(self, data=None, parent=None):
         '''
             StationModulesGroup(data)       -> stationModulesGroup
             StationModulesGroup()           -> stationModulesGroup
         '''
-        self.__parent = parent
+        super().__init__(parent)
         if isinstance(data, dict):
             self.__initByData(data)
 
@@ -236,7 +241,7 @@ class StationModulesGroup:
         '''
             Set parent.
         '''
-        self.__parent = parent
+        super().setParent(parent)
         self.__setParentDirty()
 
     def name(self):
@@ -252,6 +257,7 @@ class StationModulesGroup:
         '''
         self.__name = name
         self.__setParentDirty()
+        self.nameChanged.emit(self)
 
     def setDirty(self):
         '''
@@ -279,21 +285,22 @@ class StationModulesGroup:
         '''
             Make parent dirty.
         '''
-        if self.__parent != None:
-            self.__parent.setDirty()
+        if self.parent() != None:
+            self.parent().setDirty()
 
     @TypeChecker(object, StationModules)
     def append(self, item):
         '''
             Append item.
         '''
-        item.setParent(self)
         try:
             self.__stationModuleIndex[item.stationModule()] += item
 
         except KeyError:
             self.__stationModules.append(item)
+            item.setParent(self)
             self.__setParentDirty()
+            self.addModules.emit(self, item)
 
     @TypeChecker(object, StationModules)
     def remove(self, item):
@@ -303,6 +310,7 @@ class StationModulesGroup:
         self.__stationModules.remove(item)
         item.setParent(None)
         self.__setParentDirty()
+        self.removeModules.emit(self, item)
 
     def copy(self):
         '''
@@ -317,15 +325,8 @@ class StationModulesGroup:
     def __getitem__(self, index):
         return self.__stationModules[index]
 
-    @TypeChecker(object, int, StationModules)
-    def __setitem__(self, index, value):
-        value.setParent(self)
-        self.__stationModules[index] = value
-
     def __delitem__(self, index):
-        self.__stationModules[index].setParent(None)
-        del self.__stationModules[index]
-        self.__setParentDirty()
+        self.remove(self.__stationModules[index])
 
     def __iadd__(self, l):
         for m in l:
@@ -333,10 +334,10 @@ class StationModulesGroup:
                 raise TypeError(
                     "Type of item should be %s." % (str(StationModules)))
             m.setParent(self)
-            self.__stationModules.append(m)
+            self.append(m)
 
 
-class Station:
+class Station(QObject):
     '''
         Station file.
 
@@ -401,9 +402,15 @@ class Station:
             ]
         }
     '''
+    EXT_NAME = ".x4station"
+    #addGroup(station, group)
+    addGroup = pyqtSignal(QObject, StationModulesGroup)
+    #removeGroup(station, group)
+    removeGroup = pyqtSignal(QObject, StationModulesGroup)
 
     @TypeChecker(object, (str, type(None)))
     def __init__(self, path=None):
+        super().__init__()
         #Path
         self.__path = path
 
@@ -466,6 +473,9 @@ class Station:
         '''
             Set path.
         '''
+        if len(path) < len(
+                self.EXT_NAME) or path[-len(self.EXT_NAME):] != self.EXT_NAME:
+            path += self.EXT_NAME
         self.__path = path
 
     def name(self):
@@ -519,6 +529,8 @@ class Station:
         '''
         item.setParent(self)
         self.__stationModulesGroups.append(item)
+        self.setDirty()
+        self.addGroup.emit(self, item)
 
     @TypeChecker(object, StationModulesGroup)
     def remove(self, item):
@@ -527,6 +539,8 @@ class Station:
         '''
         self.__stationModulesGroups.remove(item)
         item.setParent(None)
+        self.setDirty()
+        self.removeGroup.emit(self, item)
 
     def __iter__(self):
         return self.__stationModulesGroups.__iter__()
@@ -535,21 +549,12 @@ class Station:
     def __getitem__(self, index):
         return self.__stationModulesGroups[index]
 
-    @TypeChecker(object, int, StationModulesGroup)
-    def __setitem__(self, index, value):
-        value.setParent(self)
-        self.__stationModulesGroups[index] = value
-
     def __delitem__(self, index):
-        self.__stationModulesGroups[index].setParent(None)
-        del self.__stationModulesGroups[index]
-        self.setDirty()
+        self.remove(self.__stationModulesGroups[index])
 
     def __iadd__(self, l):
         for m in l:
             if not isinstance(m, StationModulesGroup):
                 raise TypeError(
                     "Type of item should be %s." % (str(StationModulesGroup)))
-            m.setParent(self)
-            self.__stationModulesGroups.append(m)
-            self.setDirty()
+            self.append(m)

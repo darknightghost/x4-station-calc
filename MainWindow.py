@@ -137,6 +137,7 @@ class MainWindow(QMainWindow):
         self.__editNewGroupAction = QAction(
             StringTable.getString("MENU_EDIT_NEW_GROUP"))
         self.__editMenu.addAction(self.__editNewGroupAction)
+        self.__editNewGroupAction.setShortcut(QKeySequence("Ctrl+G"))
         self.__editNewGroupAction.setEnabled(False)
 
         self.__editMenu.addSeparator()
@@ -144,27 +145,32 @@ class MainWindow(QMainWindow):
         self.__editUndoAction = QAction(
             StringTable.getString("MENU_EDIT_UNDO"))
         self.__editMenu.addAction(self.__editUndoAction)
+        self.__editUndoAction.setShortcut(QKeySequence.Undo)
         self.__editUndoAction.setEnabled(False)
 
         self.__editRedoAction = QAction(
             StringTable.getString("MENU_EDIT_REDO"))
         self.__editMenu.addAction(self.__editRedoAction)
+        self.__editRedoAction.setShortcut(QKeySequence.Redo)
         self.__editRedoAction.setEnabled(False)
 
         self.__editMenu.addSeparator()
 
         self.__editCutAction = QAction(StringTable.getString("MENU_EDIT_CUT"))
         self.__editMenu.addAction(self.__editCutAction)
+        self.__editCutAction.setShortcut(QKeySequence.Cut)
         self.__editCutAction.setEnabled(False)
 
         self.__editCopyAction = QAction(
             StringTable.getString("MENU_EDIT_COPY"))
         self.__editMenu.addAction(self.__editCopyAction)
+        self.__editCopyAction.setShortcut(QKeySequence.Copy)
         self.__editCopyAction.setEnabled(False)
 
         self.__editPasteAction = QAction(
             StringTable.getString("MENU_EDIT_PASTE"))
         self.__editMenu.addAction(self.__editPasteAction)
+        self.__editPasteAction.setShortcut(QKeySequence.Paste)
         self.__editPasteAction.setEnabled(False)
 
         self.__editMenu.addSeparator()
@@ -172,7 +178,14 @@ class MainWindow(QMainWindow):
         self.__editRemoveAction = QAction(
             StringTable.getString("MENU_EDIT_REMOVE"))
         self.__editMenu.addAction(self.__editRemoveAction)
+        self.__editRemoveAction.setShortcut(QKeySequence("Ctrl+R"))
         self.__editRemoveAction.setEnabled(False)
+
+    def editMenu(self):
+        '''
+            Get edit menu.
+        '''
+        return self.__editMenu
 
     def __initSettingMenu(self):
         self.__settingMenu = QMenu(StringTable.getString("MENU_SETTING"))

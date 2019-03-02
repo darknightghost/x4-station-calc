@@ -145,7 +145,7 @@ class StationModules(QObject):
         '''
             Set amount.
         '''
-        if amount > 0:
+        if amount > 0 and amount != self.__amount:
             oldAmount = self.__amount
             self.__amount = amount
             self.__setParentDirty()

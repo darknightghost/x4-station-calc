@@ -68,8 +68,9 @@ class ModuleItemWidget(QWidget):
 
     @TypeChecker(QWidget, int)
     def __onAmountChanged(self, n):
-        self.__item.setAmount(n)
-        self.__loadAmount
+        if n != self.__item.amount():
+            self.__item.setAmount(n)
+            self.__loadAmount
 
     def __loadAmount(self):
         self.__spinboxAmount.setValue(self.__item.amount())

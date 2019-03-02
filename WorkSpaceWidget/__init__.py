@@ -220,8 +220,10 @@ class WorkSpaceWidget(QTreeWidget):
         self.changeCopyState.emit(False)
         self.changePasteState.emit(False)
         self.changeRemovePasteState.emit(False)
+        super().closeEvent(event)
 
     @TypeChecker(QTreeWidget, QContextMenuEvent)
     def contextMenuEvent(self, event):
         #Popup menu.
         self.parent().editMenu().exec(event.globalPos())
+        super().contextMenuEvent(event)

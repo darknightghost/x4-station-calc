@@ -353,6 +353,10 @@ __STRING_TABLE = {
         "en_US": "Total",
         "zh_CN": "总计"
     },
+    "STR_INTERMEDIATES": {
+        "en_US": "Intermediates",
+        "zh_CN": "中间产品"
+    },
     #"": {
     #    "en_US": "",
     #    "zh_CN": ""

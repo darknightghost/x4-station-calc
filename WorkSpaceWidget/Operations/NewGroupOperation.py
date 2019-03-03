@@ -39,6 +39,7 @@ class NewGroupOperation(Operation):
 
     @TypeChecker(Operation)
     def __init__(self):
+        super().__init__()
         self.__group = None
 
     def onDo(self):

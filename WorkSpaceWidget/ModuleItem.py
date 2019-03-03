@@ -25,6 +25,8 @@ import StringTable
 
 import Station
 
+import WorkSpaceWidget
+
 
 class ModuleItemWidget(QWidget):
     #Signals
@@ -32,9 +34,10 @@ class ModuleItemWidget(QWidget):
     moveDown = pyqtSignal()
     remove = pyqtSignal()
 
-    @TypeChecker(QWidget, Station.StationModules)
-    def __init__(self, item):
+    @TypeChecker(QWidget, Station.StationModules, QTreeWidget)
+    def __init__(self, item, treeWidget):
         super().__init__()
+        self.__treeWidget = treeWidget
         self.__item = item
         self.__layout = QHBoxLayout(self)
         self.setLayout(self.__layout)
@@ -71,7 +74,9 @@ class ModuleItemWidget(QWidget):
     @TypeChecker(QWidget, int)
     def __onSpinAmountChanged(self, n):
         if n != self.__item.amount():
-            self.__item.setAmount(n)
+            from WorkSpaceWidget.Operations import ChangeModuleAmountOperation as ChangeModuleAmountOperation
+            op = ChangeModuleAmountOperation(self.__item, n)
+            self.__treeWidget.doOperation(op)
             self.__loadAmount
 
     def __onItemAmountChanged(self, stationModules, oldNum, newNum):
@@ -112,7 +117,7 @@ class ModuleItem(QTreeWidgetItem):
         return self.__item
 
     def onAdd(self):
-        self.__itemWidget = ModuleItemWidget(self.__item)
+        self.__itemWidget = ModuleItemWidget(self.__item, self.treeWidget())
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
         self.__itemWidget.show()
 

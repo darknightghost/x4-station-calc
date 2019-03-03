@@ -54,7 +54,7 @@ class SummaryItem(QTreeWidgetItem):
         super().__init__(parent, [group.name()])
 
         self.setFlags(Qt.ItemIsEnabled)
-        self.setExpanded(True)
+        self.setExpanded(False)
 
         self.__group = group
         group.addModules.connect(self.__stationModuleAddRemove)
@@ -138,6 +138,18 @@ class SummaryItem(QTreeWidgetItem):
         self.__productsItem.setExpanded(True)
 
         self.update()
+
+    def attributes(self):
+        '''
+            Attrributes.
+
+            return {"attr" : num}
+        '''
+        ret = {}
+        for a in self.__attributes:
+            ret[a[0]] = int(a[1].text(1))
+
+        return ret
 
     def foods(self):
         '''

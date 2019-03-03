@@ -39,6 +39,7 @@ class ChangeGroupNameOperation(Operation):
 
     @TypeChecker(Operation, ModuleGroupItem, str, str)
     def __init__(self, groupItem, oldName, newName):
+        super().__init__()
         self.__groupItem = groupItem
         self.__oldName = oldName
         self.__newName = newName

@@ -343,7 +343,7 @@ __STRING_TABLE = {
     },
     "STR_SUMMARY": {
         "en_US": "Summary",
-        "zh_CN": "总计"
+        "zh_CN": "统计信息"
     },
     "STR_SUMMARY_EACH_GROUP": {
         "en_US": "Summary Each Group",

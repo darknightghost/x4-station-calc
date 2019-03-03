@@ -30,3 +30,32 @@ import WorkSpaceWidget
 
 from WorkSpaceWidget.ModuleGroupItem import *
 from WorkSpaceWidget.Operations import *
+
+
+class ChangeModuleAmountOperation(Operation):
+    '''
+        Change module amount.
+    '''
+
+    @TypeChecker(Operation, Station.StationModules, int)
+    def __init__(self, modules, newAmount):
+        super().__init__()
+        self.__modules = modules
+        self.__oldAmount = modules.amount()
+        self.__newAmount = newAmount
+
+    def onDo(self):
+        '''
+            Do operation, return True if success.
+        '''
+        self.__modules.setAmount(self.__newAmount)
+
+        return True
+
+    def onUndo(self):
+        '''
+            Undo operation.
+        '''
+        self.__modules.setAmount(self.__oldAmount)
+
+        return True

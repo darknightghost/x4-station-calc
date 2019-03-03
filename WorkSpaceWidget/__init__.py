@@ -88,6 +88,7 @@ class WorkSpaceWidget(QTreeWidget):
         '''
             Do operation.
         '''
+        pos = self.horizontalScrollBar().value()
         if not op.setWorkspace(self):
             return
 
@@ -97,6 +98,8 @@ class WorkSpaceWidget(QTreeWidget):
                 self.__operationDone = self.__operationDone[-1024:]
             self.__operationUndone = []
             self.__updateUndoRedo()
+
+        self.horizontalScrollBar().setValue(pos)
 
     def redo(self):
         '''

@@ -43,9 +43,10 @@ class ModuleGroupItem(QTreeWidgetItem):
         self.setText(0, item.name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable
                       | Qt.ItemIsEditable)
+        self.__index = {}
 
         for m in item:
-            ModuleItem(m, self)
+            self.__index[m.id()] = ModuleItem(m, self)
 
         self.setExpanded(True)
 
@@ -56,30 +57,46 @@ class ModuleGroupItem(QTreeWidgetItem):
         '''
         if isinstance(m, StationModule.StationModule):
             m = Station.StationModules(m.id())
-            self.__item.append(m)
 
-            return ModuleItem(m, self)
+            if m in self.__item:
+                self.__item.append(m)
+                return self.__index[m.id()]
+
+            else:
+                self.__item.append(m)
+                self.__index[m.id()] = ModuleItem(m, self)
+                return self.__index[m.id()]
 
         else:
-            self.__item.append(m.item())
-            self.addChild(m)
-            m.onAdd()
-            return m
+            if m.item() in self.__item:
+                m.item().increase()
 
-    def item(self):
-        '''
-            Get item.
-        '''
-        return self.__item
+            else:
+                self.__item.append(m.item())
+                self.__index[m.item().id()] = m
+                self.addChild(m)
+                m.onAdd()
+            return m
 
     @TypeChecker(QTreeWidgetItem, ModuleItem)
     def removeStationModule(self, m):
         '''
             Remove station module.
         '''
-        item = m.item()
-        self.removeChild(m)
-        self.__item.remove(item)
+        if m.item().amount() > 1:
+            m.item().decrease()
+
+        else:
+            item = m.item()
+            del self.__index[m.item().id()]
+            self.removeChild(m)
+            self.__item.remove(item)
+
+    def item(self):
+        '''
+            Get item.
+        '''
+        return self.__item
 
     def setName(self, name):
         '''

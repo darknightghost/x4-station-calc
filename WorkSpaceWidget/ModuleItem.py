@@ -49,7 +49,8 @@ class ModuleItemWidget(QWidget):
 
         self.__spinboxAmount = QSpinBox(self)
         self.__spinboxAmount.setMinimum(1)
-        self.__spinboxAmount.valueChanged.connect(self.__onAmountChanged)
+        self.__spinboxAmount.setValue(self.__item.amount())
+        self.__spinboxAmount.valueChanged.connect(self.__onSpinAmountChanged)
         self.__layout.addWidget(self.__spinboxAmount)
 
         self.__btnUp = QSquareButton("↑", self)
@@ -65,12 +66,16 @@ class ModuleItemWidget(QWidget):
         self.__btnRemove.clicked.connect(self.__onRemove)
 
         self.__layout.addStretch()
+        self.__item.amountChanged.connect(self.__onItemAmountChanged)
 
     @TypeChecker(QWidget, int)
-    def __onAmountChanged(self, n):
+    def __onSpinAmountChanged(self, n):
         if n != self.__item.amount():
             self.__item.setAmount(n)
             self.__loadAmount
+
+    def __onItemAmountChanged(self, stationModules, oldNum, newNum):
+        self.__spinboxAmount.setValue(newNum)
 
     def __loadAmount(self):
         self.__spinboxAmount.setValue(self.__item.amount())

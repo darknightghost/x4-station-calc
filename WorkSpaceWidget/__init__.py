@@ -93,6 +93,8 @@ class WorkSpaceWidget(QTreeWidget):
 
         if op.do():
             self.__operationDone.append(op)
+            if len(self.__operationDone) > 1024:
+                self.__operationDone = self.__operationDone[-1024:]
             self.__operationUndone = []
             self.__updateUndoRedo()
 

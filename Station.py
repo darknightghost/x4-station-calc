@@ -116,6 +116,12 @@ class StationModules(QObject):
         super().setParent(parent)
         self.__setParentDirty()
 
+    def id(self):
+        '''
+            Station module id.
+        '''
+        return self.__stationModule.id()
+
     def stationModule(self):
         '''
             Get station module.
@@ -194,6 +200,8 @@ class StationModules(QObject):
         else:
             raise TypeError("\"item\" must be StationModules or int.")
 
+        return self
+
 
 class StationModulesGroup(QObject):
     '''
@@ -226,11 +234,11 @@ class StationModulesGroup(QObject):
         for m in data["modules"]:
             m = StationModules(m, parent=self)
             try:
-                self.__stationModuleIndex[m.stationModule] += m
+                self.__stationModuleIndex[m.stationModule().id()] += m
 
             except KeyError:
                 self.__stationModules.append(m)
-                self.__stationModuleIndex[m.stationModule()] = m
+                self.__stationModuleIndex[m.stationModule().id()] = m
 
     def __initWithoutData(self):
         self.__name = StringTable.getString("NEW_GROUP_NAME")
@@ -294,10 +302,11 @@ class StationModulesGroup(QObject):
             Append item.
         '''
         try:
-            self.__stationModuleIndex[item.stationModule()] += item
+            self.__stationModuleIndex[item.stationModule().id()] += item
 
         except KeyError:
             self.__stationModules.append(item)
+            self.__stationModuleIndex[item.stationModule().id()] = item
             item.setParent(self)
             self.__setParentDirty()
             self.addModules.emit(self, item)
@@ -308,6 +317,7 @@ class StationModulesGroup(QObject):
             Remove item.
         '''
         self.__stationModules.remove(item)
+        del self.__stationModuleIndex[item.stationModule().id()]
         item.setParent(None)
         self.__setParentDirty()
         self.removeModules.emit(self, item)
@@ -318,12 +328,20 @@ class StationModulesGroup(QObject):
         '''
         return type(self)(self.toDict())
 
+    @TypeChecker(object, (StationModules, StationModule.StationModule))
+    def __contains__(self, station):
+        return station.id() in self.__stationModuleIndex
+
     def __iter__(self):
         return self.__stationModules.__iter__()
 
-    @TypeChecker(object, int)
+    @TypeChecker(object, (int, StationModule.StationModule))
     def __getitem__(self, index):
-        return self.__stationModules[index]
+        if isinstance(index, int):
+            return self.__stationModules[index]
+
+        else:
+            return self.__stationModuleIndex[index.id()]
 
     def __delitem__(self, index):
         self.remove(self.__stationModules[index])

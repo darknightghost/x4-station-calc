@@ -64,12 +64,18 @@ class AddModuleOperation(Operation):
             return False
 
         seleceted = seleceted[0]
-        if not isinstance(seleceted, ModuleGroupItem):
-            return False
+        if isinstance(seleceted, ModuleGroupItem):
+            self.__groupItem = seleceted
+            self.__moduleItems = None
+            self.__index = 0
 
-        #Do operation
-        self.__groupItem = seleceted
-        self.__moduleItems = None
+        elif isinstance(seleceted, ModuleItem):
+            self.__groupItem = seleceted.parent()
+            self.__moduleItems = None
+            self.__index = self.__groupItem.indexOfChild(seleceted) + 1
+
+        else:
+            return False
 
         return True
 
@@ -79,14 +85,19 @@ class AddModuleOperation(Operation):
         '''
         if self.__moduleItems == None:
             self.__moduleItems = []
+            i = 0
             for m in self.__modules:
-                self.__moduleItems.append(self.__groupItem.addStationModule(m))
+                self.__moduleItems.append(
+                    self.__groupItem.addStationModule(m, self.__index + i))
+                i += 1
 
             return True
 
         else:
+            i = 0
             for m in self.__moduleItems:
-                self.__groupItem.addStationModule(m)
+                self.__groupItem.addStationModule(m, self.__index + i)
+                i += 1
 
     def onUndo(self):
         '''

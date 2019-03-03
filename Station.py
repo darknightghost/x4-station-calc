@@ -311,6 +311,24 @@ class StationModulesGroup(QObject):
             self.__setParentDirty()
             self.addModules.emit(self, item)
 
+    @TypeChecker(object, int, StationModules)
+    def insert(self, index, item):
+        '''
+            Append item.
+        '''
+        if index < 0:
+            index = len(self.__stationModules) + 1 + index
+
+        try:
+            self.__stationModuleIndex[item.stationModule().id()] += item
+
+        except KeyError:
+            self.__stationModules.insert(index, item)
+            self.__stationModuleIndex[item.stationModule().id()] = item
+            item.setParent(self)
+            self.__setParentDirty()
+            self.addModules.emit(self, item)
+
     @TypeChecker(object, StationModules)
     def remove(self, item):
         '''
@@ -345,6 +363,9 @@ class StationModulesGroup(QObject):
 
     def __delitem__(self, index):
         self.remove(self.__stationModules[index])
+
+    def __len__(self):
+        return len(self.__stationModules)
 
     def __iadd__(self, l):
         for m in l:
@@ -550,6 +571,19 @@ class Station(QObject):
         self.setDirty()
         self.addGroup.emit(self, item)
 
+    @TypeChecker(object, int, StationModulesGroup)
+    def insert(self, index, item):
+        '''
+            Append item.
+        '''
+        if index < 0:
+            index = len(self.__stationModules) + 1 + index
+
+        item.setParent(self)
+        self.__stationModulesGroups.insert(index, item)
+        self.setDirty()
+        self.addGroup.emit(self, item)
+
     @TypeChecker(object, StationModulesGroup)
     def remove(self, item):
         '''
@@ -569,6 +603,9 @@ class Station(QObject):
 
     def __delitem__(self, index):
         self.remove(self.__stationModulesGroups[index])
+
+    def __len__(self):
+        return len(self.__stationModulesGroups)
 
     def __iadd__(self, l):
         for m in l:

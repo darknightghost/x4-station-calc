@@ -102,13 +102,13 @@ class ModuleItem(QTreeWidgetItem):
     #Signals
     updateData = pyqtSignal()
 
-    @TypeChecker(QTreeWidgetItem, Station.StationModules, QTreeWidgetItem)
-    def __init__(self, item, parent):
+    @TypeChecker(QTreeWidgetItem, Station.StationModules,
+                 (QTreeWidgetItem, type(None)))
+    def __init__(self, item, parent=None):
         super().__init__(parent)
         self.__item = item
         self.setText(0, item.stationModule().name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-        self.onAdd()
 
     def item(self):
         '''

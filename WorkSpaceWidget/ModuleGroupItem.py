@@ -46,25 +46,36 @@ class ModuleGroupItem(QTreeWidgetItem):
         self.__index = {}
 
         for m in item:
-            self.__index[m.id()] = ModuleItem(m, self)
+            item = ModuleItem(m, self)
+            self.__index[m.id()] = item
+            item.onAdd()
 
         self.setExpanded(True)
 
-    @TypeChecker(QTreeWidgetItem, (StationModule.StationModule, ModuleItem))
-    def addStationModule(self, m):
+    @TypeChecker(QTreeWidgetItem, (StationModule.StationModule, ModuleItem),
+                 int)
+    def addStationModule(self, m, index=-1):
         '''
             Add station module.
         '''
+        if index < 0:
+            index = self.childCount() + 1 + index
+
         if isinstance(m, StationModule.StationModule):
             m = Station.StationModules(m.id())
 
             if m in self.__item:
-                self.__item.append(m)
+                self.__item.insert(index, m)
+                self.treeWidget().setCurrentItem(self.__index[m.id()])
                 return self.__index[m.id()]
 
             else:
-                self.__item.append(m)
-                self.__index[m.id()] = ModuleItem(m, self)
+                self.__item.insert(index, m)
+                item = ModuleItem(m, None)
+                self.__index[m.id()] = item
+                self.insertChild(index, item)
+                item.onAdd()
+                self.treeWidget().setCurrentItem(item)
                 return self.__index[m.id()]
 
         else:
@@ -72,10 +83,11 @@ class ModuleGroupItem(QTreeWidgetItem):
                 m.item().increase()
 
             else:
-                self.__item.append(m.item())
+                self.__item.insert(index, m.item())
                 self.__index[m.item().id()] = m
-                self.addChild(m)
+                self.insertChild(index, m)
                 m.onAdd()
+                self.treeWidget().setCurrentItem(m)
             return m
 
     @TypeChecker(QTreeWidgetItem, ModuleItem)

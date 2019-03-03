@@ -168,20 +168,15 @@ class WorkSpaceWidget(QTreeWidget):
         selected = self.selectedItems()
 
         if len(selected) == 1:
-            #Add module
-            if isinstance(selected[0], ModuleGroupItem):
-                self.changeEnableAddState.emit(True)
-
-            else:
-                self.changeEnableAddState.emit(False)
-
-            #Paste
+            #Add module & paste
             if isinstance(selected[0], ModuleGroupItem) or isinstance(
                     selected[0], ModuleItem):
                 self.changePasteState.emit(True)
+                self.changeEnableAddState.emit(True)
 
             else:
                 self.changePasteState.emit(False)
+                self.changeEnableAddState.emit(False)
 
         else:
             self.changeEnableAddState.emit(False)

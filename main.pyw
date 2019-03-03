@@ -32,21 +32,37 @@ except ImportError:
     print("PyQt5 is required!")
     exit(-1)
 
-import MainWindow
 import Common
 from Common import *
-MainWindow = MainWindow.MainWindow
 
 
 def main():
-    stationPath = None
-
+    #App
     app = QApplication(sys.argv)
-    QApplication.setApplicationName("x4-station-caculator")
+    QApplication.setApplicationName("X4 Station Caculator")
     QApplication.setApplicationVersion(str(VERSION))
-    parser = QCommandLineParser()
-    #app.setStyle(QStyleFactory.create("WindowsXP"))
 
+    #Arguments
+    parser = QCommandLineParser()
+    parser.setApplicationDescription("X4:Foundations station caculator.")
+    parser.addHelpOption()
+    parser.addVersionOption()
+    parser.addPositionalArgument("station-file", "Station file to open.")
+    parser.process(app)
+
+    pargs = parser.positionalArguments()
+
+    if len(pargs) == 1:
+        stationPath = pargs[0]
+
+    else:
+
+        stationPath = None
+
+    #Main window
+
+    import MainWindow
+    MainWindow = MainWindow.MainWindow
     w = MainWindow(None, stationPath)
     w.show()
 

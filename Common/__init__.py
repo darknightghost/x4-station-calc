@@ -21,8 +21,6 @@ import inspect
 import functools
 from distutils.version import StrictVersion
 
-import StringTable
-
 VERSION = StrictVersion("0.0.1")
 RECORD_VERSION = StrictVersion("0.0.1")
 
@@ -76,6 +74,9 @@ def addIndent(s, indent=" " * 4):
         ret += "%s%s\n" % (indent, l)
 
     return ret[:-1]
+
+
+import StringTable
 
 
 def testSetLocale():

@@ -36,7 +36,8 @@ class ModuleGroupItem(QTreeWidgetItem):
     '''
     updateData = pyqtSignal()
 
-    @TypeChecker(QTreeWidgetItem, Station.StationModulesGroup, QTreeWidgetItem)
+    @TypeChecker(QTreeWidgetItem, Station.StationModulesGroup,
+                 (QTreeWidgetItem, type(None)))
     def __init__(self, item, parent):
         super().__init__(parent)
         self.__item = item

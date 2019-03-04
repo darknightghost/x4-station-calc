@@ -29,6 +29,7 @@ import StationModule
 import WorkSpaceWidget
 
 from WorkSpaceWidget.ModuleGroupItem import *
+from WorkSpaceWidget.ModuleItem import *
 from WorkSpaceWidget.Operations import *
 
 
@@ -47,10 +48,21 @@ class NewGroupOperation(Operation):
             Do operation, return True if success.
         '''
         if self.__group == None:
-            self.__group = self._workSpace.operationAddGroup()
+            selected = self._workSpace.currentItem()
+            if isinstance(selected, ModuleGroupItem):
+                self.__index = selected.parent().indexOfChild(selected) + 1
+
+            elif isinstance(selected, ModuleItem):
+                self.__index = selected.parent().parent().indexOfChild(
+                    selected.parent()) + 1
+
+            else:
+                self.__index = 0
+
+            self.__group = self._workSpace.operationAddGroup(self.__index)
 
         else:
-            self._workSpace.operationAddGroup(self.__group)
+            self._workSpace.operationAddGroup(self.__index, self.__group)
 
         return True
 

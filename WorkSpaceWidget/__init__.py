@@ -128,19 +128,24 @@ class WorkSpaceWidget(QTreeWidget):
         op = NewGroupOperation()
         self.doOperation(op)
 
-    @TypeChecker(QTreeWidget, (type(None), ModuleGroupItem))
-    def operationAddGroup(self, g=None):
+    @TypeChecker(QTreeWidget, int, (type(None), ModuleGroupItem))
+    def operationAddGroup(self, index=-1, g=None):
         '''
             Add new group.
         '''
+        if index < 0:
+            index += self.__modulesItem.childCount() + 1
+
         if g == None:
             g = Station.StationModulesGroup()
-            self.__station.append(g)
-            return ModuleGroupItem(g, self.__modulesItem)
+            self.__station.insert(index, g)
+            ret = ModuleGroupItem(g, None)
+            self.__modulesItem.insertChild(index, ret)
+            return ret
 
         else:
-            self.__station.append(g.item())
-            self.__modulesItem.addChild(g)
+            self.__station.insert(index, g.item())
+            self.__modulesItem.insertChild(index, g)
             return g
 
     @TypeChecker(QTreeWidget, ModuleGroupItem)

@@ -340,6 +340,16 @@ class StationModulesGroup(QObject):
         self.__setParentDirty()
         self.removeModules.emit(self, item)
 
+    @TypeChecker(QObject, int, int)
+    def swap(self, index1, index2):
+        '''
+            Swap value at index1 and index2
+        '''
+        self.__stationModules[index1], self.__stationModules[
+            index2] = self.__stationModules[index2], self.__stationModules[
+                index1]
+        self.__setParentDirty()
+
     def copy(self):
         '''
             Copy a new instance.
@@ -561,7 +571,7 @@ class Station(QObject):
 
         self.__dirty = False
 
-    @TypeChecker(object, StationModulesGroup)
+    @TypeChecker(QObject, StationModulesGroup)
     def append(self, item):
         '''
             Append item.
@@ -571,7 +581,7 @@ class Station(QObject):
         self.setDirty()
         self.addGroup.emit(self, item)
 
-    @TypeChecker(object, int, StationModulesGroup)
+    @TypeChecker(QObject, int, StationModulesGroup)
     def insert(self, index, item):
         '''
             Append item.
@@ -584,7 +594,7 @@ class Station(QObject):
         self.setDirty()
         self.addGroup.emit(self, item)
 
-    @TypeChecker(object, StationModulesGroup)
+    @TypeChecker(QObject, StationModulesGroup)
     def remove(self, item):
         '''
             Remove item.
@@ -593,6 +603,16 @@ class Station(QObject):
         item.setParent(None)
         self.setDirty()
         self.removeGroup.emit(self, item)
+
+    @TypeChecker(QObject, int, int)
+    def swap(self, index1, index2):
+        '''
+            Swap value at index1 and index2
+        '''
+        self.__stationModulesGroups[index1], self.__stationModulesGroups[
+            index2] = self.__stationModulesGroups[
+                index2], self.__stationModulesGroups[index1]
+        self.__setParentDirty()
 
     def __iter__(self):
         return self.__stationModulesGroups.__iter__()

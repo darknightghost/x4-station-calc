@@ -30,14 +30,11 @@ import WorkSpaceWidget
 
 class ModuleItemWidget(QWidget):
     #Signals
-    moveUp = pyqtSignal()
-    moveDown = pyqtSignal()
-    remove = pyqtSignal()
-
-    @TypeChecker(QWidget, Station.StationModules, QTreeWidget)
-    def __init__(self, item, treeWidget):
+    @TypeChecker(QWidget, Station.StationModules, QTreeWidget, QTreeWidgetItem)
+    def __init__(self, item, treeWidget, treeItem):
         super().__init__()
         self.__treeWidget = treeWidget
+        self.__treeItem = treeItem
         self.__item = item
         self.__layout = QHBoxLayout(self)
         self.setLayout(self.__layout)
@@ -59,10 +56,14 @@ class ModuleItemWidget(QWidget):
         self.__btnUp = QSquareButton("↑", self)
         self.__layout.addWidget(self.__btnUp)
         self.__btnUp.clicked.connect(self.__onMoveUp)
+        if self.__item == self.__item.parent()[0]:
+            self.__btnUp.setEnabled(False)
 
         self.__btnDown = QSquareButton("↓", self)
         self.__layout.addWidget(self.__btnDown)
         self.__btnDown.clicked.connect(self.__onMoveDown)
+        if self.__item == self.__item.parent()[-1]:
+            self.__btnDown.setEnabled(False)
 
         self.__btnRemove = QSquareButton("×", self)
         self.__layout.addWidget(self.__btnRemove)
@@ -86,13 +87,19 @@ class ModuleItemWidget(QWidget):
         self.__spinboxAmount.setValue(self.__item.amount())
 
     def __onMoveUp(self):
-        self.moveUp.emit()
+        from WorkSpaceWidget.Operations import SwapModuleOperation as SwapModuleOperation
+        index = self.__treeItem.parent().indexOfChild(self.__treeItem)
+        op = SwapModuleOperation(self.__treeItem.parent(), index, index - 1)
+        self.__treeWidget.doOperation(op)
 
     def __onMoveDown(self):
-        self.moveDown.emit()
+        from WorkSpaceWidget.Operations import SwapModuleOperation as SwapModuleOperation
+        index = self.__treeItem.parent().indexOfChild(self.__treeItem)
+        op = SwapModuleOperation(self.__treeItem.parent(), index, index + 1)
+        self.__treeWidget.doOperation(op)
 
     def __onRemove(self):
-        self.remove.emit()
+        pass
 
 
 class ModuleItem(QTreeWidgetItem):
@@ -110,6 +117,8 @@ class ModuleItem(QTreeWidgetItem):
         self.setText(0, item.stationModule().name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
 
+        self.onAdd()
+
     def item(self):
         '''
             Get Item.
@@ -117,7 +126,8 @@ class ModuleItem(QTreeWidgetItem):
         return self.__item
 
     def onAdd(self):
-        self.__itemWidget = ModuleItemWidget(self.__item, self.treeWidget())
+        self.__itemWidget = ModuleItemWidget(self.__item, self.treeWidget(),
+                                             self)
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
         self.__itemWidget.show()
 

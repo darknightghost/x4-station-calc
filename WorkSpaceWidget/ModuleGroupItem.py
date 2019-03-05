@@ -105,6 +105,23 @@ class ModuleGroupItem(QTreeWidgetItem):
             self.removeChild(m)
             self.__item.remove(item)
 
+    @TypeChecker(QTreeWidgetItem, int, int)
+    def swapStationModule(self, index1, index2):
+        '''
+            Swap
+        '''
+        if index1 < index2:
+            index1, index2 = index2, index1
+
+        self.item().swap(index1, index2)
+
+        item2 = self.takeChild(index2)
+        self.insertChild(index1, item2)
+        item1 = self.takeChild(index1 - 1)
+        self.insertChild(index2, item1)
+        item1.onAdd()
+        item2.onAdd()
+
     def item(self):
         '''
             Get item.

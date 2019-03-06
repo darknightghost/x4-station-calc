@@ -41,6 +41,7 @@ def main():
     app = QApplication(sys.argv)
     QApplication.setApplicationName("X4 Station Caculator")
     QApplication.setApplicationVersion(str(VERSION))
+    QApplication.setStyle(QStyleFactory.create("fusion"))
 
     #Arguments
     parser = QCommandLineParser()

@@ -318,7 +318,7 @@ class MainWindow(QMainWindow):
     def __loadWindow(self):
         if self.CONFIG_PATH.exists():
             with open(str(self.CONFIG_PATH)) as f:
-                self.__config = json.loads(f.read())
+                self.__config = json.loads(f.read(), encoding="utf-8")
 
         else:
             self.__config = {}

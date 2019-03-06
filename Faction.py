@@ -31,7 +31,7 @@ def __initialize():
     factionsDir = pathlib.Path(__file__).parent / "factions"
     for fname in factionsDir.glob("*.json"):
         with open(str(fname)) as f:
-            data = json.loads(f.read())
+            data = json.loads(f.read(), encoding="utf-8")
             faction = Faction(data)
             __FACTIONS[faction.id()] = faction
 

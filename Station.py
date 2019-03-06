@@ -482,7 +482,7 @@ class Station(QObject):
 
             #Parse json
             try:
-                data = json.loads(s)
+                data = json.loads(s, encoding="utf-8")
 
             except json.decoder.JSONDecodeError:
                 raise StationParseException(

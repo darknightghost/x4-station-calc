@@ -33,7 +33,7 @@ def __initialize():
     for pname in productsDir.glob("*.json"):
         print("Loading data file \"%s\"..." % (str(pname)))
         with open(str(pname)) as f:
-            data = json.loads(f.read())
+            data = json.loads(f.read(), encoding="utf-8")
             product = Product(data)
             __PRODUCTS[product.id()] = product
 

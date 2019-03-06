@@ -68,6 +68,7 @@ class ModuleGroupItem(QTreeWidgetItem):
             if m in self.__item:
                 self.__item.insert(index, m)
                 self.treeWidget().setCurrentItem(self.__index[m.id()])
+                self.treeWidget().updateItemButtons.emit()
                 return self.__index[m.id()]
 
             else:
@@ -77,6 +78,7 @@ class ModuleGroupItem(QTreeWidgetItem):
                 self.insertChild(index, item)
                 item.onAdd()
                 self.treeWidget().setCurrentItem(item)
+                self.treeWidget().updateItemButtons.emit()
                 return self.__index[m.id()]
 
         else:
@@ -89,14 +91,16 @@ class ModuleGroupItem(QTreeWidgetItem):
                 self.insertChild(index, m)
                 m.onAdd()
                 self.treeWidget().setCurrentItem(m)
+
+            self.treeWidget().updateItemButtons.emit()
             return m
 
-    @TypeChecker(QTreeWidgetItem, ModuleItem)
-    def removeStationModule(self, m):
+    @TypeChecker(QTreeWidgetItem, ModuleItem, bool)
+    def removeStationModule(self, m, removeAll=False):
         '''
             Remove station module.
         '''
-        if m.item().amount() > 1:
+        if m.item().amount() > 1 and not removeAll:
             m.item().decrease()
 
         else:
@@ -104,6 +108,8 @@ class ModuleGroupItem(QTreeWidgetItem):
             del self.__index[m.item().id()]
             self.removeChild(m)
             self.__item.remove(item)
+
+        self.treeWidget().updateItemButtons.emit()
 
     @TypeChecker(QTreeWidgetItem, int, int)
     def swapStationModule(self, index1, index2):
@@ -115,9 +121,11 @@ class ModuleGroupItem(QTreeWidgetItem):
 
         self.item().swap(index1, index2)
 
-        item2 = self.takeChild(index2)
+        item2 = self.child(index2)
+        self.removeChild(item2)
         self.insertChild(index1, item2)
-        item1 = self.takeChild(index1 - 1)
+        item1 = self.child(index1 - 1)
+        self.removeChild(item1)
         self.insertChild(index2, item1)
         item1.onAdd()
         item2.onAdd()

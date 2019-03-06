@@ -35,9 +35,10 @@ class ModulesItem(QTreeWidgetItem):
         super().__init__(parent)
         self.setText(0, StringTable.getString("STR_STATION_MODULES"))
         self.setFlags(Qt.ItemIsEnabled)
-        self.__loadData(parent)
+        self.__station = parent.station()
+        self.__loadData()
         self.setExpanded(True)
 
-    def __loadData(self, parent):
-        for g in parent.station():
+    def __loadData(self):
+        for g in self.__station:
             self.addChild(ModuleGroupItem(g, self))

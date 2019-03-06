@@ -45,6 +45,7 @@ class WorkSpaceWidget(QTreeWidget):
     changeCopyState = pyqtSignal(bool)
     changePasteState = pyqtSignal(bool)
     changeRemovePasteState = pyqtSignal(bool)
+    updateItemButtons = pyqtSignal()
 
     @TypeChecker(QTreeWidget, QMainWindow, Station.Station)
     def __init__(self, parent, station):
@@ -58,6 +59,8 @@ class WorkSpaceWidget(QTreeWidget):
         self.itemChanged.connect(self.__onItemChanged)
         self.itemSelectionChanged.connect(self.__onItemSelectionChanged)
         self.itemClicked.connect(self.__onItemClicked)
+
+        self.setStyleSheet("QTreeWidget::item{height:28px}")
 
         self.__modulesItem = ModulesItem(self)
         self.addTopLevelItem(self.__modulesItem)
@@ -126,6 +129,13 @@ class WorkSpaceWidget(QTreeWidget):
             Add new Group.
         '''
         op = NewGroupOperation()
+        self.doOperation(op)
+
+    def remove(self):
+        '''
+            Remove selected.
+        '''
+        op = RemoveOperation()
         self.doOperation(op)
 
     @TypeChecker(QTreeWidget, int, (type(None), ModuleGroupItem))

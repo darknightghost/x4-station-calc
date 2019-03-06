@@ -452,8 +452,11 @@ class MainWindow(QMainWindow):
             self.__editCopyAction.setEnabled)
         self.centralWidget().changePasteState.connect(
             self.__editPasteAction.setEnabled)
+
         self.centralWidget().changeRemovePasteState.connect(
             self.__editRemoveAction.setEnabled)
+        self.__editRemoveAction.triggered.connect(self.centralWidget().remove)
+
         self.__moduleListWidget.operation.connect(
             self.centralWidget().doOperation)
 

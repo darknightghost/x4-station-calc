@@ -44,6 +44,7 @@ class ModuleItemWidget(QWidget):
         margins.setTop(0)
         margins.setBottom(0)
         self.__layout.setContentsMargins(margins)
+        self.setMaximumHeight(28)
 
         self.__layout.addStretch()
 
@@ -56,14 +57,10 @@ class ModuleItemWidget(QWidget):
         self.__btnUp = QSquareButton("↑", self)
         self.__layout.addWidget(self.__btnUp)
         self.__btnUp.clicked.connect(self.__onMoveUp)
-        if self.__item == self.__item.parent()[0]:
-            self.__btnUp.setEnabled(False)
 
         self.__btnDown = QSquareButton("↓", self)
         self.__layout.addWidget(self.__btnDown)
         self.__btnDown.clicked.connect(self.__onMoveDown)
-        if self.__item == self.__item.parent()[-1]:
-            self.__btnDown.setEnabled(False)
 
         self.__btnRemove = QSquareButton("×", self)
         self.__layout.addWidget(self.__btnRemove)
@@ -71,6 +68,22 @@ class ModuleItemWidget(QWidget):
 
         self.__layout.addStretch()
         self.__item.amountChanged.connect(self.__onItemAmountChanged)
+
+        self.__onUpdateBtn()
+        self.__treeWidget.updateItemButtons.connect(self.__onUpdateBtn)
+
+    def __onUpdateBtn(self):
+        if self.__item == self.__item.parent()[0]:
+            self.__btnUp.setEnabled(False)
+
+        else:
+            self.__btnUp.setEnabled(True)
+
+        if self.__item == self.__item.parent()[-1]:
+            self.__btnDown.setEnabled(False)
+
+        else:
+            self.__btnDown.setEnabled(True)
 
     @TypeChecker(QWidget, int)
     def __onSpinAmountChanged(self, n):
@@ -99,7 +112,9 @@ class ModuleItemWidget(QWidget):
         self.__treeWidget.doOperation(op)
 
     def __onRemove(self):
-        pass
+        from WorkSpaceWidget.Operations import RemoveOperation as RemoveOperation
+        op = RemoveOperation([self.__treeItem])
+        self.__treeWidget.doOperation(op)
 
 
 class ModuleItem(QTreeWidgetItem):
@@ -116,8 +131,6 @@ class ModuleItem(QTreeWidgetItem):
         self.__item = item
         self.setText(0, item.stationModule().name())
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-
-        self.onAdd()
 
     def item(self):
         '''

@@ -98,3 +98,4 @@ from WorkSpaceWidget.Operations.ChangeGroupNameOperation import *
 from WorkSpaceWidget.Operations.AddModuleOperation import *
 from WorkSpaceWidget.Operations.ChangeModuleAmountOperation import *
 from WorkSpaceWidget.Operations.SwapModuleOperation import *
+from WorkSpaceWidget.Operations.RemoveOperation import *

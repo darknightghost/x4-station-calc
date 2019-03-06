@@ -45,7 +45,7 @@ def __initialize():
 
         for sname in moduleDir.glob("*.json"):
             print("Loading data file \"%s\"..." % (str(sname)))
-            with open(str(sname)) as f:
+            with open(str(sname), encoding="utf-8") as f:
                 data = json.loads(f.read(), encoding="utf-8")
                 m = __STATION_MODULE_TYPE[t][1](data)
                 __STATION_MODULES[m.id()] = m

@@ -472,7 +472,7 @@ class Station(QObject):
             #Load file
             self.__dirty = False
             try:
-                f = open(path)
+                f = open(path, encoding="utf-8")
                 s = f.read()
 
             except Exception:
@@ -563,7 +563,7 @@ class Station(QObject):
 
         #Write json
         try:
-            f = open(self.__path, "w")
+            f = open(self.__path, "w", encoding="utf-8")
             f.write(s)
             f.close()
         except Exception:

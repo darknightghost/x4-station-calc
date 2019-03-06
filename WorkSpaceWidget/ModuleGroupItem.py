@@ -107,6 +107,7 @@ class ModuleGroupItem(QTreeWidgetItem):
             item = m.item()
             del self.__index[m.item().id()]
             self.removeChild(m)
+            m.onRemove()
             self.__item.remove(item)
 
         self.treeWidget().updateItemButtons.emit()
@@ -123,9 +124,11 @@ class ModuleGroupItem(QTreeWidgetItem):
 
         item2 = self.child(index2)
         self.removeChild(item2)
+        item2.onRemove()
         self.insertChild(index1, item2)
         item1 = self.child(index1 - 1)
         self.removeChild(item1)
+        item1.onRemove()
         self.insertChild(index2, item1)
         item1.onAdd()
         item2.onAdd()

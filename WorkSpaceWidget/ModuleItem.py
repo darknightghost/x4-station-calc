@@ -115,6 +115,9 @@ class ModuleItemWidget(QWidget):
         from WorkSpaceWidget.Operations import RemoveOperation as RemoveOperation
         op = RemoveOperation([self.__treeItem])
         self.__treeWidget.doOperation(op)
+        
+    def closeEvent(self, event):
+        self.__treeWidget.updateItemButtons.disconnect(self.__onUpdateBtn)
 
 
 class ModuleItem(QTreeWidgetItem):
@@ -143,6 +146,9 @@ class ModuleItem(QTreeWidgetItem):
                                              self)
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
         self.__itemWidget.show()
+        
+    def onRemove(self):
+        self.__itemWidget.close()
 
     @TypeChecker(QTreeWidgetItem, int)
     def onClicked(self, column):

@@ -32,7 +32,7 @@ def __initialize():
     productsDir = pathlib.Path(__file__).parent / "products"
     for pname in productsDir.glob("*.json"):
         print("Loading data file \"%s\"..." % (str(pname)))
-        with open(str(pname)) as f:
+        with open(str(pname), encoding="utf-8") as f:
             data = json.loads(f.read(), encoding="utf-8")
             product = Product(data)
             __PRODUCTS[product.id()] = product

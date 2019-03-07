@@ -198,8 +198,8 @@ class WorkSpaceWidget(QTreeWidget):
             self.changePasteState.emit(False)
 
         #Copy/cut/remove
-        copyable = True
-        removeable = True
+        copyable = len(selected) > 0
+        removeable = len(selected) > 0
         for s in selected:
             if isinstance(s, ModuleGroupItem):
                 try:

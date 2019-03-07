@@ -203,6 +203,27 @@ class StationModules(QObject):
         return self
 
 
+class StationModulesMimeData(QMimeData):
+    '''
+        Mime data of StationModules.
+    '''
+
+    @TypeChecker(QMimeData, list)
+    def __init__(self, moduleList):
+        super().__init__()
+        l = []
+        for m in moduleList:
+            if not isinstance(m, StationModules):
+                raise TypeError(
+                    "All members in moduleList should be the instance of StationModules!"
+                )
+
+            l.append(m.toDict)
+
+        data = json.dumps(l, ensure_ascii=False).encode(encoding="utf-8")
+        self.setData("text/StationModulesList", data)
+
+
 class StationModulesGroup(QObject):
     '''
         Station module group.
@@ -384,6 +405,27 @@ class StationModulesGroup(QObject):
                     "Type of item should be %s." % (str(StationModules)))
             m.setParent(self)
             self.append(m)
+
+
+class StationModulesGroupsMimeData(QMimeData):
+    '''
+        Mime data of StationModulesGroup.
+    '''
+
+    @TypeChecker(QMimeData, list)
+    def __init__(self, modulesGroupList):
+        super().__init__()
+        l = []
+        for g in modulesGroupList:
+            if not isinstance(g, StationModulesGroup):
+                raise TypeError(
+                    "All members in modulesGroupList should be the instance of StationModulesGroup!"
+                )
+
+            l.append(g.toDict)
+
+        data = json.dumps(l, ensure_ascii=False).encode(encoding="utf-8")
+        self.setData("text/StationModulesGroupList", data)
 
 
 class Station(QObject):

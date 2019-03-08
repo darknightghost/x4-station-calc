@@ -34,6 +34,7 @@ import ModuleListWidget
 import InfoWidget
 import DockWidget
 import LicenseDialog
+import AboutDialog
 
 
 class MainWindow(QMainWindow):
@@ -78,6 +79,7 @@ class MainWindow(QMainWindow):
         self.__initEditMenu()
         self.__initSettingMenu()
         self.__initViewMenu()
+        self.__initHelpMenu()
         self.__initWidgets()
 
         #Open file
@@ -222,6 +224,15 @@ class MainWindow(QMainWindow):
             StringTable.getString("MENU_VIEW_INFO"), False)
         self.__viewInfoMenu.setEnabled(True)
         self.__viewMenu.addAction(self.__viewInfoMenu)
+
+    def __initHelpMenu(self):
+        self.__helpMenu = QMenu(StringTable.getString("MENU_HELP"))
+        self.menuBar().addMenu(self.__helpMenu)
+
+        self.__helpAboutAction = QAction(
+            StringTable.getString("MENU_HELP_ABOUT"))
+        self.__helpMenu.addAction(self.__helpAboutAction)
+        self.__helpAboutAction.triggered.connect(self.onAbout)
 
     def __initWidgets(self):
         self.__infoWidget = self.__initSingleDockWidget(
@@ -396,6 +407,9 @@ class MainWindow(QMainWindow):
 
     def onMenuFileExit(self, state):
         self.close()
+
+    def onAbout(self):
+        AboutDialog.AboutDialog().exec()
 
     #Events
     @TypeChecker(QMainWindow, QCloseEvent)

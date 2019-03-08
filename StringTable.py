@@ -161,6 +161,14 @@ __STRING_TABLE = {
         "en_US": "&Info",
         "zh_CN": "信息(&I)"
     },
+    "MENU_HELP": {
+        "en_US": "&Help",
+        "zh_CN": "帮助(&H)"
+    },
+    "MENU_HELP_ABOUT": {
+        "en_US": "&About",
+        "zh_CN": "关于(&A)"
+    },
 
     #File dialog
     "TITLE_OPEN_FILE": {
@@ -356,6 +364,16 @@ __STRING_TABLE = {
     "STR_INTERMEDIATES": {
         "en_US": "Intermediates",
         "zh_CN": "中间产品"
+    },
+
+    #About
+    "STR_ABOUT_TITLE": {
+        "en_US": "About",
+        "zh_CN": "关于"
+    },
+    "STR_ABOUT": {
+        "en_US": "%s\nVersion : %s",
+        "zh_CN": "%s\n版本 : %s"
     },
     #"": {
     #    "en_US": "",

@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import *
 import pathlib
 import json
 import locale
+import sys
 
 import StringTable
 import Station
@@ -32,6 +33,7 @@ import WorkSpaceWidget
 import ModuleListWidget
 import InfoWidget
 import DockWidget
+import LicenseDialog
 
 
 class MainWindow(QMainWindow):
@@ -321,6 +323,10 @@ class MainWindow(QMainWindow):
                 self.__config = json.loads(f.read(), encoding="utf-8")
 
         else:
+            licenseDlg = LicenseDialog.LicenseDialog()
+            if licenseDlg.exec() != QDialog.Accepted:
+                sys.exit(0)
+
             self.__config = {}
 
     #Slots

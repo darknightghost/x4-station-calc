@@ -44,7 +44,7 @@ class WorkSpaceWidget(QTreeWidget):
     changeRedoState = pyqtSignal(bool)
     changeCopyState = pyqtSignal(bool)
     changePasteState = pyqtSignal(bool)
-    changeRemovePasteState = pyqtSignal(bool)
+    changeRemoveState = pyqtSignal(bool)
     updateItemButtons = pyqtSignal()
 
     @TypeChecker(QTreeWidget, QMainWindow, Station.Station)
@@ -55,6 +55,7 @@ class WorkSpaceWidget(QTreeWidget):
         self.setColumnCount(2)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.currentItemChanged.connect(self.__onCurrentItemChanged)
 
         self.itemChanged.connect(self.__onItemChanged)
         self.itemSelectionChanged.connect(self.__onItemSelectionChanged)
@@ -68,8 +69,13 @@ class WorkSpaceWidget(QTreeWidget):
         self.__summarysItem = SummarysItem(self)
         self.addTopLevelItem(self.__summarysItem)
 
+        QApplication.clipboard().dataChanged.connect(
+            self.__clipboardDataChanged)
+
         self.__operationDone = []
         self.__operationUndone = []
+
+        self.__clipboardDataChanged()
 
     def initMenuState(self):
         self.changeEnableAddState.emit(False)
@@ -78,7 +84,7 @@ class WorkSpaceWidget(QTreeWidget):
         self.changeRedoState.emit(False)
         self.changeCopyState.emit(False)
         self.changePasteState.emit(False)
-        self.changeRemovePasteState.emit(False)
+        self.changeRemoveState.emit(False)
 
     def station(self):
         '''
@@ -124,6 +130,43 @@ class WorkSpaceWidget(QTreeWidget):
             self.__operationUndone.append(op)
             self.__updateUndoRedo()
 
+    def copy(self):
+        '''
+            Copy selected.
+        '''
+        selected = self.selectedItems()
+        if len(selected) <= 0:
+            return False
+
+        for item in selected:
+            if type(item) != type(selected[0]) or not isinstance(
+                    item, (ModuleGroupItem, ModuleItem)):
+                return False
+
+        l = []
+        for item in selected:
+            l.append(item.item())
+
+        if isinstance(l[0], Station.StationModulesGroup):
+            l.sort(key=lambda v: self.station().index(v))
+            mime = Station.StationModulesGroupsMimeData(l)
+
+        else:
+            l.sort(key=lambda v: v.parent().index(v))
+            mime = Station.StationModulesMimeData(l)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(mime)
+
+        return True
+
+    def cut(self):
+        '''
+            Cut selected.
+        '''
+        if self.copy():
+            self.remove()
+
     def addGroup(self):
         '''
             Add new Group.
@@ -138,7 +181,15 @@ class WorkSpaceWidget(QTreeWidget):
         op = RemoveOperation()
         self.doOperation(op)
 
-    @TypeChecker(QTreeWidget, int, (type(None), ModuleGroupItem))
+    def paste(self):
+        '''
+            Paste.
+        '''
+        op = PasteOperation()
+        self.doOperation(op)
+
+    @TypeChecker(QTreeWidget, int,
+                 (type(None), ModuleGroupItem, Station.StationModulesGroup))
     def operationAddGroup(self, index=-1, g=None):
         '''
             Add new group.
@@ -151,15 +202,26 @@ class WorkSpaceWidget(QTreeWidget):
             self.__station.insert(index, g)
             ret = ModuleGroupItem(g, None)
             self.__modulesItem.insertChild(index, ret)
+            ret.onAdd()
             return ret
 
-        else:
+        elif isinstance(g, ModuleGroupItem):
             self.__station.insert(index, g.item())
             self.__modulesItem.insertChild(index, g)
+            g.onAdd()
             return g
+
+        elif isinstance(g, Station.StationModulesGroup):
+            self.__station.insert(index, g)
+            ret = ModuleGroupItem(g, self.__modulesItem)
+            self.__modulesItem.removeChild(ret)
+            self.__modulesItem.insertChild(index, ret)
+            ret.onAdd()
+            return ret
 
     @TypeChecker(QTreeWidget, ModuleGroupItem)
     def operationRemoveGroup(self, g):
+        g.onRemove()
         self.__station.remove(g.item())
         self.__modulesItem.removeChild(g)
 
@@ -186,16 +248,13 @@ class WorkSpaceWidget(QTreeWidget):
             #Add module & paste
             if isinstance(selected[0], ModuleGroupItem) or isinstance(
                     selected[0], ModuleItem):
-                self.changePasteState.emit(True)
                 self.changeEnableAddState.emit(True)
 
             else:
-                self.changePasteState.emit(False)
                 self.changeEnableAddState.emit(False)
 
         else:
             self.changeEnableAddState.emit(False)
-            self.changePasteState.emit(False)
 
         #Copy/cut/remove
         copyable = len(selected) > 0
@@ -223,7 +282,7 @@ class WorkSpaceWidget(QTreeWidget):
                 break
 
         self.changeCopyState.emit(copyable)
-        self.changeRemovePasteState.emit(removeable)
+        self.changeRemoveState.emit(removeable)
 
     @TypeChecker(QTreeWidget, QCloseEvent)
     def closeEvent(self, event):
@@ -234,11 +293,36 @@ class WorkSpaceWidget(QTreeWidget):
         self.changeRedoState.emit(False)
         self.changeCopyState.emit(False)
         self.changePasteState.emit(False)
-        self.changeRemovePasteState.emit(False)
+        self.changeRemoveState.emit(False)
         super().closeEvent(event)
 
     @TypeChecker(QTreeWidget, QContextMenuEvent)
     def contextMenuEvent(self, event):
         #Popup menu.
         self.parent().editMenu().exec(event.globalPos())
-        super().contextMenuEvent(event)
+        try:
+            super().contextMenuEvent(event)
+
+        except RuntimeError:
+            pass
+
+    def __onCurrentItemChanged(self, current, previous):
+        self.__clipboardDataChanged()
+
+    def __clipboardDataChanged(self):
+        clipboard = QApplication.clipboard()
+        mimeData = clipboard.mimeData()
+        if (mimeData.hasFormat(Station.StationModulesGroupsMimeData.mimeType())
+                or mimeData.hasFormat(
+                    Station.StationModulesMimeData.mimeType())) and isinstance(
+                        self.currentItem(), (ModuleItem, ModuleGroupItem)):
+            self.changePasteState.emit(True)
+            return
+
+        elif isinstance(self.currentItem(),
+                        ModulesItem) and mimeData.hasFormat(
+                            Station.StationModulesGroupsMimeData.mimeType()):
+            self.changePasteState.emit(True)
+            return
+
+        self.changePasteState.emit(False)

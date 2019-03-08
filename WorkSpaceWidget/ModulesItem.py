@@ -34,7 +34,7 @@ class ModulesItem(QTreeWidgetItem):
     def __init__(self, parent):
         super().__init__(parent)
         self.setText(0, StringTable.getString("STR_STATION_MODULES"))
-        self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
         self.__station = parent.station()
         self.__loadData()
         self.setExpanded(True)

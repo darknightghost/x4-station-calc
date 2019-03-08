@@ -99,3 +99,4 @@ from WorkSpaceWidget.Operations.AddModuleOperation import *
 from WorkSpaceWidget.Operations.ChangeModuleAmountOperation import *
 from WorkSpaceWidget.Operations.SwapModuleOperation import *
 from WorkSpaceWidget.Operations.RemoveOperation import *
+from WorkSpaceWidget.Operations.PasteOperation import *

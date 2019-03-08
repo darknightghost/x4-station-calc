@@ -218,10 +218,16 @@ class StationModulesMimeData(QMimeData):
                     "All members in moduleList should be the instance of StationModules!"
                 )
 
-            l.append(m.toDict)
+            l.append(m.toDict())
 
         data = json.dumps(l, ensure_ascii=False).encode(encoding="utf-8")
-        self.setData("text/StationModulesList", data)
+        self.setData(StationModulesMimeData.mimeType(), data)
+
+    def mimeType():
+        '''
+            Get mime type.
+        '''
+        return "text/StationModulesList"
 
 
 class StationModulesGroup(QObject):
@@ -361,6 +367,13 @@ class StationModulesGroup(QObject):
         self.__setParentDirty()
         self.removeModules.emit(self, item)
 
+    @TypeChecker(QObject, StationModules)
+    def index(self, value):
+        '''
+            Get index.
+        '''
+        return self.__stationModules.index(value)
+
     @TypeChecker(QObject, int, int)
     def swap(self, index1, index2):
         '''
@@ -422,10 +435,16 @@ class StationModulesGroupsMimeData(QMimeData):
                     "All members in modulesGroupList should be the instance of StationModulesGroup!"
                 )
 
-            l.append(g.toDict)
+            l.append(g.toDict())
 
         data = json.dumps(l, ensure_ascii=False).encode(encoding="utf-8")
-        self.setData("text/StationModulesGroupList", data)
+        self.setData(StationModulesGroupsMimeData.mimeType(), data)
+
+    def mimeType():
+        '''
+            Get mime type.
+        '''
+        return "text/StationModulesGroupList"
 
 
 class Station(QObject):
@@ -645,6 +664,13 @@ class Station(QObject):
         item.setParent(None)
         self.setDirty()
         self.removeGroup.emit(self, item)
+
+    @TypeChecker(QObject, StationModulesGroup)
+    def index(self, value):
+        '''
+            Get index.
+        '''
+        return self.__stationModulesGroups.index(value)
 
     @TypeChecker(QObject, int, int)
     def swap(self, index1, index2):

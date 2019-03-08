@@ -448,12 +448,17 @@ class MainWindow(QMainWindow):
 
         self.centralWidget().changeCopyState.connect(
             self.__editCutAction.setEnabled)
+        self.__editCutAction.triggered.connect(self.centralWidget().cut)
+
         self.centralWidget().changeCopyState.connect(
             self.__editCopyAction.setEnabled)
+        self.__editCopyAction.triggered.connect(self.centralWidget().copy)
+
         self.centralWidget().changePasteState.connect(
             self.__editPasteAction.setEnabled)
+        self.__editPasteAction.triggered.connect(self.centralWidget().paste)
 
-        self.centralWidget().changeRemovePasteState.connect(
+        self.centralWidget().changeRemoveState.connect(
             self.__editRemoveAction.setEnabled)
         self.__editRemoveAction.triggered.connect(self.centralWidget().remove)
 

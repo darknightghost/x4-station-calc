@@ -38,7 +38,7 @@ class ModuleGroupItem(QTreeWidgetItem):
 
     @TypeChecker(QTreeWidgetItem, Station.StationModulesGroup,
                  (QTreeWidgetItem, type(None)))
-    def __init__(self, item, parent):
+    def __init__(self, item, parent=None):
         super().__init__(parent)
         self.__item = item
         self.setText(0, item.name())
@@ -53,8 +53,17 @@ class ModuleGroupItem(QTreeWidgetItem):
 
         self.setExpanded(True)
 
-    @TypeChecker(QTreeWidgetItem, (StationModule.StationModule, ModuleItem),
-                 int)
+    def onAdd(self):
+        for id in self.__index:
+            self.__index[id].onAdd()
+
+    def onRemove(self):
+        for id in self.__index:
+            self.__index[id].onRemove()
+
+    @TypeChecker(
+        QTreeWidgetItem,
+        (StationModule.StationModule, Station.StationModules, ModuleItem), int)
     def addStationModule(self, m, index=-1):
         '''
             Add station module.
@@ -62,8 +71,10 @@ class ModuleGroupItem(QTreeWidgetItem):
         if index < 0:
             index = self.childCount() + 1 + index
 
-        if isinstance(m, StationModule.StationModule):
-            m = Station.StationModules(m.id())
+        if isinstance(m,
+                      (StationModule.StationModule, Station.StationModules)):
+            if isinstance(m, StationModule.StationModule):
+                m = Station.StationModules(m.id())
 
             if m in self.__item:
                 self.__item.insert(index, m)
@@ -81,7 +92,7 @@ class ModuleGroupItem(QTreeWidgetItem):
                 self.treeWidget().updateItemButtons.emit()
                 return self.__index[m.id()]
 
-        else:
+        elif isinstance(m, ModuleItem):
             if m.item() in self.__item:
                 m.item().increase()
 

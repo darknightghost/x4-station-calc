@@ -1,6 +1,9 @@
-# x4-station-calc
-X4:Foundnation Station Caculator
+# X4:Foundnation Station Caculator
 
-Requires python3 with pyqt5 module.
+Requirements : python3 with pyqt5 module.
 
-## Defination of products
+- - -
+
+# X4:奠基空间站计算器
+
+运行环境 ： python3 + pyqt5.

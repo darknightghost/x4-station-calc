@@ -17,6 +17,8 @@
 import platform
 import time
 import sys
+import traceback
+import logging
 
 if int(platform.python_version().split(".")[0]) != 3:
     print("Python3 is required!")
@@ -33,8 +35,12 @@ except ImportError:
     print("PyQt5 is required!")
     exit(-1)
 
+import InitLogger
+
 import Common
 from Common import *
+
+logger = logging.getLogger()
 
 
 def main():
@@ -72,4 +78,10 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        InitLogger.writeLog()
+        raise e

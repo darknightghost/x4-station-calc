@@ -19,6 +19,7 @@
 
 import pathlib
 import json
+import logging
 
 import StringTable
 import Faction
@@ -35,6 +36,8 @@ __STATION_MODULE_TYPE = {}
     "Build": ["STATION_TYPE_BUILD", None]
 '''
 
+logger = logging.getLogger()
+
 
 def __initialize():
     stationModuleDir = pathlib.Path(__file__).parent / "station_modules"
@@ -44,7 +47,7 @@ def __initialize():
             continue
 
         for sname in moduleDir.glob("*.json"):
-            print("Loading data file \"%s\"..." % (str(sname)))
+            logging.debug("Loading data file \"%s\"..." % (str(sname)))
             with open(str(sname), encoding="utf-8") as f:
                 data = json.loads(f.read(), encoding="utf-8")
                 m = __STATION_MODULE_TYPE[t][1](data)

@@ -23,13 +23,17 @@ import json
 import StringTable
 import Common
 from Common import *
+import logging
 
 __FACTIONS = {}
+
+logger = logging.getLogger()
 
 
 def __initialize():
     factionsDir = pathlib.Path(__file__).parent / "factions"
     for fname in factionsDir.glob("*.json"):
+        logger.debug("Loading data file \"%s\"..." % str(fname))
         with open(str(fname), encoding="utf-8") as f:
             data = json.loads(f.read(), encoding="utf-8")
             faction = Faction(data)

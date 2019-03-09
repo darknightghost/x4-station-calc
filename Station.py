@@ -26,12 +26,15 @@ import pathlib
 import json
 import traceback
 import os
+import logging
 from distutils.version import StrictVersion
 
 import StationModule
 import Station
 import Common
 from Common import *
+
+logger = logging.getLogger()
 
 
 class StationFileException(Exception):

@@ -25,33 +25,35 @@ import shutil
 SCRIPT_DIR = pathlib.Path(__file__).parent
 MAIN_FILE = SCRIPT_DIR / "main.pyw"
 
+
 def scanDir(beginDir):
     ret = []
     exp = re.compile(".*\\.py|.*\\.pyw")
     for f in beginDir.glob("*"):
         if f.is_dir():
             ret += scanDir(f)
-            
+
         elif exp.fullmatch(f.name) and f.absolute() != MAIN_FILE.absolute():
             ret.append(f.relative_to(SCRIPT_DIR))
-        
+
     return ret
+
 
 def main():
     os.chdir(SCRIPT_DIR)
-            
+
     distpath = pathlib.Path(__file__).parent / "pack" / "dist"
     try:
         shutil.rmtree(distpath)
-        
+
     except FileNotFoundError:
         pass
-        
+
     workpath = pathlib.Path(__file__).parent / "pack" / "build"
-    
+
     try:
         shutil.rmtree(workpath)
-                
+
     except FileNotFoundError:
         pass
 
@@ -59,31 +61,39 @@ def main():
     fileList = scanDir(SCRIPT_DIR)
 
     #Make command
-    cmd = "pyinstaller.exe --distpath \"%s\" --workpath \"%s\"" % (str(distpath), str(workpath))
-    
+    cmd = "pyinstaller.exe --distpath \"%s\" --workpath \"%s\"" % (
+        str(distpath), str(workpath))
+
     for f in fileList:
         cmd += " -p \"%s\"" % (str(f))
-        
+
     cmd += " \"%s\"" % (str(MAIN_FILE.relative_to(SCRIPT_DIR)))
-    
+
     print(cmd)
-    
+
     #Pack
     ret = os.system(cmd)
 
     if ret != 0:
         return ret
-    
+
     #Copy data
-    shutil.copytree(str(SCRIPT_DIR / "factions"), str(distpath / "main" / "factions"))
-    shutil.copytree(str(SCRIPT_DIR / "products"), str(distpath / "main" / "products"))
-    shutil.copytree(str(SCRIPT_DIR / "station_modules"), str(distpath / "main" / "station_modules"))
-    shutil.copyfile(str(SCRIPT_DIR / "LICENSE"), str(distpath / "main" / "LICENSE"))
-    shutil.copyfile(str(SCRIPT_DIR / "README.md"), str(distpath / "main" / "README.md"))
-    
+    shutil.copytree(
+        str(SCRIPT_DIR / "factions"), str(distpath / "main" / "factions"))
+    shutil.copytree(
+        str(SCRIPT_DIR / "products"), str(distpath / "main" / "products"))
+    shutil.copytree(
+        str(SCRIPT_DIR / "station_modules"),
+        str(distpath / "main" / "station_modules"))
+    shutil.copyfile(
+        str(SCRIPT_DIR / "LICENSE"), str(distpath / "main" / "LICENSE"))
+    shutil.copyfile(
+        str(SCRIPT_DIR / "README.md"), str(distpath / "main" / "README.md"))
+
     print("The output directory is \"%s\"." % str(distpath / "main"))
     return 0
-    
+
+
 if __name__ == "__main__":
     ret = main()
     exit(ret)

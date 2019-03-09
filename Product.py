@@ -19,6 +19,7 @@
 
 import pathlib
 import json
+import logging
 
 import StringTable
 import InfoWidget
@@ -27,11 +28,13 @@ from Common import *
 
 __PRODUCTS = {}
 
+logger = logging.getLogger()
+
 
 def __initialize():
     productsDir = pathlib.Path(__file__).parent / "products"
     for pname in productsDir.glob("*.json"):
-        print("Loading data file \"%s\"..." % (str(pname)))
+        logger.debug("Loading data file \"%s\"..." % (str(pname)))
         with open(str(pname), encoding="utf-8") as f:
             data = json.loads(f.read(), encoding="utf-8")
             product = Product(data)

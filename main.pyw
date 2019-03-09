@@ -16,6 +16,7 @@
 
 import platform
 import time
+import sys
 
 if int(platform.python_version().split(".")[0]) != 3:
     print("Python3 is required!")
@@ -71,4 +72,4 @@ def main():
 
 
 if __name__ == '__main__':
-    exit(main())
+    sys.exit(main())

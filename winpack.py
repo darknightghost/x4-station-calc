@@ -14,7 +14,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 '''
-    Pack windows package.
+    Pack exe package.
 '''
 
 import pathlib
@@ -89,6 +89,8 @@ def main():
         str(SCRIPT_DIR / "LICENSE"), str(distpath / "main" / "LICENSE"))
     shutil.copyfile(
         str(SCRIPT_DIR / "README.md"), str(distpath / "main" / "README.md"))
+    shutil.copyfile(
+        str(SCRIPT_DIR / "CHANGELOG"), str(distpath / "main" / "CHANGELOG"))
 
     print("The output directory is \"%s\"." % str(distpath / "main"))
     return 0

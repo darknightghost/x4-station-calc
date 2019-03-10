@@ -42,14 +42,16 @@ class AboutDialog(QDialog):
 
         text = (StringTable.getString("STR_ABOUT") %
                 (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
-                
+
         self.__lblAbout = QLabel(text, self)
-        
+
         fontMetrics = self.__lblAbout.fontMetrics()
-        
+
         tmpRect = fontMetrics.boundingRect("a" * 80)
         changeLogTxtWidth = fontMetrics.boundingRect("Changelog").width()
-        num = (tmpRect.width() - changeLogTxtWidth) / ((fontMetrics.boundingRect("Changelog" + "-" * 100).width() - fontMetrics.boundingRect("Changelog").width()) / 100) / 2
+        num = (tmpRect.width() - changeLogTxtWidth) / (
+            (fontMetrics.boundingRect("Changelog" + "-" * 100).width() -
+             fontMetrics.boundingRect("Changelog").width()) / 100) / 2
         num = int(num)
 
         with open(str(self.CHANGELOG_PATH), encoding="utf-8") as f:

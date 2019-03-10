@@ -42,14 +42,23 @@ class AboutDialog(QDialog):
 
         text = (StringTable.getString("STR_ABOUT") %
                 (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
+                
+        self.__lblAbout = QLabel(text, self)
+        
+        fontMetrics = self.__lblAbout.fontMetrics()
+        
+        tmpRect = fontMetrics.boundingRect("a" * 80)
+        changeLogTxtWidth = fontMetrics.boundingRect("Changelog").width()
+        num = (tmpRect.width() - changeLogTxtWidth) / ((fontMetrics.boundingRect("Changelog" + "-" * 100).width() - fontMetrics.boundingRect("Changelog").width()) / 100) / 2
+        num = int(num)
 
-        with open(str(self.CHANGELOG_PATH)) as f:
-            text = "%s\n%sChangelog%s\n%s" % (text, '-' * 37, '-' * 37,
+        with open(str(self.CHANGELOG_PATH), encoding="utf-8") as f:
+            text = "%s\n%sChangelog%s\n%s" % (text, '-' * num, '-' * num,
                                               f.read())
 
-        self.__lblAbout = QLabel(text, self)
+        self.__lblAbout.setText(text)
         self.__vbox.addWidget(self.__lblAbout)
-        tmpRect = self.__lblAbout.fontMetrics().boundingRect("a" * 80)
+        tmpRect = fontMetrics.boundingRect("a" * 80)
         width = tmpRect.width()
         height = tmpRect.height() * 40
         self.__lblAbout.setMinimumWidth(width)

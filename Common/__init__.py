@@ -21,8 +21,8 @@ import inspect
 import functools
 from distutils.version import StrictVersion
 
-VERSION = StrictVersion("0.0.1")
-RECORD_VERSION = StrictVersion("0.0.1")
+VERSION = StrictVersion("0.0.2")
+RECORD_VERSION = StrictVersion("0.0.2")
 
 import Common
 

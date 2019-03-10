@@ -100,12 +100,36 @@ class SummaryItem(QTreeWidgetItem):
                                 [StringTable.getString("STR_L_XL_DOCK"), "0"])
             ],
             [
-                "workforceCapacity",
+                "lFabricationBay",
                 QTreeWidgetItem(
                     self,
-                    [StringTable.getString("STR_WORKFORCE_CAPACITY"), "0"])
+                    [StringTable.getString("STR_L_SHIP_FABRICATION_BAY"), "0"])
+            ],
+            [
+                "xlFabricationBay",
+                QTreeWidgetItem(self, [
+                    StringTable.getString("STR_XL_SHIP_FABRICATION_BAY"), "0"
+                ])
+            ],
+            [
+                "lMaintenanceBay",
+                QTreeWidgetItem(
+                    self,
+                    [StringTable.getString("STR_L_SHIP_MAINTENANCE_BAY"), "0"])
+            ],
+            [
+                "xlMaintenanceBay",
+                QTreeWidgetItem(self, [
+                    StringTable.getString("STR_XL_SHIP_MAINTENANCE_BAY"), "0"
+                ])
             ],
         ]
+
+        #Workforce
+        self.__workforce = 0
+        self.__workforceItem = QTreeWidgetItem(
+            self, [StringTable.getString("STR_WORKFORCE_CAPACITY")])
+        self.__workforceItem.setFlags(Qt.ItemIsEnabled)
 
         #Foods
         #{Product : amount}
@@ -118,6 +142,7 @@ class SummaryItem(QTreeWidgetItem):
         #Resources
         #{Product : amount}
         self.__resources = {}
+        self.__maxResources = {}
         self.__resourcesItem = QTreeWidgetItem(
             self, [StringTable.getString("STR_RESOURCES")])
         self.__resourcesItem.setFlags(Qt.ItemIsEnabled)
@@ -132,6 +157,7 @@ class SummaryItem(QTreeWidgetItem):
         #Products
         #{Product : amount}
         self.__products = {}
+        self.__maxProducts = {}
         self.__productsItem = QTreeWidgetItem(
             self, [StringTable.getString("STR_PRODUCTS")])
         self.__productsItem.setFlags(Qt.ItemIsEnabled)
@@ -151,6 +177,12 @@ class SummaryItem(QTreeWidgetItem):
 
         return ret
 
+    def workforce(self):
+        '''
+            Get workforce.
+        '''
+        return self.__workforce
+
     def foods(self):
         '''
             Get foods.
@@ -161,13 +193,13 @@ class SummaryItem(QTreeWidgetItem):
         '''
             Get products.
         '''
-        return self.__products
+        return self.__products, self.__maxProducts
 
     def resources(self):
         '''
             Get resources.
         '''
-        return self.__resources
+        return self.__resources, self.__maxResources
 
     def update(self):
         '''
@@ -178,8 +210,11 @@ class SummaryItem(QTreeWidgetItem):
             a[1].setText(1, "0")
 
         self.__products = {}
+        self.__maxProducts = {}
         self.__resources = {}
+        self.__maxResources = {}
         self.__foods = {}
+        self.__workforce = 0
 
         self.__foodsItem.takeChildren()
         self.__resourcesItem.takeChildren()
@@ -206,15 +241,34 @@ class SummaryItem(QTreeWidgetItem):
                 a[1].setFlags(Qt.ItemIsEnabled)
                 a[1].setExpanded(True)
 
+            #Workforce
+            try:
+                self.__workforce += m.stationModule().workforceCapacity(
+                ) * m.amount()
+
+            except AttributeError:
+                pass
+
+            try:
+                self.__workforce -= m.stationModule().maxEmployeeNum(
+                ) * m.amount()
+
+            except AttributeError:
+                pass
+
             #Products
             try:
                 products = m.stationModule().products()
                 for p in products:
                     try:
                         self.__products[p.product()] += p.amount() * m.amount()
+                        self.__maxProducts[p.product()] += p.amount(
+                        ) * m.amount() * m.stationModule().maxEfficiency()
 
                     except KeyError:
                         self.__products[p.product()] = p.amount() * m.amount()
+                        self.__maxProducts[p.product()] = p.amount(
+                        ) * m.amount() * m.stationModule().maxEfficiency()
 
             except AttributeError:
                 pass
@@ -226,9 +280,13 @@ class SummaryItem(QTreeWidgetItem):
                     try:
                         self.__resources[
                             r.product()] += r.amount() * m.amount()
+                        self.__maxResources[r.product()] += r.amount(
+                        ) * m.amount() * m.stationModule().maxEfficiency()
 
                     except KeyError:
                         self.__resources[r.product()] = r.amount() * m.amount()
+                        self.__maxResources[r.product()] = r.amount(
+                        ) * m.amount() * m.stationModule().maxEfficiency()
 
             except AttributeError:
                 pass
@@ -246,27 +304,31 @@ class SummaryItem(QTreeWidgetItem):
             except AttributeError:
                 pass
 
-        #Foods, resources, intermediates & products
-        intermediates = []
-        foods = []
-        products = []
-        resources = []
+        #Workforce
+        self.__workforceItem.setText(1, "%+d" % (self.__workforce))
 
+        #Foods, resources, intermediates & products
         for p in self.__products:
             if p in self.__resources:
                 #p is an intermediate
                 amount = self.__products[p] - self.__resources[p]
-                SummaryProductItem(p, "%+d/h" % (amount),
+                maxAmount = self.__maxProducts[p] - self.__maxResources[p]
+                if p in self.__foods:
+                    amount -= self.__foods[p]
+                    maxAmount -= self.__foods[p]
+                SummaryProductItem(p, "%+d/h -> %+d/h" % (amount, maxAmount),
                                    self.__intermediatesItem)
 
             else:
                 #p is a product
                 amount = self.__products[p]
+                maxAmount = self.__maxProducts[p]
                 if p in self.__foods:
                     amount -= self.__foods[p]
+                    maxAmount -= self.__foods[p]
 
-                if amount > 0:
-                    SummaryProductItem(p, "%d/h" % (amount),
+                if amount > 0 or maxAmount > 0:
+                    SummaryProductItem(p, "%d/h -> %d/h" % (amount, maxAmount),
                                        self.__productsItem)
 
         for p in self.__resources:
@@ -274,18 +336,26 @@ class SummaryItem(QTreeWidgetItem):
                 continue
 
             amount = self.__resources[p]
-            SummaryProductItem(p, "%d/h" % (amount), self.__resourcesItem)
+            maxAmount = self.__maxResources[p]
+            SummaryProductItem(p, "%d/h - >%d/h" % (amount, maxAmount),
+                               self.__resourcesItem)
 
         for p in self.__foods:
             amount = self.__foods[p]
+            maxAmount = self.__foods[p]
             if p in self.__products:
-                if amount < self.__products[p]:
-                    continue
+                if amount > self.__products[p] or maxAmount > self.__products[
+                        p]:
+                    amount -= self.__products[p]
+                    amount = amount if amount > 0 else 0
+                    maxAmount -= self.__maxProducts[p]
+                    maxAmount = maxAmount if maxAmount > 0 else 0
 
                 else:
-                    amount -= self.__products[p]
+                    continue
 
-            SummaryProductItem(p, "%d/h" % (amount), self.__foodsItem)
+            SummaryProductItem(p, "%d/h -> %d/h" % (amount, maxAmount),
+                               self.__foodsItem)
 
         #Hide empty items
         for a in self.__attributes:

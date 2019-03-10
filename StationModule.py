@@ -363,7 +363,7 @@ class DockModule(StationModule):
                 "    number of ship storage = %d,\n" \
                 "    number of S dock = %d,\n" \
                 "    number of M dock = %d,\n" \
-                "    number of L/XL ldock = %d\n" \
+                "    number of L/XL dock = %d\n" \
                 "}" % (
                         commonStr,
                         self.__shipStorage,
@@ -671,6 +671,162 @@ class StorageModule(StationModule):
 
 #Regist type
 __registStationModule("Storage", "STATION_TYPE_STORAGE", StorageModule)
+
+
+class BuildModule(StationModule):
+    '''
+        Build module.
+    '''
+
+    @TypeChecker(object, dict)
+    def __init__(self, data):
+        super().__init__(data)
+        self.__shipStorage = data["ship_storage"]
+        if not isinstance(self.__shipStorage, int):
+            raise TypeError("Value of ship_storage should be an integer.")
+
+        self.__sDock = data["s_docking"]
+        if not isinstance(self.__sDock, int):
+            raise TypeError("Value of s_docking should be an integer.")
+
+        self.__mDock = data["m_docking"]
+        if not isinstance(self.__mDock, int):
+            raise TypeError("Value of m_docking should be an integer.")
+
+        self.__lFabricationBay = data["l_fabrication_bay"]
+        if not isinstance(self.__lFabricationBay, int):
+            raise TypeError("Value of l_fabrication_bay should be an integer.")
+
+        self.__xlFabricationBay = data["xl_fabrication_bay"]
+        if not isinstance(self.__xlFabricationBay, int):
+            raise TypeError(
+                "Value of xl_fabrication_bay should be an integer.")
+
+        self.__lMaintenanceBay = data["l_maintenance_bay"]
+        if not isinstance(self.__lMaintenanceBay, int):
+            raise TypeError("Value of l_maintenance_bay should be an integer.")
+
+        self.__xlMaintenanceBay = data["xl_maintenance_bay"]
+        if not isinstance(self.__xlMaintenanceBay, int):
+            raise TypeError(
+                "Value of xl_maintenance_bay should be an integer.")
+
+    def shipStorage(self):
+        '''
+            Get ship storage.
+        '''
+        return self.__shipStorage
+
+    def sDock(self):
+        '''
+            Get number of s docking.
+        '''
+        return self.__sDock
+
+    def mDock(self):
+        '''
+            Get number of m docking.
+        '''
+        return self.__mDock
+
+    def lXLDock(self):
+        '''
+            Get number of L/XL docking.
+        '''
+        return self.__lXLDock
+
+    def lFabricationBay(self):
+        '''
+            Get number L fabrication bay.
+        '''
+        return self.__lFabricationBay
+
+    def xlFabricationBay(self):
+        '''
+            Get number of XL fabrication bay.
+        '''
+        return self.__xlFabricationBay
+
+    def lMaintenanceBay(self):
+        '''
+            Get number of L maintenance bay.
+        '''
+        return self.__lMaintenanceBay
+
+    def xlMaintenanceBay(self):
+        '''
+            Get number of XL maintenance bay.
+        '''
+        return self.__xlMaintenanceBay
+
+    def __str__(self):
+        commonStr = addIndent(super().__str__())
+        return "{\n" \
+                "%s,\n" \
+                "    number of ship storage = %d,\n" \
+                "    number of S dock = %d,\n" \
+                "    number of M dock = %d,\n" \
+                "    number of L fabrication bay = %d\n" \
+                "    number of XL fabrication bay = %d\n" \
+                "    number of L maintenance bay = %d\n" \
+                "    number of XL maintenance bay = %d\n" \
+                "}" % (
+                        commonStr,
+                        self.__shipStorage,
+                        self.__sDock,
+                        self.__mDock,
+                        self.__lFabricationBay,
+                        self.__xlFabricationBay,
+                        self.__lMaintenanceBay,
+                        self.__xlMaintenanceBay)
+
+    def info(self):
+        ret = super().info()
+        if self.shipStorage() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_SHIP_STORAGE"),
+                    str(self.shipStorage())))
+
+        if self.sDock() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_S_DOCK"), str(self.sDock())))
+
+        if self.mDock() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_M_DOCK"), str(self.mDock())))
+
+        if self.lFabricationBay() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_L_SHIP_FABRICATION_BAY"),
+                    str(self.lFabricationBay())))
+
+        if self.lMaintenanceBay() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_L_SHIP_MAINTENANCE_BAY"),
+                    str(self.lMaintenanceBay())))
+
+        if self.xlFabricationBay() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_XL_SHIP_FABRICATION_BAY"),
+                    str(self.xlFabricationBay())))
+
+        if self.xlMaintenanceBay() != 0:
+            ret.append(
+                InfoWidget.InfoItem(
+                    StringTable.getString("STR_XL_SHIP_MAINTENANCE_BAY"),
+                    str(self.xlMaintenanceBay())))
+
+        return ret
+
+
+#Regist type
+__registStationModule("Build", "STATION_TYPE_BUILD", BuildModule)
 
 __initialize()
 

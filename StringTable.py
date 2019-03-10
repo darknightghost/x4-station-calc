@@ -351,6 +351,22 @@ __STRING_TABLE = {
         "en_US": "Storage Capacity",
         "zh_CN": "仓储容量"
     },
+    "STR_L_SHIP_FABRICATION_BAY": {
+        "en_US": "L Ship Fabrication Bay",
+        "zh_CN": "L级飞船制造港"
+    },
+    "STR_L_SHIP_MAINTENANCE_BAY": {
+        "en_US": "L Ship Maintenance Bay",
+        "zh_CN": "L级飞船维护港"
+    },
+    "STR_XL_SHIP_FABRICATION_BAY": {
+        "en_US": "XL Ship Fabrication Bay",
+        "zh_CN": "XL级飞船制造港"
+    },
+    "STR_XL_SHIP_MAINTENANCE_BAY": {
+        "en_US": "XL Ship Maintenance Bay",
+        "zh_CN": "XL级飞船维护港"
+    },
 
     #WorkSpace
     "STR_STATION_MODULES": {

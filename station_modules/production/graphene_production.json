@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    120,
+    "max_efficiency":
+    1.27,
     "name": {
         "en_US": "Graphene Production",
         "zh_CN": "石墨产线"

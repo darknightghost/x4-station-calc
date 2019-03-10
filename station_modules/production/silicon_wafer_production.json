@@ -17,6 +17,10 @@
     }],
     "turret":
     9,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Silicon Wafer Production",
         "zh_CN": "硅晶片产线"

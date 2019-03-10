@@ -17,6 +17,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    120,
+    "max_efficiency":
+    1.28,
     "name": {
         "en_US": "Superfluid Coolant Production",
         "zh_CN": "超流体冷却剂产线"

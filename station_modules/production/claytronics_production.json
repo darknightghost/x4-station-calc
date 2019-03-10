@@ -23,6 +23,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    810,
+    "max_efficiency":
+    1.2,
     "name": {
         "en_US": "Claytronics Production",
         "zh_CN": "纳米计算机产线"

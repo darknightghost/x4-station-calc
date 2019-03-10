@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    720,
+    "max_efficiency":
+    1.23,
     "name": {
         "en_US": "Antimatter Converter Production",
         "zh_CN": "反物质转换器产线"

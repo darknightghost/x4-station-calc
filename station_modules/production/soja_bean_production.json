@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    78,
+    "max_efficiency":
+    1.28,
     "name": {
         "en_US": "Soja Bean Production",
         "zh_CN": "白豆产线"

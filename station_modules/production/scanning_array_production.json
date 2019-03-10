@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    210,
+    "max_efficiency":
+    1.24,
     "name": {
         "en_US": "Scanning Array Production",
         "zh_CN": "扫描阵列产线"

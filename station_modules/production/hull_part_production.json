@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    180,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Hull Part Production",
         "zh_CN": "船体部件产线"

@@ -23,6 +23,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    99,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Soja Husk Production",
         "zh_CN": "白豆荚产线"

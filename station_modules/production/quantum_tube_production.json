@@ -20,6 +20,10 @@
     }],
     "turret":
     8,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.30,
     "name": {
         "en_US": "Quantum Tube Production",
         "zh_CN": "量子管产线"

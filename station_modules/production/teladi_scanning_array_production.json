@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.24,
     "name": {
         "en_US": "Teladi Scanning Array Production",
         "zh_CN": "Teladi扫描阵列产线"

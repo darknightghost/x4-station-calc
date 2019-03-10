@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Plasma Conductor Production",
         "zh_CN": "等离子导体产线"

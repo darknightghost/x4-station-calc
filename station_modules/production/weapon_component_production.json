@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.30,
     "name": {
         "en_US": "Weapon Component Production",
         "zh_CN": "武器部件产线"

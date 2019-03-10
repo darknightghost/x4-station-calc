@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    75,
+    "max_efficiency":
+    1.33,
     "name": {
         "en_US": "Swamp Plant Production",
         "zh_CN": "沼泽植物产线"

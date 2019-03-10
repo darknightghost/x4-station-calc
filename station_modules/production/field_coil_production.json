@@ -20,6 +20,10 @@
     }],
     "turret":
     9,
+    "max_employee_num":
+    540,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Field Coil Production",
         "zh_CN": "励磁线圈产线"

@@ -17,6 +17,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    60,
+    "max_efficiency":
+    1.4,
     "name": {
         "en_US": "Spice Production",
         "zh_CN": "香料产线"

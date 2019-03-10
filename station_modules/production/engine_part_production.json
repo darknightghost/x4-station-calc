@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.27,
     "name": {
         "en_US": "Engine Part Production",
         "zh_CN": "引擎部件产线"

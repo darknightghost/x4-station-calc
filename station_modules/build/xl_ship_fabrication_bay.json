@@ -7,7 +7,7 @@
     "s_docking": 0,
     "m_docking": 0,
     "l_fabrication_bay": 0,
-    "xl_fabrication_bay": 0,
+    "xl_fabrication_bay": 1,
     "l_maintenance_bay": 0,
     "xl_maintenance_bay": 0,
     "name": {

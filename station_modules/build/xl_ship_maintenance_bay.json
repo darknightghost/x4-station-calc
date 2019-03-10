@@ -9,7 +9,7 @@
     "l_fabrication_bay": 0,
     "xl_fabrication_bay": 0,
     "l_maintenance_bay": 0,
-    "xl_maintenance_bay": 0,
+    "xl_maintenance_bay": 1,
     "name": {
         "en_US": "XL Ship Maintenance Bay",
         "zh_CN": "XL级飞船维护港"

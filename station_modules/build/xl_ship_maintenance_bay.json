@@ -1,0 +1,17 @@
+{
+    "id": "XL_SHIP_MAINTENANCE_BAY",
+    "type": "Build",
+    "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
+    "turret": 0,
+    "ship_storage": 0,
+    "s_docking": 0,
+    "m_docking": 0,
+    "l_fabrication_bay": 0,
+    "xl_fabrication_bay": 0,
+    "l_maintenance_bay": 0,
+    "xl_maintenance_bay": 0,
+    "name": {
+        "en_US": "XL Ship Maintenance Bay",
+        "zh_CN": "XL级飞船维护港"
+    }
+}

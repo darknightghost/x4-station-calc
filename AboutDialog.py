@@ -29,6 +29,8 @@ from Common import *
 
 
 class AboutDialog(QDialog):
+    CHANGELOG_PATH = pathlib.Path(__file__).parent / "CHANGELOG"
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setModal(True)
@@ -38,10 +40,20 @@ class AboutDialog(QDialog):
         self.__vbox = QVBoxLayout()
         self.setLayout(self.__vbox)
 
-        self.__lblAbout = QLabel(
-            StringTable.getString("STR_ABOUT") %
-            (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
+        text = (StringTable.getString("STR_ABOUT") %
+                (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
+
+        with open(str(self.CHANGELOG_PATH)) as f:
+            text = "%s\n%sChangelog%s\n%s" % (text, '-' * 37, '-' * 37,
+                                              f.read())
+
+        self.__lblAbout = QLabel(text, self)
         self.__vbox.addWidget(self.__lblAbout)
-        rect = self.__lblAbout.fontMetrics().boundingRect(
-            self.__lblAbout.text())
-        self.__lblAbout.setMinimumSize(rect.size())
+        tmpRect = self.__lblAbout.fontMetrics().boundingRect("a" * 80)
+        width = tmpRect.width()
+        height = tmpRect.height() * 40
+        self.__lblAbout.setMinimumWidth(width)
+        self.__lblAbout.setMaximumWidth(width)
+        self.__lblAbout.setMaximumHeight(height)
+        self.__lblAbout.setWordWrap(True)
+        self.__lblAbout.setAlignment(Qt.AlignTop)

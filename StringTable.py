@@ -327,6 +327,14 @@ __STRING_TABLE = {
         "en_US": "Maxium Supply Required",
         "zh_CN": "最大所需补给"
     },
+    "STR_MAX_EMPLOYEE_NUM": {
+        "en_US": "Maxium Number of Employee",
+        "zh_CN": "最大雇员数"
+    },
+    "STR_MAX_EFFICIENCY": {
+        "en_US": "Maxium Efficiency",
+        "zh_CN": "最大生产效率"
+    },
     "STR_PRODUCTS": {
         "en_US": "Products",
         "zh_CN": "产品"

@@ -224,7 +224,7 @@ class StationModule:
         for f in self.factions():
             factionsStr += " %s, " % (f.name())
 
-        factionsStr = factionsStr[:-2]
+        factionsStr = factionsStr.strip()[:-1]
         ret = [
             InfoWidget.InfoItem(
                 StringTable.getString("STR_NAME"), self.name()),
@@ -501,12 +501,33 @@ class ProductionModule(StationModule):
     def __init__(self, data):
         super().__init__(data)
         self.__products = []
+        self.__maxEmployeeNum = data["max_employee_num"]
+
+        if not isinstance(self.__maxEmployeeNum, int):
+            raise TypeError("Value of max_employee_num should be an integer.")
+
+        self.__maxEfficiency = data["max_efficiency"]
+        if not isinstance(self.__maxEfficiency, float):
+            raise TypeError("Value of max_efficiency should be a float.")
+
         for p in data["products"]:
             self.__products.append(StationProductInfo(p))
 
         self.__resources = []
         for r in data["resources"]:
             self.__resources.append(StationProductInfo(r))
+
+    def maxEmployeeNum(self):
+        '''
+            Maxium number of employee.
+        '''
+        return self.__maxEmployeeNum
+
+    def maxEfficiency(self):
+        '''
+            Maxium efficiency.
+        '''
+        return self.__maxEfficiency
 
     def products(self):
         '''
@@ -535,15 +556,29 @@ class ProductionModule(StationModule):
         productsStr = addIndent(productsStr[:-2] + "\n]")
         return "{\n" \
                 "%s,\n" \
+                "    maxium number of employee = %d,\n" \
+                "    maxium efficiency = %f,\n" \
                 "%s,\n" \
                 "%s\n" \
                 "}" % (
                         commonStr,
+                        self.maxEmployeeNum(),
+                        self.maxEfficiency(),
                         resourcesStr,
                         productsStr)
 
     def info(self):
         ret = super().info()
+
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_MAX_EMPLOYEE_NUM"),
+                "%d" % (self.maxEmployeeNum())))
+
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_MAX_EFFICIENCY"),
+                "%.2f%%" % (self.maxEfficiency() * 100)))
 
         #Products
         products = []

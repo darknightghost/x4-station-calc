@@ -23,6 +23,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    90,
+    "max_efficiency":
+    1.28,
     "name": {
         "en_US": "Paranid Medical Supply Production",
         "zh_CN": "Paranid医疗物资产线"

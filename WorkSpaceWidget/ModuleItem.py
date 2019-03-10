@@ -91,7 +91,7 @@ class ModuleItemWidget(QWidget):
             from WorkSpaceWidget.Operations import ChangeModuleAmountOperation as ChangeModuleAmountOperation
             op = ChangeModuleAmountOperation(self.__item, n)
             self.__treeWidget.doOperation(op)
-            self.__loadAmount
+            self.__loadAmount()
 
     def __onItemAmountChanged(self, stationModules, oldNum, newNum):
         self.__spinboxAmount.setValue(newNum)
@@ -115,7 +115,7 @@ class ModuleItemWidget(QWidget):
         from WorkSpaceWidget.Operations import RemoveOperation as RemoveOperation
         op = RemoveOperation([self.__treeItem])
         self.__treeWidget.doOperation(op)
-        
+
     def closeEvent(self, event):
         self.__treeWidget.updateItemButtons.disconnect(self.__onUpdateBtn)
 
@@ -146,7 +146,7 @@ class ModuleItem(QTreeWidgetItem):
                                              self)
         self.treeWidget().setItemWidget(self, 1, self.__itemWidget)
         self.__itemWidget.show()
-        
+
     def onRemove(self):
         self.__itemWidget.close()
 

@@ -23,6 +23,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    90,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Food Ration Production",
         "zh_CN": "食品配给产线"

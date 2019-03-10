@@ -327,6 +327,14 @@ __STRING_TABLE = {
         "en_US": "Maxium Supply Required",
         "zh_CN": "最大所需补给"
     },
+    "STR_MAX_EMPLOYEE_NUM": {
+        "en_US": "Maxium Number of Employee",
+        "zh_CN": "最大雇员数"
+    },
+    "STR_MAX_EFFICIENCY": {
+        "en_US": "Maxium Efficiency",
+        "zh_CN": "最大生产效率"
+    },
     "STR_PRODUCTS": {
         "en_US": "Products",
         "zh_CN": "产品"
@@ -342,6 +350,22 @@ __STRING_TABLE = {
     "STR_STORAGE_CAPACITY": {
         "en_US": "Storage Capacity",
         "zh_CN": "仓储容量"
+    },
+    "STR_L_SHIP_FABRICATION_BAY": {
+        "en_US": "L Ship Fabrication Bay",
+        "zh_CN": "L级飞船制造港"
+    },
+    "STR_L_SHIP_MAINTENANCE_BAY": {
+        "en_US": "L Ship Maintenance Bay",
+        "zh_CN": "L级飞船维护港"
+    },
+    "STR_XL_SHIP_FABRICATION_BAY": {
+        "en_US": "XL Ship Fabrication Bay",
+        "zh_CN": "XL级飞船制造港"
+    },
+    "STR_XL_SHIP_MAINTENANCE_BAY": {
+        "en_US": "XL Ship Maintenance Bay",
+        "zh_CN": "XL级飞船维护港"
     },
 
     #WorkSpace

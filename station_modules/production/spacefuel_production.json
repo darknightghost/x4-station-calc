@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.38,
     "name": {
         "en_US": "Spacefuel Production",
         "zh_CN": "太空燃料产线"

@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    15,
+    "max_efficiency":
+    1.30,
     "name": {
         "en_US": "Missile Component Production",
         "zh_CN": "导弹部件产线"

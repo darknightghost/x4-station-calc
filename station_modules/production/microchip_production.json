@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    300,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Microchip Production",
         "zh_CN": "微芯片产线"

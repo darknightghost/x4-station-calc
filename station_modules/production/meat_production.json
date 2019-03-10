@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    75,
+    "max_efficiency":
+    1.33,
     "name": {
         "en_US": "Meat Production",
         "zh_CN": "肉产线"

@@ -1,4 +1,4 @@
-# X4:Foundnation Station Caculator
+# X4:Foundnations Station Caculator
 
 * Requirements : python3 with pyqt5 module.
 * Run `main.pyw` to start the program.

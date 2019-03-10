@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    120,
+    "max_efficiency":
+    1.21,
     "name": {
         "en_US": "Antimatter Cell Production",
         "zh_CN": "反物质单元产线"

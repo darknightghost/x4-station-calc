@@ -20,6 +20,10 @@
     }],
     "turret":
     8,
+    "max_employee_num":
+    123,
+    "max_efficiency":
+    1.40,
     "name": {
         "en_US": "Maja Dust Production",
         "zh_CN": "艳耀星尘产线"

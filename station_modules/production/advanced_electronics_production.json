@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    360,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Advanced Electronics Production",
         "zh_CN": "先进电子设备产线"

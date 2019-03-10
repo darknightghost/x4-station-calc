@@ -43,7 +43,7 @@ class LicenseDialog(QDialog):
 
         self.__txtLicense = QTextEdit()
         self.__txtLicense.setReadOnly(True)
-        with open(str(self.LICENSE_PATH)) as f:
+        with open(str(self.LICENSE_PATH), encoding="utf-8") as f:
             self.__txtLicense.setPlainText(f.read())
         self.__vbox.addWidget(self.__txtLicense)
         rect = self.__txtLicense.fontMetrics().boundingRect("a" * 71)

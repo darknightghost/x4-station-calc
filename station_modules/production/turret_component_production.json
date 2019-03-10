@@ -23,6 +23,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    150,
+    "max_efficiency":
+    1.30,
     "name": {
         "en_US": "Turret Component Production",
         "zh_CN": "炮塔部件产线"

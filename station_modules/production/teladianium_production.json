@@ -17,6 +17,10 @@
     }],
     "turret":
     10,
+    "max_employee_num":
+    180,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Teladianium Production",
         "zh_CN": "T材料产线"

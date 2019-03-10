@@ -17,6 +17,10 @@
     }],
     "turret":
     8,
+    "max_employee_num":
+    40,
+    "max_efficiency":
+    1.22,
     "name": {
         "en_US": "Smart Chip Production",
         "zh_CN": "智能芯片产线"

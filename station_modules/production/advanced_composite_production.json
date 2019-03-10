@@ -20,6 +20,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    210,
+    "max_efficiency":
+    1.2,
     "name": {
         "en_US": "Advanced Composite Production",
         "zh_CN": "先进复合材料产线"

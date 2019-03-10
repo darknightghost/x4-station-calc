@@ -17,6 +17,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    120,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Water Production",
         "zh_CN": "水产线"

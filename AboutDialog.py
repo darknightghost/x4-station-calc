@@ -29,6 +29,8 @@ from Common import *
 
 
 class AboutDialog(QDialog):
+    CHANGELOG_PATH = pathlib.Path(__file__).parent / "CHANGELOG"
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setModal(True)
@@ -38,10 +40,31 @@ class AboutDialog(QDialog):
         self.__vbox = QVBoxLayout()
         self.setLayout(self.__vbox)
 
-        self.__lblAbout = QLabel(
-            StringTable.getString("STR_ABOUT") %
-            (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
+        text = (StringTable.getString("STR_ABOUT") %
+                (StringTable.getString("TITLE_MAIN_WINDOW"), str(VERSION)))
+
+        self.__lblAbout = QLabel(text, self)
+
+        fontMetrics = self.__lblAbout.fontMetrics()
+
+        tmpRect = fontMetrics.boundingRect("a" * 80)
+        changeLogTxtWidth = fontMetrics.boundingRect("Changelog").width()
+        num = (tmpRect.width() - changeLogTxtWidth) / (
+            (fontMetrics.boundingRect("Changelog" + "-" * 100).width() -
+             fontMetrics.boundingRect("Changelog").width()) / 100) / 2
+        num = int(num)
+
+        with open(str(self.CHANGELOG_PATH), encoding="utf-8") as f:
+            text = "%s\n%sChangelog%s\n%s" % (text, '-' * num, '-' * num,
+                                              f.read())
+
+        self.__lblAbout.setText(text)
         self.__vbox.addWidget(self.__lblAbout)
-        rect = self.__lblAbout.fontMetrics().boundingRect(
-            self.__lblAbout.text())
-        self.__lblAbout.setMinimumSize(rect.size())
+        tmpRect = fontMetrics.boundingRect("a" * 80)
+        width = tmpRect.width()
+        height = tmpRect.height() * 40
+        self.__lblAbout.setMinimumWidth(width)
+        self.__lblAbout.setMaximumWidth(width)
+        self.__lblAbout.setMaximumHeight(height)
+        self.__lblAbout.setWordWrap(True)
+        self.__lblAbout.setAlignment(Qt.AlignTop)

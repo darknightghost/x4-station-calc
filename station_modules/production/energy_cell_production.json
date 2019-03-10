@@ -8,6 +8,8 @@
         "amount": 12000
     }],
     "turret": 4,
+    "max_employee_num": 60,
+    "max_efficiency": 1.25,
     "name": {
         "en_US": "Energy Cell Production",
         "zh_CN": "能量电池产线"

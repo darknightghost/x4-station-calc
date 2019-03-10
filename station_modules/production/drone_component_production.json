@@ -23,6 +23,10 @@
     }],
     "turret":
     12,
+    "max_employee_num":
+    450,
+    "max_efficiency":
+    1.25,
     "name": {
         "en_US": "Drone Component Production",
         "zh_CN": "无人机组件产线"

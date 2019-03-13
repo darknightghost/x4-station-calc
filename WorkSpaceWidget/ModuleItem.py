@@ -50,6 +50,7 @@ class ModuleItemWidget(QWidget):
 
         self.__spinboxAmount = QSpinBox(self)
         self.__spinboxAmount.setMinimum(1)
+        self.__spinboxAmount.setMaximum(0x0FFFFFFF)
         self.__spinboxAmount.setValue(self.__item.amount())
         self.__spinboxAmount.valueChanged.connect(self.__onSpinAmountChanged)
         self.__layout.addWidget(self.__spinboxAmount)

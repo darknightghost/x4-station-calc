@@ -1,6 +1,10 @@
+v0.0.3
+    Fixed a bug that the amount of module cannot bigger than 100.
+    Fixed a mistake in the data of Wheat Production module.
+
 v0.0.2
-	Add build modules which are added to X4:Foundnations 2.0.
-	Add information about the requirements of workforce of production modules to summary.
+	Added build modules which are added to X4:Foundnations 2.0.
+	Added information about the requirements of workforce of production modules to summary.
 
 v0.0.1
-	Initialize version.
+	First version.

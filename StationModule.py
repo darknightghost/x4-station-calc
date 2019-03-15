@@ -122,10 +122,18 @@ class StationProductInfo:
         '''
         return self.__amount
 
-    def info(self):
-        return InfoWidget.InfoItem(self.product().name(),
-                                   "%d/h" % (self.amount()),
-                                   self.product().info)
+    @TypeChecker(object, (int, float, type(None)))
+    def info(self, efficiency=None):
+        if efficiency == None:
+            return InfoWidget.InfoItem(self.product().name(),
+                                       "%d/h" % (self.amount()),
+                                       self.product().info)
+
+        else:
+            return InfoWidget.InfoItem(
+                self.product().name(), "%d/h -> %d/h" %
+                (self.amount(), int(self.amount() * efficiency)),
+                self.product().info)
 
     def __str__(self):
         return "{\n" \
@@ -583,7 +591,7 @@ class ProductionModule(StationModule):
         #Products
         products = []
         for p in self.products():
-            products.append(p.info())
+            products.append(p.info(self.maxEfficiency()))
 
         ret.append(
             InfoWidget.InfoItem(
@@ -592,7 +600,7 @@ class ProductionModule(StationModule):
         #Resources
         resources = []
         for r in self.resources():
-            resources.append(r.info())
+            resources.append(r.info(self.maxEfficiency()))
 
         ret.append(
             InfoWidget.InfoItem(

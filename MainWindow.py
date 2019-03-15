@@ -39,6 +39,7 @@ import AboutDialog
 
 class MainWindow(QMainWindow):
     CONFIG_PATH = pathlib.Path(__file__).parent / ".config"
+    ICON_DIR = pathlib.Path(__file__).parent / "icons"
 
     @TypeChecker(QMainWindow, (QWidget, type(None)), (str, type(None)))
     def __init__(self, parent=None, stationPath=None):
@@ -87,103 +88,150 @@ class MainWindow(QMainWindow):
             self.openStation(stationPath)
 
     #Initialize menus
+    @TypeChecker(QMainWindow, str)
+    def __getIcon(self, name):
+        return QIcon(str(self.ICON_DIR / name))
+
     def __initFileMenu(self):
         self.__fileMenu = QMenu(StringTable.getString("MENU_FILE"))
+
+        self.__fileToolBar = QToolBar(StringTable.getString("TOOLBAR_FILE"))
+        self.addToolBar(Qt.TopToolBarArea, self.__fileToolBar)
+        self.__fileToolBar.setFloatable(False)
+
         self.menuBar().addMenu(self.__fileMenu)
-        self.__fileNewAction = QAction(StringTable.getString("MENU_FILE_NEW"))
+        self.__fileNewAction = QAction(
+            self.__getIcon("FileNew.png"),
+            StringTable.getString("MENU_FILE_NEW"))
         self.__fileNewAction.setShortcut(QKeySequence.New)
         self.__fileNewAction.triggered.connect(self.onMenuFileNew)
         self.__fileMenu.addAction(self.__fileNewAction)
+        self.__fileToolBar.addAction(self.__fileNewAction)
 
         self.__fileOpenAction = QAction(
+            self.__getIcon("FileOpen.png"),
             StringTable.getString("MENU_FILE_OPEN"))
         self.__fileOpenAction.setShortcut(QKeySequence.Open)
         self.__fileOpenAction.triggered.connect(self.onMenuFileOpen)
         self.__fileMenu.addAction(self.__fileOpenAction)
+        self.__fileToolBar.addAction(self.__fileOpenAction)
 
         self.__fileMenu.addSeparator()
+        self.__fileToolBar.addSeparator()
 
         self.__fileSaveAction = QAction(
+            self.__getIcon("FileSave.png"),
             StringTable.getString("MENU_FILE_SAVE"))
         self.__fileSaveAction.setShortcut(QKeySequence.Save)
         self.__fileSaveAction.triggered.connect(self.onMenuFileSave)
         self.__fileSaveAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileSaveAction)
+        self.__fileToolBar.addAction(self.__fileSaveAction)
 
         self.__fileSaveAsAction = QAction(
+            self.__getIcon("FileSaveAs.png"),
             StringTable.getString("MENU_FILE_SAVE_AS"))
         self.__fileSaveAsAction.setShortcut(QKeySequence.SaveAs)
         self.__fileSaveAsAction.triggered.connect(self.onMenuFileSaveAs)
         self.__fileSaveAsAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileSaveAsAction)
+        self.__fileToolBar.addAction(self.__fileSaveAsAction)
 
         self.__fileMenu.addSeparator()
+        self.__fileToolBar.addSeparator()
 
         self.__fileCloseAction = QAction(
+            self.__getIcon("FileClose.png"),
             StringTable.getString("MENU_FILE_CLOSE"))
         self.__fileCloseAction.setShortcut(QKeySequence.Close)
         self.__fileCloseAction.triggered.connect(self.onMenuFileClose)
         self.__fileMenu.addAction(self.__fileCloseAction)
+        self.__fileToolBar.addAction(self.__fileCloseAction)
 
         self.__fileMenu.addSeparator()
+        self.__fileToolBar.addSeparator()
 
         self.__fileExitAction = QAction(
+            self.__getIcon("FileExit.png"),
             StringTable.getString("MENU_FILE_EXIT"))
         self.__fileExitAction.setShortcut(QKeySequence.Quit)
         self.__fileExitAction.triggered.connect(self.onMenuFileExit)
         self.__fileCloseAction.setEnabled(False)
         self.__fileMenu.addAction(self.__fileExitAction)
+        self.__fileToolBar.addAction(self.__fileExitAction)
 
     def __initEditMenu(self):
         self.__editMenu = QMenu(StringTable.getString("MENU_EDIT"))
         self.menuBar().addMenu(self.__editMenu)
 
+        self.__editToolBar = QToolBar(StringTable.getString("TOOLBAR_EDIT"))
+        self.addToolBar(Qt.TopToolBarArea, self.__editToolBar)
+        self.__editToolBar.setFloatable(False)
+
         self.__editNewGroupAction = QAction(
+            self.__getIcon("EditNewGroup.png"),
             StringTable.getString("MENU_EDIT_NEW_GROUP"))
         self.__editMenu.addAction(self.__editNewGroupAction)
         self.__editNewGroupAction.setShortcut(QKeySequence("Ctrl+G"))
         self.__editNewGroupAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editNewGroupAction)
 
         self.__editMenu.addSeparator()
+        self.__editToolBar.addSeparator()
 
         self.__editUndoAction = QAction(
+            self.__getIcon("EditUndo.png"),
             StringTable.getString("MENU_EDIT_UNDO"))
         self.__editMenu.addAction(self.__editUndoAction)
         self.__editUndoAction.setShortcut(QKeySequence.Undo)
         self.__editUndoAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editUndoAction)
 
         self.__editRedoAction = QAction(
+            self.__getIcon("EditRedo.png"),
             StringTable.getString("MENU_EDIT_REDO"))
         self.__editMenu.addAction(self.__editRedoAction)
         self.__editRedoAction.setShortcut(QKeySequence.Redo)
         self.__editRedoAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editRedoAction)
 
         self.__editMenu.addSeparator()
+        self.__editToolBar.addSeparator()
 
-        self.__editCutAction = QAction(StringTable.getString("MENU_EDIT_CUT"))
+        self.__editCutAction = QAction(
+            self.__getIcon("EditCut.png"),
+            StringTable.getString("MENU_EDIT_CUT"))
         self.__editMenu.addAction(self.__editCutAction)
         self.__editCutAction.setShortcut(QKeySequence.Cut)
         self.__editCutAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editCutAction)
 
         self.__editCopyAction = QAction(
+            self.__getIcon("EditCopy.png"),
             StringTable.getString("MENU_EDIT_COPY"))
         self.__editMenu.addAction(self.__editCopyAction)
         self.__editCopyAction.setShortcut(QKeySequence.Copy)
         self.__editCopyAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editCopyAction)
 
         self.__editPasteAction = QAction(
+            self.__getIcon("EditPaste.png"),
             StringTable.getString("MENU_EDIT_PASTE"))
         self.__editMenu.addAction(self.__editPasteAction)
         self.__editPasteAction.setShortcut(QKeySequence.Paste)
         self.__editPasteAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editPasteAction)
 
         self.__editMenu.addSeparator()
+        self.__editToolBar.addSeparator()
 
         self.__editRemoveAction = QAction(
+            self.__getIcon("EditRemove.png"),
             StringTable.getString("MENU_EDIT_REMOVE"))
         self.__editMenu.addAction(self.__editRemoveAction)
         self.__editRemoveAction.setShortcut(QKeySequence("Ctrl+R"))
         self.__editRemoveAction.setEnabled(False)
+        self.__editToolBar.addAction(self.__editRemoveAction)
 
     def editMenu(self):
         '''

@@ -10,6 +10,7 @@
     "xl_fabrication_bay": 0,
     "l_maintenance_bay": 1,
     "xl_maintenance_bay": 0,
+    "max_employee_num": 500,
     "name": {
         "en_US": "L Ship Maintenance Bay",
         "zh_CN": "L级飞船维护港"

@@ -10,6 +10,7 @@
     "xl_fabrication_bay": 0,
     "l_maintenance_bay": 0,
     "xl_maintenance_bay": 0,
+    "max_employee_num": 0,
     "name": {
         "en_US": "S/M Ship Fabrication Bay",
         "zh_CN": "S/M级飞船制造港"

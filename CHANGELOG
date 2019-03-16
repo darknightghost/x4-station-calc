@@ -2,6 +2,7 @@ v0.0.3
     Fixed a bug that the amount of module cannot bigger than 100.
     Fixed a mistake in the data of Wheat Production module.
     Added toolbar(Icons are copied from gnome).
+    Added workforce information to build modules.
 
 v0.0.2
     Added build modules which are added to X4:Foundnations 2.0.

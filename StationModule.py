@@ -719,6 +719,11 @@ class BuildModule(StationModule):
             raise TypeError(
                 "Value of xl_maintenance_bay should be an integer.")
 
+        self.__maxEmployeeNum = data["max_employee_num"]
+
+        if not isinstance(self.__maxEmployeeNum, int):
+            raise TypeError("Value of max_employee_num should be an integer.")
+
     def shipStorage(self):
         '''
             Get ship storage.
@@ -767,6 +772,12 @@ class BuildModule(StationModule):
         '''
         return self.__xlMaintenanceBay
 
+    def maxEmployeeNum(self):
+        '''
+            Maxium number of employee.
+        '''
+        return self.__maxEmployeeNum
+
     def __str__(self):
         commonStr = addIndent(super().__str__())
         return "{\n" \
@@ -778,6 +789,7 @@ class BuildModule(StationModule):
                 "    number of XL fabrication bay = %d\n" \
                 "    number of L maintenance bay = %d\n" \
                 "    number of XL maintenance bay = %d\n" \
+                "    maxium number of employee = %d,\n" \
                 "}" % (
                         commonStr,
                         self.__shipStorage,
@@ -786,7 +798,8 @@ class BuildModule(StationModule):
                         self.__lFabricationBay,
                         self.__xlFabricationBay,
                         self.__lMaintenanceBay,
-                        self.__xlMaintenanceBay)
+                        self.__xlMaintenanceBay,
+                        self.maxEmployeeNum())
 
     def info(self):
         ret = super().info()
@@ -829,6 +842,11 @@ class BuildModule(StationModule):
                 InfoWidget.InfoItem(
                     StringTable.getString("STR_XL_SHIP_MAINTENANCE_BAY"),
                     str(self.xlMaintenanceBay())))
+
+        ret.append(
+            InfoWidget.InfoItem(
+                StringTable.getString("STR_MAX_EMPLOYEE_NUM"),
+                "%d" % (self.maxEmployeeNum())))
 
         return ret
 

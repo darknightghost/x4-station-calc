@@ -83,6 +83,8 @@ def main():
     shutil.copytree(
         str(SCRIPT_DIR / "products"), str(distpath / "main" / "products"))
     shutil.copytree(
+        str(SCRIPT_DIR / "icons"), str(distpath / "main" / "icons"))
+    shutil.copytree(
         str(SCRIPT_DIR / "station_modules"),
         str(distpath / "main" / "station_modules"))
     shutil.copyfile(

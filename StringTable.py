@@ -85,6 +85,10 @@ __STRING_TABLE = {
         "en_US": "&File",
         "zh_CN": "文件(&F)"
     },
+    "TOOLBAR_FILE": {
+        "en_US": "File",
+        "zh_CN": "文件"
+    },
     "MENU_FILE_NEW": {
         "en_US": "&New",
         "zh_CN": "新建(&N)"
@@ -112,6 +116,10 @@ __STRING_TABLE = {
     "MENU_EDIT": {
         "en_US": "&Edit",
         "zh_CN": "编辑(&E)"
+    },
+    "TOOLBAR_EDIT": {
+        "en_US": "Edit",
+        "zh_CN": "编辑"
     },
     "MENU_EDIT_NEW_GROUP": {
         "en_US": "&New Group",

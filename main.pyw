@@ -64,7 +64,6 @@ def main():
         stationPath = pargs[0]
 
     else:
-
         stationPath = None
 
     #Main window

@@ -5,7 +5,7 @@
     "Production",
     "factions": ["FACTION_ARGON"],
     "resources": [{
-        "id": "PRODUCT_WHEAT",
+        "id": "PRODUCT_ENERGY_CELLS",
         "amount": 360
     }, {
         "id": "PRODUCT_WATER",

@@ -10,6 +10,7 @@
     "xl_fabrication_bay": 1,
     "l_maintenance_bay": 0,
     "xl_maintenance_bay": 0,
+    "max_employee_num": 500,
     "name": {
         "en_US": "XL Ship Fabrication Bay",
         "zh_CN": "XL级飞船制造港"

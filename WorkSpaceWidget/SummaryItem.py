@@ -142,7 +142,6 @@ class SummaryItem(QTreeWidgetItem):
         #Resources
         #{Product : amount}
         self.__resources = {}
-        self.__maxResources = {}
         self.__resourcesItem = QTreeWidgetItem(
             self, [StringTable.getString("STR_RESOURCES")])
         self.__resourcesItem.setFlags(Qt.ItemIsEnabled)
@@ -199,7 +198,7 @@ class SummaryItem(QTreeWidgetItem):
         '''
             Get resources.
         '''
-        return self.__resources, self.__maxResources
+        return self.__resources
 
     def update(self):
         '''
@@ -212,7 +211,6 @@ class SummaryItem(QTreeWidgetItem):
         self.__products = {}
         self.__maxProducts = {}
         self.__resources = {}
-        self.__maxResources = {}
         self.__foods = {}
         self.__workforce = 0
 
@@ -280,13 +278,9 @@ class SummaryItem(QTreeWidgetItem):
                     try:
                         self.__resources[
                             r.product()] += r.amount() * m.amount()
-                        self.__maxResources[r.product()] += r.amount(
-                        ) * m.amount() * m.stationModule().maxEfficiency()
 
                     except KeyError:
                         self.__resources[r.product()] = r.amount() * m.amount()
-                        self.__maxResources[r.product()] = r.amount(
-                        ) * m.amount() * m.stationModule().maxEfficiency()
 
             except AttributeError:
                 pass
@@ -312,7 +306,7 @@ class SummaryItem(QTreeWidgetItem):
             if p in self.__resources:
                 #p is an intermediate
                 amount = self.__products[p] - self.__resources[p]
-                maxAmount = self.__maxProducts[p] - self.__maxResources[p]
+                maxAmount = self.__maxProducts[p] - self.__resources[p]
                 if p in self.__foods:
                     amount -= self.__foods[p]
                     maxAmount -= self.__foods[p]
@@ -336,8 +330,7 @@ class SummaryItem(QTreeWidgetItem):
                 continue
 
             amount = self.__resources[p]
-            maxAmount = self.__maxResources[p]
-            SummaryProductItem(p, "%d/h - >%d/h" % (amount, maxAmount),
+            SummaryProductItem(p, "%d/h" % (amount),
                                self.__resourcesItem)
 
         for p in self.__foods:

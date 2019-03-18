@@ -132,7 +132,6 @@ class SummarysItem(QTreeWidgetItem):
         #Resources
         #{Product : amount}
         self.__resources = {}
-        self.__maxResources = {}
         self.__resourcesItem = QTreeWidgetItem(
             self.__totalSummaryItem, [StringTable.getString("STR_RESOURCES")])
         self.__resourcesItem.setFlags(Qt.ItemIsEnabled)
@@ -168,7 +167,6 @@ class SummarysItem(QTreeWidgetItem):
         allProducts = {}
         allMaxProducts = {}
         allResources = {}
-        allMaxResources = {}
         workforce = 0
 
         def merge(dest, src):
@@ -191,8 +189,7 @@ class SummarysItem(QTreeWidgetItem):
             merge(allFoods, g.foods())
             merge(allProducts, g.products()[0])
             merge(allMaxProducts, g.products()[1])
-            merge(allResources, g.resources()[0])
-            merge(allMaxResources, g.resources()[1])
+            merge(allResources, g.resources())
 
         self.__workforceItem.setText(1, "%+d" % (workforce))
 
@@ -201,13 +198,13 @@ class SummarysItem(QTreeWidgetItem):
             if p in allResources:
                 #p is an intermediate
                 amount = allProducts[p] - allResources[p]
-                maxAmount = allMaxProducts[p] - allMaxResources[p]
+                maxAmount = allMaxProducts[p] - allResources[p]
 
                 if p in allFoods:
                     amount -= allFoods[p]
                     maxAmount -= allFoods[p]
 
-                SummaryProductItem(p, "%+d/h -> %+d/h" % (amount, maxAmount),
+                SummaryProductItem(p, "%+d/h" % (amount),
                                    self.__intermediatesItem)
 
             else:
@@ -227,8 +224,7 @@ class SummarysItem(QTreeWidgetItem):
                 continue
 
             amount = allResources[p]
-            maxAmount = allMaxResources[p]
-            SummaryProductItem(p, "%d/h -> %d/h" % (amount, maxAmount),
+            SummaryProductItem(p, "%d/h" % (amount),
                                self.__resourcesItem)
 
         for p in allFoods:

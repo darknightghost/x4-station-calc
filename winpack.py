@@ -25,6 +25,13 @@ import shutil
 SCRIPT_DIR = pathlib.Path(__file__).parent
 MAIN_FILE = SCRIPT_DIR / "main.pyw"
 
+def copy(src, dest):
+    print("Copying \"%s\" to \"%s\"..." % (str(src), str(dest)))
+    if src.is_dir():
+        shutil.copytree(str(src), str(dest))
+        
+    else:
+        shutil.copyfile(str(src), str(dest))
 
 def scanDir(beginDir):
     ret = []
@@ -78,21 +85,18 @@ def main():
         return ret
 
     #Copy data
-    shutil.copytree(
-        str(SCRIPT_DIR / "factions"), str(distpath / "main" / "factions"))
-    shutil.copytree(
-        str(SCRIPT_DIR / "products"), str(distpath / "main" / "products"))
-    shutil.copytree(
-        str(SCRIPT_DIR / "icons"), str(distpath / "main" / "icons"))
-    shutil.copytree(
-        str(SCRIPT_DIR / "station_modules"),
-        str(distpath / "main" / "station_modules"))
-    shutil.copyfile(
-        str(SCRIPT_DIR / "LICENSE"), str(distpath / "main" / "LICENSE"))
-    shutil.copyfile(
-        str(SCRIPT_DIR / "README.md"), str(distpath / "main" / "README.md"))
-    shutil.copyfile(
-        str(SCRIPT_DIR / "CHANGELOG"), str(distpath / "main" / "CHANGELOG"))
+    sources = [
+        "factions",
+        "products",
+        "icons",
+        "station_modules",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG",
+    ]
+    
+    for s in sources:
+        copy(SCRIPT_DIR / s, distpath / "main" / s)
 
     print("The output directory is \"%s\"." % str(distpath / "main"))
     return 0

@@ -1,6 +1,6 @@
 {
     "id": "PRODUCT_METHANE",
-    "storage": "Container",
+    "storage": "Liquid",
     "volume": 6,
     "name": {
         "en_US": "Methane",

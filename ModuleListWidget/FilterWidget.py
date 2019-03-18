@@ -82,8 +82,12 @@ class FilterWidget(QWidget):
                 products = []
                 for p in m.products():
                     products.append(p.product())
+                    
+                resources = []
+                for p in m.resources():
+                    resources.append(p.product())
                 if self.__comboProduct.itemData(
-                        self.__comboProduct.currentIndex()) not in products:
+                        self.__comboProduct.currentIndex()) not in (products + resources):
                     return False
 
         #By keywords

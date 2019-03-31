@@ -68,7 +68,7 @@ def main():
     fileList = scanDir(SCRIPT_DIR)
 
     #Make command
-    cmd = "pyinstaller.exe --distpath \"%s\" --workpath \"%s\"" % (
+    cmd = "pyinstaller.exe -w --distpath \"%s\" --workpath \"%s\"" % (
         str(distpath), str(workpath))
 
     for f in fileList:

@@ -35,10 +35,14 @@ import sys
 import re
 import os
 
+import logging
+
 import Common
 from Common import *
 
 import StringTable
+
+logger = logging.getLogger()
 
 
 def __url():
@@ -58,11 +62,13 @@ def checkUpdate(parent):
         Check update.
     '''
     #Download url
+    logger.info("Getting url \"%s\"." % (__VERSION_URL))
     try:
         request = urllib.request.urlopen(__VERSION_URL, timeout=10)
         data = request.read().decode(encoding="utf-8")
 
-    except Exception:
+    except Exception as e:
+        logger.error(str(e))
         QMessageBox.critical(
             parent, StringTable.getString("TITLE_MSG_ERROR"),
             StringTable.getString("STR_CHECKUPDATE_NETWORK_ERROR"))
@@ -83,6 +89,8 @@ def checkUpdate(parent):
         return
 
     #Show message
+    logger.info("Current version is %s, the latest version is %s." %
+                (str(VERSION), str(latestVersion)))
     if VERSION < latestVersion:
         if QMessageBox.information(
                 parent,

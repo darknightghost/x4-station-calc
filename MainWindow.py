@@ -283,8 +283,7 @@ class MainWindow(QMainWindow):
         self.__helpMenu.addAction(self.__helpAboutAction)
         self.__helpAboutAction.triggered.connect(self.onAbout)
 
-        self.__editMenu.addSeparator()
-        self.__editToolBar.addSeparator()
+        self.__helpMenu.addSeparator()
 
         self.__helpCheckUpdateAction = QAction(
             StringTable.getString("MENU_CHECKUPDATE"))

@@ -67,8 +67,8 @@ def main():
         stationPath = None
 
     #Main window
-
     import MainWindow
+
     MainWindow = MainWindow.MainWindow
     w = MainWindow(None, stationPath)
     w.show()

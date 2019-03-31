@@ -35,6 +35,7 @@ import InfoWidget
 import DockWidget
 import LicenseDialog
 import AboutDialog
+import CheckUpdate
 
 
 class MainWindow(QMainWindow):
@@ -282,6 +283,14 @@ class MainWindow(QMainWindow):
         self.__helpMenu.addAction(self.__helpAboutAction)
         self.__helpAboutAction.triggered.connect(self.onAbout)
 
+        self.__editMenu.addSeparator()
+        self.__editToolBar.addSeparator()
+
+        self.__helpCheckUpdateAction = QAction(
+            StringTable.getString("MENU_CHECKUPDATE"))
+        self.__helpMenu.addAction(self.__helpCheckUpdateAction)
+        self.__helpCheckUpdateAction.triggered.connect(self.onCheckUpdate)
+
     def __initWidgets(self):
         self.__infoWidget = self.__initSingleDockWidget(
             InfoWidget.InfoWidget, self.__viewInfoMenu,
@@ -458,6 +467,9 @@ class MainWindow(QMainWindow):
 
     def onAbout(self):
         AboutDialog.AboutDialog().exec()
+
+    def onCheckUpdate(self):
+        CheckUpdate.checkUpdate(self)
 
     #Events
     @TypeChecker(QMainWindow, QCloseEvent)

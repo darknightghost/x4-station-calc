@@ -600,7 +600,7 @@ class ProductionModule(StationModule):
         #Resources
         resources = []
         for r in self.resources():
-            resources.append(r.info(self.maxEfficiency()))
+            resources.append(r.info())
 
         ret.append(
             InfoWidget.InfoItem(

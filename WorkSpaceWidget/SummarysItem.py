@@ -204,7 +204,7 @@ class SummarysItem(QTreeWidgetItem):
                     amount -= allFoods[p]
                     maxAmount -= allFoods[p]
 
-                SummaryProductItem(p, "%+d/h" % (amount),
+                SummaryProductItem(p, "%+d/h -> %+d/h" % (amount, maxAmount),
                                    self.__intermediatesItem)
 
             else:
@@ -224,8 +224,7 @@ class SummarysItem(QTreeWidgetItem):
                 continue
 
             amount = allResources[p]
-            SummaryProductItem(p, "%d/h" % (amount),
-                               self.__resourcesItem)
+            SummaryProductItem(p, "%d/h" % (amount), self.__resourcesItem)
 
         for p in allFoods:
             amount = allFoods[p]

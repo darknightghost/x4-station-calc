@@ -16,6 +16,7 @@
 
 import logging
 import pathlib
+import time
 
 
 class LogHandler(logging.StreamHandler):
@@ -30,6 +31,8 @@ class LogHandler(logging.StreamHandler):
                 f.write(l)
                 f.write("\n")
 
+        print("Log has been written to \"%s\"." % (path))
+
     def emit(self, record):
         self.__buffer.append(self.format(record))
         if len(self.__buffer) > self.__maxRecord:
@@ -43,7 +46,7 @@ __HANDLER.setFormatter(
 
 
 def writeLog():
-    logPath = pathlib.Path(__file__).parent / "err.log"
+    logPath = pathlib.Path(__file__).parent / ("err.log")
     __HANDLER.writeFile(str(logPath))
     return
 

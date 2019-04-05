@@ -397,6 +397,14 @@ __STRING_TABLE = {
         "en_US": "Intermediates",
         "zh_CN": "中间产品"
     },
+    "BTN_FILTER_MODULES": {
+        "en_US": "F&ilter Modules",
+        "zh_CN": "过滤模块(&I)"
+    },
+    "BTN_AUTO_COMPUTE": {
+        "en_US": "Auto &Compute",
+        "zh_CN": "自动计算(&C)"
+    },
 
     #About
     "STR_ABOUT_TITLE": {
@@ -406,6 +414,28 @@ __STRING_TABLE = {
     "STR_ABOUT": {
         "en_US": "%s\nVersion : %s",
         "zh_CN": "%s\n版本 : %s"
+    },
+
+    #Check update
+    "MENU_CHECKUPDATE": {
+        "en_US": "Check &Update",
+        "zh_CN": "检查更新(&U)"
+    },
+    "TITLE_CHECKUPDATE": {
+        "en_US": "Check &Update",
+        "zh_CN": "检查更新"
+    },
+    "STR_HAS_NEW_VERSION": {
+        "en_US": "A new version is available, go to the download page now?",
+        "zh_CN": "有新的版本可用, 是否前往下载页面?"
+    },
+    "STR_HAS_NOT_NEW_VERSION": {
+        "en_US": "Current version is the latest version.",
+        "zh_CN": "已经是最新版本, 无需更新."
+    },
+    "STR_CHECKUPDATE_NETWORK_ERROR": {
+        "en_US": "Network error.",
+        "zh_CN": "网络错误."
     },
     #"": {
     #    "en_US": "",

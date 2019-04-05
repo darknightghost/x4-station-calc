@@ -1,3 +1,9 @@
+v0.0.5
+    Fixed a bug that exceptions in QT classes cannot be caught by logger.
+    Fixed a mistake in the data of Smart Chip Production module.
+    Add check update module.
+    Add "Filter Modules" button.
+
 v0.0.4
     Fixed a bug that the amount of resource are not influenced by workforce now.
 

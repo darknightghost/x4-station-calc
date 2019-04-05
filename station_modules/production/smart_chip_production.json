@@ -5,15 +5,15 @@
     "Production",
     "factions": ["FACTION_ARGON", "FACTION_TELADI", "FACTION_PARANID"],
     "resources": [{
-        "id": "PRODUCT_SMART_CHIPS",
-        "amount": 480
-    }],
-    "products": [{
         "id": "PRODUCT_ENERGY_CELLS",
         "amount": 300
     }, {
         "id": "PRODUCT_SILICON_WAFERS",
         "amount": 120
+    }],
+    "products": [{
+        "id": "PRODUCT_SMART_CHIPS",
+        "amount": 480
     }],
     "turret":
     8,

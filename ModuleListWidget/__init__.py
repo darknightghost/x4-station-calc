@@ -88,3 +88,8 @@ class ModuleListWidget(DockWidget.QDockWidgetAttachAction):
 
         op = WorkSpaceWidget.AddModuleOperation(moduleList)
         self.operation.emit(op)
+
+    @TypeChecker(QWidget, str)
+    def setProductFilter(self, pid):
+        self.__filterWidget.setProductFilter(pid)
+        self.__buttonBarWidget.showFilterWidget()

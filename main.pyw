@@ -13,12 +13,12 @@
       You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
 import platform
 import time
 import sys
 import traceback
 import logging
+import sys
 
 if int(platform.python_version().split(".")[0]) != 3:
     print("Python3 is required!")
@@ -67,20 +67,27 @@ def main():
         stationPath = None
 
     #Main window
-
     import MainWindow
+
     MainWindow = MainWindow.MainWindow
     w = MainWindow(None, stationPath)
     w.show()
 
-    return app.exec_()
+    return app.exec()
+
+
+def excepthook(tp, value, trace):
+    '''
+        Unhandled exceptions.
+    '''
+    s = ""
+    for l in traceback.format_exception(tp, value, trace):
+        s += l
+    logger.error(s)
+    InitLogger.writeLog()
+    sys.exit(-1)
 
 
 if __name__ == '__main__':
-    try:
-        sys.exit(main())
-
-    except Exception as e:
-        logger.error(traceback.format_exc())
-        InitLogger.writeLog()
-        raise e
+    sys.excepthook = excepthook
+    sys.exit(main())

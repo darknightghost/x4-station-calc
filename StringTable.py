@@ -397,6 +397,14 @@ __STRING_TABLE = {
         "en_US": "Intermediates",
         "zh_CN": "中间产品"
     },
+    "BTN_FILTER_MODULES": {
+        "en_US": "F&ilter Modules",
+        "zh_CN": "过滤模块(&I)"
+    },
+    "BTN_AUTO_COMPUTE": {
+        "en_US": "Auto &Compute",
+        "zh_CN": "自动计算(&C)"
+    },
 
     #About
     "STR_ABOUT_TITLE": {

@@ -502,7 +502,8 @@ class MainWindow(QMainWindow):
         #Create central widget
         s = self.centralWidget()
         self.setCentralWidget(
-            WorkSpaceWidget.WorkSpaceWidget(self, self.__station))
+            WorkSpaceWidget.WorkSpaceWidget(self, self.__station,
+                                            self.__moduleListWidget))
         s.close()
         del s
         self.centralWidget().show()

@@ -82,12 +82,13 @@ class FilterWidget(QWidget):
                 products = []
                 for p in m.products():
                     products.append(p.product())
-                    
+
                 resources = []
                 for p in m.resources():
                     resources.append(p.product())
                 if self.__comboProduct.itemData(
-                        self.__comboProduct.currentIndex()) not in (products + resources):
+                        self.__comboProduct.currentIndex()) not in (
+                            products + resources):
                     return False
 
         #By keywords
@@ -96,6 +97,16 @@ class FilterWidget(QWidget):
                 return False
 
         return True
+
+    @TypeChecker(QWidget, str)
+    def setProductFilter(self, pid):
+        self.__chkByProduct.setChecked(True)
+        for i in range(0, self.__comboProduct.count()):
+            if self.__comboProduct.itemData(i).id() == pid:
+                self.__comboProduct.setCurrentIndex(i)
+                return
+
+        return
 
     def __loadFactions(self):
         for f in Faction.factions():

@@ -38,6 +38,24 @@ class SummaryProductItem(QTreeWidgetItem):
         self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
         self.__product = product
 
+        self.__btnWidget = QWidget()
+        self.__btnLayout = QHBoxLayout(self.__btnWidget)
+        margins = self.__btnLayout.contentsMargins()
+        margins.setLeft(0)
+        margins.setRight(0)
+        margins.setTop(0)
+        margins.setBottom(0)
+        self.__btnLayout.setContentsMargins(margins)
+        self.__btnFilterModules = QPushButton(
+            StringTable.getString("BTN_FILTER_MODULES"))
+        self.__btnLayout.addWidget(self.__btnFilterModules)
+        self.__btnLayout.addStretch()
+        self.treeWidget().setItemWidget(self, 2, self.__btnWidget)
+        self.__btnFilterModules.clicked.connect(self.onBtnFilterClicked)
+
+    def onBtnFilterClicked(self):
+        self.treeWidget().setProductFilter(self.__product.id())
+
     @TypeChecker(QTreeWidgetItem, int)
     def onClicked(self, column):
         self.treeWidget().moduleClicked.emit(self.__product.info())
@@ -330,8 +348,7 @@ class SummaryItem(QTreeWidgetItem):
                 continue
 
             amount = self.__resources[p]
-            SummaryProductItem(p, "%d/h" % (amount),
-                               self.__resourcesItem)
+            SummaryProductItem(p, "%d/h" % (amount), self.__resourcesItem)
 
         for p in self.__foods:
             amount = self.__foods[p]

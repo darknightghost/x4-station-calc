@@ -62,6 +62,10 @@ class ButtonBarWidget(QWidget):
         '''
         self.__btnAddToStation.setEnabled(state)
 
+    def showFilterWidget(self):
+        if not self.__showFilter:
+            self.__btnShowFilter.clicked.emit()
+
     def __onAddToStationClicked(self):
         self.addToStation.emit()
 

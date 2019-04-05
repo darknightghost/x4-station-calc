@@ -47,12 +47,13 @@ class WorkSpaceWidget(QTreeWidget):
     changeRemoveState = pyqtSignal(bool)
     updateItemButtons = pyqtSignal()
 
-    @TypeChecker(QTreeWidget, QMainWindow, Station.Station)
-    def __init__(self, parent, station):
+    @TypeChecker(QTreeWidget, QMainWindow, Station.Station, QWidget)
+    def __init__(self, parent, station, moduleListWidget):
         super().__init__(parent)
+        self.__moduleListWidget = moduleListWidget
         self.__station = station
         self.header().setVisible(False)
-        self.setColumnCount(2)
+        self.setColumnCount(3)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.currentItemChanged.connect(self.__onCurrentItemChanged)
@@ -326,3 +327,7 @@ class WorkSpaceWidget(QTreeWidget):
             return
 
         self.changePasteState.emit(False)
+
+    @TypeChecker(QWidget, str)
+    def setProductFilter(self, pid):
+        self.__moduleListWidget.setProductFilter(pid)

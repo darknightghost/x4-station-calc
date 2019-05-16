@@ -14,6 +14,9 @@
         "id": "PRODUCT_HULL_PARTS",
         "amount": 60
     }, {
+        "id": "PRODUCT_MICROCHIPS",
+        "amount": 60
+    }, {
         "id": "PRODUCT_SCANNING_ARRAYS",
         "amount": 120
     }],

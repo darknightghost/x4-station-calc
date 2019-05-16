@@ -1,3 +1,6 @@
+v0.0.6
+    Fixed a mistake in the data of drone component production module.
+
 v0.0.5
     Fixed a bug that exceptions in QT classes cannot be caught by logger.
     Fixed a mistake in the data of Smart Chip Production module.

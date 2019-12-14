@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/StringTable">
+        <file>StringTable/StringTable.json</file>
+    </qresource>
+    <qresource prefix="/Shaders"/>
+</RCC>

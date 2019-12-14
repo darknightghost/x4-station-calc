@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_ENGINE_PARTS",
-    "storage": "Container",
-    "volume": 30,
-    "name": {
-        "en_US": "Engine Parts",
-        "zh_CN": "引擎部件"
-    }
-}

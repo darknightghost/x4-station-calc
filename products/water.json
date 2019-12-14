@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_WATER",
-    "storage": "Container",
-    "volume": 6,
-    "name": {
-        "en_US": "Water",
-        "zh_CN": "水"
-    }
-}

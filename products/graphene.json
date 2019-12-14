@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_GRAPHENE",
-    "storage": "Container",
-    "volume": 20,
-    "name": {
-        "en_US": "Graphene",
-        "zh_CN": "石墨"
-    }
-}

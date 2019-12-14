@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_MICROCHIPS",
-    "storage": "Container",
-    "volume": 22,
-    "name": {
-        "en_US": "Microchips",
-        "zh_CN": "微芯片"
-    }
-}

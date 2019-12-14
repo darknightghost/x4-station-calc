@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SWAMP_PLANT",
-    "storage": "Container",
-    "volume": 6,
-    "name": {
-        "en_US": "Swamp Plant",
-        "zh_CN": "沼泽植物"
-    }
-}

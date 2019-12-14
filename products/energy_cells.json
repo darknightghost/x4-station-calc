@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_ENERGY_CELLS",
-    "storage": "Container",
-    "volume": 1,
-    "name": {
-        "en_US": "Energy Cells",
-        "zh_CN": "能量电池"
-    }
-}

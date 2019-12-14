@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_WEAPON_COMPONENTS",
-    "storage": "Container",
-    "volume": 20,
-    "name": {
-        "en_US": "Weapon Components",
-        "zh_CN": "武器部件"
-    }
-}

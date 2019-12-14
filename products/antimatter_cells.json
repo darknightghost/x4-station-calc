@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_ANTIMATTER_CELLS",
-    "storage": "Container",
-    "volume": 18,
-    "name": {
-        "en_US": "Antimatter Cells",
-        "zh_CN": "反物质单元"
-    }
-}

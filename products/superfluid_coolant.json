@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SUPERFLUID_COOLANT",
-    "storage": "Container",
-    "volume": 16,
-    "name": {
-        "en_US": "Superfluid Coolant",
-        "zh_CN": "超流体冷却剂"
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_ADVANCED_ELECTRONICS",
-    "storage": "Container",
-    "volume": 30,
-    "name": {
-        "en_US": "Advanced Electronics",
-        "zh_CN": "先进电子设备"
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_DRONE_COMPONENTS",
-    "storage": "Container",
-    "volume": 30,
-    "name": {
-        "en_US": "Drone Components",
-        "zh_CN": "无人机组件"
-    }
-}

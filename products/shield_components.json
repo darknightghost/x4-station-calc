@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SHIELD_COMPONENTS",
-    "storage": "Container",
-    "volume": 10,
-    "name": {
-        "en_US": "Shield Components",
-        "zh_CN": "护盾部件"
-    }
-}

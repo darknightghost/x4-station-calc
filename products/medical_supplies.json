@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_MEDICAL_SUPPLIES",
-    "storage": "Container",
-    "volume": 2,
-    "name": {
-        "en_US": "Medical Supplies",
-        "zh_CN": "医疗物资"
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_WHEAT",
-    "storage": "Container",
-    "volume": 4,
-    "name": {
-        "en_US": "Container",
-        "zh_CN": "小麦"
-    }
-}

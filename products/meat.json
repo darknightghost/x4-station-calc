@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_MEAT",
-    "storage": "Container",
-    "volume": 6,
-    "name": {
-        "en_US": "Meat",
-        "zh_CN": "食用肉"
-    }
-}

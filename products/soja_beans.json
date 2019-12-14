@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SOJA_BEANS",
-    "storage": "Container",
-    "volume": 5,
-    "name": {
-        "en_US": "Soja Beans",
-        "zh_CN": "白豆"
-    }
-}

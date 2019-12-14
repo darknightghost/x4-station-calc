@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SMART_CHIPS",
-    "storage": "Container",
-    "volume": 5,
-    "name": {
-        "en_US": "Smart Chips",
-        "zh_CN": "智能芯片"
-    }
-}

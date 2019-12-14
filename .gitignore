@@ -10,3 +10,7 @@ __pycache__/*
 pack/*
 main.spec
 *.log
+.build/*
+build/*
+Makefile
+.ycm_extra_conf.py

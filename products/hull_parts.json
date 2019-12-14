@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_HULL_PARTS",
-    "storage": "Container",
-    "volume": 10,
-    "name": {
-        "en_US": "Hull Parts",
-        "zh_CN": "船体部件"
-    }
-}

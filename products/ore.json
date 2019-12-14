@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_ORE",
-    "storage": "Solid",
-    "volume": 10,
-    "name": {
-        "en_US": "Ore",
-        "zh_CN": "金属矿石"
-    }
-}

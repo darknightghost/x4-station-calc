@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_FOOD_RATIONS",
-    "storage": "Container",
-    "volume": 1,
-    "name": {
-        "en_US": "Food Rations",
-        "zh_CN": "食品配给"
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_MISSILE_COMPONENTS",
-    "storage": "Container",
-    "volume": 2,
-    "name": {
-        "en_US": "Missile Components",
-        "zh_CN": "导弹部件"
-    }
-}

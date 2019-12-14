@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SPACEFUEL",
-    "storage": "Container",
-    "volume": 2,
-    "name": {
-        "en_US": "Spacefuel",
-        "zh_CN": "太空燃料"
-    }
-}

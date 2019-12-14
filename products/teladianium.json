@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_TELADIANIUM",
-    "storage": "Container",
-    "volume": 16,
-    "name": {
-        "en_US": "Teladianium",
-        "zh_CN": "T材料"
-    }
-}

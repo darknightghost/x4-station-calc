@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_CLAYTRONICS",
-    "storage": "Container",
-    "volume": 24,
-    "name": {
-        "en_US": "Claytronics",
-        "zh_CN": "纳米计算机"
-    }
-}

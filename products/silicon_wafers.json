@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_SILICON_WAFERS",
-    "storage": "Container",
-    "volume": 18,
-    "name": {
-        "en_US": "Silicon Wafers",
-        "zh_CN": "硅晶片"
-    }
-}

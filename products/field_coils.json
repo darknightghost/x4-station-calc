@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_FIELD_COILS",
-    "storage": "Container",
-    "volume": 15,
-    "name": {
-        "en_US": "Field Coils",
-        "zh_CN": "励磁线圈"
-    }
-}

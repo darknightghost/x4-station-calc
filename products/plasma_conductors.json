@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_PLASMA_CONDUCTORS",
-    "storage": "Container",
-    "volume": 32,
-    "name": {
-        "en_US": "Plasma Conductors",
-        "zh_CN": "等离子导体"
-    }
-}

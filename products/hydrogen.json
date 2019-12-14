@@ -1,9 +1,0 @@
-{
-    "id": "PRODUCT_HYDROGEN",
-    "storage": "Liquid",
-    "volume": 6,
-    "name": {
-        "en_US": "Hydrogen",
-        "zh_CN": "氢"
-    }
-}

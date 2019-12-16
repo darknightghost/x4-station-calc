@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <vector>
 
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtWidgets/QApplication>
+
 #include <getopt.h>
 
 #include <global.h>
@@ -31,6 +35,24 @@ Global::Global(int& argc, char**& argv, int& exitCode)
         return;
     }
 
+    if(m_hasFileToOpen) {
+        qDebug() << "Hase file to open : True.";
+        qDebug() << "File to open : " << m_fileToOpen << ".";
+
+    } else {
+        qDebug() << "Hase file to open : False.";
+
+    }
+
+    /// Path of current file.
+    m_execDir = QDir(QApplication::applicationDirPath()).absolutePath();
+    qDebug() << "Tool dir : " << m_execDir << ".";
+
+    /// Path of config file
+    m_configPath = QString("%1%2%3").arg(m_execDir)
+                   .arg(QDir::separator()).arg(".config");
+    qDebug() << "Path of config file : " << m_configPath;
+
     this->setGood();
 }
 
@@ -40,7 +62,7 @@ Global::Global(int& argc, char**& argv, int& exitCode)
  *
  * @preturn     Path of the file.
  */
-const QString&      Global::execDir()
+const QString&      Global::execDir() const
 {
     return m_execDir;
 }
@@ -50,9 +72,29 @@ const QString&      Global::execDir()
  *
  * @preturn     Path of the file.
  */
-const QString&      Global::configPath()
+const QString&      Global::configPath() const
 {
     return m_configPath;
+}
+
+/**
+ * @brief       Check if there is a file to open.
+ *
+ * @preturn     True if has a file to open, otherwise returns false..
+ */
+bool            Global::hasFileToOpen() const
+{
+    return m_hasFileToOpen;
+}
+
+/**
+ * @brief       Get path of file to open.
+ *
+ * @preturn     Path of the file to open.
+ */
+const QString&      Global::fileToOpen()  const
+{
+    return m_fileToOpen;
 }
 
 /**
@@ -75,7 +117,7 @@ void Global::showHelp(const char* arg0)
 
     /// Usage
     ss << "Usage: " << ::std::endl;
-    ss << "    " << arg0 << "[OPTIONS] [FILE]" << ::std::endl;
+    ss << "    " << arg0 << " [OPTIONS] [FILE]" << ::std::endl;
     ss << ::std::endl;
     ss << "Editor of stations in X4:Foundations." << ::std::endl;
     ss << ::std::endl;
@@ -269,6 +311,20 @@ bool Global::parseArgs(int& argc, char**& argv, int& exitCode)
 
         }
     }
+
+    if(argc == optind + 1)  {
+        m_hasFileToOpen = true;
+        m_fileToOpen = QDir(argv[optind]).absolutePath();
+
+    } else if(argc > optind + 1) {
+        m_hasFileToOpen = false;
+        ::std::cerr << "Too many files to open.";
+        return false;
+
+    } else {
+        m_hasFileToOpen = false;
+    }
+
 
     return true;
 }

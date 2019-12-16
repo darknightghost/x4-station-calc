@@ -29,6 +29,8 @@ class Global : public Singleton<Global, int&, char**&, int&> {
         ::std::map<char, ArgInfo>   m_argMap;   //< Arguments.
         QString             m_execDir;      //< Path of current executable file.
         QString             m_configPath;   //< Path of config file.
+        bool                m_hasFileToOpen;    //< Has file to open.
+        QString             m_fileToOpen;       //< File to open.
 
     protected:
         /**
@@ -46,14 +48,28 @@ class Global : public Singleton<Global, int&, char**&, int&> {
          *
          * @preturn     Path of the file.
          */
-        const QString&      execDir();
+        const QString&      execDir() const;
 
         /**
          * @brief       Get path of config file.
          *
          * @preturn     Path of the file.
          */
-        const QString&      configPath();
+        const QString&      configPath() const;
+
+        /**
+         * @brief       Check if there is a file to open.
+         *
+         * @preturn     True if has a file to open, otherwise returns false..
+         */
+        bool            hasFileToOpen() const;
+
+        /**
+         * @brief       Get path of file to open.
+         *
+         * @preturn     Path of the file to open.
+         */
+        const QString&      fileToOpen()  const;
 
         /**
          * @brief   Destructor.

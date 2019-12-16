@@ -9,6 +9,9 @@
 int main(int argc, char* argv[])
 {
     int exitCode;
+    int fakeArgc = 1;
+    char* fakeArgv[] = {argv[0], NULL};
+    QApplication app(fakeArgc, fakeArgv);
 
     /// Initialize
     if(Global::initialize(argc, argv, exitCode) == nullptr) {

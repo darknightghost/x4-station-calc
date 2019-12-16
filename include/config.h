@@ -60,30 +60,208 @@ class Config : public Singleton<Config> {
 
     public:
         /// Check value
+        /**
+         * @brief       Get value type.
+         *
+         * @param[in]   key         Key of the value.
+         *
+         * @return      Type of the value, if the value does not exists,
+         *              ValueType::None is returned.
+         */
         ValueType       valueType(const QString& key);
+
+        /// Getters of simple values.
+        /**
+         * @brief       Get boolean value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   defaultVal  Default value.
+         *
+         * @return      On success, the value of the key is returned. If the
+         *              value does not exists or the type of value does not
+         *              match, the default value is returned.
+         */
         bool            getBool(const QString& key, bool defaultVal);
+
+        /**
+         * @brief       Get integer value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   defaultVal  Default value.
+         *
+         * @return      On success, the value of the key is returned. If the
+         *              value does not exists or the type of value does not
+         *              match, the default value is returned.
+         */
         int64_t         getInt(const QString& key, int64_t defaultVal);
+
+        /**
+         * @brief       Get float value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   defaultVal  Default value.
+         *
+         * @return      On success, the value of the key is returned. If the
+         *              value does not exists or the type of value does not
+         *              match, the default value is returned.
+         */
         double          getFloat(const QString& key, double defaultVal);
+
+        /**
+         * @brief       Get string value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   defaultVal  Default value.
+         *
+         * @return      On success, the value of the key is returned. If the
+         *              value does not exists or the type of value does not
+         *              match, the default value is returned.
+         */
         QString         getString(const QString& key, const QString& defaultVal);
 
+        /// Setters of simple values
+        /**
+         * @brief       Set boolean value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   value       Value to set.
+         */
         void            setBool(const QString& key, bool value);
+
+        /**
+         * @brief       Set integer value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   value       Value to set.
+         */
         void            setInt(const QString& key, int64_t value);
+
+        /**
+         * @brief       Set float value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   value       Value to set.
+         */
         void            setFloat(const QString& key, double value);
+
+        /**
+         * @brief       Set string value.
+         *
+         * @param[in]   key         Key of the value.
+         * @param[in]   value       Value to set.
+         */
         void            setString(const QString& key, const QString& value);
 
+        /// Getters of array
+        /**
+         * @brief       Get boolean array.
+         *
+         * @param[in]   key         Key of the array.
+         *
+         * @return      On success, the value array of the key is returned. if
+         *              the value does not exists or the type of value does not
+         *              match, an empty vector is returned.
+         */
         QVector<bool>       getBoolArray(const QString& key);
-        QVector<int64_t>    getIntArray(const QString& key);
-        QVector<double>     getFloatArray(const QString& key);
-        QVector<QString>    getStringArray(const QString& key);
-        QVector<::std::shared_ptr<Config>>  getConfigArray(const QString& key);
 
+        /**
+         * @brief       Get integer array.
+         *
+         * @param[in]   key         Key of the array.
+         *
+         * @return      On success, the value array of the key is returned. if
+         *              the value does not exists or the type of value does not
+         *              match, an empty vector is returned.
+         */
+        QVector<int64_t>    getIntArray(const QString& key);
+
+        /**
+         * @brief       Get float array.
+         *
+         * @param[in]   key         Key of the array.
+         *
+         * @return      On success, the value array of the key is returned. if
+         *              the value does not exists or the type of value does not
+         *              match, an empty vector is returned.
+         */
+        QVector<double>     getFloatArray(const QString& key);
+
+        /**
+         * @brief       Get string array.
+         *
+         * @param[in]   key         Key of the array.
+         *
+         * @return      On success, the value array of the key is returned. if
+         *              the value does not exists or the type of value does not
+         *              match, an empty vector is returned.
+         */
+        QVector<QString>    getStringArray(const QString& key);
+
+        /**
+         * @brief       Get config array.
+         *
+         * @param[in]   key         Key of the array.
+         *
+         * @return      On success, the value array of the key is returned. if
+         *              the value does not exists or the type of value does not
+         *              match, an empty vector is returned.
+         */
+        QVector<::std::shared_ptr<Config>>  getConfigArray(
+                                            const QString& key);
+
+        /// Setters of array
+        /**
+         * @brief       Set boolean array.
+         *
+         * @param[in]   key         Key of the array.
+         * @param[in]   value       Array to set.
+         */
         void    setBoolArray(const QString& key, const QVector<bool>& value);
+
+        /**
+         * @brief       Set integer array.
+         *
+         * @param[in]   key         Key of the array.
+         * @param[in]   value       Array to set.
+         */
         void    setIntArray(const QString& key, const QVector<int64_t>& value);
+
+        /**
+         * @brief       Set float array.
+         *
+         * @param[in]   key         Key of the array.
+         * @param[in]   value       Array to set.
+         */
         void    setFloatArray(const QString& key, const QVector<double>& value);
+
+        /**
+         * @brief       Set string array.
+         *
+         * @param[in]   key         Key of the array.
+         * @param[in]   value       Array to set.
+         */
         void    setStringArray(const QString& key, const QVector<QString>& value);
+
+        /**
+         * @brief       Set config array.
+         *
+         * @param[in]   key         Key of the array.
+         * @param[in]   value       Array to set.
+         */
         void    setConfigArray(const QString& key,
                                const QVector<::std::shared_ptr<Config>>& value);
 
         virtual ~Config();
+
+    private:
+        /**
+         * @brief   Load data from config file.
+         */
+        void                loadFile();
+
+        /**
+         * @brief   Save data to config file.
+         */
+        void                saveFaile();
 
 };

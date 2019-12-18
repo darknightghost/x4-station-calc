@@ -3,8 +3,7 @@
 /**
  * @brief   Constructor.
  */
-StringTable::StringTable():
-    QObject(nullptr)
+StringTable::StringTable() : QObject(nullptr)
 {
     this->setGood();
 }
@@ -17,13 +16,9 @@ StringTable::StringTable():
  * @param[in]   locale      Locale.
  *
  */
-void StringTable::setLocale(const QString locale)
-{
-}
+void StringTable::setLocale(const QString locale) {}
 
 /**
  * @brief Destructor.
  */
-StringTable::~StringTable()
-{
-}
+StringTable::~StringTable() {}

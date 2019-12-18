@@ -3,17 +3,14 @@
 /**
  * @brief   Constructor, initialize and set m_good to false.
  */
-IIsGood::IIsGood() :
-    m_good(false)
-{
-}
+IIsGood::IIsGood() : m_good(false) {}
 
 /**
  * @brief   Get initialize result.
  *
  * @return  Initialize result.
  */
-bool        IIsGood::good()
+bool IIsGood::good()
 {
     return m_good;
 }
@@ -21,14 +18,12 @@ bool        IIsGood::good()
 /**
  * @brief   Destructor.
  */
-IIsGood::~IIsGood()
-{
-}
+IIsGood::~IIsGood() {}
 
 /**
  * @brief   Set initialize status to true.
  */
-void        IIsGood::setGood()
+void IIsGood::setGood()
 {
     m_good = true;
 }

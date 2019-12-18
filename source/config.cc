@@ -232,6 +232,10 @@ void Config::setString(const QString &key, const QString &value)
  */
 bool Config::splitKey(const QString &key, QVector<QString> &splitedKey)
 {
+    if (key.isEmpty() || key[0] != '/') {
+        return false;
+    }
+
     for (auto &c : key) {
         if ((c > '9' || c < '0') && (c > 'z' || c < 'a') && (c > 'Z' || c < 'A')
             && (c != '/') && (c != '_')) {

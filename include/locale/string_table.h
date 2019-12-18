@@ -1,6 +1,8 @@
 #pragma once
 
+#include <QtCore/QMap>
 #include <QtCore/QObject>
+#include <QtCore/QReadWriteLock>
 
 #include <design_model/singleton.h>
 
@@ -10,6 +12,13 @@
 class StringTable : public QObject, public Singleton<StringTable> {
     Q_OBJECT
     SIGNLETON_OBJECT(StringTable)
+  private:
+    QReadWriteLock                        m_lock;     //< Lock;
+    QMap<QString, QMap<QString, QString>> m_strings;  //< Strings.
+    QString                               m_language; //< Language.
+  private:
+    static QMap<int, QString> _languageTable; //< Convert qt language to locale.
+
   protected:
     /**
      * @brief   Constructor.
@@ -27,6 +36,7 @@ class StringTable : public QObject, public Singleton<StringTable> {
      */
     void setLocale(const QString locale);
 
+  public:
   signals:
     /**
      * @brief   Emit when locale changes.
@@ -38,4 +48,12 @@ class StringTable : public QObject, public Singleton<StringTable> {
      * @brief Destructor.
      */
     virtual ~StringTable();
+
+  private:
+    /**
+     * @brief	Get system locale.
+     *
+     * @return	System locale.
+     */
+    QString systemLanguage();
 };

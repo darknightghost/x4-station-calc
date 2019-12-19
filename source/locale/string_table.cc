@@ -1,36 +1,14 @@
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
 #include <QtCore/QLocale>
+#include <QtCore/QReadLocker>
+#include <QtCore/QWriteLocker>
 
 #include <config.h>
 #include <locale/string_table.h>
-
-/**
- * @brief   Constructor.
- */
-StringTable::StringTable() : QObject(nullptr)
-{
-    /// Get language.
-    m_language
-        = Config::instance()->getString("/language", this->systemLanguage());
-    Config::instance()->setString("/language", m_language);
-    qDebug() << "Language : " << m_language << ".";
-    this->setGood();
-}
-
-/**
- * @brief       Set current locale.
- *  Set current locale to locale. If the locale does not supported,
- *  current locale will be set to default locale.
- *
- * @param[in]   locale      Locale.
- *
- */
-void StringTable::setLocale(const QString locale) {}
-
-/**
- * @brief Destructor.
- */
-StringTable::~StringTable() {}
 
 QMap<int, QString>
     StringTable::_languageTable({{QLocale::Language::Chinese, "zh_CN"},
@@ -43,6 +21,171 @@ QMap<int, QString>
                                  {QLocale::Language::Russian, "ru_RU"},
                                  {QLocale::Language::Korean, "ko_KR"},
                                  {QLocale::Language::Japanese, "ja_JP"}});
+
+QMap<QString, uint32_t> StringTable::_languageIDTable({{"zh_CN", 86},
+                                                       {"zh_TW", 88},
+                                                       {"en_US", 44},
+                                                       {"de_DE", 49},
+                                                       {"fr_FR", 33},
+                                                       {"it_IT", 39},
+                                                       {"pt_PT", 55},
+                                                       {"es_ES", 34},
+                                                       {"ru_RU", 7},
+                                                       {"ko_KR", 82},
+                                                       {"ja_JP", 81}});
+
+/**
+ * @brief   Constructor.
+ */
+StringTable::StringTable() :
+    QObject(nullptr), m_notFoundStr("---INNEKGAL-STRING-ID---")
+{
+    /// Get language.
+    m_language
+        = Config::instance()->getString("/language", this->systemLanguage());
+    Config::instance()->setString("/language", m_language);
+    m_languageID = _languageIDTable[m_language];
+    qDebug() << "Language : " << m_language << ".";
+
+    /// Read string table.
+    QFile jsonFile(":/StringTable/StringTable/StringTable.json");
+    if (! jsonFile.open(QFile::ReadOnly)) {
+        qDebug() << "Failed to open string table.";
+        return;
+    }
+    QByteArray jsonStr = jsonFile.readAll();
+    jsonFile.close();
+
+    /// Parse string table
+    QJsonParseError err;
+    QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qDebug() << "Failed to parse string table : " << err.errorString();
+        return;
+    }
+    QJsonObject root = doc.object();
+    for (auto iter = root.begin(); iter != root.end(); iter++) {
+        QJsonValue value = iter.value();
+        if (! value.isObject()) {
+            qDebug() << "Illegal string, ID = " << iter.key() << ".";
+            return;
+        }
+
+        m_stringTable[iter.key()] = QMap<QString, QString>();
+
+        QJsonObject strObject   = value.toObject();
+        bool        defaultFlag = false;
+        for (auto strIter = strObject.begin(); strIter != strObject.end();
+             strIter++) {
+            QJsonValue value = strIter.value();
+            if (! value.isString()) {
+                qDebug() << "Illegal string, ID = " << iter.key() << ".";
+                return;
+            }
+            m_stringTable[iter.key()][strIter.key()]
+                = strIter.value().toString();
+            if (strIter.key() == "en_US") {
+                defaultFlag = true;
+            }
+        }
+        if (defaultFlag) {
+            qDebug() << "String" << iter.key() << "loaded.";
+        } else {
+            qDebug() << "String" << iter.key() << "requires \"en_US\" support.";
+            return;
+        }
+    }
+
+    this->setGood();
+}
+
+/**
+ * @brief	Get current language ID.
+ *
+ * @return	Current language ID.
+ */
+uint32_t StringTable::languageId()
+{
+    QReadLocker lock(&m_lock);
+    return m_languageID;
+}
+
+/**
+ * @brief		Get string.
+ *
+ * @param[in]	id		String ID.
+ *
+ * @return		String.
+ */
+const QString &StringTable::getString(const QString &id)
+{
+    QReadLocker lock(&m_lock);
+    auto        iter = m_stringTable.find(id);
+    if (iter == m_stringTable.end()) {
+        qDebug() << "Illegal string ID :" << id << ".";
+        return m_notFoundStr;
+    }
+    auto strIter = (*iter).find(m_language);
+    if (strIter == (*iter).end()) {
+        return (*iter)["en_US"];
+    } else {
+        return *strIter;
+    }
+}
+
+/**
+ * @brief		Get string in all languages.
+ *
+ * @param[in]	id		String ID.
+ *
+ * @return		Map of strings.
+ */
+const QMap<QString, QString> &StringTable::getStrings(const QString &id)
+{
+    QReadLocker lock(&m_lock);
+
+    auto iter = m_stringTable.find(id);
+    if (iter == m_stringTable.end()) {
+        qDebug() << "Illegal string ID :" << id << ".";
+        return m_notFoundMap;
+    }
+
+    return *iter;
+}
+
+/**
+ * @brief       Set current language.
+ *  Set current locale to locale. If the locale does not supported,
+ *  current locale will be set to default locale.
+ *
+ * @param[in]   language		Language.
+ *
+ */
+void StringTable::setLanguage(const QString &language)
+{
+    {
+        QWriteLocker lock(&m_lock);
+        if (language == m_language) {
+            return;
+        }
+
+        /// Search language
+        auto iter = _languageIDTable.find(language);
+        if (iter == _languageIDTable.end()) {
+            return;
+        }
+
+        m_language   = language;
+        m_languageID = *iter;
+        Config::instance()->setString("/language", m_language);
+    }
+    emit this->languageChanged();
+}
+
+/**
+ * @brief Destructor.
+ */
+StringTable::~StringTable() {}
 
 /**
  * @brief	Get system locale.
@@ -57,6 +200,11 @@ QString StringTable::systemLanguage()
     if (iter == _languageTable.end()) {
         return "en_US";
     } else {
+        if (*iter == "zh_CN" && locale.country() != QLocale::China) {
+            /// Where is QLocale::Scotland, QLocale::Catalonian or
+            /// QLocale::California.
+            return "zh_TW";
+        }
         return *iter;
     }
 }

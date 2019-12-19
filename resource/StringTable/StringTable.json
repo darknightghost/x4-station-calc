@@ -1,6 +1,32 @@
 {
+	"STR_TITLE_LANGUAGE" : {
+		"zh_CN" : "语言设置",
+		"zh_TW" : "語言設置",
+		"en_US" : "Language Settings"
+	},
+	"STR_LANGUAGE" : {
+		"zh_CN" : "语言 :",
+		"zh_TW" : "語言 :",
+		"en_US" : "Language :"
+	},
+	"STR_LANGUAGE_TYPE" : {
+		"zh_CN" : "简体中文",
+		"zh_TW" : "正體中文",
+		"en_US" : "X4 Station Editor"
+	},
+	"STR_BTN_AGERR" : {
+		"zh_CN" : "同意(&A)",
+		"zh_TW" : "同意(&A)",
+		"en_US" : "&Agree"
+	},
+	"STR_BTN_DISAGREE" : {
+		"zh_CN" : "不同意(&D)",
+		"zh_TW" : "不同意(&D)",
+		"en_US" : "&Disagree"
+	},
 	"STR_TITLE" : {
 		"zh_CN" : "X4空间站编辑工具",
+		"zh_TW" : "X4空間站編輯工具",
 		"en_US" : "X4 Station Editor"
 	}
 }

@@ -6,6 +6,7 @@
 #include <config.h>
 #include <global.h>
 #include <locale/string_table.h>
+#include <ui/language_setting_dialog.h>
 
 int main(int argc, char *argv[])
 {

@@ -13,11 +13,18 @@ class StringTable : public QObject, public Singleton<StringTable> {
     Q_OBJECT
     SIGNLETON_OBJECT(StringTable)
   private:
-    QReadWriteLock                        m_lock;     //< Lock;
-    QMap<QString, QMap<QString, QString>> m_strings;  //< Strings.
-    QString                               m_language; //< Language.
+    QReadWriteLock                        m_lock;        //< Lock;
+    QMap<QString, QMap<QString, QString>> m_strings;     //< Strings.
+    QString                               m_language;    //< Language.
+    uint32_t                              m_languageID;  //< Language ID.
+    QMap<QString, QMap<QString, QString>> m_stringTable; //< String table.
+    QString                               m_notFoundStr; //< Default string.
+    QMap<QString, QString>                m_notFoundMap; //< Not found map.
   private:
-    static QMap<int, QString> _languageTable; //< Convert qt language to locale.
+    static QMap<int, QString>
+        _languageTable; //< Convert qt language to language string.
+    static QMap<QString, uint32_t>
+        _languageIDTable; //< Convert language string to ID.
 
   protected:
     /**
@@ -25,23 +32,48 @@ class StringTable : public QObject, public Singleton<StringTable> {
      */
     StringTable();
 
+  public:
+    /**
+     * @brief	Get current language ID.
+     *
+     * @return	Current language ID.
+     */
+    uint32_t languageId();
+
+    /**
+     * @brief		Get string.
+     *
+     * @param[in]	id		String ID.
+     *
+     * @return		String.
+     */
+    const QString &getString(const QString &id);
+
+    /**
+     * @brief		Get string in all languages.
+     *
+     * @param[in]	id		String ID.
+     *
+     * @return		Map of strings.
+     */
+    const QMap<QString, QString> &getStrings(const QString &id);
+
   public slots:
     /**
-     * @brief       Set current locale.
+     * @brief       Set current language.
      *  Set current locale to locale. If the locale does not supported,
      *  current locale will be set to default locale.
      *
-     * @param[in]   locale      Locale.
+     * @param[in]   language		Language.
      *
      */
-    void setLocale(const QString locale);
+    void setLanguage(const QString &language);
 
-  public:
   signals:
     /**
      * @brief   Emit when locale changes.
      */
-    void updateString();
+    void languageChanged();
 
   public:
     /**
@@ -57,3 +89,5 @@ class StringTable : public QObject, public Singleton<StringTable> {
      */
     QString systemLanguage();
 };
+
+#define STR(id) (::StringTable::instance()->getString((id)))

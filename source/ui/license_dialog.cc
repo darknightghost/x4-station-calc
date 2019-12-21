@@ -2,6 +2,7 @@
 #include <QtCore/QFile>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QScrollBar>
 
 #include <locale/string_table.h>
 #include <ui/license_dialog.h>
@@ -11,22 +12,11 @@
  */
 LicenseDialog::LicenseDialog() : QDialog(nullptr)
 {
-    /// Load data
-    QFile licenseFile(":/License/gplv3.html");
-    if (! licenseFile.open(QFile::ReadOnly)) {
-        qDebug() << "Failed to open license file.";
-        this->reject();
-        return;
-    }
-    QString license = licenseFile.readAll();
-    licenseFile.close();
-
     /// Layout
     m_layout = new QVBoxLayout();
 
     /// Text
     m_txtLicense = new QTextEdit();
-    m_txtLicense->insertHtml(license);
     m_txtLicense->setReadOnly(true);
     QString templateCode;
     for (int i = 0; i < 80; i++) {
@@ -36,6 +26,9 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
         = m_txtLicense->fontMetrics().boundingRect(templateCode).size();
     txtSize.setHeight(txtSize.height() * 25);
     m_txtLicense->setMinimumSize(txtSize);
+    this->loadLicense();
+    m_txtLicense->moveCursor(QTextCursor::MoveOperation::Start);
+    m_txtLicense->verticalScrollBar()->setValue(0);
     m_layout->addWidget(m_txtLicense);
 
     /// Buttons
@@ -75,3 +68,99 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
  * @brief	Destructor.
  */
 LicenseDialog::~LicenseDialog() {}
+
+/**
+ * @brief	Load license data.
+ */
+void LicenseDialog::loadLicense()
+{
+    /// Head
+    QString document;
+    {
+        QFile licenseFile(":/License/head");
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+    }
+
+    /// License
+    {
+        QFile licenseFile(QString(":/License/license.%1")
+                              .arg(StringTable::instance()->language()));
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+        document += "\n<hr />\n";
+    }
+
+    /// GPLv3
+    {
+        QFile licenseFile(":/License/gplv3");
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+        document += "\n<hr />\n";
+    }
+
+    /// 3rd-party
+    document += QString("\n<h1 style=\"text-align: center;\">%1</h1>\n")
+                    .arg(STR("STR_3RD_LICENSE"));
+    document += "\n<hr />\n";
+    /// Qt5(LGPLv3)
+    {
+        QFile licenseFile(":/License/lgplv3");
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+        document += "\n<hr />\n";
+    }
+
+    /// Egosoft
+    {
+        QFile licenseFile(":/License/egosoft");
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+        document += "\n<hr />\n";
+    }
+
+    /// Tail
+    {
+        QFile licenseFile(":/License/tail");
+        if (! licenseFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open license file.";
+            this->reject();
+            return;
+        }
+        QString license = licenseFile.readAll();
+        licenseFile.close();
+        document += license;
+    }
+
+    m_txtLicense->setHtml(document);
+}

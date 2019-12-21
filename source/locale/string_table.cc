@@ -100,6 +100,17 @@ StringTable::StringTable() :
 }
 
 /**
+ * @brief	Get current language.
+ *
+ * @return	Current language.
+ */
+const QString &StringTable::language()
+{
+    QReadLocker lock(&m_lock);
+    return m_language;
+}
+
+/**
  * @brief	Get current language ID.
  *
  * @return	Current language ID.

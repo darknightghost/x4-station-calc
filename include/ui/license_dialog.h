@@ -33,4 +33,10 @@ class LicenseDialog : public QDialog {
      * @brief	Destructor.
      */
     virtual ~LicenseDialog();
+
+  private:
+    /**
+     * @brief	Load license data.
+     */
+    void loadLicense();
 };

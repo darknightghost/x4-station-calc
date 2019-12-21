@@ -34,6 +34,13 @@ class StringTable : public QObject, public Singleton<StringTable> {
 
   public:
     /**
+     * @brief	Get current language.
+     *
+     * @return	Current language.
+     */
+    const QString &language();
+
+    /**
      * @brief	Get current language ID.
      *
      * @return	Current language ID.

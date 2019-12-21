@@ -29,6 +29,11 @@
 		"zh_TW" : "許可聲明",
 		"en_US" : "License"
 	},
+	"STR_3RD_LICENSE" : {
+		"zh_CN" : "第三方库和资源许可",
+		"zh_TW" : "第三方庫和資源許可",
+		"en_US" : "License of Third-party Libraries and Resources"
+	},
 	"STR_BTN_AGREE" : {
 		"zh_CN" : "同意(&A)",
 		"zh_TW" : "同意(&A)",
@@ -39,9 +44,29 @@
 		"zh_TW" : "不同意(&D)",
 		"en_US" : "&Disagree"
 	},
+	"STR_BTN_DISAGREE" : {
+		"zh_CN" : "不同意(&D)",
+		"zh_TW" : "不同意(&D)",
+		"en_US" : "&Disagree"
+	},
 	"STR_TITLE" : {
-		"zh_CN" : "X4空间站编辑工具",
-		"zh_TW" : "X4空間站編輯工具",
-		"en_US" : "X4 Station Editor"
+		"zh_CN" : "X4: 基石空间站编辑工具",
+		"zh_TW" : "X4: 基石空間站編輯工具",
+		"en_US" : "X4: Foundations Station Editor"
+	},
+	"STR_TITLE_SELECT_GAME_PATH" : {
+		"zh_CN" : "选择游戏路径",
+		"zh_TW" : "選擇遊戲路徑",
+		"en_US" : "Select Path of Game"
+	},
+	"STR_GAME_PATH" : {
+		"zh_CN" : "游戏路径 :",
+		"zh_TW" : "遊戲路徑 :",
+		"en_US" : "Path of Game :"
+	},
+	"STR_BTN_BROWSE" : {
+		"zh_CN" : "浏览(&B)",
+		"zh_TW" : "瀏覽(&B)",
+		"en_US" : "&Browse"
 	}
 }

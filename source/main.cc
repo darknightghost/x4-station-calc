@@ -13,16 +13,17 @@ int firstRun()
 {
     /// Select language
     LanguageSettingDialog langDlg;
-    langDlg.exec();
+    if (langDlg.exec() != QDialog::DialogCode::Accepted) {
+        return 1;
+    }
 
     /// Show license
     LicenseDialog licenseDlg;
-    if (licenseDlg.exec() == QDialog::DialogCode::Accepted) {
-        return 0;
-
-    } else {
+    if (licenseDlg.exec() != QDialog::DialogCode::Accepted) {
         return 1;
     }
+
+    return 0;
 }
 
 int main(int argc, char *argv[])

@@ -14,7 +14,22 @@
 		"zh_TW" : "正體中文",
 		"en_US" : "English"
 	},
-	"STR_BTN_AGERR" : {
+	"STR_BTN_OK" : {
+		"zh_CN" : "确定(&O)",
+		"zh_TW" : "確定(&O)",
+		"en_US" : "&OK"
+	},
+	"STR_BTN_CANCEL" : {
+		"zh_CN" : "取消(&C)",
+		"zh_TW" : "取消(&C)",
+		"en_US" : "&Cancel"
+	},
+	"STR_TITLE_LICENSE" : {
+		"zh_CN" : "许可声明",
+		"zh_TW" : "許可聲明",
+		"en_US" : "License"
+	},
+	"STR_BTN_AGREE" : {
 		"zh_CN" : "同意(&A)",
 		"zh_TW" : "同意(&A)",
 		"en_US" : "&Agree"

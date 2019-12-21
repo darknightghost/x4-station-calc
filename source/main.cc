@@ -7,17 +7,22 @@
 #include <global.h>
 #include <locale/string_table.h>
 #include <ui/language_setting_dialog.h>
+#include <ui/license_dialog.h>
 
 int firstRun()
 {
     /// Select language
     LanguageSettingDialog langDlg;
-    if (langDlg.exec() != QDialog::Accepted) {
-        return 1;
-    }
+    langDlg.exec();
 
     /// Show license
-    return 1;
+    LicenseDialog licenseDlg;
+    if (licenseDlg.exec() == QDialog::DialogCode::Accepted) {
+        return 0;
+
+    } else {
+        return 1;
+    }
 }
 
 int main(int argc, char *argv[])

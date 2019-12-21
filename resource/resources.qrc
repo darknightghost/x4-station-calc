@@ -1,6 +1,6 @@
 <RCC>
-    <qresource prefix="/StringTable">
+    <qresource prefix="/">
         <file>StringTable/StringTable.json</file>
+        <file>License/gplv3.html</file>
     </qresource>
-    <qresource prefix="/Shaders"/>
 </RCC>

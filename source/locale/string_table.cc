@@ -48,7 +48,7 @@ StringTable::StringTable() :
     qDebug() << "Language : " << m_language << ".";
 
     /// Read string table.
-    QFile jsonFile(":/StringTable/StringTable/StringTable.json");
+    QFile jsonFile(":/StringTable/StringTable.json");
     if (! jsonFile.open(QFile::ReadOnly)) {
         qDebug() << "Failed to open string table.";
         return;

@@ -4,6 +4,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
 
 /**
@@ -18,6 +19,18 @@ class LanguageSettingDialog : public QDialog {
     QComboBox *  m_comboLang;       //< Select language.
 
     QHBoxLayout *m_btnLayout; //< Layout of Buttons..
+    QPushButton *m_btnOK;     //< Button OK.
+
+  private slots:
+    /**
+     * @brief	Language changed slot.
+     */
+    void onLanguageChanged();
+
+    /**
+     * @brief	Selected language changed slot.
+     */
+    void onSelectedChanged(int index);
 
   public:
     /**

@@ -16,3 +16,4 @@ Makefile
 .ycm_extra_conf.py
 lib/*
 bin/*
+doc/*

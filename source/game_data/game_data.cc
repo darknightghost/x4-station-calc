@@ -1,11 +1,20 @@
+#include <QtCore/QThread>
 #include <config.h>
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
 
 /**
- * @brief   Constructor.
+ * @brief		Constructor.
+ *
+ * @param[in]	showStatusFunc	Callback to print status.
+ *
  */
-GameData::GameData() {}
+GameData::GameData(::std::function<void(QString)> showStatusFunc) :
+    QObject(nullptr)
+{
+    showStatusFunc(STR("STR_CHECKING_GAME_PATH"));
+    QThread::sleep(2);
+}
 
 /**
  * @brief		Check path of game.
@@ -16,7 +25,11 @@ GameData::GameData() {}
  * false.
  *
  */
-bool GameData::checkGamePath(const QString &path) {}
+bool GameData::checkGamePath(const QString &path)
+{
+    (void)path;
+    return true;
+}
 
 /**
  * @brief		Check path of game.

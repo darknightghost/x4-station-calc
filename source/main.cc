@@ -1,13 +1,16 @@
 #include <cstdlib>
 
+#include <QtCore/QTextCodec>
 #include <QtWidgets/QApplication>
 
 #include <common.h>
 #include <config.h>
+#include <game_data/game_data.h>
 #include <global.h>
 #include <locale/string_table.h>
 #include <ui/language_setting_dialog.h>
 #include <ui/license_dialog.h>
+#include <ui/splash/splash_widget.h>
 
 int firstRun()
 {
@@ -28,12 +31,15 @@ int firstRun()
 
 int main(int argc, char *argv[])
 {
+    /// Force UTF-8.
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
     int          exitCode;
     int          fakeArgc   = 1;
     char *       fakeArgv[] = {argv[0], NULL};
     QApplication app(fakeArgc, fakeArgv);
 
-    /// Initialize
+    /// Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {
         return exitCode;
     }
@@ -56,6 +62,17 @@ int main(int argc, char *argv[])
     }
 
     /// Show splash and load data.
+    SplashWidget splash;
+    splash.exec([&]() -> int {
+        /// Load game data.
+        if (GameData::initialize(::std::bind(&SplashWidget::setText, &splash,
+                                             ::std::placeholders::_1))
+            == nullptr) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 
     /// Show main window.
 

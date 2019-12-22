@@ -54,6 +54,11 @@
 		"zh_TW" : "X4: 基石空間站編輯工具",
 		"en_US" : "X4: Foundations Station Editor"
 	},
+	"STR_CHECKING_GAME_PATH" :{
+		"zh_CN" : "正在检查游戏路径...",
+		"zh_TW" : "正在檢查遊戲路徑...",
+		"en_US" : "Checking game path..."
+	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",
 		"zh_TW" : "選擇遊戲路徑",

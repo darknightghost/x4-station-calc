@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
@@ -9,15 +11,20 @@
 /**
  * @brief   String table.
  */
-class GameData : public QObject, public Singleton<GameData> {
+class GameData :
+    public QObject,
+    public Singleton<GameData, ::std::function<void(QString)>> {
     Q_OBJECT
-    SIGNLETON_OBJECT(GameData)
+    SIGNLETON_OBJECT(GameData, ::std::function<void(QString)>)
   private:
   protected:
     /**
-     * @brief   Constructor.
+     * @brief		Constructor.
+     *
+     * @param[in]	showStatusFunc	Callback to print status.
+     *
      */
-    GameData();
+    GameData(::std::function<void(QString)> showStatusFunc);
 
   public:
     /**

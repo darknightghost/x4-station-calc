@@ -32,6 +32,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             }
         }
 
+        /// Load files
+
         break;
     }
 
@@ -178,6 +180,7 @@ bool GameData::checkGamePath(const QString &         path,
     }
 
     qDebug() << "OK.";
+    catFiles = ::std::move(catsFound);
     return true;
 }
 

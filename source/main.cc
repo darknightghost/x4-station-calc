@@ -65,9 +65,7 @@ int main(int argc, char *argv[])
     SplashWidget splash;
     splash.exec([&]() -> int {
         /// Load game data.
-        if (GameData::initialize(::std::bind(&SplashWidget::setText, &splash,
-                                             ::std::placeholders::_1))
-            == nullptr) {
+        if (GameData::initialize(&splash) == nullptr) {
             return 1;
         } else {
             return 0;

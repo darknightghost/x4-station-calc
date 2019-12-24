@@ -19,6 +19,8 @@ SplashWidget::SplashWidget() :
     QWidget(nullptr), m_thread(nullptr), m_text(""),
     m_eventLoop(new QEventLoop(this))
 {
+    qRegisterMetaType<::std::function<void()>>("::std::function<void()>");
+
     /// Set flags
     this->setWindowFlags(Qt::WindowType::FramelessWindowHint
                          | Qt::WindowType::NoDropShadowWindowHint
@@ -34,6 +36,10 @@ SplashWidget::SplashWidget() :
                       (desktop->height() - sz.height()) / 2, sz.width(),
                       sz.height());
     m_background = background.scaled(sz);
+
+    this->connect(this, &SplashWidget::sigCallFunc, this,
+                  &SplashWidget::onCallFunc,
+                  Qt::ConnectionType::QueuedConnection);
 }
 
 /**
@@ -61,6 +67,16 @@ int SplashWidget::exec(::std::function<int()> workFunc)
     delete m_thread;
     m_thread = nullptr;
     return ret;
+}
+
+/**
+ * @brief		Slot to run function in eventloop.
+ *
+ * @param[in]	func	Function to call.
+ */
+void SplashWidget::onCallFunc(::std::function<void()> func)
+{
+    func();
 }
 
 /**

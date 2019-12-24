@@ -1,14 +1,20 @@
 #pragma once
 
 #include <functional>
+#include <type_traits>
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QMetaType>
+#include <QtCore/QMutex>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QTimer>
+#include <QtCore/QWaitCondition>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
 
 #include <ui/splash/splash_thread.h>
+
+Q_DECLARE_METATYPE(::std::function<void()>);
 
 class SplashWidget : public QWidget {
     Q_OBJECT
@@ -35,9 +41,86 @@ class SplashWidget : public QWidget {
     int exec(::std::function<int()> workFunc);
 
     /**
+     * @brief		Run function in event loop.
+     *
+     * @param[in]	func		Function to call.
+     * @param[in]	args		Arguments to call.
+     *
+     * @return		Return value of func.
+     */
+    template<typename R, typename... Args>
+    typename ::std::enable_if<! ::std::is_void<R>::value, R>::type
+        callFunc(::std::function<R(Args...)> func, Args... args)
+    {
+        if (QThread::currentThread() == this->thread()) {
+            /// Call directlly in the same thread.
+            return func(args...);
+        }
+
+        /// Send signal.
+        R              ret;
+        QMutex         mutex;
+        QWaitCondition cond;
+        mutex.lock();
+        emit this->sigCallFunc(::std::function<void()>([&]() -> void {
+            ret = func(args...);
+            mutex.lock();
+            cond.notify_all();
+            mutex.unlock();
+        }));
+        cond.wait(&mutex);
+        mutex.unlock();
+        return ret;
+    }
+
+    /**
+     * @brief	Run function in event loop.
+     *
+     * @param[in]	func		Function to call.
+     * @param[in]	args		Arguments to call.
+     */
+    template<typename... Args>
+    void callFunc(::std::function<void(Args...)> func, Args... args)
+    {
+        if (QThread::currentThread() == this->thread()) {
+            /// Call directlly in the same thread.
+            func(args...);
+            return;
+        }
+
+        /// Send signal.
+        QMutex         mutex;
+        QWaitCondition cond;
+        mutex.lock();
+        emit this->sigCallFunc(::std::function<void()>([&]() -> void {
+            func(args...);
+            mutex.lock();
+            cond.notify_all();
+            mutex.unlock();
+        }));
+        cond.wait(&mutex);
+        mutex.unlock();
+        return;
+    }
+
+    /**
      * @brief	Destructor.
      */
     virtual ~SplashWidget();
+
+  signals:
+    /**
+     * @brief	Signal to call function.
+     */
+    void sigCallFunc(::std::function<void()>);
+
+  private:
+    /**
+     * @brief		Slot to run function in eventloop.
+     *
+     * @param[in]	func	Function to call.
+     */
+    void onCallFunc(::std::function<void()> func);
 
   private:
     /**

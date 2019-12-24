@@ -46,10 +46,7 @@ Global::Global(int &argc, char **&argv, int &exitCode)
     qDebug() << "Tool dir : " << m_execDir << ".";
 
     /// Path of config file
-    m_configPath = QString("%1%2%3")
-                       .arg(m_execDir)
-                       .arg(QDir::separator())
-                       .arg(".config");
+    m_configPath = QDir(m_execDir).absoluteFilePath(".config");
     qDebug() << "Path of config file : " << m_configPath;
 
     this->setGood();

@@ -1,4 +1,10 @@
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QRegExp>
 #include <QtCore/QThread>
+#include <QtWidgets/QFileDialog>
+
 #include <config.h>
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
@@ -6,14 +12,30 @@
 /**
  * @brief		Constructor.
  *
- * @param[in]	showStatusFunc	Callback to print status.
+ * @param[in]	splash		Splash widget.
  *
  */
-GameData::GameData(::std::function<void(QString)> showStatusFunc) :
-    QObject(nullptr)
+GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 {
-    showStatusFunc(STR("STR_CHECKING_GAME_PATH"));
-    QThread::sleep(2);
+    while (true) {
+        splash->setText(STR("STR_CHECKING_GAME_PATH"));
+
+        /// Check game path
+        m_gamePath = Config::instance()->getString("/gamePath", "");
+        if (! checkGamePath(m_gamePath, m_catFiles)) {
+            if (splash->callFunc(::std::function<bool()>(
+                    ::std::bind(&GameData::askGamePath, this)))) {
+                continue;
+
+            } else {
+                return;
+            }
+        }
+
+        break;
+    }
+
+    this->setGood();
 }
 
 /**
@@ -27,8 +49,8 @@ GameData::GameData(::std::function<void(QString)> showStatusFunc) :
  */
 bool GameData::checkGamePath(const QString &path)
 {
-    (void)path;
-    return true;
+    QMap<int, CatFileInfo> catFiles;
+    return this->checkGamePath(path, catFiles);
 }
 
 /**
@@ -42,9 +64,13 @@ bool GameData::checkGamePath(const QString &path)
  */
 bool GameData::setGamePath(const QString &path)
 {
-    if (! checkGamePath(path)) {
+    QMap<int, CatFileInfo> catFiles;
+
+    if (! checkGamePath(path, catFiles)) {
         return false;
     }
+
+    m_catFiles = ::std::move(catFiles);
     Config::instance()->setString("/gamePath", path);
     return true;
 }
@@ -53,3 +79,150 @@ bool GameData::setGamePath(const QString &path)
  * @brief Destructor.
  */
 GameData::~GameData() {}
+
+/**
+ * @brief		Check path of game.
+ *
+ * @param[in]	path		Path of the game.
+ * @param[out]	catFiles	Cat files found.
+ *
+ * @return		True if the path of game is available, otherwise returns
+ * false.
+ *
+ */
+bool GameData::checkGamePath(const QString &         path,
+                             QMap<int, CatFileInfo> &catFiles)
+{
+    /// Prepare
+    QDir                   dir(path);
+    bool                   execFound = false;
+    QMap<int, CatFileInfo> catsFound;
+    qDebug() << "Checking game path...";
+
+    /// List files.
+    /// Filters
+    QRegExp execFilter("x4|x4\\.exe");
+    execFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp catFilter("\\d+\\.cat");
+    catFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp catSigFilter("\\d+_sig\\.cat");
+    catSigFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp datFilter("\\d+\\.dat");
+    datFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp datSigFilter("\\d+_sig\\.dat");
+    datSigFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+
+    for (auto &f :
+         dir.entryList(QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+        if (execFilter.exactMatch(f)) {
+            qDebug() << "Game executable file :" << f << ".";
+            execFound = true;
+
+        } else if (catFilter.exactMatch(f)) {
+            qDebug() << "Found cat file file :" << f << ".";
+            int  key  = this->getNumberFromStr(f);
+            auto iter = catsFound.find(key);
+            if (iter == catsFound.end()) {
+                catsFound[key] = CatFileInfo();
+            }
+            catsFound[key].cat = f;
+
+        } else if (catSigFilter.exactMatch(f)) {
+            qDebug() << "Found signature file of dat file :" << f << ".";
+            int  key  = this->getNumberFromStr(f);
+            auto iter = catsFound.find(key);
+            if (iter == catsFound.end()) {
+                catsFound[key] = CatFileInfo();
+            }
+            catsFound[key].catSig = f;
+
+        } else if (datFilter.exactMatch(f)) {
+            qDebug() << "Found dat file file :" << f << ".";
+            int  key  = this->getNumberFromStr(f);
+            auto iter = catsFound.find(key);
+            if (iter == catsFound.end()) {
+                catsFound[key] = CatFileInfo();
+            }
+            catsFound[key].dat = f;
+
+        } else if (datSigFilter.exactMatch(f)) {
+            qDebug() << "Found signature file of dat file :" << f << ".";
+            int  key  = this->getNumberFromStr(f);
+            auto iter = catsFound.find(key);
+            if (iter == catsFound.end()) {
+                catsFound[key] = CatFileInfo();
+            }
+            catsFound[key].datSig = f;
+        }
+    }
+
+    /// Check result
+    if (! execFound) {
+        qDebug() << "Missing main program.";
+        qDebug() << "Failed.";
+        return false;
+    }
+
+    if (catsFound.size() < MIN_CAT_FILE_NUM) {
+        qDebug() << "Number of cat files si not enough.";
+        qDebug() << "Failed.";
+        return false;
+    }
+
+    for (int i = 1; i < catsFound.size() + 1; i++) {
+        if (catsFound[i].cat == "" || catsFound[i].catSig == ""
+            || catsFound[i].dat == "" || catsFound[i].datSig == "") {
+            qDebug() << "Failed.";
+            return false;
+        }
+    }
+
+    qDebug() << "OK.";
+    return true;
+}
+
+/**
+ * @brief		Ask game path.
+ *
+ * @return		True if the path of game is selected, otherwise returns
+ *				false.
+ *
+ */
+bool GameData::askGamePath()
+{
+    QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
+                           m_gamePath, STR("STR_GAME_EXEC_FILE_FILTER"));
+    fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+    fileDialog.setFileMode(QFileDialog::FileMode::ExistingFile);
+    if (fileDialog.exec() != QDialog::DialogCode::Accepted
+        || fileDialog.selectedFiles().empty()) {
+        return false;
+    }
+    QString str = QDir(fileDialog.selectedFiles()[0]).absolutePath();
+    str         = str.left(str.lastIndexOf("/"));
+
+    m_gamePath = str;
+    Config::instance()->setString("/gamePath", m_gamePath);
+    return true;
+}
+
+/**
+ * @brief		Get number from string.
+ *
+ * @param[in]	str		String to get number.
+ *
+ * @return		Number got.
+ */
+int GameData::getNumberFromStr(const QString &str)
+{
+    int ret = 0;
+    for (auto &c : str) {
+        if (c >= '0' && c <= '9') {
+            ret = ret * 10 + (c.toLatin1() - '0');
+        } else {
+            break;
+        }
+    }
+
+    return ret;
+}

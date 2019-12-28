@@ -139,6 +139,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                    false,
                    {},
                    {datFile.fileName(), offset, size}};
+            qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
         }
     }
 

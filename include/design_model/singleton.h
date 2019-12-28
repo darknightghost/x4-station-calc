@@ -95,9 +95,7 @@ template<class T, typename... Args>
 }
 
 /**
- * @brief       Get.
- *
- * @param[in]   args        Arguments of constructor.
+ * @brief       Get instance.
  *
  * @return      If the instalce has been initialized, the method
  *              returns the instance, otherwise returns nullptr.

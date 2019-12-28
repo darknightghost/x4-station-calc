@@ -27,9 +27,11 @@ class SplashWidget : public QWidget {
 
   public:
     /**
-     * @brief	Constructor.
+     * @brief		Constructor.
+     *
+     * @param[in]	parent		Parent widget.
      */
-    SplashWidget();
+    SplashWidget(QWidget *parent = nullptr);
 
     /**
      * @brief		Start work.

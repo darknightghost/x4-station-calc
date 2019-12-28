@@ -22,7 +22,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         /// Check game path
         m_gamePath = Config::instance()->getString("/gamePath", "");
-        if (! checkGamePath(m_gamePath, m_catFiles)) {
+        QMap<int, GameVFS::CatFileInfo> catFiles;
+        if (! checkGamePath(m_gamePath, catFiles)) {
             if (splash->callFunc(::std::function<bool()>(
                     ::std::bind(&GameData::askGamePath, this)))) {
                 continue;
@@ -32,7 +33,12 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             }
         }
 
-        /// Load files
+        /// Load vfs
+        splash->setText(STR("STR_LOADING_VFS"));
+        ::std::shared_ptr<GameVFS> vfs(new GameVFS(m_gamePath, catFiles));
+        if (! vfs->good()) {
+            continue;
+        }
 
         break;
     }
@@ -46,12 +52,12 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
  * @param[in]	path	Path of the game.
  *
  * @return		True if the path of game is available, otherwise returns
- * false.
+ *				false.
  *
  */
 bool GameData::checkGamePath(const QString &path)
 {
-    QMap<int, CatFileInfo> catFiles;
+    QMap<int, GameVFS::CatFileInfo> catFiles;
     return this->checkGamePath(path, catFiles);
 }
 
@@ -66,13 +72,12 @@ bool GameData::checkGamePath(const QString &path)
  */
 bool GameData::setGamePath(const QString &path)
 {
-    QMap<int, CatFileInfo> catFiles;
+    QMap<int, GameVFS::CatFileInfo> catFiles;
 
     if (! checkGamePath(path, catFiles)) {
         return false;
     }
 
-    m_catFiles = ::std::move(catFiles);
     Config::instance()->setString("/gamePath", path);
     return true;
 }
@@ -89,16 +94,16 @@ GameData::~GameData() {}
  * @param[out]	catFiles	Cat files found.
  *
  * @return		True if the path of game is available, otherwise returns
- * false.
+ *				false.
  *
  */
-bool GameData::checkGamePath(const QString &         path,
-                             QMap<int, CatFileInfo> &catFiles)
+bool GameData::checkGamePath(const QString &                  path,
+                             QMap<int, GameVFS::CatFileInfo> &catFiles)
 {
     /// Prepare
-    QDir                   dir(path);
-    bool                   execFound = false;
-    QMap<int, CatFileInfo> catsFound;
+    QDir                            dir(path);
+    bool                            execFound = false;
+    QMap<int, GameVFS::CatFileInfo> catsFound;
     qDebug() << "Checking game path...";
 
     /// List files.
@@ -125,7 +130,7 @@ bool GameData::checkGamePath(const QString &         path,
             int  key  = this->getNumberFromStr(f);
             auto iter = catsFound.find(key);
             if (iter == catsFound.end()) {
-                catsFound[key] = CatFileInfo();
+                catsFound[key] = GameVFS::CatFileInfo();
             }
             catsFound[key].cat = f;
 
@@ -134,7 +139,7 @@ bool GameData::checkGamePath(const QString &         path,
             int  key  = this->getNumberFromStr(f);
             auto iter = catsFound.find(key);
             if (iter == catsFound.end()) {
-                catsFound[key] = CatFileInfo();
+                catsFound[key] = GameVFS::CatFileInfo();
             }
             catsFound[key].catSig = f;
 
@@ -143,7 +148,7 @@ bool GameData::checkGamePath(const QString &         path,
             int  key  = this->getNumberFromStr(f);
             auto iter = catsFound.find(key);
             if (iter == catsFound.end()) {
-                catsFound[key] = CatFileInfo();
+                catsFound[key] = GameVFS::CatFileInfo();
             }
             catsFound[key].dat = f;
 
@@ -152,7 +157,7 @@ bool GameData::checkGamePath(const QString &         path,
             int  key  = this->getNumberFromStr(f);
             auto iter = catsFound.find(key);
             if (iter == catsFound.end()) {
-                catsFound[key] = CatFileInfo();
+                catsFound[key] = GameVFS::CatFileInfo();
             }
             catsFound[key].datSig = f;
         }
@@ -194,18 +199,21 @@ bool GameData::checkGamePath(const QString &         path,
 bool GameData::askGamePath()
 {
     QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
-                           m_gamePath, STR("STR_GAME_EXEC_FILE_FILTER"));
+                           m_gamePath, "*");
     fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
-    fileDialog.setFileMode(QFileDialog::FileMode::ExistingFile);
+    fileDialog.setFileMode(QFileDialog::FileMode::Directory);
+    fileDialog.setFilter(QDir::Filter::Dirs | QDir::Filter::Hidden
+                         | QDir::Filter::System);
     if (fileDialog.exec() != QDialog::DialogCode::Accepted
         || fileDialog.selectedFiles().empty()) {
         return false;
     }
     QString str = QDir(fileDialog.selectedFiles()[0]).absolutePath();
-    str         = str.left(str.lastIndexOf("/"));
+    qDebug() << "Selected:" << str;
 
     m_gamePath = str;
     Config::instance()->setString("/gamePath", m_gamePath);
+
     return true;
 }
 

@@ -8,6 +8,7 @@
 #include <QtCore/QVector>
 
 #include <design_model/singleton.h>
+#include <game_data/game_vfs/game_vfs.h>
 #include <ui/splash/splash_widget.h>
 
 /// Minimum number of cat files.
@@ -22,20 +23,8 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     SIGNLETON_OBJECT(GameData, SplashWidget *)
 
   private:
-    /**
-     * @brief	Information of cat file.
-     *
-     */
-    struct CatFileInfo {
-        QString cat;    //< Name of cat file.
-        QString catSig; //< Name of sig file of cat file.
-        QString dat;    //< Name of dat file.
-        QString datSig; //< Name of sig file of dat file.
-    };
-
-  private:
-    QString                m_gamePath; //< Path of game.
-    QMap<int, CatFileInfo> m_catFiles; //< Cat files.
+    QString                    m_gamePath; //< Game path.
+    ::std::shared_ptr<GameVFS> m_vfs;      //< Game VFS
 
   protected:
     /**
@@ -85,7 +74,8 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
      *				false.
      *
      */
-    bool checkGamePath(const QString &path, QMap<int, CatFileInfo> &catFiles);
+    bool checkGamePath(const QString &                  path,
+                       QMap<int, GameVFS::CatFileInfo> &catFiles);
 
     /**
      * @brief		Ask game path.
@@ -103,4 +93,10 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
      * @return		Number got.
      */
     int getNumberFromStr(const QString &str);
+
+  signals:
+    /**
+     * @brief	Game data reloaded.
+     */
+    void dataReloaded();
 };

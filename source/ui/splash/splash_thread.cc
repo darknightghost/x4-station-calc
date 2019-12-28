@@ -13,7 +13,7 @@ SplashThread::SplashThread(::std::function<int()> workFunc,
 {}
 
 /**
- * @breif		Get exit code.
+ * @brief		Get exit code.
  *
  * @return		Exit code.
  */

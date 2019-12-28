@@ -9,7 +9,9 @@ if (NOT CMAKE_BUILD_TYPE)
 
 endif ()
 
-message (STATUS "Build type - ${CMAKE_BUILD_TYPE}.")
+message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
+message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")
+message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
 
 # Environment
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -25,9 +27,18 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
 
+if (WIN32)
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+		add_link_options ("//subsystem:windows" "/entry:mainCRTStartup")
+
+	endif ()
+endif ()
+
 # Dependencies
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
+find_package (Doxygen REQUIRED)
+
 
 # Sources
 file (GLOB_RECURSE HEADERS
@@ -68,4 +79,9 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
 	Qt5::Core
 	Qt5::Widgets)
+
+#Doc
+add_custom_target("doc" ALL
+	COMMAND				${DOXYGEN_EXECUTABLE}
+	WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR})
 

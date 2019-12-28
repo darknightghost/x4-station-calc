@@ -13,10 +13,12 @@
 #define SHADOW 1
 
 /**
- * @brief	Constructor.
+ * @brief		Constructor.
+ *
+ * @param[in]	parent		Parent widget.
  */
-SplashWidget::SplashWidget() :
-    QWidget(nullptr), m_thread(nullptr), m_text(""),
+SplashWidget::SplashWidget(QWidget *parent) :
+    QWidget(parent), m_thread(nullptr), m_text(""),
     m_eventLoop(new QEventLoop(this))
 {
     qRegisterMetaType<::std::function<void()>>("::std::function<void()>");

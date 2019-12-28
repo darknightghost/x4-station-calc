@@ -21,7 +21,7 @@ class SplashThread : public QThread {
     SplashThread(::std::function<int()> workFunc, SplashWidget *parent);
 
     /**
-     * @breif		Get exit code.
+     * @brief		Get exit code.
      *
      * @return		Exit code.
      */

@@ -46,28 +46,28 @@ class Global : public Singleton<Global, int &, char **&, int &> {
     /**
      * @brief       Get the direcotry of current executable file.
      *
-     * @preturn     Path of the file.
+     * @return		Path of the file.
      */
     const QString &execDir() const;
 
     /**
      * @brief       Get path of config file.
      *
-     * @preturn     Path of the file.
+     * @return		Path of the file.
      */
     const QString &configPath() const;
 
     /**
      * @brief       Check if there is a file to open.
      *
-     * @preturn     True if has a file to open, otherwise returns false..
+     * @return		True if has a file to open, otherwise returns false.
      */
     bool hasFileToOpen() const;
 
     /**
      * @brief       Get path of file to open.
      *
-     * @preturn     Path of the file to open.
+     * @return		Path of the file to open.
      */
     const QString &fileToOpen() const;
 

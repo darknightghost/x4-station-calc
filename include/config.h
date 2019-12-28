@@ -19,7 +19,7 @@ class Config : public Singleton<Config> {
     SIGNLETON_OBJECT(Config)
   public:
     /**
-     * @breif   Value types.
+     * @brief   Value types.
      */
     enum ValueType {
         None   = 0x00, //< The value does not exists.
@@ -59,7 +59,7 @@ class Config : public Singleton<Config> {
      * @param[in]   key         Key of the value.
      *
      * @return      Type of the value, if the value does not exists,
-     *              ValueType::None is returned.
+     *              \c ValueType::None is returned.
      */
     ValueType valueType(const QString &key);
 
@@ -144,7 +144,7 @@ class Config : public Singleton<Config> {
     /**
      * @brief       Join key.
      *
-     * @param[out]  splited     Splited key.
+     * @param[out]  splitted	Splitted key.
      *
      * @return      Joined key.
      */

@@ -257,7 +257,7 @@ bool Config::splitKey(const QString &key, QVector<QString> &splitedKey)
 /**
  * @brief       Join key.
  *
- * @param[out]  splited     Splited key.
+ * @param[out]  splitted	Splitted key.
  *
  * @return      Joined key.
  */

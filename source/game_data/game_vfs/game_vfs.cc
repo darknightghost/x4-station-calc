@@ -549,7 +549,7 @@ GameVFS::NormalFileReader::~NormalFileReader() {}
  * @brief		Constructor.
  *
  * @param[in]	path		Path of directory.
- * @para[in]	entry		Dat file entery. If not found, set it to
+ * @param[in]	entry		Dat file entery. If not found, set it to
  *							nullptr.
  * @param[in]	vfs			VFS.
  */

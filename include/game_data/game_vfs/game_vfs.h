@@ -82,10 +82,12 @@ class GameVFS : private IIsGood {
      * @param[in]	gamePath		Path of game.
      * @param[in]	info			Cat files info.
      * @param[in]	setTextFunc		Callback to set text.
+     * @param[in]	errFunc			Callback to show error.
      */
     GameVFS(const QString &                        gamePath,
             const QMap<int, CatFileInfo> &         info,
-            ::std::function<void(const QString &)> setTextFunc);
+            ::std::function<void(const QString &)> setTextFunc,
+            ::std::function<void(const QString &)> errFunc);
 
   public:
     /**
@@ -95,13 +97,15 @@ class GameVFS : private IIsGood {
      * @param[in]	info			Cat files info.
      * @param[in]	setTextFunc		Callback to set text.
      *
+     *
      * @return		On success, a nmew object is returned. Otherwise returns
      *				nullptr.
      */
     static ::std::shared_ptr<GameVFS>
         create(const QString &                        gamePath,
                const QMap<int, CatFileInfo> &         info,
-               ::std::function<void(const QString &)> setTextFunc);
+               ::std::function<void(const QString &)> setTextFunc,
+               ::std::function<void(const QString &)> errFunc);
 
     /**
      * @brief		Open file.
@@ -127,6 +131,16 @@ class GameVFS : private IIsGood {
      * @brief	Destructor.
      */
     virtual ~GameVFS();
+
+  private:
+    /**
+     * @brief		Open directory.
+     *
+     * @param[in]	line	Data in line.
+     *
+     * @return		Splitted data.
+     */
+    QStringList splitCatLine(const QString &line);
 };
 
 /**

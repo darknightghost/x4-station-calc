@@ -4,6 +4,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QThread>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <game_data/game_data.h>
@@ -36,10 +37,17 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         /// Load vfs
         splash->setText(STR("STR_LOADING_VFS"));
         ::std::shared_ptr<GameVFS> vfs = GameVFS::create(
-            m_gamePath, catFiles, [&](const QString &s) -> void {
+            m_gamePath, catFiles,
+            [&](const QString &s) -> void {
                 splash->setText(STR("STR_LOADING_VFS") + "\n" + s);
+            },
+            [&](const QString &s) -> void {
+                splash->callFunc(::std::function<void()>([&]() -> void {
+                    QMessageBox::critical(splash, STR("STR_ERROR"), s);
+                }));
             });
         if (vfs == nullptr) {
+            Config::instance()->setString("/gamePath", "");
             continue;
         }
 

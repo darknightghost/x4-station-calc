@@ -2,7 +2,6 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
-#include <QtWidgets/QMessageBox>
 
 #include <common.h>
 #include <game_data/game_vfs/game_vfs.h>
@@ -14,10 +13,12 @@
  * @param[in]	gamePath		Path of game.
  * @param[in]	info			Cat files info.
  * @param[in]	setTextFunc		Callback to set text.
+ * @param[in]	errFunc			Callback to show error.
  */
 GameVFS::GameVFS(const QString &                        gamePath,
                  const QMap<int, CatFileInfo> &         info,
-                 ::std::function<void(const QString &)> setTextFunc) :
+                 ::std::function<void(const QString &)> setTextFunc,
+                 ::std::function<void(const QString &)> errFunc) :
     m_gamePath(gamePath),
     m_datEntry({"/", true, {}, {"", 0, 0}})
 {
@@ -29,9 +30,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
         if (! catFile.open(QIODevice::OpenModeFlag::ReadOnly
                            | QIODevice::OpenModeFlag::ExistingOnly)) {
             qDebug() << "Failed to open file :" << catFile.fileName() << ".";
-            QMessageBox::critical(
-                nullptr, STR("STR_ERROR"),
-                STR("STR_FAILED_OPEN_FILE").arg(catFile.fileName()));
+            errFunc(STR("STR_FAILED_OPEN_FILE").arg(catFile.fileName()));
 
             return;
         }
@@ -40,15 +39,15 @@ GameVFS::GameVFS(const QString &                        gamePath,
         if (! datFile.open(QIODevice::OpenModeFlag::ReadOnly
                            | QIODevice::OpenModeFlag::ExistingOnly)) {
             qDebug() << "Failed to open file :" << datFile.fileName() << ".";
-            QMessageBox::critical(
-                nullptr, STR("STR_ERROR"),
-                STR("STR_FAILED_OPEN_FILE").arg(datFile.fileName()));
+            errFunc(STR("STR_FAILED_OPEN_FILE").arg(datFile.fileName()));
             return;
         }
 
         setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
-                        .arg(catFile.fileName())
-                        .arg(datFile.fileName()));
+                        .arg(catDatInfo.cat)
+                        .arg(catDatInfo.dat)
+                        .arg(0)
+                        .arg(datFile.size()));
 
         /// Scan cat file.
         while (! catFile.atEnd()) {
@@ -60,23 +59,18 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 continue;
             }
 
-            QStringList splittedLine
-                = line.split(' ', QString::SplitBehavior::SkipEmptyParts);
-            quint64 size   = splittedLine[1].toULongLong();
-            quint64 offset = datFile.pos();
+            QStringList splittedLine = this->splitCatLine(line);
+            quint64     size         = splittedLine[1].toULongLong();
+            quint64     offset       = datFile.pos();
             if (splittedLine.size() != 4) {
                 qDebug() << "Broken cat file :" << catFile.fileName();
-                QMessageBox::critical(
-                    nullptr, STR("STR_ERROR"),
-                    STR("STR_FILE_BROKEN").arg(catFile.fileName()));
+                errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
                 return;
             }
 
             if ((quint64)(datFile.size() - datFile.pos()) < size) {
                 qDebug() << "Broken dat file :" << datFile.fileName();
-                QMessageBox::critical(
-                    nullptr, STR("STR_ERROR"),
-                    STR("STR_FILE_BROKEN").arg(datFile.fileName()));
+                errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
                 return;
             }
 
@@ -92,15 +86,13 @@ GameVFS::GameVFS(const QString &                        gamePath,
                     hash.addData(datFile.read(sizeToRead));
 
                     sizeRead += sizeToRead;
+                }
 
-                    /// Check
-                    if (hash.result().toHex() != splittedLine.back()) {
-                        qDebug() << "Broken dat file :" << datFile.fileName();
-                        QMessageBox::critical(
-                            nullptr, STR("STR_ERROR"),
-                            STR("STR_FILE_BROKEN").arg(datFile.fileName()));
-                        return;
-                    }
+                /// Check
+                if (hash.result().toHex() != splittedLine.back()) {
+                    qDebug() << "Broken dat file :" << datFile.fileName();
+                    errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
+                    return;
                 }
             }
 
@@ -126,9 +118,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 }
                 if (! entry->isDirectory) {
                     qDebug() << "Broken cat file :" << catFile.fileName();
-                    QMessageBox::critical(
-                        nullptr, STR("STR_ERROR"),
-                        STR("STR_FILE_BROKEN").arg(catFile.fileName()));
+                    errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
                     return;
                 }
             }
@@ -140,6 +130,12 @@ GameVFS::GameVFS(const QString &                        gamePath,
                    {},
                    {datFile.fileName(), offset, size}};
             qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
+
+            setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
+                            .arg(catDatInfo.cat)
+                            .arg(catDatInfo.dat)
+                            .arg(datFile.pos())
+                            .arg(datFile.size()));
         }
     }
 
@@ -152,6 +148,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
  * @param[in]	gamePath		Path of game.
  * @param[in]	info			Cat files info.
  * @param[in]	setTextFunc		Callback to set text.
+ * @param[in]	errFunc			Callback to show error.
  *
  * @return		On success, a nmew object is returned. Otherwise returns
  *				nullptr.
@@ -159,9 +156,11 @@ GameVFS::GameVFS(const QString &                        gamePath,
 ::std::shared_ptr<GameVFS>
     GameVFS::create(const QString &                        gamePath,
                     const QMap<int, CatFileInfo> &         info,
-                    ::std::function<void(const QString &)> setTextFunc)
+                    ::std::function<void(const QString &)> setTextFunc,
+                    ::std::function<void(const QString &)> errFunc)
 {
-    ::std::shared_ptr<GameVFS> ret(new GameVFS(gamePath, info, setTextFunc));
+    ::std::shared_ptr<GameVFS> ret(
+        new GameVFS(gamePath, info, setTextFunc, errFunc));
     if (ret->good()) {
         ret->m_this = ret;
         return ret;
@@ -280,6 +279,91 @@ GameVFS::GameVFS(const QString &                        gamePath,
  * @brief	Destructor.
  */
 GameVFS::~GameVFS() {}
+
+/**
+ * @brief		Open directory.
+ *
+ * @param[in]	line	Data in line.
+ *
+ * @return		Splitted data.
+ */
+QStringList GameVFS::splitCatLine(const QString &line)
+{
+    QStringList ret;
+    QString     s;
+
+    auto iter = line.rbegin();
+    while (*iter == ' ' || *iter == '\t') {
+        iter++;
+        if (iter == line.rend()) {
+            return ret;
+        }
+    }
+
+    /// Hash
+    s.clear();
+    while (*iter != ' ' && *iter != '\t') {
+        s.push_front(*iter);
+        iter++;
+        if (iter == line.rend()) {
+            ret.push_front(s);
+            return ret;
+        }
+    }
+    ret.push_front(s);
+    while (*iter == ' ' || *iter == '\t') {
+        iter++;
+        if (iter == line.rend()) {
+            return ret;
+        }
+    }
+
+    /// Timestamp
+    s.clear();
+    while (*iter != ' ' && *iter != '\t') {
+        s.push_front(*iter);
+        iter++;
+        if (iter == line.rend()) {
+            ret.push_front(s);
+            return ret;
+        }
+    }
+    ret.push_front(s);
+    while (*iter == ' ' || *iter == '\t') {
+        iter++;
+        if (iter == line.rend()) {
+            return ret;
+        }
+    }
+
+    /// Size
+    s.clear();
+    while (*iter != ' ' && *iter != '\t') {
+        s.push_front(*iter);
+        iter++;
+        if (iter == line.rend()) {
+            ret.push_front(s);
+            return ret;
+        }
+    }
+    ret.push_front(s);
+    while (*iter == ' ' || *iter == '\t') {
+        iter++;
+        if (iter == line.rend()) {
+            return ret;
+        }
+    }
+
+    /// Name
+    s.clear();
+    while (iter != line.rend()) {
+        s.push_front(*iter);
+        iter++;
+    }
+    ret.push_front(s);
+
+    return ret;
+}
 
 /**
  * @brief		Constructor.

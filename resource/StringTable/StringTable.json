@@ -65,9 +65,9 @@
 		"en_US" : "Loading virtual filesystem..."
 	},
 	"STR_ERROR" : {
-		"zh_CN" : "错误(&E)",
-		"zh_TW" : "錯誤(&E)",
-		"en_US" : "&Error"
+		"zh_CN" : "错误",
+		"zh_TW" : "錯誤",
+		"en_US" : "Error"
 	},
 	"STR_FAILED_OPEN_FILE" : {
 		"zh_CN" : "打开文件\"%1\"失败!",
@@ -80,9 +80,9 @@
 		"en_US" : "File \"%1\" is broken!"
 	},
 	"STR_LOADING_CAT_DAT_FILE" : {
-		"zh_CN" : "正在读取文件\"%1\"/\"%2\"...",
-		"zh_TW" : "正在讀取文件\"%1\"/\"%2\"...",
-		"en_US" : "Loading file \"%1\"/\"%2\"..."
+		"zh_CN" : "正在读取文件\"%1\"/\"%2\" (%3/%4)...",
+		"zh_TW" : "正在讀取文件\"%1\"/\"%2\" (%3/%4)...",
+		"en_US" : "Loading file \"%1\"/\"%2\" (%3/%4)..."
 	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",

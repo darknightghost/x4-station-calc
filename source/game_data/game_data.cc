@@ -35,8 +35,11 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         /// Load vfs
         splash->setText(STR("STR_LOADING_VFS"));
-        ::std::shared_ptr<GameVFS> vfs(new GameVFS(m_gamePath, catFiles));
-        if (! vfs->good()) {
+        ::std::shared_ptr<GameVFS> vfs = GameVFS::create(
+            m_gamePath, catFiles, [&](const QString &s) -> void {
+                splash->setText(STR("STR_LOADING_VFS") + "\n" + s);
+            });
+        if (vfs == nullptr) {
             continue;
         }
 

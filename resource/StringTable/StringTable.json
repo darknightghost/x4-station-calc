@@ -64,6 +64,26 @@
 		"zh_TW" : "正在加載虛擬文件系統...",
 		"en_US" : "Loading virtual filesystem..."
 	},
+	"STR_ERROR" : {
+		"zh_CN" : "错误(&E)",
+		"zh_TW" : "錯誤(&E)",
+		"en_US" : "&Error"
+	},
+	"STR_FAILED_OPEN_FILE" : {
+		"zh_CN" : "打开文件\"%1\"失败!",
+		"zh_TW" : "打開文件\"%1\"失敗!",
+		"en_US" : "Failed to open file \"%1\"!"
+	},
+	"STR_FILE_BROKEN" : {
+		"zh_CN" : "文件\"%1\"已损坏!",
+		"zh_TW" : "文件\"%1\"已損壞!",
+		"en_US" : "File \"%1\" is broken!"
+	},
+	"STR_LOADING_CAT_DAT_FILE" : {
+		"zh_CN" : "正在读取文件\"%1\"/\"%2\"...",
+		"zh_TW" : "正在讀取文件\"%1\"/\"%2\"...",
+		"en_US" : "Loading file \"%1\"/\"%2\"..."
+	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",
 		"zh_TW" : "選擇遊戲路徑",

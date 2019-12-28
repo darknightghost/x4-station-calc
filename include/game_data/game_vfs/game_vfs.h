@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 
 #include <QtCore/QDir>
@@ -10,7 +11,7 @@
 
 #include <interface/i_is_good.h>
 
-class GameVFS : public IIsGood {
+class GameVFS : private IIsGood {
   public:
     /**
      * @brief	Information of cat file.
@@ -59,30 +60,48 @@ class GameVFS : public IIsGood {
      * @brief	Dat file entery
      */
     struct DatFileEntery {
-        QString name;        //< Name.
-        bool    isDirectory; //< Directory flag.
-        union {
-            QMap<QString, DatFileEntery> children; //< Children.
-            struct {
-                QString datName; //< Name of dat file.
-                quint64 offset;  //< Offset.
-                quint64 size;    //< Size.
-            } FileInfo;          //< File infomation;
-        };
+        QString                      name;        //< Name.
+        bool                         isDirectory; //< Directory flag.
+        QMap<QString, DatFileEntery> children;    //< Children.
+        struct _tmp1 {
+            QString datName; //< Name of dat file.
+            quint64 offset;  //< Offset.
+            quint64 size;    //< Size.
+        } fileInfo;          //< File infomation;
     };
 
   private:
-    QString                      m_gamePath;    //< Game path.
-    QMap<QString, DatFileEntery> m_datEnteries; //< Enteries..
+    QString                  m_gamePath; //< Game path.
+    DatFileEntery            m_datEntry; //< Enteries.
+    ::std::weak_ptr<GameVFS> m_this;     //< This reference.
 
-  public:
+  private:
     /**
      * @brief		Constructor.
      *
      * @param[in]	gamePath		Path of game.
      * @param[in]	info			Cat files info.
+     * @param[in]	setTextFunc		Callback to set text.
      */
-    GameVFS(const QString &gamePath, const QMap<int, CatFileInfo> &info);
+    GameVFS(const QString &                        gamePath,
+            const QMap<int, CatFileInfo> &         info,
+            ::std::function<void(const QString &)> setTextFunc);
+
+  public:
+    /**
+     * @brief		Create a VFS object.
+     *
+     * @param[in]	gamePath		Path of game.
+     * @param[in]	info			Cat files info.
+     * @param[in]	setTextFunc		Callback to set text.
+     *
+     * @return		On success, a nmew object is returned. Otherwise returns
+     *				nullptr.
+     */
+    static ::std::shared_ptr<GameVFS>
+        create(const QString &                        gamePath,
+               const QMap<int, CatFileInfo> &         info,
+               ::std::function<void(const QString &)> setTextFunc);
 
     /**
      * @brief		Open file.
@@ -116,8 +135,9 @@ class GameVFS : public IIsGood {
  */
 class GameVFS::FileReader {
   protected:
-    QString m_path; //< Path of the file.
-    QString m_name; //< Name of the file.
+    QStringList                m_path; //< Path of the file.
+    QString                    m_name; //< Name of the file.
+    ::std::shared_ptr<GameVFS> m_vfs;  //< VFS.
 
   public:
     /**
@@ -134,15 +154,16 @@ class GameVFS::FileReader {
      * @brief		Constructor.
      *
      * @param[in]	path		Path of file.
+     * @param[in]	vfs			VFS.
      */
-    FileReader(const QString &path);
+    FileReader(const QString &path, ::std::shared_ptr<GameVFS> vfs);
 
     /**
      * @brief	Get path of the file.
      *
      * @return	Path of the file.
      */
-    const QString &path() const;
+    QString path() const;
 
     /**
      * @brief	Get name of the file.
@@ -178,6 +199,21 @@ class GameVFS::FileReader {
     virtual QByteArray readAll() = 0;
 
     /**
+     * @brief		Read a line.
+     *
+     * @return		Data in a line.
+     */
+    QByteArray readLine();
+
+    /**
+     * @brief		Check if current position is at the end of current file.
+     *
+     * @return		If current position reachs the end of the file, true is
+     *				returned. Otherwise returns false.
+     */
+    virtual bool atEnd() = 0;
+
+    /**
      * @brief		Seek file.
      *
      * @param[in]	offset		Offset to seek.
@@ -198,9 +234,9 @@ class GameVFS::FileReader {
  */
 class GameVFS::PackedFileReader : public GameVFS::FileReader {
   protected:
-    QFile   m_file;   //< File object.
-    quint64 m_offset; //< Offset.
-    quint64 m_size;   //< File size.
+    ::std::unique_ptr<QFile> m_file;   //< File object.
+    quint64                  m_offset; //< Offset.
+    quint64                  m_size;   //< File size.
 
   public:
     /**
@@ -210,11 +246,13 @@ class GameVFS::PackedFileReader : public GameVFS::FileReader {
      * @param[in]	file		Qt file object for data file.
      * @param[in]	offset		Begin offset.
      * @param[in]	size		File size.
+     * @param[in]	vfs			VFS.
      */
-    PackedFileReader(const QString &path,
-                     QFile &&       file,
-                     quint64        offset,
-                     quint64        size);
+    PackedFileReader(const QString &            path,
+                     ::std::unique_ptr<QFile>   file,
+                     quint64                    offset,
+                     quint64                    size,
+                     ::std::shared_ptr<GameVFS> vfs);
 
     /**
      * @brief		Read file.
@@ -252,6 +290,14 @@ class GameVFS::PackedFileReader : public GameVFS::FileReader {
      */
     virtual qint64 seek(qint64 offset,
                         Whence whence = Whence::Current) override;
+
+    /**
+     * @brief		Check if current position is at the end of current file.
+     *
+     * @return		If current position reachs the end of the file, true is
+     *				returned. Otherwise returns false.
+     */
+    virtual bool atEnd() override;
 
     /**
      * @brief	Destructor.
@@ -264,7 +310,7 @@ class GameVFS::PackedFileReader : public GameVFS::FileReader {
  */
 class GameVFS::NormalFileReader : public GameVFS::FileReader {
   protected:
-    QFile m_file; //< File object.
+    ::std::unique_ptr<QFile> m_file; //< File object.
 
   public:
     /**
@@ -272,8 +318,11 @@ class GameVFS::NormalFileReader : public GameVFS::FileReader {
      *
      * @param[in]	path		Path of file.
      * @param[in]	file		Qt file object for data file.
+     * @param[in]	vfs			VFS.
      */
-    NormalFileReader(const QString &path, QFile &&file);
+    NormalFileReader(const QString &            path,
+                     ::std::unique_ptr<QFile>   file,
+                     ::std::shared_ptr<GameVFS> vfs);
 
     /**
      * @brief		Read file.
@@ -313,6 +362,14 @@ class GameVFS::NormalFileReader : public GameVFS::FileReader {
                         Whence whence = Whence::Current) override;
 
     /**
+     * @brief		Check if current position is at the end of current file.
+     *
+     * @return		If current position reachs the end of the file, true is
+     *				returned. Otherwise returns false.
+     */
+    virtual bool atEnd() override;
+
+    /**
      * @brief	Destructor.
      */
     virtual ~NormalFileReader();
@@ -322,10 +379,6 @@ class GameVFS::NormalFileReader : public GameVFS::FileReader {
  * @brief	Directory reader.
  */
 class GameVFS::DirReader {
-  protected:
-    QString m_path; //< Path of the file.
-    QString m_name; //< Name of the file.
-
   public:
     /**
      * @brief	Type of directory entery.
@@ -348,52 +401,68 @@ class GameVFS::DirReader {
      */
     class Iterator;
 
+    typedef Iterator iterator;
+
+  protected:
+    QStringList                          m_path;     //< Path of the file.
+    QString                              m_name;     //< Name of the file.
+    ::std::shared_ptr<GameVFS>           m_vfs;      //< VFS.
+    ::std::shared_ptr<QVector<DirEntry>> m_enteries; //< Enteries.
+
   public:
     /**
      * @brief		Constructor.
      *
      * @param[in]	path		Path of directory.
+     * @para[in]	entry		Dat file entery. If not found, set it to
+     *							nullptr.
+     * @param[in]	vfs			VFS.
      */
-    DirReader(const QString &path);
+    DirReader(const QString &            path,
+              DatFileEntery *            entry,
+              ::std::shared_ptr<GameVFS> vfs);
 
     /**
-     * @brief		Open file in this directory.
+     * @brief	Get name of the directory.
      *
-     * @param[in]	path		Path of file.
-     *
-     * @return		On success, a \c FileReader object is returned. Otherwise
-     *				returns nullptr.
+     * @return	Name of the directory.
      */
-    virtual ::std::shared_ptr<FileReader> open(const QString &path) = 0;
+    const QString &name() const;
 
     /**
-     * @brief		Open sub directory in this directory.
+     * @brief	Get path of the directory.
      *
-     * @param[in]	path		Path of directory.
-     *
-     * @return		On success, a \c DirReader object is returned. Otherwise
-     *				returns nullptr.
+     * @return	Path.
      */
-    virtual ::std::shared_ptr<DirReader> openDir(const QString &path) = 0;
+    QString path() const;
+
+    /**
+     * @brief		Convert relative path to absolute path.
+     *
+     * @param[in]	path	Relative path.
+     *
+     * @return		Absolute path.
+     */
+    QString absPath(const QString &path) const;
 
     /**
      * @brief		Get iterator point to the first entery.
      *
      * @return		Iterator.
      */
-    virtual Iterator begin() = 0;
+    iterator begin();
 
     /**
      * @brief		Get iterator point to the end.
      *
      * @return		Iterator.
      */
-    virtual Iterator end() = 0;
+    iterator end();
 
     /**
      * @brief		Destructor.
      */
-    virtual ~DirReader();
+    ~DirReader();
 };
 
 /**
@@ -409,8 +478,10 @@ class GameVFS::DirReader::Iterator {
      * @brief		Constructor.
      *
      * @param[in]	enteries		Directory enteries.
+     * @param[in]	iter			Iterator.
      */
-    Iterator(::std::shared_ptr<QVector<DirEntry>> enteries);
+    Iterator(::std::shared_ptr<QVector<DirEntry>> enteries,
+             QVector<DirEntry>::iterator          iter);
 
     /**
      * @brief		Constructor.
@@ -452,117 +523,4 @@ class GameVFS::DirReader::Iterator {
 
     bool operator==(const Iterator &iter) const;
     bool operator!=(const Iterator &iter) const;
-};
-
-/**
- * @brief	Directory reader for packed files.
- */
-class GameVFS::PackedDirReader : public GameVFS::DirReader {
-  protected:
-    const QMap<QString, DatFileEntery> &m_enteries; //< Enteries.
-
-  public:
-    /**
-     * @brief		Constructor.
-     *
-     * @param[in]	path		Path of directory.
-     * @param[in]	enteries	Enteries.
-     */
-    PackedDirReader(const QString &                     path,
-                    const QMap<QString, DatFileEntery> &enteries);
-
-    /**
-     * @brief		Open file in this directory.
-     *
-     * @param[in]	path		Path of file.
-     *
-     * @return		On success, a \c FileReader object is returned. Otherwise
-     *				returns nullptr.
-     */
-    virtual ::std::shared_ptr<FileReader> open(const QString &path) override;
-
-    /**
-     * @brief		Open sub directory in this directory.
-     *
-     * @param[in]	path		Path of directory.
-     *
-     * @return		On success, a \c DirReader object is returned. Otherwise
-     *				returns nullptr.
-     */
-    virtual ::std::shared_ptr<DirReader> openDir(const QString &path) override;
-
-    /**
-     * @brief		Get iterator point to the first entery.
-     *
-     * @return		Iterator.
-     */
-    virtual Iterator begin() override;
-
-    /**
-     * @brief		Get iterator point to the end.
-     *
-     * @return		Iterator.
-     */
-    virtual Iterator end() override;
-
-    /**
-     * @brief		Destructor.
-     */
-    virtual ~PackedDirReader();
-};
-
-/**
- * @brief	Directory reader for normal files.
- */
-class GameVFS::NormalDirReader : public GameVFS::DirReader {
-  protected:
-    QDir m_dir; //< Directory object.
-
-  public:
-    /**
-     * @brief		Constructor.
-     *
-     * @param[in]	path		Path of directory.
-     * @param[in]	dir			Directory object.
-     */
-    NormalDirReader(const QString &path, QDir &&dir);
-
-    /**
-     * @brief		Open file in this directory.
-     *
-     * @param[in]	path		Path of file.
-     *
-     * @return		On success, a \c FileReader object is returned. Otherwise
-     *				returns nullptr.
-     */
-    virtual ::std::shared_ptr<FileReader> open(const QString &path) override;
-
-    /**
-     * @brief		Open sub directory in this directory.
-     *
-     * @param[in]	path		Path of directory.
-     *
-     * @return		On success, a \c DirReader object is returned. Otherwise
-     *				returns nullptr.
-     */
-    virtual ::std::shared_ptr<DirReader> openDir(const QString &path) override;
-
-    /**
-     * @brief		Get iterator point to the first entery.
-     *
-     * @return		Iterator.
-     */
-    virtual Iterator begin() override;
-
-    /**
-     * @brief		Get iterator point to the end.
-     *
-     * @return		Iterator.
-     */
-    virtual Iterator end() override;
-
-    /**
-     * @brief		Destructor.
-     */
-    virtual ~NormalDirReader();
 };

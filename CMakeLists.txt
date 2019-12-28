@@ -28,8 +28,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
 
 if (WIN32)
+    add_compile_options ("-D_CRT_SECURE_NO_WARNINGS")
 	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-		add_link_options ("//subsystem:windows" "/entry:mainCRTStartup")
+		add_link_options ("/subsystem:windows" "/entry:mainCRTStartup")
 
 	endif ()
 endif ()
@@ -37,8 +38,12 @@ endif ()
 # Dependencies
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
-find_package (Doxygen REQUIRED)
+find_package (Doxygen)
 
+if (NOT DOXYGEN_EXECUTABLE)
+    message (STATUS "Doxygen is not found. Code document will not be generated.")
+    
+endif()
 
 # Sources
 file (GLOB_RECURSE HEADERS
@@ -81,7 +86,10 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Widgets)
 
 #Doc
-add_custom_target("doc" ALL
-	COMMAND				${DOXYGEN_EXECUTABLE}
-	WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR})
+if (DOXYGEN_EXECUTABLE)
+    add_custom_target("doc" ALL
+        COMMAND				${DOXYGEN_EXECUTABLE}
+        WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR})
+   
+endif ()
 

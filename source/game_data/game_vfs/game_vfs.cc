@@ -50,6 +50,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                         .arg(datFile.size()));
 
         /// Scan cat file.
+        quint64 offset = 0;
         while (! catFile.atEnd()) {
             /// Get file info
             QString line = catFile.readLine();
@@ -61,7 +62,6 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
             QStringList splittedLine = this->splitCatLine(line);
             quint64     size         = splittedLine[1].toULongLong();
-            quint64     offset       = datFile.pos();
             if (splittedLine.size() != 4) {
                 qDebug() << "Broken cat file :" << catFile.fileName();
                 errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
@@ -75,6 +75,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
             }
 
             /// Checksum
+            /*
             if (size != 0) {
                 /// Get hash
                 QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
@@ -94,7 +95,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                     errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
                     return;
                 }
-            }
+            }*/
 
             /// Append file
             /// Split path
@@ -136,6 +137,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                             .arg(catDatInfo.dat)
                             .arg(datFile.pos())
                             .arg(datFile.size()));
+            offset += size;
         }
     }
 

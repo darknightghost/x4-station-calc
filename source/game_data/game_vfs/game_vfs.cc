@@ -83,7 +83,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 while (sizeRead < size) {
                     /// Size to read.
                     quint64 sizeToRead
-                        = min((quint64)(4096), (quint64)(size - sizeRead));
+                        = min((quint64)(64 * 1024 * 1024), (quint64)(size - sizeRead));
                     hash.addData(datFile.read(sizeToRead));
 
                     sizeRead += sizeToRead;

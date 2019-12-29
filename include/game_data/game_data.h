@@ -30,7 +30,7 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     /**
      * @brief		Constructor.
      *
-     * @param[in]	splash			Splash widget.
+     * @param[in]	splashWidget		Splash widget.
      *
      */
     GameData(SplashWidget *splashWidget);

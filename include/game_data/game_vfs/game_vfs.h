@@ -7,6 +7,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QMap>
 #include <QtCore/QObject>
+#include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
 #include <interface/i_is_good.h>
@@ -60,20 +61,55 @@ class GameVFS : private IIsGood {
      * @brief	Dat file entery
      */
     struct DatFileEntery {
-        QString                      name;        //< Name.
-        bool                         isDirectory; //< Directory flag.
-        QMap<QString, DatFileEntery> children;    //< Children.
+        QString name;        //< Name.
+        bool    isDirectory; //< Directory flag.
+        QMap<QString, ::std::shared_ptr<DatFileEntery>> children; //< Children.
+        QReadWriteLock                                  lock;     //< Lock.
         struct _tmp1 {
             QString datName; //< Name of dat file.
             quint64 offset;  //< Offset.
             quint64 size;    //< Size.
         } fileInfo;          //< File infomation;
+
+        /**
+         * @brief		Constructor.
+         *
+         */
+        DatFileEntery() {}
+
+        /**
+         * @brief		Construct a directory node.
+         *
+         * @param[in]	name	Name.
+         */
+        DatFileEntery(const QString &name) :
+            name(name), isDirectory(true), children({}), fileInfo({"", 0, 0})
+        {}
+
+        /**
+         * @brief		Construct a file node.
+         *
+         * @param[in]	name	Name.
+         * @param[in]	datName	Name of dat file.
+         * @param[in]	offset	Offset in dat file.
+         * @param[in]	size	File size.
+         */
+        DatFileEntery(const QString &name,
+                      const QString &datName,
+                      quint64        offset,
+                      quint64        size) :
+            name(name),
+            isDirectory(true), children({}), fileInfo({datName, offset, size})
+        {}
+
+        DatFileEntery(const DatFileEntery &) = delete;
+        DatFileEntery(DatFileEntery &&)      = delete;
     };
 
   private:
-    QString                  m_gamePath; //< Game path.
-    DatFileEntery            m_datEntry; //< Enteries.
-    ::std::weak_ptr<GameVFS> m_this;     //< This reference.
+    QString                          m_gamePath; //< Game path.
+    ::std::shared_ptr<DatFileEntery> m_datEntry; //< Enteries.
+    ::std::weak_ptr<GameVFS>         m_this;     //< This reference.
 
   private:
     /**
@@ -96,7 +132,7 @@ class GameVFS : private IIsGood {
      * @param[in]	gamePath		Path of game.
      * @param[in]	info			Cat files info.
      * @param[in]	setTextFunc		Callback to set text.
-     *
+     * @param[in]	errFunc			Callback to show error.
      *
      * @return		On success, a nmew object is returned. Otherwise returns
      *				nullptr.
@@ -112,8 +148,8 @@ class GameVFS : private IIsGood {
      *
      * @param[in]	path		Path of file.
      *
-     * @return		On success, a \c FileReader object is returned. Otherwise
-     *				returns nullptr.
+     * @return		On success, a \c FileReader object is returned.
+     *Otherwise returns nullptr.
      */
     ::std::shared_ptr<FileReader> open(const QString &path);
 
@@ -432,9 +468,9 @@ class GameVFS::DirReader {
      *							nullptr.
      * @param[in]	vfs			VFS.
      */
-    DirReader(const QString &            path,
-              DatFileEntery *            entry,
-              ::std::shared_ptr<GameVFS> vfs);
+    DirReader(const QString &                  path,
+              ::std::shared_ptr<DatFileEntery> entry,
+              ::std::shared_ptr<GameVFS>       vfs);
 
     /**
      * @brief	Get name of the directory.
@@ -509,7 +545,10 @@ class GameVFS::DirReader::Iterator {
      */
     virtual ~Iterator();
 
-    /// Operators
+    /**
+     * @defgroup	Operators.
+     * @{
+     */
     const DirEntry *operator->() const;
     const DirEntry &operator*() const;
 
@@ -537,4 +576,7 @@ class GameVFS::DirReader::Iterator {
 
     bool operator==(const Iterator &iter) const;
     bool operator!=(const Iterator &iter) const;
+    /**
+     * @}
+     */
 };

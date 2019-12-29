@@ -1,7 +1,13 @@
+#include <atomic>
+
 #include <QtCore/QCryptographicHash>
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QReadLocker>
+#include <QtCore/QWriteLocker>
 
 #include <common.h>
 #include <game_data/game_vfs/game_vfs.h>
@@ -20,7 +26,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                  ::std::function<void(const QString &)> setTextFunc,
                  ::std::function<void(const QString &)> errFunc) :
     m_gamePath(gamePath),
-    m_datEntry({"/", true, {}, {"", 0, 0}})
+    m_datEntry(new DatFileEntery("/"))
 {
     QDir dir(gamePath);
 
@@ -35,109 +41,150 @@ GameVFS::GameVFS(const QString &                        gamePath,
             return;
         }
 
-        QFile datFile(dir.absoluteFilePath(catDatInfo.dat));
-        if (! datFile.open(QIODevice::OpenModeFlag::ReadOnly
-                           | QIODevice::OpenModeFlag::ExistingOnly)) {
-            qDebug() << "Failed to open file :" << datFile.fileName() << ".";
-            errFunc(STR("STR_FAILED_OPEN_FILE").arg(datFile.fileName()));
-            return;
-        }
+        QMutex                 catLock;
+        ::std::atomic<bool>    errFlag;
+        ::std::atomic<quint64> total;
+        errFlag = false;
+        total   = 0;
 
-        setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
-                        .arg(catDatInfo.cat)
-                        .arg(catDatInfo.dat)
-                        .arg(0)
-                        .arg(datFile.size()));
-
-        /// Scan cat file.
-        quint64 offset = 0;
-        while (! catFile.atEnd()) {
-            /// Get file info
-            QString line = catFile.readLine();
-            line.remove(QChar('\r'));
-            line.remove(QChar('\n'));
-            if (line == "") {
-                continue;
-            }
-
-            QStringList splittedLine = this->splitCatLine(line);
-            quint64     size         = splittedLine[1].toULongLong();
-            if (splittedLine.size() != 4) {
-                qDebug() << "Broken cat file :" << catFile.fileName();
-                errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
+        MultiRun loadTask(::std::function<void()>([&]() -> void {
+            QFile datFile(dir.absoluteFilePath(catDatInfo.dat));
+            if (! datFile.open(QIODevice::OpenModeFlag::ReadOnly
+                               | QIODevice::OpenModeFlag::ExistingOnly)) {
+                if (! errFlag.exchange(true)) {
+                    qDebug()
+                        << "Failed to open file :" << datFile.fileName() << ".";
+                    errFunc(
+                        STR("STR_FAILED_OPEN_FILE").arg(datFile.fileName()));
+                }
                 return;
             }
-
-            if ((quint64)(datFile.size() - datFile.pos()) < size) {
-                qDebug() << "Broken dat file :" << datFile.fileName();
-                errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
-                return;
-            }
-
-            /// Checksum
-            /*
-            if (size != 0) {
-                /// Get hash
-                QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
-                quint64            sizeRead = 0;
-                while (sizeRead < size) {
-                    /// Size to read.
-                    quint64 sizeToRead
-                        = min((quint64)(64 * 1024 * 1024), (quint64)(size - sizeRead));
-                    hash.addData(datFile.read(sizeToRead));
-
-                    sizeRead += sizeToRead;
-                }
-
-                /// Check
-                if (hash.result().toHex() != splittedLine.back()) {
-                    qDebug() << "Broken dat file :" << datFile.fileName();
-                    errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
-                    return;
-                }
-            }*/
-
-            /// Append file
-            /// Split path
-            auto splittedPath = splittedLine[0].split(
-                '/', QString::SplitBehavior::SkipEmptyParts);
-            if (splittedPath.empty()) {
-                break;
-            }
-
-            /// Parent
-            DatFileEntery *entry = &m_datEntry;
-            for (auto iter = splittedPath.begin();
-                 iter < splittedPath.end() - 1; iter++) {
-                auto pathIter = entry->children.find(*iter);
-                if (pathIter == entry->children.end()) {
-                    /// Create new
-                    entry->children[*iter] = {*iter, true, {}, {"", 0, 0}};
-                    entry                  = &(entry->children[*iter]);
-                } else {
-                    entry = (&*pathIter);
-                }
-                if (! entry->isDirectory) {
-                    qDebug() << "Broken cat file :" << catFile.fileName();
-                    errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
-                    return;
-                }
-            }
-
-            /// File
-            entry->children[splittedPath.back()]
-                = {splittedPath.back(),
-                   false,
-                   {},
-                   {datFile.fileName(), offset, size}};
-            qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
 
             setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
                             .arg(catDatInfo.cat)
                             .arg(catDatInfo.dat)
-                            .arg(datFile.pos())
+                            .arg(total)
                             .arg(datFile.size()));
-            offset += size;
+
+            /// Scan cat file.
+            catLock.lock();
+            while ((! catFile.atEnd()) && (! errFlag)) {
+                /// Get file info
+                QString line = catFile.readLine();
+                line.remove(QChar('\r'));
+                line.remove(QChar('\n'));
+                if (line == "") {
+                    continue;
+                }
+
+                QStringList splittedLine = this->splitCatLine(line);
+                quint64     size         = splittedLine[1].toULongLong();
+                quint64     offset       = total;
+                total += size;
+                catLock.unlock();
+                if (splittedLine.size() != 4) {
+                    if (! errFlag.exchange(true)) {
+                        qDebug() << "Broken cat file :" << catFile.fileName();
+                        errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
+                    }
+                    return;
+                }
+
+                datFile.seek(offset);
+                if ((quint64)(datFile.size() - datFile.pos()) < size) {
+                    if (! errFlag.exchange(true)) {
+                        qDebug() << "Broken dat file :" << datFile.fileName();
+                        errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
+                    }
+                    return;
+                }
+
+                /// Checksum
+                if (size != 0) {
+                    /// Get hash
+                    QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
+                    quint64            sizeRead = 0;
+                    while (sizeRead < size) {
+                        /// Size to read.
+                        quint64 sizeToRead = min((quint64)(64 * 1024 * 1024),
+                                                 (quint64)(size - sizeRead));
+                        hash.addData(datFile.read(sizeToRead));
+
+                        sizeRead += sizeToRead;
+                    }
+
+                    /// Check
+                    if (hash.result().toHex() != splittedLine.back()) {
+                        if (! errFlag.exchange(true)) {
+                            qDebug()
+                                << "Broken dat file :" << datFile.fileName();
+                            errFunc(
+                                STR("STR_FILE_BROKEN").arg(datFile.fileName()));
+                        }
+                        return;
+                    }
+                }
+
+                /// Append file
+                /// Split path
+                auto splittedPath = splittedLine[0].split(
+                    '/', QString::SplitBehavior::SkipEmptyParts);
+                if (splittedPath.empty()) {
+                    break;
+                }
+
+                /// Parent
+                ::std::shared_ptr<DatFileEntery> entry = m_datEntry;
+                for (auto iter = splittedPath.begin();
+                     iter < splittedPath.end() - 1; iter++) {
+                    entry->lock.lockForRead();
+                    auto pathIter = entry->children.find(*iter);
+                    if (pathIter == entry->children.end()) {
+                        /// Create new
+                        entry->lock.unlock();
+                        entry->lock.lockForWrite();
+                        entry->children[*iter]
+                            = ::std::shared_ptr<DatFileEntery>(
+                                new DatFileEntery(*iter));
+                        ::std::shared_ptr<DatFileEntery> oldEntry = entry;
+                        entry = entry->children[*iter];
+                        oldEntry->lock.unlock();
+                    } else {
+                        ::std::shared_ptr<DatFileEntery> oldEntry = entry;
+                        entry                                     = *pathIter;
+                        oldEntry->lock.unlock();
+                    }
+                    if (! entry->isDirectory) {
+                        if (! errFlag.exchange(true)) {
+                            qDebug()
+                                << "Broken cat file :" << catFile.fileName();
+                            errFunc(
+                                STR("STR_FILE_BROKEN").arg(catFile.fileName()));
+                        }
+                        return;
+                    }
+                }
+
+                /// File
+                entry->lock.lockForWrite();
+                entry->children[splittedPath.back()]
+                    = ::std::shared_ptr<DatFileEntery>(new DatFileEntery(
+                        splittedPath.back(), datFile.fileName(), offset, size));
+                entry->lock.unlock();
+                qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
+
+                setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
+                                .arg(catDatInfo.cat)
+                                .arg(catDatInfo.dat)
+                                .arg(total)
+                                .arg(datFile.size()));
+                catLock.lock();
+            }
+            catLock.unlock();
+        }));
+        loadTask.run();
+        if (errFlag) {
+            return;
         }
     }
 
@@ -197,7 +244,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
     QStringList splittedPath
         = path.split('/', QString::SplitBehavior::SkipEmptyParts);
 
-    DatFileEntery *entry = &m_datEntry;
+    ::std::shared_ptr<DatFileEntery> entry = m_datEntry;
     for (auto name : splittedPath) {
         if (! entry->isDirectory) {
             return nullptr;
@@ -207,7 +254,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
         if (pathIter == entry->children.end()) {
             return nullptr;
         }
-        entry = &(*pathIter);
+        entry = *pathIter;
     }
     if (entry->isDirectory) {
         return nullptr;
@@ -251,7 +298,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
     QStringList splittedPath
         = path.split('/', Qt::SplitBehaviorFlags::SkipEmptyParts);
 
-    DatFileEntery *entry = &m_datEntry;
+    ::std::shared_ptr<DatFileEntery> entry = m_datEntry;
     for (auto name : splittedPath) {
         if (! entry->isDirectory) {
             return nullptr;
@@ -266,7 +313,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 return nullptr;
             }
         }
-        entry = &(*pathIter);
+        entry = *pathIter;
     }
 
     if (! entry->isDirectory) {
@@ -639,9 +686,9 @@ GameVFS::NormalFileReader::~NormalFileReader() {}
  *							nullptr.
  * @param[in]	vfs			VFS.
  */
-GameVFS::DirReader::DirReader(const QString &            path,
-                              DatFileEntery *            entry,
-                              ::std::shared_ptr<GameVFS> vfs) :
+GameVFS::DirReader::DirReader(const QString &                  path,
+                              ::std::shared_ptr<DatFileEntery> entry,
+                              ::std::shared_ptr<GameVFS>       vfs) :
     m_path(path.split('/', QString::SplitBehavior::SkipEmptyParts)),
     m_name(m_path.back()), m_vfs(vfs), m_enteries(new QVector<DirEntry>)
 {
@@ -657,8 +704,8 @@ GameVFS::DirReader::DirReader(const QString &            path,
     if (entry != nullptr) {
         for (auto &datEntry : entry->children) {
             m_enteries->append(
-                {datEntry.name, (datEntry.isDirectory ? EntryType::Directory
-                                                      : EntryType::File)});
+                {datEntry->name, (datEntry->isDirectory ? EntryType::Directory
+                                                        : EntryType::File)});
         }
     }
 }

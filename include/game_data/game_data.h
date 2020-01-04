@@ -8,7 +8,8 @@
 #include <QtCore/QVector>
 
 #include <design_model/singleton.h>
-#include <game_data/game_vfs/game_vfs.h>
+#include <game_data/game_text.h>
+#include <game_data/game_vfs.h>
 #include <ui/splash/splash_widget.h>
 
 /// Minimum number of cat files.
@@ -23,8 +24,9 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     SIGNLETON_OBJECT(GameData, SplashWidget *)
 
   private:
-    QString                    m_gamePath; //< Game path.
-    ::std::shared_ptr<GameVFS> m_vfs;      //< Game VFS
+    QString                     m_gamePath; //< Game path.
+    ::std::shared_ptr<GameVFS>  m_vfs;      //< Game VFS
+    ::std::shared_ptr<GameText> m_texts;    //< Game texts.
 
   protected:
     /**

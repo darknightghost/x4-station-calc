@@ -8,6 +8,7 @@
 
 #include <config.h>
 #include <game_data/game_data.h>
+#include <game_data/game_text.h>
 #include <locale/string_table.h>
 
 /**
@@ -50,6 +51,19 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+
+        /// Load text
+        ::std::shared_ptr<GameText> texts
+            = GameText::load(vfs, [&](const QString &s) -> void {
+                  splash->setText(STR("STR_LOADING_TEXTS") + "\n" + s);
+              });
+
+        /// Set value
+        m_vfs   = vfs;
+        m_texts = texts;
+
+        qDebug() << texts->text(102, 21);
+        qDebug() << texts->text(30120, 3103);
 
         break;
     }

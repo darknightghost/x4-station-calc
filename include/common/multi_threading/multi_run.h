@@ -51,9 +51,11 @@ class MultiRun : public QObject {
     MultiRun(::std::function<void()> task);
 
     /**
-     * @brief	Run task.
+     * @brief		Run task.
+     *
+     * @param[in]	signleThread	True if run in signle thread.
      */
-    void run();
+    void run(bool signleThread = false);
 
     /**
      * @brief	Destructor.

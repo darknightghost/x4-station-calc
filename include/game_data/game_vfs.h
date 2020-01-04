@@ -6,8 +6,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QMap>
+#include <QtCore/QMutex>
 #include <QtCore/QObject>
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
 #include <interface/i_is_good.h>
@@ -64,7 +64,7 @@ class GameVFS : private IIsGood {
         QString name;        //< Name.
         bool    isDirectory; //< Directory flag.
         QMap<QString, ::std::shared_ptr<DatFileEntery>> children; //< Children.
-        QReadWriteLock                                  lock;     //< Lock.
+        QMutex                                          lock;     //< Lock.
         struct _tmp1 {
             QString datName; //< Name of dat file.
             quint64 offset;  //< Offset.
@@ -99,7 +99,7 @@ class GameVFS : private IIsGood {
                       quint64        offset,
                       quint64        size) :
             name(name),
-            isDirectory(true), children({}), fileInfo({datName, offset, size})
+            isDirectory(false), children({}), fileInfo({datName, offset, size})
         {}
 
         DatFileEntery(const DatFileEntery &) = delete;
@@ -510,6 +510,13 @@ class GameVFS::DirReader {
     iterator end();
 
     /**
+     * @brief		Get number of files in the directory.
+     *
+     * @return		Number.
+     */
+    quint64 count();
+
+    /**
      * @brief		Destructor.
      */
     ~DirReader();
@@ -524,6 +531,11 @@ class GameVFS::DirReader::Iterator {
     QVector<DirEntry>::iterator          m_iterator; //< Iterator.
 
   public:
+    /**
+     * @brief		Constructor.
+     */
+    Iterator();
+
     /**
      * @brief		Constructor.
      *

@@ -54,7 +54,8 @@ SplashWidget::SplashWidget(QWidget *parent) :
 int SplashWidget::exec(::std::function<int()> workFunc)
 {
     /// Create thread.
-    m_thread = new SplashThread(workFunc, this);
+    m_closeable = false;
+    m_thread    = new SplashThread(workFunc, this);
     this->connect(m_thread, &SplashThread::finished, this,
                   &SplashWidget::onFinished,
                   Qt::ConnectionType::QueuedConnection);
@@ -155,7 +156,11 @@ void SplashWidget::paintEvent(QPaintEvent *event)
  */
 void SplashWidget::closeEvent(QCloseEvent *event)
 {
-    event->accept();
+    if (m_closeable) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 /**
@@ -201,5 +206,6 @@ void SplashWidget::setText(QString text)
  */
 void SplashWidget::onFinished()
 {
+    m_closeable = true;
     m_eventLoop->quit();
 }

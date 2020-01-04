@@ -10,7 +10,7 @@
 #include <QtCore/QWriteLocker>
 
 #include <common.h>
-#include <game_data/game_vfs/game_vfs.h>
+#include <game_data/game_vfs.h>
 #include <locale/string_table.h>
 
 /**
@@ -137,22 +137,20 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 ::std::shared_ptr<DatFileEntery> entry = m_datEntry;
                 for (auto iter = splittedPath.begin();
                      iter < splittedPath.end() - 1; iter++) {
-                    entry->lock.lockForRead();
-                    auto pathIter = entry->children.find(*iter);
-                    if (pathIter == entry->children.end()) {
-                        /// Create new
-                        entry->lock.unlock();
-                        entry->lock.lockForWrite();
-                        entry->children[*iter]
-                            = ::std::shared_ptr<DatFileEntery>(
-                                new DatFileEntery(*iter));
-                        ::std::shared_ptr<DatFileEntery> oldEntry = entry;
-                        entry = entry->children[*iter];
-                        oldEntry->lock.unlock();
-                    } else {
-                        ::std::shared_ptr<DatFileEntery> oldEntry = entry;
-                        entry                                     = *pathIter;
-                        oldEntry->lock.unlock();
+                    {
+                        QMutexLocker locker(&(entry->lock));
+                        auto         pathIter = entry->children.find(*iter);
+                        if (pathIter == entry->children.end()) {
+                            /// Create new
+                            pathIter = entry->children.find(*iter);
+                            entry->children[*iter]
+                                = ::std::shared_ptr<DatFileEntery>(
+                                    new DatFileEntery(*iter));
+                            entry = entry->children[*iter];
+
+                        } else {
+                            entry = *pathIter;
+                        }
                     }
                     if (! entry->isDirectory) {
                         if (! errFlag.exchange(true)) {
@@ -166,11 +164,13 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 }
 
                 /// File
-                entry->lock.lockForWrite();
-                entry->children[splittedPath.back()]
-                    = ::std::shared_ptr<DatFileEntery>(new DatFileEntery(
-                        splittedPath.back(), datFile.fileName(), offset, size));
-                entry->lock.unlock();
+                {
+                    QMutexLocker locker(&(entry->lock));
+                    entry->children[splittedPath.back()]
+                        = ::std::shared_ptr<DatFileEntery>(new DatFileEntery(
+                            splittedPath.back(), datFile.fileName(), offset,
+                            size));
+                }
                 qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
 
                 setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
@@ -232,7 +232,14 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
     /// Try to open file
     {
-        ::std::unique_ptr<QFile> file(new QFile(dir.absoluteFilePath(path)));
+        ::std::unique_ptr<QFile> file;
+        if (path.front() == '/') {
+            file = ::std::unique_ptr<QFile>(
+                new QFile(dir.absoluteFilePath("." + path)));
+        } else {
+            file = ::std::unique_ptr<QFile>(
+                new QFile(dir.absoluteFilePath(path)));
+        }
         if (file->open(QIODevice::OpenModeFlag::ReadOnly
                        | QIODevice::OpenModeFlag::ExistingOnly)) {
             return ::std::shared_ptr<FileReader>(
@@ -693,7 +700,7 @@ GameVFS::DirReader::DirReader(const QString &                  path,
     m_name(m_path.back()), m_vfs(vfs), m_enteries(new QVector<DirEntry>)
 {
     QDir rootDir(m_vfs->m_gamePath);
-    QDir dir(rootDir.absoluteFilePath(this->path()));
+    QDir dir(rootDir.absoluteFilePath(QString(".") + this->path()));
     if (dir.exists()) {
         for (auto &info : dir.entryInfoList()) {
             m_enteries->append(
@@ -790,9 +797,24 @@ GameVFS::DirReader::iterator GameVFS::DirReader::end()
 }
 
 /**
+ * @brief		Get number of files in the directory.
+ *
+ * @return		Number.
+ */
+quint64 GameVFS::DirReader::count()
+{
+    return m_enteries->size();
+}
+
+/**
  * @brief		Destructor.
  */
 GameVFS::DirReader::~DirReader() {}
+
+/**
+ * @brief		Constructor.
+ */
+GameVFS::DirReader::Iterator::Iterator() : m_enteries(nullptr) {}
 
 /**
  * @brief		Constructor.

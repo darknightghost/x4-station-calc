@@ -41,19 +41,30 @@ MultiRun::MultiRun(::std::function<void()> task)
 }
 
 /**
- * @brief	Run task.
+ * @brief		Run task.
+ *
+ * @param[in]	signleThread	True if run in signle thread.
  */
-void MultiRun::run()
+void MultiRun::run(bool signleThread)
 {
-    for (auto &thread : m_threads) {
-        thread->start();
-    }
+    if (signleThread) {
+        m_threads.front()->start();
 
-    qDebug() << "Multi-threading task started, number of thread is "
-             << m_threads.size() << ".";
+        qDebug() << "Multi-threading task started, number of thread is " << 1
+                 << ".";
 
-    for (auto &thread : m_threads) {
-        thread->wait();
+        m_threads.front()->wait();
+    } else {
+        for (auto &thread : m_threads) {
+            thread->start();
+        }
+
+        qDebug() << "Multi-threading task started, number of thread is "
+                 << m_threads.size() << ".";
+
+        for (auto &thread : m_threads) {
+            thread->wait();
+        }
     }
 }
 

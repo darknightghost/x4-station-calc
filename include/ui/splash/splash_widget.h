@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <functional>
 #include <type_traits>
 
@@ -19,11 +20,12 @@ Q_DECLARE_METATYPE(::std::function<void()>);
 class SplashWidget : public QWidget {
     Q_OBJECT
   private:
-    SplashThread * m_thread;     //< Working thread.
-    QStringList    m_text;       //< Text.
-    QReadWriteLock m_textLock;   //< Text lock.
-    QImage         m_background; //< background.
-    QEventLoop *   m_eventLoop;  //< Event loop.
+    SplashThread *      m_thread;     //< Working thread.
+    QStringList         m_text;       //< Text.
+    QReadWriteLock      m_textLock;   //< Text lock.
+    QImage              m_background; //< background.
+    QEventLoop *        m_eventLoop;  //< Event loop.
+    ::std::atomic<bool> m_closeable;  //< Close enable flag.
 
   public:
     /**

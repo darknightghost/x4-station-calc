@@ -15,6 +15,7 @@ message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
 
 # Environment
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
+add_definitions ("-DQIODEVICE_BUFFERSIZE=Q_INT64_C(64 * 1024 * 1024)")
 
 if (WIN32)
 	include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")

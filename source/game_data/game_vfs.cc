@@ -49,6 +49,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
         MultiRun loadTask(::std::function<void()>([&]() -> void {
             QFile datFile(dir.absoluteFilePath(catDatInfo.dat));
+            QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
             if (! datFile.open(QIODevice::OpenModeFlag::ReadOnly
                                | QIODevice::OpenModeFlag::ExistingOnly)) {
                 if (! errFlag.exchange(true)) {
@@ -90,8 +91,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                     return;
                 }
 
-                datFile.seek(offset);
-                if ((quint64)(datFile.size() - datFile.pos()) < size) {
+                if ((qint64)(datFile.size()) - (qint64)offset < (qint64)size) {
                     if (! errFlag.exchange(true)) {
                         qDebug() << "Broken dat file :" << datFile.fileName();
                         errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
@@ -102,17 +102,11 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 /// Checksum
                 if (size != 0) {
                     /// Get hash
-                    QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
-                    quint64            sizeRead = 0;
-                    while (sizeRead < size) {
-                        /// Size to read.
-                        quint64 sizeToRead = min((quint64)(64 * 1024 * 1024),
-                                                 (quint64)(size - sizeRead));
-                        hash.addData(datFile.read(sizeToRead));
-
-                        sizeRead += sizeToRead;
-                    }
-
+                    hash.reset();
+                    uchar* data = datFile.map(offset, size);
+                    hash.addData((const char*)data, size);
+                    datFile.unmap(data);
+    
                     /// Check
                     if (hash.result().toHex() != splittedLine.back()) {
                         if (! errFlag.exchange(true)) {

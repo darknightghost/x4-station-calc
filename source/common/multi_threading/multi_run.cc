@@ -35,7 +35,7 @@ void MultiRunThread::run()
 MultiRun::MultiRun(::std::function<void()> task)
 {
     size_t threadNum = ::std::thread::hardware_concurrency();
-    for (size_t i = 0; i < threadNum; i++) {
+    for (size_t i = 0; i < threadNum + 1; i++) {
         m_threads.push_back(new MultiRunThread(task, this));
     }
 }

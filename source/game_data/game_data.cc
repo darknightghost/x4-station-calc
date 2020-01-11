@@ -73,7 +73,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
                   splash->setText(STR(s));
               });
 
-        if (texts == nullptr) {
+        if (macros == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
                 QMessageBox::critical(splash, STR("STR_ERROR"),
                                       STR("STR_FAILED_LOAD_MACROS"));
@@ -82,10 +82,26 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
+        // Load game components
+        ::std::shared_ptr<GameComponent> components
+            = GameComponent::load(vfs, [&](const QString &s) -> void {
+                  splash->setText(STR(s));
+              });
+
+        if (components == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_COMPONENTS"));
+            }));
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
         // Set value
-        m_vfs    = vfs;
-        m_texts  = texts;
-        m_macros = macros;
+        m_vfs        = vfs;
+        m_texts      = texts;
+        m_macros     = macros;
+        m_components = components;
 
         break;
     }

@@ -26,22 +26,33 @@ class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
      * @return		On success, a new object is reutnred. Otherwise returns
      *				nullptr.
      */
-    static ::std::shared_ptr<T> load(Args... args)
-    {
-        ::std::shared_ptr<T> ret(new T(args...));
-
-        if (ret == nullptr || ! ret->good()) {
-            return nullptr;
-
-        } else {
-            return ret;
-        }
-    }
+    static ::std::shared_ptr<T> load(Args... args);
 
     /**
      * @brief	Destructor..
      */
     virtual ~ILoadFactoryFunc() {}
 };
+
+/**
+ * @brief		Load object.
+ *
+ * @param[in]	args		Arguments.
+ *
+ * @return		On success, a new object is reutnred. Otherwise returns
+ *				nullptr.
+ */
+template<class T, typename... Args>
+::std::shared_ptr<T> ILoadFactoryFunc<T(Args...)>::load(Args... args)
+{
+    ::std::shared_ptr<T> ret(new T(args...));
+
+    if (ret == nullptr || ! ret->good()) {
+        return nullptr;
+
+    } else {
+        return ret;
+    }
+}
 
 #define LOAD_FUNC(T, ...) friend class ILoadFactoryFunc<T(__VA_ARGS__)>;

@@ -8,7 +8,8 @@
 #include <QtCore/QVector>
 
 #include <design_model/singleton.h>
-#include <game_data/game_macros.h>
+#include <game_data/game_component.h>
+#include <game_data/game_macro.h>
 #include <game_data/game_text.h>
 #include <game_data/game_vfs.h>
 #include <interface/i_load_factory_func.h>
@@ -26,10 +27,11 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     SIGNLETON_OBJECT(GameData, SplashWidget *)
 
   private:
-    QString                      m_gamePath; //< Game path.
-    ::std::shared_ptr<GameVFS>   m_vfs;      //< Game VFS
-    ::std::shared_ptr<GameText>  m_texts;    //< Game texts.
-    ::std::shared_ptr<GameMacro> m_macros;   //< Game macros.
+    QString                          m_gamePath;   //< Game path.
+    ::std::shared_ptr<GameVFS>       m_vfs;        //< Game VFS
+    ::std::shared_ptr<GameText>      m_texts;      //< Game texts.
+    ::std::shared_ptr<GameMacro>     m_macros;     //< Game macros.
+    ::std::shared_ptr<GameComponent> m_components; //< Game macros.
 
   protected:
     /**

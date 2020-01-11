@@ -4,7 +4,7 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
-#include <game_data/game_macros.h>
+#include <game_data/game_macro.h>
 #include <locale/string_table.h>
 
 /**
@@ -40,8 +40,10 @@ GameMacro::GameMacro(::std::shared_ptr<GameVFS>             vfs,
                     QXmlStreamAttributes attrs = reader.attributes();
                     if (attrs.hasAttribute("name")
                         && attrs.hasAttribute("value")) {
-                        QString name   = attrs.value("name").toString();
-                        QString value  = attrs.value("value").toString();
+                        QString name  = attrs.value("name").toString();
+                        QString value = "/";
+                        value.append(
+                            attrs.value("value").toString().replace('\\', '/'));
                         m_macros[name] = value;
                         qDebug() << "Macro " << name << "=" << value << ".";
                     }

@@ -23,7 +23,7 @@
 Global::Global(int &argc, char **&argv, int &exitCode)
 {
     exitCode = 0;
-    /// Argument table
+    // Argument table
     m_argMap['h'] = {"h", "help", "Show this help.", [&]() -> bool {
                          exitCode = 0;
                          this->showHelp(argv[0]);
@@ -42,11 +42,11 @@ Global::Global(int &argc, char **&argv, int &exitCode)
         qDebug() << "Hase file to open : False.";
     }
 
-    /// Path of current file.
+    // Path of current file.
     m_execDir = QDir(QApplication::applicationDirPath()).absolutePath();
     qDebug() << "Tool dir : " << m_execDir << ".";
 
-    /// Path of config file
+    // Path of config file
     QDir configDir(QStandardPaths::writableLocation(
         QStandardPaths::StandardLocation::AppLocalDataLocation));
     if (! configDir.exists()) {
@@ -114,18 +114,18 @@ void Global::showHelp(const char *arg0)
 #define MAX_WIDTH    80
     ::std::ostringstream ss;
 
-    /// Usage
+    // Usage
     ss << "Usage: " << ::std::endl;
     ss << "    " << arg0 << " [OPTIONS] [FILE]" << ::std::endl;
     ss << ::std::endl;
     ss << "Editor of stations in X4:Foundations." << ::std::endl;
     ss << ::std::endl;
 
-    /// Options
+    // Options
     ss << "Options: " << ::std::endl;
 
     for (auto iter = m_argMap.begin(); iter != m_argMap.end(); iter++) {
-        /// Option
+        // Option
         ::std::ostringstream shortStr, longStr;
         shortStr << "-" << iter->first;
         longStr << "--" << iter->second.longName;
@@ -138,10 +138,10 @@ void Global::showHelp(const char *arg0)
             longStr << " " << upperStr;
         }
 
-        /// Strip lines
+        // Strip lines
         ::std::vector<::std::string> optionLines, helpLines;
 
-        /// Strip options lines
+        // Strip options lines
         if (shortStr.str().size() + longStr.str().size() + 3 > OPTION_WIDTH) {
             optionLines.push_back(shortStr.str());
             optionLines.push_back(longStr.str());
@@ -151,7 +151,7 @@ void Global::showHelp(const char *arg0)
             optionLines.push_back(shortStr.str());
         }
 
-        /// Strip help lines
+        // Strip help lines
         int  helpWidth = MAX_WIDTH - 4 * 2 - OPTION_WIDTH;
         auto wordBegin = iter->second.help.begin();
 
@@ -174,14 +174,14 @@ void Global::showHelp(const char *arg0)
                     break;
                 }
 
-                /// Get next end
-                /// Jump space
+                // Get next end
+                // Jump space
                 while (nextEnd != iter->second.help.end()
                        && (*nextEnd == ' ' || *nextEnd == '\t')) {
                     nextEnd++;
                 }
 
-                /// Jump word
+                // Jump word
                 while (nextEnd != iter->second.help.end() && *nextEnd != ' '
                        && *nextEnd != '\t') {
                     nextEnd++;
@@ -191,7 +191,7 @@ void Global::showHelp(const char *arg0)
             helpLines.push_back(iter->second.help.substr(
                 wordBegin - iter->second.help.begin(), wordEnd - wordBegin));
 
-            /// Jump space
+            // Jump space
             while (wordEnd != iter->second.help.end()
                    && (*wordEnd == ' ' || *wordEnd == '\t')) {
                 wordEnd++;
@@ -200,7 +200,7 @@ void Global::showHelp(const char *arg0)
             wordBegin = wordEnd;
         }
 
-        /// Print lines
+        // Print lines
         size_t maxLineNum = optionLines.size();
 
         if (maxLineNum < helpLines.size()) {
@@ -209,7 +209,7 @@ void Global::showHelp(const char *arg0)
 
         for (size_t i = 0; i < maxLineNum; i++) {
             ss << "    ";
-            /// Option
+            // Option
             size_t optionRemain = OPTION_WIDTH;
 
             if (i < optionLines.size()) {
@@ -223,7 +223,7 @@ void Global::showHelp(const char *arg0)
 
             ss << "    ";
 
-            /// Help
+            // Help
             if (i < helpLines.size()) {
                 ss << helpLines[i];
             }
@@ -247,7 +247,7 @@ void Global::showHelp(const char *arg0)
  */
 bool Global::parseArgs(int &argc, char **&argv, int &exitCode)
 {
-    /// Make description.
+    // Make description.
     ::std::ostringstream             shortArgs;
     ::std::unique_ptr<struct option> longArgs(
         new struct option[m_argMap.size() + 1]);
@@ -272,7 +272,7 @@ bool Global::parseArgs(int &argc, char **&argv, int &exitCode)
     longArgs.get()[count] = {NULL, 0, NULL, 0};
     int optIndex          = 0;
 
-    /// Parse arguments
+    // Parse arguments
     for (char c   = ::getopt_long(argc, argv, shortArgs.str().c_str(),
                                 longArgs.get(), &optIndex);
          c > 0; c = ::getopt_long(argc, argv, shortArgs.str().c_str(),

@@ -52,10 +52,7 @@ class Config : public Singleton<Config> {
            ::std::shared_ptr<Config> parent);
 
   public:
-    /**
-     * @defgroup	Value tyle.
-     * @{
-     */
+    // Valu types.
     /**
      * @brief       Get value type.
      *
@@ -65,14 +62,8 @@ class Config : public Singleton<Config> {
      *              \c ValueType::None is returned.
      */
     ValueType valueType(const QString &key);
-    /**
-     * @}
-     */
 
-    /**
-     * @defgroup	Getters.
-     * @{
-     */
+    // Getters
     /**
      * @brief       Get boolean value.
      *
@@ -108,14 +99,8 @@ class Config : public Singleton<Config> {
      *              match, the default value is returned.
      */
     QString getString(const QString &key, const QString &defaultVal);
-    /**
-     * @}
-     */
 
-    /**
-     * @defgroup	Setters.
-     * @{
-     */
+    // Setters
     /**
      * @brief       Set boolean value.
      *
@@ -139,9 +124,6 @@ class Config : public Singleton<Config> {
      * @param[in]   value       Value to set.
      */
     void setString(const QString &key, const QString &value);
-    /**
-     * @}
-     */
 
     /**
      * @brief   Destructor.

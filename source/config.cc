@@ -12,7 +12,7 @@
  */
 Config::Config() : m_globalInfo(Global::instance())
 {
-    /// Load config data.
+    // Load config data.
     QFile      file(m_globalInfo->configPath());
     QByteArray jsonStr;
 
@@ -24,7 +24,7 @@ Config::Config() : m_globalInfo(Global::instance())
         jsonStr = "{}";
     }
 
-    /// Parse data.
+    // Parse data.
     QJsonParseError jsonError;
     m_doc = QJsonDocument::fromJson(jsonStr, &jsonError);
 
@@ -46,13 +46,13 @@ Config::Config() : m_globalInfo(Global::instance())
  */
 Config::ValueType Config::valueType(const QString &key)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return ValueType::None;
     }
 
-    /// Find value
+    // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
     if (! this->findNode(splitedKey, value)) {
@@ -74,25 +74,25 @@ Config::ValueType Config::valueType(const QString &key)
  */
 bool Config::getBool(const QString &key, bool defaultVal)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
-    /// Find value
+    // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
     if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
-    /// Check type.
+    // Check type.
     if (this->valueType(value) != ValueType::Bool) {
         return defaultVal;
     }
 
-    /// Return
+    // Return
     return value.toBool();
 }
 
@@ -108,25 +108,25 @@ bool Config::getBool(const QString &key, bool defaultVal)
  */
 double Config::getNumber(const QString &key, double defaultVal)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
-    /// Find value
+    // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
     if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
-    /// Check type.
+    // Check type.
     if (this->valueType(value) != ValueType::Number) {
         return defaultVal;
     }
 
-    /// Return
+    // Return
     return value.toDouble();
 }
 
@@ -142,29 +142,29 @@ double Config::getNumber(const QString &key, double defaultVal)
  */
 QString Config::getString(const QString &key, const QString &defaultVal)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
-    /// Find value
+    // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
     if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
-    /// Check type.
+    // Check type.
     if (this->valueType(value) != ValueType::String) {
         return defaultVal;
     }
 
-    /// Return
+    // Return
     return value.toString();
 }
 
-/// Setters of simple values
+// Setters of simple values
 /**
  * @brief       Set boolean value.
  *
@@ -173,13 +173,13 @@ QString Config::getString(const QString &key, const QString &defaultVal)
  */
 void Config::setBool(const QString &key, bool value)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
-    /// Set value.
+    // Set value.
     QJsonValue v(value);
     this->setNode(splitedKey, v);
 }
@@ -192,13 +192,13 @@ void Config::setBool(const QString &key, bool value)
  */
 void Config::setNumber(const QString &key, double value)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
-    /// Set value.
+    // Set value.
     QJsonValue v(value);
     this->setNode(splitedKey, v);
 }
@@ -211,13 +211,13 @@ void Config::setNumber(const QString &key, double value)
  */
 void Config::setString(const QString &key, const QString &value)
 {
-    /// Split key.
+    // Split key.
     QVector<QString> splitedKey;
     if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
-    /// Set value.
+    // Set value.
     QJsonValue v(value);
     this->setNode(splitedKey, v);
 }
@@ -286,7 +286,7 @@ bool Config::findNode(const QVector<QString> &key, QJsonValue &ret)
         return false;
     }
 
-    /// Search
+    // Search
     QJsonObject obj = m_doc.object();
     for (auto iter = key.begin(); iter < key.end() - 1; iter++) {
         if (obj.contains(*iter)) {
@@ -323,7 +323,7 @@ void Config::setNode(const QVector<QString> &key, QJsonValue &node)
     QVector<QJsonObject> nodeStack;
     nodeStack.push_back(m_doc.object());
 
-    /// Search and create parent nodes
+    // Search and create parent nodes
     for (auto iter = key.begin(); iter < key.end() - 1; iter++) {
         if (nodeStack.back().contains(*iter)) {
             QJsonValue v = nodeStack.back().value(*iter);
@@ -338,10 +338,10 @@ void Config::setNode(const QVector<QString> &key, QJsonValue &node)
         }
     }
 
-    /// Set value
+    // Set value
     nodeStack.back().insert(key.back(), node);
 
-    /// Save nodes to document.
+    // Save nodes to document.
     for (auto iter = key.rbegin() + 1; iter < key.rend(); iter++) {
         QJsonObject obj(nodeStack.takeLast());
         nodeStack.back().insert(*iter, QJsonValue(obj));
@@ -386,7 +386,7 @@ Config::ValueType Config::valueType(QJsonValue &node)
  */
 Config::~Config()
 {
-    /// Save config file.
+    // Save config file.
     qDebug() << "Saving config file " << m_globalInfo->configPath() << ".";
     QFile file(m_globalInfo->configPath());
 

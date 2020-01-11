@@ -14,13 +14,13 @@
 
 int firstRun()
 {
-    /// Select language
+    // Select language
     LanguageSettingDialog langDlg;
     if (langDlg.exec() != QDialog::DialogCode::Accepted) {
         return 1;
     }
 
-    /// Show license
+    // Show license
     LicenseDialog licenseDlg;
     if (licenseDlg.exec() != QDialog::DialogCode::Accepted) {
         return 1;
@@ -31,7 +31,7 @@ int firstRun()
 
 int main(int argc, char *argv[])
 {
-    /// Force UTF-8.
+    // Force UTF-8.
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
     int          exitCode;
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     QApplication app(fakeArgc, fakeArgv);
     app.setApplicationName("X4 Station Editor");
 
-    /// Initialize.
+    // Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {
         return exitCode;
     }
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    /// Check if it is the first time to run.
+    // Check if it is the first time to run.
     if (Config::instance()->getBool("/firstRun", true)) {
         exitCode = firstRun();
         if (exitCode != 0) {
@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
         Config::instance()->setBool("/firstRun", false);
     }
 
-    /// Show splash and load data.
+    // Show splash and load data.
     SplashWidget splash;
     splash.exec([&]() -> int {
-        /// Load game data.
+        // Load game data.
         if (GameData::initialize(&splash) == nullptr) {
             return 1;
         } else {
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         }
     });
 
-    /// Show main window.
+    // Show main window.
 
     return 0;
 }

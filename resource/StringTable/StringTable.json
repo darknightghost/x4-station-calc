@@ -94,6 +94,21 @@
 		"zh_TW" : "正在讀取字符串表(%1/%2)...",
 		"en_US" : "Loading string table (%1/%2)..."
 	},
+	"STR_FAILED_LOAD_STRINGS" : {
+		"zh_CN" : "加载游戏字符串表失败!",
+		"zh_TW" : "加載遊戲字符串表失敗!",
+		"en_US" : "Failed to load string table!"
+	},
+	"STR_LOADING_MACROS" :{
+		"zh_CN" : "正在加载游戏宏...",
+		"zh_TW" : "正在加載遊戲宏...",
+		"en_US" : "Loading game macros..."
+	},
+	"STR_FAILED_LOAD_MACROS" :{
+		"zh_CN" : "加载游戏宏失败!",
+		"zh_TW" : "加載遊戲宏失敗!",
+		"en_US" : "Failed to load game macros!"
+	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",
 		"zh_TW" : "選擇遊戲路徑",

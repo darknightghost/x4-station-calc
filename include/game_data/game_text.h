@@ -9,7 +9,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
-#include <interface/i_is_good.h>
+#include <interface/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
@@ -17,7 +17,12 @@ class GameVFS;
 /**
  * @brief	Text in game.
  */
-class GameText : private IIsGood {
+class GameText :
+    public ILoadFactoryFunc<GameText(::std::shared_ptr<GameVFS>,
+                                     ::std::function<void(const QString &)>)> {
+    LOAD_FUNC(GameText,
+              ::std::shared_ptr<GameVFS>,
+              ::std::function<void(const QString &)>)
   private:
     /**
      * @brief	Text link.
@@ -67,19 +72,6 @@ class GameText : private IIsGood {
              ::std::function<void(const QString &)> setTextFunc);
 
   public:
-    /**
-     * @brief		Load text.
-     *
-     * @param[in]	vfs				Virtual filesystem of the game.
-     * @param[in]	setTextFunc		Callback to set text.
-     *
-     * @return		On success, a new \c GameText object is returned,
-     *				Otherwise returns nullptr.
-     */
-    static ::std::shared_ptr<GameText>
-        load(::std::shared_ptr<GameVFS>             vfs,
-             ::std::function<void(const QString &)> setTextFunc);
-
     /**
      * @brief		Get text.
      *

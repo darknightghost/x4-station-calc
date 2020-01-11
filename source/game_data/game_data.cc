@@ -59,16 +59,33 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
               });
 
         if (texts == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_STRINGS"));
+            }));
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
+        /// Load game macros
+        ::std::shared_ptr<GameMacro> macros
+            = GameMacro::load(vfs, [&](const QString &s) -> void {
+                  splash->setText(STR(s));
+              });
+
+        if (texts == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_MACROS"));
+            }));
             Config::instance()->setString("/gamePath", "");
             continue;
         }
 
         /// Set value
-        m_vfs   = vfs;
-        m_texts = texts;
-
-        qDebug() << texts->text(102, 21);
-        qDebug() << texts->text(30120, 3103);
+        m_vfs    = vfs;
+        m_texts  = texts;
+        m_macros = macros;
 
         break;
     }

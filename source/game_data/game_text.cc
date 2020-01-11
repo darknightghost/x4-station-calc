@@ -51,7 +51,6 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
 
                 /// Parse xml
                 QXmlStreamReader reader(fileReader->readAll());
-                qDebug() << reader.readNext();
                 if (! reader.readNextStartElement()
                     || reader.name() != "language") {
                     goto END_PARSE;
@@ -75,28 +74,6 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
     loadTask.run();
 
     this->setGood();
-}
-
-/**
- * o
- * @brief		Load text.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	setTextFunc		Callback to set text.
- *
- * @return		On success, a new \c GameText object is returned,
- *				Otherwise returns nullptr.
- */
-::std::shared_ptr<GameText>
-    GameText::load(::std::shared_ptr<GameVFS>             vfs,
-                   ::std::function<void(const QString &)> setTextFunc)
-{
-    ::std::shared_ptr<GameText> ret(new GameText(vfs, setTextFunc));
-    if (ret == nullptr || ! ret->good()) {
-        return nullptr;
-    } else {
-        return ret;
-    }
 }
 
 /**

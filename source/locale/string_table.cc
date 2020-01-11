@@ -40,14 +40,14 @@ QMap<QString, uint32_t> StringTable::_languageIDTable({{"zh_CN", 86},
 StringTable::StringTable() :
     QObject(nullptr), m_notFoundStr("---INNEKGAL-STRING-ID---")
 {
-    /// Get language.
+    // Get language.
     m_language
         = Config::instance()->getString("/language", this->systemLanguage());
     Config::instance()->setString("/language", m_language);
     m_languageID = _languageIDTable[m_language];
     qDebug() << "Language : " << m_language << ".";
 
-    /// Read string table.
+    // Read string table.
     QFile jsonFile(":/StringTable/StringTable.json");
     if (! jsonFile.open(QFile::ReadOnly)) {
         qDebug() << "Failed to open string table.";
@@ -56,7 +56,7 @@ StringTable::StringTable() :
     QByteArray jsonStr = jsonFile.readAll();
     jsonFile.close();
 
-    /// Parse string table
+    // Parse string table
     QJsonParseError err;
     QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &err);
     if (err.error != QJsonParseError::NoError) {
@@ -180,7 +180,7 @@ void StringTable::setLanguage(const QString &language)
             return;
         }
 
-        /// Search language
+        // Search language
         auto iter = _languageIDTable.find(language);
         if (iter == _languageIDTable.end()) {
             return;
@@ -212,8 +212,8 @@ QString StringTable::systemLanguage()
         return "en_US";
     } else {
         if (*iter == "zh_CN" && locale.country() != QLocale::China) {
-            /// Where is QLocale::Scotland, QLocale::Catalonian or
-            /// QLocale::California.
+            // Where is QLocale::Scotland, QLocale::Catalonian or
+            // QLocale::California.
             return "zh_TW";
         }
         return *iter;

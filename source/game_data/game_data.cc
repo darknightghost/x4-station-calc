@@ -22,7 +22,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
     while (true) {
         splash->setText(STR("STR_CHECKING_GAME_PATH"));
 
-        /// Check game path
+        // Check game path
         m_gamePath = Config::instance()->getString("/gamePath", "");
         QMap<int, GameVFS::CatFileInfo> catFiles;
         if (! checkGamePath(m_gamePath, catFiles)) {
@@ -35,7 +35,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             }
         }
 
-        /// Load vfs
+        // Load vfs
         splash->setText(STR("STR_LOADING_VFS"));
         ::std::shared_ptr<GameVFS> vfs = GameVFS::create(
             m_gamePath, catFiles,
@@ -52,7 +52,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
-        /// Load text
+        // Load text
         ::std::shared_ptr<GameText> texts
             = GameText::load(vfs, [&](const QString &s) -> void {
                   splash->setText(STR("STR_LOADING_TEXTS") + "\n" + s);
@@ -67,7 +67,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
-        /// Load game macros
+        // Load game macros
         ::std::shared_ptr<GameMacro> macros
             = GameMacro::load(vfs, [&](const QString &s) -> void {
                   splash->setText(STR(s));
@@ -82,7 +82,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
-        /// Set value
+        // Set value
         m_vfs    = vfs;
         m_texts  = texts;
         m_macros = macros;
@@ -147,14 +147,14 @@ GameData::~GameData() {}
 bool GameData::checkGamePath(const QString &                  path,
                              QMap<int, GameVFS::CatFileInfo> &catFiles)
 {
-    /// Prepare
+    // Prepare
     QDir                            dir(path);
     bool                            execFound = false;
     QMap<int, GameVFS::CatFileInfo> catsFound;
     qDebug() << "Checking game path...";
 
-    /// List files.
-    /// Filters
+    // List files.
+    // Filters
     QRegExp execFilter("x4|x4\\.exe");
     execFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
     QRegExp catFilter("\\d+\\.cat");
@@ -210,7 +210,7 @@ bool GameData::checkGamePath(const QString &                  path,
         }
     }
 
-    /// Check result
+    // Check result
     if (! execFound) {
         qDebug() << "Missing main program.";
         qDebug() << "Failed.";

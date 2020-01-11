@@ -18,7 +18,7 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
 {
     ::std::shared_ptr<GameVFS::DirReader> dirReader = vfs->openDir("t");
 
-    /// Search file
+    // Search file
     auto                   allFileIter = dirReader->begin();
     QMutex                 allFileIterLock;
     ::std::atomic<quint64> finishedCount;
@@ -27,7 +27,7 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
     MultiRun loadTask(::std::function<void()>([&]() -> void {
         GameVFS::DirReader::iterator fileIter;
         while (true) {
-            /// Get file
+            // Get file
             {
                 QMutexLocker locker(&allFileIterLock);
                 if (allFileIter == dirReader->end()) {
@@ -42,14 +42,14 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
             nameFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
             if (fileIter->type == GameVFS::DirReader::EntryType::File
                 && nameFilter.exactMatch(fileIter->name)) {
-                /// Load file
+                // Load file
                 qDebug() << "Loading file" << fileIter->name << ".";
 
-                /// Open
+                // Open
                 ::std::shared_ptr<GameVFS::FileReader> fileReader
                     = vfs->open(dirReader->absPath(fileIter->name));
 
-                /// Parse xml
+                // Parse xml
                 QXmlStreamReader reader(fileReader->readAll());
                 if (! reader.readNextStartElement()
                     || reader.name() != "language") {
@@ -132,7 +132,7 @@ void GameText::readPage(QXmlStreamReader &reader, quint32 languageID)
             case QXmlStreamReader::TokenType::StartElement:
                 if (depth == 0) {
                     if (reader.name() == "page") {
-                        /// Parse page node
+                        // Parse page node
                         QXmlStreamAttributes attributes = reader.attributes();
                         if (! attributes.hasAttribute("id")) {
                             depth += 1;
@@ -140,7 +140,7 @@ void GameText::readPage(QXmlStreamReader &reader, quint32 languageID)
                         }
                         qint32 id = attributes.value("id").toInt();
 
-                        /// Get page
+                        // Get page
                         ::std::shared_ptr<TextPage> page;
                         {
                             QMutexLocker locker(&m_pageLock);
@@ -155,7 +155,7 @@ void GameText::readPage(QXmlStreamReader &reader, quint32 languageID)
                             }
                         }
 
-                        /// Read texts
+                        // Read texts
                         this->readText(reader, languageID, page);
                     } else {
                         depth += 1;
@@ -202,7 +202,7 @@ void GameText::readText(QXmlStreamReader &          reader,
             case QXmlStreamReader::TokenType::StartElement:
                 if (depth == 0) {
                     if (reader.name() == "t") {
-                        /// Parse text node
+                        // Parse text node
                         QXmlStreamAttributes attributes = reader.attributes();
                         if (! attributes.hasAttribute("id")) {
                             depth += 1;
@@ -210,7 +210,7 @@ void GameText::readText(QXmlStreamReader &          reader,
                         }
                         qint32 id = attributes.value("id").toInt();
 
-                        /// Get text
+                        // Get text
                         QMutexLocker locket(&(page->lock));
                         auto         textIter = page->texts.find(id);
                         if (textIter == page->texts.end()) {
@@ -239,11 +239,11 @@ void GameText::readText(QXmlStreamReader &          reader,
 
             case QXmlStreamReader::TokenType::Characters:
                 if (text != nullptr) {
-                    /// Read and parse text.
+                    // Read and parse text.
                     QVector<GameText::TextLink> links
                         = this->parseText(reader.text().toString());
 
-                    /// Set text.
+                    // Set text.
                     QMutexLocker locker(&(text->lock));
                     text->links[languageID] = ::std::move(links);
                 }
@@ -278,7 +278,7 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
     while (s != "") {
         int index = referenceExp.indexIn(s);
         if (index == -1) {
-            /// No reference exists.
+            // No reference exists.
             link.isRef          = false;
             link.text           = s;
             link.refInfo.pageID = 0;
@@ -286,9 +286,9 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
             ret.append(link);
             break;
         } else {
-            /// Reference found.
+            // Reference found.
             if (index > 0) {
-                /// Before
+                // Before
                 link.isRef          = false;
                 link.text           = s.left(index);
                 link.refInfo.pageID = 0;
@@ -296,14 +296,14 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
                 ret.append(link);
             }
 
-            /// Reference
+            // Reference
             link.isRef          = true;
             link.text           = "";
             link.refInfo.pageID = referenceExp.cap(1).toInt();
             link.refInfo.textId = referenceExp.cap(2).toInt();
             ret.append(link);
 
-            /// After
+            // After
             s = s.mid(index + referenceExp.cap().size());
         }
     }

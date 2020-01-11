@@ -44,7 +44,6 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
                 && nameFilter.exactMatch(fileIter->name)) {
                 /// Load file
                 qDebug() << "Loading file" << fileIter->name << ".";
-                // setTextFunc(STR("STR_LOADING_TEXT_FILE").arg(fileIter->name));
 
                 /// Open
                 ::std::shared_ptr<GameVFS::FileReader> fileReader

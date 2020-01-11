@@ -58,6 +58,11 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
                   splash->setText(STR("STR_LOADING_TEXTS") + "\n" + s);
               });
 
+        if (texts == nullptr) {
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
         /// Set value
         m_vfs   = vfs;
         m_texts = texts;

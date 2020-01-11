@@ -48,7 +48,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
         total   = 0;
 
         MultiRun loadTask(::std::function<void()>([&]() -> void {
-            QFile datFile(dir.absoluteFilePath(catDatInfo.dat));
+            QFile              datFile(dir.absoluteFilePath(catDatInfo.dat));
             QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
             if (! datFile.open(QIODevice::OpenModeFlag::ReadOnly
                                | QIODevice::OpenModeFlag::ExistingOnly)) {
@@ -103,10 +103,10 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 if (size != 0) {
                     /// Get hash
                     hash.reset();
-                    uchar* data = datFile.map(offset, size);
-                    hash.addData((const char*)data, size);
+                    uchar *data = datFile.map(offset, size);
+                    hash.addData((const char *)data, size);
                     datFile.unmap(data);
-    
+
                     /// Check
                     if (hash.result().toHex() != splittedLine.back()) {
                         if (! errFlag.exchange(true)) {

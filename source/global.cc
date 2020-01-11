@@ -6,6 +6,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
+#include <QtCore/QStandardPaths>
 #include <QtWidgets/QApplication>
 
 #include <getopt.h>
@@ -46,7 +47,12 @@ Global::Global(int &argc, char **&argv, int &exitCode)
     qDebug() << "Tool dir : " << m_execDir << ".";
 
     /// Path of config file
-    m_configPath = QDir(m_execDir).absoluteFilePath(".config");
+    QDir configDir(QStandardPaths::writableLocation(
+        QStandardPaths::StandardLocation::AppLocalDataLocation));
+    if (! configDir.exists()) {
+        configDir.mkpath(".");
+    }
+    m_configPath = configDir.absoluteFilePath(".config");
     qDebug() << "Path of config file : " << m_configPath;
 
     this->setGood();

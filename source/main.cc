@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     int          fakeArgc   = 1;
     char *       fakeArgv[] = {argv[0], NULL};
     QApplication app(fakeArgc, fakeArgv);
+    app.setApplicationName("X4 Station Editor");
 
     /// Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {

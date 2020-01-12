@@ -10,7 +10,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
-#include <interface/i_is_good.h>
+#include <interfaces/i_is_good.h>
 
 class GameVFS : private IIsGood {
   public:

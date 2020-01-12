@@ -119,6 +119,16 @@
 		"zh_TW" : "加載遊戲零件失敗!",
 		"en_US" : "Failed to load game components!"
 	},
+	"STR_LOADING_RACES" :{
+		"zh_CN" : "正在加载种族信息...",
+		"zh_TW" : "正在加載種族信息...",
+		"en_US" : "Loading game races..."
+	},
+	"STR_FAILED_LOAD_RACESS" :{
+		"zh_CN" : "加载游戏种族信息失败!",
+		"zh_TW" : "加載遊戲種族信息失敗!",
+		"en_US" : "Failed to load game races!"
+	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",
 		"zh_TW" : "選擇遊戲路徑",

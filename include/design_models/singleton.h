@@ -3,7 +3,7 @@
 #include <memory>
 #include <mutex>
 
-#include <interface/i_is_good.h>
+#include <interfaces/i_is_good.h>
 
 /**
  * @brief   Base class of signleton object.

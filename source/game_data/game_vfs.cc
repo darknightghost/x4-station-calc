@@ -1,6 +1,7 @@
 #include <atomic>
 
 #include <QtCore/QCryptographicHash>
+#include <QtCore/QDateTime>
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -42,8 +43,11 @@ GameVFS::GameVFS(const QString &                        gamePath,
         }
 
         QMutex                 catLock;
+        QMutex                 printLock;
         ::std::atomic<bool>    errFlag;
         ::std::atomic<quint64> total;
+        ::std::atomic<quint64> printTm;
+        printTm = 0;
         errFlag = false;
         total   = 0;
 
@@ -167,13 +171,28 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 }
                 qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
 
-                setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
-                                .arg(catDatInfo.cat)
-                                .arg(catDatInfo.dat)
-                                .arg(total)
-                                .arg(datFile.size()));
+                {
+                    quint64 tm = QDateTime::currentMSecsSinceEpoch();
+                    printLock.lock();
+                    if (tm - printTm > 100) {
+                        printTm = tm;
+                        printLock.unlock();
+                        setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
+                                        .arg(catDatInfo.cat)
+                                        .arg(catDatInfo.dat)
+                                        .arg(total)
+                                        .arg(datFile.size()));
+                    } else {
+                        printLock.unlock();
+                    }
+                }
                 catLock.lock();
             }
+            setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
+                            .arg(catDatInfo.cat)
+                            .arg(catDatInfo.dat)
+                            .arg(total)
+                            .arg(datFile.size()));
             catLock.unlock();
         }));
         loadTask.run();

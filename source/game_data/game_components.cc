@@ -4,7 +4,7 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
-#include <game_data/game_macro.h>
+#include <game_data/game_components.h>
 #include <locale/string_table.h>
 
 /**
@@ -13,15 +13,16 @@
  * @param[in]	vfs				Virtual filesystem of the game.
  * @param[in]	setTextFunc		Callback to set text.
  */
-GameMacro::GameMacro(::std::shared_ptr<GameVFS>             vfs,
-                     ::std::function<void(const QString &)> setTextFunc)
+GameComponents::GameComponents(
+    ::std::shared_ptr<GameVFS>             vfs,
+    ::std::function<void(const QString &)> setTextFunc)
 {
-    setTextFunc(STR("STR_LOADING_MACROS"));
-    qDebug() << "Loading macros...";
+    setTextFunc(STR("STR_LOADING_COMPONENTS"));
+    qDebug() << "Loading components...";
 
     // Open file.
     ::std::shared_ptr<GameVFS::FileReader> file
-        = vfs->open("/index/macros.xml");
+        = vfs->open("/index/components.xml");
     QByteArray       data = file->readAll();
     QXmlStreamReader reader(data);
 
@@ -44,8 +45,8 @@ GameMacro::GameMacro(::std::shared_ptr<GameVFS>             vfs,
                         QString value = "/";
                         value.append(
                             attrs.value("value").toString().replace('\\', '/'));
-                        m_macros[name] = value;
-                        qDebug() << "Macro " << name << "=" << value << ".";
+                        m_components[name] = value;
+                        qDebug() << "Component " << name << "=" << value << ".";
                     }
                 }
                 ++level;
@@ -64,16 +65,16 @@ GameMacro::GameMacro(::std::shared_ptr<GameVFS>             vfs,
 }
 
 /**
- * @brief	Get macro.
+ * @brief	Get component.
  *
- * @return	Value of macro.
+ * @return	Value of component.
  */
-QString GameMacro::macro(const QString &id)
+QString GameComponents::component(const QString &id)
 {
-    return m_macros[id];
+    return m_components[id];
 }
 
 /**
  * @brief		Destructor.
  */
-GameMacro::~GameMacro() {}
+GameComponents::~GameComponents() {}

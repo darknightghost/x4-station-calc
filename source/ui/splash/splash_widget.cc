@@ -26,7 +26,8 @@ SplashWidget::SplashWidget(QWidget *parent) :
     /// Set flags
     this->setWindowFlags(Qt::WindowType::FramelessWindowHint
                          | Qt::WindowType::NoDropShadowWindowHint
-                         | Qt::WindowType::CustomizeWindowHint);
+                         | Qt::WindowType::CustomizeWindowHint
+                         | Qt::WindowType::WindowStaysOnTopHint);
 
     /// Set size.
     QImage          background(":/Images/splash.jpg");

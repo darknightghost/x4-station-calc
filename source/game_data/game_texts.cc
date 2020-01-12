@@ -4,7 +4,7 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
-#include <game_data/game_text.h>
+#include <game_data/game_texts.h>
 #include <locale/string_table.h>
 
 /**
@@ -13,8 +13,8 @@
  * @param[in]	vfs				Virtual filesystem of the game.
  * @param[in]	setTextFunc		Callback to set text.
  */
-GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
-                   ::std::function<void(const QString &)> setTextFunc)
+GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
+                     ::std::function<void(const QString &)> setTextFunc)
 {
     ::std::shared_ptr<GameVFS::DirReader> dirReader = vfs->openDir("t");
 
@@ -84,7 +84,7 @@ GameText::GameText(::std::shared_ptr<GameVFS>             vfs,
  *
  * @return		Text.
  */
-QString GameText::text(qint32 pageID, qint32 textID)
+QString GameTexts::text(qint32 pageID, qint32 textID)
 {
     QString ret      = "";
     auto    pageIter = m_textPages.find(pageID);
@@ -104,7 +104,7 @@ QString GameText::text(qint32 pageID, qint32 textID)
 
     for (auto &link : *linkIter) {
         if (link.isRef) {
-            ret.append(this->text(link.refInfo.pageID, link.refInfo.textId));
+            ret.append(this->text(link.refInfo.pageID, link.refInfo.textID));
         } else {
             ret.append(link.text);
         }
@@ -114,9 +114,21 @@ QString GameText::text(qint32 pageID, qint32 textID)
 }
 
 /**
+ * @brief		Get text.
+ *
+ * @param[in]	idPair		ID.
+ *
+ * @return		Text.
+ */
+QString GameTexts::text(const IDPair &idPair)
+{
+    return this->text(idPair.pageID, idPair.textID);
+}
+
+/**
  * @brief		Destructor.
  */
-GameText::~GameText() {}
+GameTexts::~GameTexts() {}
 
 /**
  * @brief		Read text pages.
@@ -124,7 +136,7 @@ GameText::~GameText() {}
  * @param[in]	reader		XML reader.
  * @param[in]	languageID	Language ID of the text.
  */
-void GameText::readPage(QXmlStreamReader &reader, quint32 languageID)
+void GameTexts::readPage(QXmlStreamReader &reader, quint32 languageID)
 {
     quint64 depth = 0;
     while (! reader.atEnd()) {
@@ -191,9 +203,9 @@ void GameText::readPage(QXmlStreamReader &reader, quint32 languageID)
  * @param[in]	languageID	Language ID of the text.
  * @param[in]	page		Page of the text.
  */
-void GameText::readText(QXmlStreamReader &          reader,
-                        quint32                     languageID,
-                        ::std::shared_ptr<TextPage> page)
+void GameTexts::readText(QXmlStreamReader &          reader,
+                         quint32                     languageID,
+                         ::std::shared_ptr<TextPage> page)
 {
     quint64                 depth = 0;
     ::std::shared_ptr<Text> text;
@@ -216,7 +228,7 @@ void GameText::readText(QXmlStreamReader &          reader,
                         if (textIter == page->texts.end()) {
                             text            = ::std::shared_ptr<Text>(new Text);
                             text->pageID    = page->pageID;
-                            text->textId    = id;
+                            text->textID    = id;
                             page->texts[id] = text;
                         } else {
                             text = *textIter;
@@ -240,7 +252,7 @@ void GameText::readText(QXmlStreamReader &          reader,
             case QXmlStreamReader::TokenType::Characters:
                 if (text != nullptr) {
                     // Read and parse text.
-                    QVector<GameText::TextLink> links
+                    QVector<GameTexts::TextLink> links
                         = this->parseText(reader.text().toString());
 
                     // Set text.
@@ -265,12 +277,12 @@ void GameText::readText(QXmlStreamReader &          reader,
  *
  * @return		Parsed text.
  */
-QVector<GameText::TextLink> GameText::parseText(QString s)
+QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
 {
-    QVector<GameText::TextLink> ret;
-    TextLink                    link;
-    QRegExp                     ignoreExp("\\(.*\\)");
-    QRegExp                     whiteSpacewExp("\\s");
+    QVector<GameTexts::TextLink> ret;
+    TextLink                     link;
+    QRegExp                      ignoreExp("\\(.*\\)");
+    QRegExp                      whiteSpacewExp("\\s");
     QRegExp referenceExp("\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}");
     QRegExp numExp("\\d+");
 
@@ -282,7 +294,7 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
             link.isRef          = false;
             link.text           = s;
             link.refInfo.pageID = 0;
-            link.refInfo.textId = 0;
+            link.refInfo.textID = 0;
             ret.append(link);
             break;
         } else {
@@ -292,7 +304,7 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
                 link.isRef          = false;
                 link.text           = s.left(index);
                 link.refInfo.pageID = 0;
-                link.refInfo.textId = 0;
+                link.refInfo.textID = 0;
                 ret.append(link);
             }
 
@@ -300,7 +312,7 @@ QVector<GameText::TextLink> GameText::parseText(QString s)
             link.isRef          = true;
             link.text           = "";
             link.refInfo.pageID = referenceExp.cap(1).toInt();
-            link.refInfo.textId = referenceExp.cap(2).toInt();
+            link.refInfo.textID = referenceExp.cap(2).toInt();
             ret.append(link);
 
             // After

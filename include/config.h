@@ -9,7 +9,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVector>
 
-#include <design_model/singleton.h>
+#include <design_models/singleton.h>
 #include <global.h>
 
 /**

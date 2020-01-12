@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
 
-#include <design_model/singleton.h>
+#include <design_models/singleton.h>
 
 /**
  * @brief   String table.

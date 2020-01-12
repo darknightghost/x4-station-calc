@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <functional>
 #include <memory>
 
@@ -9,7 +10,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
-#include <interface/i_load_factory_func.h>
+#include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
@@ -17,12 +18,42 @@ class GameVFS;
 /**
  * @brief	Text in game.
  */
-class GameText :
-    public ILoadFactoryFunc<GameText(::std::shared_ptr<GameVFS>,
-                                     ::std::function<void(const QString &)>)> {
-    LOAD_FUNC(GameText,
+class GameTexts :
+    public ILoadFactoryFunc<GameTexts(::std::shared_ptr<GameVFS>,
+                                      ::std::function<void(const QString &)>)> {
+    LOAD_FUNC(GameTexts,
               ::std::shared_ptr<GameVFS>,
               ::std::function<void(const QString &)>)
+  public:
+    /**
+     * @brief	Game text id pair.
+     */
+    struct IDPair {
+        qint32 pageID; //< Page id.
+        qint32 textID; //< Text id.
+
+        IDPair() : pageID(-1), textID(-1) {}
+
+        IDPair(const ::std::array<qint32, 2> &pair) :
+            pageID(pair[0]), textID(pair[1])
+        {}
+
+        IDPair(const IDPair &pair) : pageID(pair.pageID), textID(pair.textID) {}
+
+        IDPair(const QString &s) : pageID(-1), textID(-1)
+        {
+            QRegExp referenceExp("\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}");
+            int     index = referenceExp.indexIn(s);
+
+            if (index == -1) {
+                return;
+            }
+
+            pageID = referenceExp.cap(1).toInt();
+            textID = referenceExp.cap(2).toInt();
+        }
+    };
+
   private:
     /**
      * @brief	Text link.
@@ -32,7 +63,7 @@ class GameText :
         QString text;  //< String of the link if it is not a reference link.
         struct {
             qint32 pageID; //< ID of referenced page.
-            qint32 textId; //< ID of referenced text.
+            qint32 textID; //< ID of referenced text.
         } refInfo;         /*< Information of referenced string if the link is
                             *  a reference.
                             */
@@ -43,7 +74,7 @@ class GameText :
      */
     struct Text {
         qint32                           pageID; //< ID of page.
-        qint32                           textId; //< ID of text.
+        qint32                           textID; //< ID of text.
         QMutex                           lock;   //< Lock.
         QMap<quint32, QVector<TextLink>> links;  //< Links.
     };
@@ -68,8 +99,8 @@ class GameText :
      * @param[in]	vfs				Virtual filesystem of the game.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameText(::std::shared_ptr<GameVFS>             vfs,
-             ::std::function<void(const QString &)> setTextFunc);
+    GameTexts(::std::shared_ptr<GameVFS>             vfs,
+              ::std::function<void(const QString &)> setTextFunc);
 
   public:
     /**
@@ -83,9 +114,18 @@ class GameText :
     QString text(qint32 pageID, qint32 textID);
 
     /**
+     * @brief		Get text.
+     *
+     * @param[in]	idPair		ID.
+     *
+     * @return		Text.
+     */
+    QString text(const IDPair &idPair);
+
+    /**
      * @brief		Destructor.
      */
-    virtual ~GameText();
+    virtual ~GameTexts();
 
   private:
     /**

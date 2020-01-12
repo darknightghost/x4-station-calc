@@ -7,7 +7,7 @@
 
 #include <QtCore/QObject>
 
-#include <design_model/singleton.h>
+#include <design_models/singleton.h>
 
 /**
  * @brief   Global informations.

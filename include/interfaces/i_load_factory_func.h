@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <interface/i_is_good.h>
+#include <interfaces/i_is_good.h>
 
 template<class>
 class ILoadFactoryFunc;

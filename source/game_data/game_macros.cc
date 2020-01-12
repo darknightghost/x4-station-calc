@@ -4,7 +4,7 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
-#include <game_data/game_component.h>
+#include <game_data/game_macros.h>
 #include <locale/string_table.h>
 
 /**
@@ -13,15 +13,15 @@
  * @param[in]	vfs				Virtual filesystem of the game.
  * @param[in]	setTextFunc		Callback to set text.
  */
-GameComponent::GameComponent(::std::shared_ptr<GameVFS>             vfs,
-                             ::std::function<void(const QString &)> setTextFunc)
+GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
+                       ::std::function<void(const QString &)> setTextFunc)
 {
-    setTextFunc(STR("STR_LOADING_COMPONENTS"));
-    qDebug() << "Loading components...";
+    setTextFunc(STR("STR_LOADING_MACROS"));
+    qDebug() << "Loading macros...";
 
     // Open file.
     ::std::shared_ptr<GameVFS::FileReader> file
-        = vfs->open("/index/components.xml");
+        = vfs->open("/index/macros.xml");
     QByteArray       data = file->readAll();
     QXmlStreamReader reader(data);
 
@@ -44,8 +44,8 @@ GameComponent::GameComponent(::std::shared_ptr<GameVFS>             vfs,
                         QString value = "/";
                         value.append(
                             attrs.value("value").toString().replace('\\', '/'));
-                        m_components[name] = value;
-                        qDebug() << "Component " << name << "=" << value << ".";
+                        m_macros[name] = value;
+                        qDebug() << "Macro " << name << "=" << value << ".";
                     }
                 }
                 ++level;
@@ -64,16 +64,16 @@ GameComponent::GameComponent(::std::shared_ptr<GameVFS>             vfs,
 }
 
 /**
- * @brief	Get component.
+ * @brief	Get macro.
  *
- * @return	Value of component.
+ * @return	Value of macro.
  */
-QString GameComponent::component(const QString &id)
+QString GameMacros::macro(const QString &id)
 {
-    return m_components[id];
+    return m_macros[id];
 }
 
 /**
  * @brief		Destructor.
  */
-GameComponent::~GameComponent() {}
+GameMacros::~GameMacros() {}

@@ -8,7 +8,7 @@
 
 #include <config.h>
 #include <game_data/game_data.h>
-#include <game_data/game_text.h>
+#include <game_data/game_texts.h>
 #include <locale/string_table.h>
 
 /**
@@ -53,8 +53,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
 
         // Load text
-        ::std::shared_ptr<GameText> texts
-            = GameText::load(vfs, [&](const QString &s) -> void {
+        ::std::shared_ptr<GameTexts> texts
+            = GameTexts::load(vfs, [&](const QString &s) -> void {
                   splash->setText(STR("STR_LOADING_TEXTS") + "\n" + s);
               });
 
@@ -68,9 +68,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
 
         // Load game macros
-        ::std::shared_ptr<GameMacro> macros
-            = GameMacro::load(vfs, [&](const QString &s) -> void {
-                  splash->setText(STR(s));
+        ::std::shared_ptr<GameMacros> macros
+            = GameMacros::load(vfs, [&](const QString &s) -> void {
+                  splash->setText(s);
               });
 
         if (macros == nullptr) {
@@ -83,9 +83,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
 
         // Load game components
-        ::std::shared_ptr<GameComponent> components
-            = GameComponent::load(vfs, [&](const QString &s) -> void {
-                  splash->setText(STR(s));
+        ::std::shared_ptr<GameComponents> components
+            = GameComponents::load(vfs, [&](const QString &s) -> void {
+                  splash->setText(s);
               });
 
         if (components == nullptr) {
@@ -97,11 +97,27 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
+        // Load game races
+        ::std::shared_ptr<GameRaces> races
+            = GameRaces::load(vfs, texts, [&](const QString &s) -> void {
+                  splash->setText(s);
+              });
+
+        if (races == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_RACESS"));
+            }));
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
         // Set value
         m_vfs        = vfs;
         m_texts      = texts;
         m_macros     = macros;
         m_components = components;
+        m_races      = races;
 
         break;
     }

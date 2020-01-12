@@ -9,7 +9,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
-#include <interface/i_load_factory_func.h>
+#include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
@@ -17,10 +17,10 @@ class GameVFS;
 /**
  * @brief	Components in game.
  */
-class GameComponent :
-    public ILoadFactoryFunc<GameComponent(
+class GameComponents :
+    public ILoadFactoryFunc<GameComponents(
         ::std::shared_ptr<GameVFS>, ::std::function<void(const QString &)>)> {
-    LOAD_FUNC(GameComponent,
+    LOAD_FUNC(GameComponents,
               ::std::shared_ptr<GameVFS>,
               ::std::function<void(const QString &)>);
 
@@ -34,8 +34,8 @@ class GameComponent :
      * @param[in]	vfs				Virtual filesystem of the game.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameComponent(::std::shared_ptr<GameVFS>             vfs,
-                  ::std::function<void(const QString &)> setTextFunc);
+    GameComponents(::std::shared_ptr<GameVFS>             vfs,
+                   ::std::function<void(const QString &)> setTextFunc);
 
     /**
      * @brief	Get component.
@@ -48,7 +48,7 @@ class GameComponent :
     /**
      * @brief		Destructor.
      */
-    virtual ~GameComponent();
+    virtual ~GameComponents();
 };
 
 #include <game_data/game_vfs.h>

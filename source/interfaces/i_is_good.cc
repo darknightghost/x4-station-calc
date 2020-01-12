@@ -1,4 +1,4 @@
-#include <interface/i_is_good.h>
+#include <interfaces/i_is_good.h>
 
 /**
  * @brief   Constructor, initialize and set m_good to false.

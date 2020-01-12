@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-# Project
-project (x4-station-calc)
-
 # Build type
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE "Debug")
 
 endif ()
+
+# Project
+project (x4-station-calc)
+
 
 message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
 message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")

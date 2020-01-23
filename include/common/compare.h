@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 /**
  * @brief		Get minimum value.
  *
@@ -60,4 +62,60 @@ T max(T v1, T v2, T v3, Args... args)
 {
     T v = v1 > v2 ? v1 : v2;
     return max(v, v3, args...);
+}
+
+/**
+ * @brief		Implement of between.
+ *
+ * @param[in]	value	Value.
+ * @param[in]	b1		Border1.
+ * @param[in]	b2		Border2.
+ *
+ * @return		If the value between b1 and b2, \c true is returned. Otherwise
+ *				returns \c false.
+ */
+template<typename T>
+bool betweenImpl(T value, T b1, T b2)
+{
+    T minBorder = min(b1, b2);
+    T maxBorder = max(b1, b2);
+
+    return value >= minBorder && value <= minBorder;
+}
+
+/**
+ * @brief		Check if the value between b1 and b2.
+ *
+ * @param[in]	value	Value.
+ * @param[in]	b1		Border1.
+ * @param[in]	b2		Border2.
+ *
+ * @return		If the value between b1 and b2, \c true is returned. Otherwise
+ *				returns \c false.
+ */
+template<typename T>
+bool between(
+    T value,
+    typename ::std::conditional<
+        ::std::is_integral<T>::value,
+        typename ::std::
+            conditional<::std::is_signed<T>::value, int64_t, uint64_t>::type,
+        typename ::std::conditional<::std::is_floating_point<T>::value,
+                                    long double,
+                                    T>::type>::type b1,
+    typename ::std::conditional<
+        ::std::is_integral<T>::value,
+        typename ::std::
+            conditional<::std::is_signed<T>::value, int64_t, uint64_t>::type,
+        typename ::std::conditional<::std::is_floating_point<T>::value,
+                                    long double,
+                                    T>::type>::type b2)
+{
+    return betweenImpl<typename ::std::conditional<
+        ::std::is_integral<T>::value,
+        typename ::std::conditional<::std::is_signed<T>::value, int64_t,
+                                    uint64_t>::type,
+        typename ::std::conditional<::std::is_floating_point<T>::value,
+                                    long double, T>::type>::type>(value, b1,
+                                                                  b2);
 }

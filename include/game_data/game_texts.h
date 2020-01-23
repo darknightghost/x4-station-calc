@@ -153,6 +153,13 @@ class GameTexts :
      * @return		Parsed text.
      */
     QVector<TextLink> parseText(QString s);
+
+    /**
+     * @brief		Parse excape characters.
+     *
+     * @return		Parsed text.
+     */
+    QString parseEscape(const QString &s);
 };
 
 #include <game_data/game_vfs.h>

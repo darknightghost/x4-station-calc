@@ -292,7 +292,7 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
         if (index == -1) {
             // No reference exists.
             link.isRef          = false;
-            link.text           = s;
+            link.text           = this->parseEscape(s);
             link.refInfo.pageID = 0;
             link.refInfo.textID = 0;
             ret.append(link);
@@ -302,7 +302,7 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
             if (index > 0) {
                 // Before
                 link.isRef          = false;
-                link.text           = s.left(index);
+                link.text           = this->parseEscape(s.left(index));
                 link.refInfo.pageID = 0;
                 link.refInfo.textID = 0;
                 ret.append(link);
@@ -317,6 +317,140 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
 
             // After
             s = s.mid(index + referenceExp.cap().size());
+        }
+    }
+
+    return ret;
+}
+
+/**
+ * @brief		Parse excape characters.
+ *
+ * @return		Parsed text.
+ */
+QString GameTexts::parseEscape(const QString &s)
+{
+    QString ret = "";
+    for (auto iter = s.begin(); iter < s.end(); iter++) {
+        if (*iter == '\\') {
+            ++iter;
+            if (iter == s.end()) {
+                continue;
+            }
+            // Parse escape characters.
+            switch (iter->unicode()) {
+                case 'n':
+                    // \n
+                    ret.append('\n');
+                    break;
+
+                case 'r':
+                    // \r
+                    ret.append('\r');
+                    break;
+
+                case 't':
+                    // \t
+                    ret.append('\t');
+                    break;
+
+                case 'v':
+                    // \v
+                    ret.append('\v');
+                    break;
+
+                case 'a':
+                    // \a
+                    ret.append('\a');
+                    break;
+
+                case 'b':
+                    // \b
+                    ret.append('\b');
+                    break;
+
+                case 'f':
+                    // \f
+                    ret.append('\f');
+                    break;
+
+                case 'x':
+                    // \xhh
+                    {
+                        ushort n = 0;
+                        if (iter + 1 != s.end()
+                            && between((iter + 1)->unicode(), '0', '9')) {
+                            n = n * 0x10 + iter->unicode(), -'0';
+
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'a',
+                                              'f')) {
+                            n = n * 0x10 + iter->unicode(), -'a';
+
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'A',
+                                              'F')) {
+                            n = n * 0x10 + iter->unicode(), -'A';
+
+                        } else {
+                            break;
+                        }
+
+                        ++iter;
+                        if (iter == s.end()) {
+                            continue;
+                        }
+
+                        if (iter + 1 != s.end()
+                            && between((iter + 1)->unicode(), '0', '9')) {
+                            n = n * 0x10 + iter->unicode(), -'0';
+
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'a',
+                                              'f')) {
+                            n = n * 0x10 + iter->unicode(), -'a';
+
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'A',
+                                              'F')) {
+                            n = n * 0x10 + iter->unicode(), -'A';
+                        }
+                        ret.append(QChar(n));
+                    }
+                    break;
+
+                case '0':
+                    // \0
+                    if ((iter + 1) == s.end() || ! (iter + 1)->isDigit()) {
+                        ret.append('\0');
+                        break;
+                    }
+
+                default:
+                    if (iter->isDigit()) {
+                        // \ddd
+                        ushort n = iter->digitValue();
+                        if (iter + 1 != s.end() && (iter + 1)->isDigit()) {
+                            ++iter;
+                            n = n * 010 + iter->digitValue();
+                        } else {
+                            ret.append(QChar(n));
+                            break;
+                        }
+                        if (iter + 1 != s.end() && (iter + 1)->isDigit()) {
+                            ++iter;
+                            n = n * 010 + iter->digitValue();
+                        }
+                        ret.append(QChar(n));
+
+                        break;
+                    } else {
+                        ret.append(*iter);
+                    }
+            }
+        } else {
+            // Copy character.
+            ret.append(*iter);
         }
     }
 

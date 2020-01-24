@@ -9,6 +9,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
+#include <common.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
@@ -37,6 +38,7 @@ class GameComponents :
     GameComponents(::std::shared_ptr<GameVFS>             vfs,
                    ::std::function<void(const QString &)> setTextFunc);
 
+  public:
     /**
      * @brief	Get component.
      *
@@ -44,11 +46,43 @@ class GameComponents :
      */
     QString component(const QString &id);
 
-  public:
     /**
      * @brief		Destructor.
      */
     virtual ~GameComponents();
+
+  protected:
+    /**
+     * @brief		Start element callback in root.
+     *
+     * @param[in]	loader			XML loader.
+     * @param[in]	context			Context.
+     * @param[in]	name			Name of the element.
+     * @param[in]	attr			Attributes.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInRoot(XMLLoader &                   loader,
+                              XMLLoader::Context &          context,
+                              const QString &               name,
+                              const QMap<QString, QString> &attr);
+
+    /**
+     * @brief		Start element callback in index.
+     *
+     * @param[in]	loader			XML loader.
+     * @param[in]	context			Context.
+     * @param[in]	name			Name of the element.
+     * @param[in]	attr			Attributes.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInIndex(XMLLoader &                   loader,
+                               XMLLoader::Context &          context,
+                               const QString &               name,
+                               const QMap<QString, QString> &attr);
 };
 
 #include <game_data/game_vfs.h>

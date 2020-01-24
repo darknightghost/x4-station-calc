@@ -25,40 +25,14 @@ GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
     QByteArray       data = file->readAll();
     QXmlStreamReader reader(data);
 
-    // Find entery
-    if (! reader.readNextStartElement() || reader.name() != "index") {
-        return;
-    }
-
-    // Load
-    quint64 level = 1;
-    while (level > 0 && ! reader.atEnd()) {
-        QXmlStreamReader::TokenType type = reader.readNext();
-        switch (type) {
-            case QXmlStreamReader::TokenType::StartElement:
-                if (level == 1 && reader.name() == "entry") {
-                    QXmlStreamAttributes attrs = reader.attributes();
-                    if (attrs.hasAttribute("name")
-                        && attrs.hasAttribute("value")) {
-                        QString name  = attrs.value("name").toString();
-                        QString value = "/";
-                        value.append(
-                            attrs.value("value").toString().replace('\\', '/'));
-                        m_macros[name] = value;
-                        qDebug() << "Macro " << name << "=" << value << ".";
-                    }
-                }
-                ++level;
-                break;
-
-            case QXmlStreamReader::TokenType::EndElement:
-                --level;
-                break;
-
-            default:
-                break;
-        }
-    }
+    // Parse file
+    auto context = XMLLoader::Context::create();
+    context->setOnStartElement(
+        ::std::bind(&GameMacros::onStartElementInRoot, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+    XMLLoader loader;
+    loader.parse(reader, ::std::move(context));
 
     this->setGood();
 }
@@ -77,3 +51,69 @@ QString GameMacros::macro(const QString &id)
  * @brief		Destructor.
  */
 GameMacros::~GameMacros() {}
+
+/**
+ * @brief		Start element callback in root.
+ *
+ * @param[in]	loader			XML loader.
+ * @param[in]	context			Context.
+ * @param[in]	name			Name of the element.
+ * @param[in]	attr			Attributes.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
+ */
+bool GameMacros::onStartElementInRoot(XMLLoader &                   loader,
+                                      XMLLoader::Context &          context,
+                                      const QString &               name,
+                                      const QMap<QString, QString> &attr)
+{
+    UNREFERENCED_PARAMETER(context);
+    UNREFERENCED_PARAMETER(attr);
+    if (name == "index") {
+        auto context = XMLLoader::Context::create();
+        context->setOnStartElement(
+            ::std::bind(&GameMacros::onStartElementInIndex, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
+        loader.pushContext(::std::move(context));
+
+    } else {
+        loader.pushContext(XMLLoader::Context::create());
+    }
+    return true;
+}
+
+/**
+ * @brief		Start element callback in index.
+ *
+ * @param[in]	loader			XML loader.
+ * @param[in]	context			Context.
+ * @param[in]	name			Name of the element.
+ * @param[in]	attr			Attributes.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
+ */
+bool GameMacros::onStartElementInIndex(XMLLoader &                   loader,
+                                       XMLLoader::Context &          context,
+                                       const QString &               name,
+                                       const QMap<QString, QString> &attr)
+{
+    UNREFERENCED_PARAMETER(context);
+    if (name == "entry") {
+        auto nameIter  = attr.find("name");
+        auto valueIter = attr.find("value");
+        if (nameIter != attr.end() && valueIter != attr.end()) {
+            QString name  = nameIter.value();
+            QString value = "/";
+            value.append(valueIter.value());
+            value.replace('\\', '/');
+            m_macros[name] = value;
+            qDebug() << "Macro " << name << "=" << value << ".";
+        }
+    }
+
+    loader.pushContext(XMLLoader::Context::create());
+    return true;
+}

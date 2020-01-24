@@ -7,3 +7,4 @@
 
 #include <common/compare.h>
 #include <common/multi_threading.h>
+#include <common/xml_loader.h>

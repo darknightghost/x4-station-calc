@@ -18,10 +18,13 @@ void XMLLoader::pushContext(::std::unique_ptr<Context> context)
 /**
  * @brief	Parse XML.
  *
- * @param[in]	read			XML SAX reader..
+ * @param[in]	reader   		XML SAX reader..
  * @param[in]	context			First context.
+ *
+ * @return		Returns \c true if the whole file has been parsed,
+ *				otherwise returns false.
  */
-void XMLLoader::parse(QXmlStreamReader &         reader,
+bool XMLLoader::parse(QXmlStreamReader &         reader,
                       ::std::unique_ptr<Context> context)
 {
     // Push first context
@@ -34,13 +37,17 @@ void XMLLoader::parse(QXmlStreamReader &         reader,
 
         switch (type) {
             case QXmlStreamReader::TokenType::StartDocument:
-                m_contextStack.back()->onStartDocument(*this,
-                                                       *m_contextStack.back());
+                if (! m_contextStack.back()->onStartDocument(
+                        *this, *m_contextStack.back())) {
+                    return false;
+                }
                 break;
 
             case QXmlStreamReader::TokenType::EndDocument:
-                m_contextStack.back()->onStopDocument(*this,
-                                                      *m_contextStack.back());
+                if (! m_contextStack.back()->onStopDocument(
+                        *this, *m_contextStack.back())) {
+                    return false;
+                }
                 break;
 
             case QXmlStreamReader::TokenType::StartElement: {
@@ -54,9 +61,13 @@ void XMLLoader::parse(QXmlStreamReader &         reader,
                         = attr.value().toString();
                 }
 
+                m_contextStack.back()->pushElement(name);
+
                 // Call callback.
-                m_contextStack.back()->onStartElement(
-                    *this, *m_contextStack.back(), name, attributes);
+                if (! m_contextStack.back()->onStartElement(
+                        *this, *m_contextStack.back(), name, attributes)) {
+                    return false;
+                }
 
             } break;
 
@@ -64,14 +75,30 @@ void XMLLoader::parse(QXmlStreamReader &         reader,
                 // Name.
                 QString name = reader.name().toString();
 
-                // Call callback.
-                m_contextStack.back()->onStopElement(
-                    *this, *m_contextStack.back(), name);
+                while (! m_contextStack.empty()) {
+                    if (m_contextStack.back()->popElement(name)) {
+                        // Call callback.
+                        if (m_contextStack.back()->onStopElement(
+                                *this, *m_contextStack.back(), name)) {
+                            break;
+
+                        } else {
+                            return false;
+                        }
+
+                    } else {
+                        m_contextStack.pop_back();
+                    }
+                }
+
             } break;
 
             case QXmlStreamReader::TokenType::Characters:
-                m_contextStack.back()->onCharacters(
-                    *this, *m_contextStack.back(), reader.text().toString());
+                if (! m_contextStack.back()->onCharacters(
+                        *this, *m_contextStack.back(),
+                        reader.text().toString())) {
+                    return false;
+                }
                 break;
 
             default:
@@ -79,6 +106,8 @@ void XMLLoader::parse(QXmlStreamReader &         reader,
                 break;
         }
     }
+
+    return true;
 }
 
 /**

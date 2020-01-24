@@ -51,19 +51,16 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
 
                 // Parse xml
                 QXmlStreamReader reader(fileReader->readAll());
-                if (! reader.readNextStartElement()
-                    || reader.name() != "language") {
-                    goto END_PARSE;
-                }
-
-                QXmlStreamAttributes attributes = reader.attributes();
-                if (! attributes.hasAttribute("id")) {
-                    goto END_PARSE;
-                }
-                this->readPage(reader, attributes.value("id").toInt());
+                XMLLoader        loader;
+                ::std::unique_ptr<XMLLoader::Context> context
+                    = XMLLoader::Context::create();
+                context->setOnStartElement(::std::bind(
+                    &GameTexts::onStartElementInRoot, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+                loader.parse(reader, ::std::move(context));
             }
 
-        END_PARSE:
             finishedCount += 1;
             setTextFunc(
                 STR("STR_LOADING_TEXT_FILE").arg(finishedCount).arg(total));
@@ -71,7 +68,7 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
     }));
 
     setTextFunc(STR("STR_LOADING_TEXT_FILE").arg(finishedCount).arg(total));
-    loadTask.run();
+    loadTask.run(true);
 
     this->setGood();
 }
@@ -131,145 +128,198 @@ QString GameTexts::text(const IDPair &idPair)
 GameTexts::~GameTexts() {}
 
 /**
- * @brief		Read text pages.
+ * @brief		Start element callback in root.
  *
- * @param[in]	reader		XML reader.
- * @param[in]	languageID	Language ID of the text.
+ * @param[in]	loader		XML loader.
+ * @param[in]	context		Context.
+ * @param[in]	name		Name of the element.
+ * @param[in]	attr		Attributes.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void GameTexts::readPage(QXmlStreamReader &reader, quint32 languageID)
+bool GameTexts::onStartElementInRoot(XMLLoader &                   loader,
+                                     XMLLoader::Context &          context,
+                                     const QString &               name,
+                                     const QMap<QString, QString> &attr)
 {
-    quint64 depth = 0;
-    while (! reader.atEnd()) {
-        switch (reader.readNext()) {
-            case QXmlStreamReader::TokenType::StartElement:
-                if (depth == 0) {
-                    if (reader.name() == "page") {
-                        // Parse page node
-                        QXmlStreamAttributes attributes = reader.attributes();
-                        if (! attributes.hasAttribute("id")) {
-                            depth += 1;
-                            break;
-                        }
-                        qint32 id = attributes.value("id").toInt();
-
-                        // Get page
-                        ::std::shared_ptr<TextPage> page;
-                        {
-                            QMutexLocker locker(&m_pageLock);
-                            auto         pageIter = m_textPages.find(id);
-                            if (pageIter == m_textPages.end()) {
-                                page
-                                    = ::std::shared_ptr<TextPage>(new TextPage);
-                                page->pageID    = id;
-                                m_textPages[id] = page;
-                            } else {
-                                page = *pageIter;
-                            }
-                        }
-
-                        // Read texts
-                        this->readText(reader, languageID, page);
-                    } else {
-                        depth += 1;
-                    }
-                } else {
-                    depth += 1;
-                }
-                break;
-
-            case QXmlStreamReader::TokenType::EndElement:
-                if (depth == 0) {
-                    return;
-                } else {
-                    depth -= 1;
-                }
-                break;
-
-            case QXmlStreamReader::TokenType::NoToken:
-            case QXmlStreamReader::TokenType::Invalid:
-            case QXmlStreamReader::TokenType::EndDocument:
-                return;
-
-            default:
-                break;
+    UNREFERENCED_PARAMETER(context);
+    if (name == "language") {
+        auto iter = attr.find("id");
+        if (iter == attr.end()) {
+            qWarning() << "Missing attribute 'id' in <language> element.";
+            return false;
         }
+
+        // Context for pages
+        ::std::unique_ptr<XMLLoader::Context> context
+            = XMLLoader::Context::create();
+        context->setOnStartElement(::std::bind(
+            &GameTexts::onStartElementInLanguage, this, ::std::placeholders::_1,
+            ::std::placeholders::_2, ::std::placeholders::_3,
+            ::std::placeholders::_4, iter.value().toInt()));
+        loader.pushContext(::std::move(context));
+
+    } else {
+        qWarning() << "Illegal name of start element in xml file";
+        return false;
     }
+
+    return true;
 }
 
 /**
- * @brief		Read texts in the page.
+ * @brief		Start element callback in language.
  *
- * @param[in]	reader		XML reader.
+ * @param[in]	loader		XML loader.
+ * @param[in]	context		Context.
+ * @param[in]	name		Name of the element.
+ * @param[in]	attr		Attributes.
+ * @param[in]	languageID	Language ID of the text.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
+ */
+bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
+                                         XMLLoader::Context &          context,
+                                         const QString &               name,
+                                         const QMap<QString, QString> &attr,
+                                         quint32 languageID)
+{
+    UNREFERENCED_PARAMETER(context);
+    if (name == "page") {
+        auto iter = attr.find("id");
+        if (iter == attr.end()) {
+            qWarning() << "Missing attribute 'id' in <page> element.";
+            loader.pushContext(XMLLoader::Context::create());
+            return true;
+        }
+
+        qint32 pageID = iter.value().toInt();
+
+        // Get page
+        ::std::shared_ptr<TextPage> page;
+        {
+            QMutexLocker locker(&m_pageLock);
+            auto         pageIter = m_textPages.find(pageID);
+            if (pageIter == m_textPages.end()) {
+                page                = ::std::shared_ptr<TextPage>(new TextPage);
+                page->pageID        = pageID;
+                m_textPages[pageID] = page;
+            } else {
+                page = *pageIter;
+            }
+        }
+
+        // Context for text
+        ::std::unique_ptr<XMLLoader::Context> context
+            = XMLLoader::Context::create();
+        context->setOnStartElement(::std::bind(
+            &GameTexts::onStartElementInPage, this, ::std::placeholders::_1,
+            ::std::placeholders::_2, ::std::placeholders::_3,
+            ::std::placeholders::_4, languageID, page));
+        loader.pushContext(::std::move(context));
+    } else {
+        loader.pushContext(XMLLoader::Context::create());
+    }
+
+    return true;
+}
+
+/**
+ * @brief		Start element callback in page.
+ *
+ * @param[in]	loader		XML loader.
+ * @param[in]	context		Context.
+ * @param[in]	name		Name of the element.
+ * @param[in]	attr		Attributes.
  * @param[in]	languageID	Language ID of the text.
  * @param[in]	page		Page of the text.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void GameTexts::readText(QXmlStreamReader &          reader,
-                         quint32                     languageID,
-                         ::std::shared_ptr<TextPage> page)
+bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
+                                     XMLLoader::Context &          context,
+                                     const QString &               name,
+                                     const QMap<QString, QString> &attr,
+                                     quint32                       languageID,
+                                     ::std::shared_ptr<TextPage>   page)
 {
-    quint64                 depth = 0;
-    ::std::shared_ptr<Text> text;
-    while (! reader.atEnd()) {
-        switch (reader.readNext()) {
-            case QXmlStreamReader::TokenType::StartElement:
-                if (depth == 0) {
-                    if (reader.name() == "t") {
-                        // Parse text node
-                        QXmlStreamAttributes attributes = reader.attributes();
-                        if (! attributes.hasAttribute("id")) {
-                            depth += 1;
-                            break;
-                        }
-                        qint32 id = attributes.value("id").toInt();
-
-                        // Get text
-                        QMutexLocker locket(&(page->lock));
-                        auto         textIter = page->texts.find(id);
-                        if (textIter == page->texts.end()) {
-                            text            = ::std::shared_ptr<Text>(new Text);
-                            text->pageID    = page->pageID;
-                            text->textID    = id;
-                            page->texts[id] = text;
-                        } else {
-                            text = *textIter;
-                        }
-                    }
-                } else {
-                    text = nullptr;
-                }
-                depth += 1;
-                break;
-
-            case QXmlStreamReader::TokenType::EndElement:
-                if (depth == 0) {
-                    return;
-                } else {
-                    text = nullptr;
-                    depth -= 1;
-                }
-                break;
-
-            case QXmlStreamReader::TokenType::Characters:
-                if (text != nullptr) {
-                    // Read and parse text.
-                    QVector<GameTexts::TextLink> links
-                        = this->parseText(reader.text().toString());
-
-                    // Set text.
-                    QMutexLocker locker(&(text->lock));
-                    text->links[languageID] = ::std::move(links);
-                }
-                break;
-
-            case QXmlStreamReader::TokenType::NoToken:
-            case QXmlStreamReader::TokenType::Invalid:
-            case QXmlStreamReader::TokenType::EndDocument:
-                return;
-
-            default:
-                break;
+    UNREFERENCED_PARAMETER(context);
+    if (name == "t") {
+        auto iter = attr.find("id");
+        if (iter == attr.end()) {
+            qWarning() << "Missing attribute 'id' in <t> element.";
+            loader.pushContext(XMLLoader::Context::create());
+            return true;
         }
+
+        qint32 id = iter.value().toInt();
+
+        // Get text
+        QMutexLocker            locker(&(page->lock));
+        ::std::shared_ptr<Text> text;
+        auto                    textIter = page->texts.find(id);
+        if (textIter == page->texts.end()) {
+            text            = ::std::shared_ptr<Text>(new Text);
+            text->pageID    = page->pageID;
+            text->textID    = id;
+            page->texts[id] = text;
+        } else {
+            text = *textIter;
+        }
+
+        // Context for text
+        ::std::unique_ptr<XMLLoader::Context> context
+            = XMLLoader::Context::create();
+        context->setOnStartElement([](XMLLoader &loader, XMLLoader::Context &,
+                                      const QString &,
+                                      const QMap<QString, QString> &) -> bool {
+            loader.pushContext(XMLLoader::Context::create());
+            return true;
+        });
+        context->setOnCharacters(
+            ::std::bind(&GameTexts::onTextCharacters, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, languageID, text));
+        loader.pushContext(::std::move(context));
+    } else {
+        loader.pushContext(XMLLoader::Context::create());
     }
+
+    return true;
+}
+
+/**
+ * @brief		Characters callback.
+ *
+ * @param[in]	loader		XML loader.
+ * @param[in]	context		Context.
+ * @param[in]	s			Text.
+ * @param[in]	languageID	Language ID of the text.
+ * @param[in]	text		Text object.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
+ */
+bool GameTexts::onTextCharacters(XMLLoader &             loader,
+                                 XMLLoader::Context &    context,
+                                 const QString &         s,
+                                 quint32                 languageID,
+                                 ::std::shared_ptr<Text> text)
+{
+    UNREFERENCED_PARAMETER(loader);
+    UNREFERENCED_PARAMETER(context);
+
+    // Read and parse text.
+    QVector<GameTexts::TextLink> links = this->parseText(s);
+
+    // Set text.
+    QMutexLocker locker(&(text->lock));
+    text->links[languageID] = ::std::move(links);
+
+    return true;
 }
 
 /**
@@ -380,17 +430,17 @@ QString GameTexts::parseEscape(const QString &s)
                         ushort n = 0;
                         if (iter + 1 != s.end()
                             && between((iter + 1)->unicode(), '0', '9')) {
-                            n = n * 0x10 + iter->unicode(), -'0';
+                            n = n * 0x10 + (iter->unicode() - '0');
 
                         } else if (iter + 1 != s.end()
                                    && between((iter + 1)->unicode(), 'a',
                                               'f')) {
-                            n = n * 0x10 + iter->unicode(), -'a';
+                            n = n * 0x10 + (iter->unicode() - 'a');
 
                         } else if (iter + 1 != s.end()
                                    && between((iter + 1)->unicode(), 'A',
                                               'F')) {
-                            n = n * 0x10 + iter->unicode(), -'A';
+                            n = n * 0x10 + (iter->unicode() - 'A');
 
                         } else {
                             break;
@@ -403,17 +453,17 @@ QString GameTexts::parseEscape(const QString &s)
 
                         if (iter + 1 != s.end()
                             && between((iter + 1)->unicode(), '0', '9')) {
-                            n = n * 0x10 + iter->unicode(), -'0';
+                            n = n * 0x10 + (iter->unicode() - '0');
 
                         } else if (iter + 1 != s.end()
                                    && between((iter + 1)->unicode(), 'a',
                                               'f')) {
-                            n = n * 0x10 + iter->unicode(), -'a';
+                            n = n * 0x10 + (iter->unicode() - 'a');
 
                         } else if (iter + 1 != s.end()
                                    && between((iter + 1)->unicode(), 'A',
                                               'F')) {
-                            n = n * 0x10 + iter->unicode(), -'A';
+                            n = n * 0x10 + (iter->unicode() - 'A');
                         }
                         ret.append(QChar(n));
                     }

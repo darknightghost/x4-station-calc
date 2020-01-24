@@ -17,22 +17,22 @@ class XMLLoader::Context {
     QVector<QString> m_elementStack; //< Element stack.
 
     // Document
-    ::std::function<void(XMLLoader &, Context &)>
+    ::std::function<bool(XMLLoader &, Context &)>
         m_onStartDocument; //< Start document.
-    ::std::function<void(XMLLoader &, Context &)>
+    ::std::function<bool(XMLLoader &, Context &)>
         m_onStopDocument; //< Stop document.
 
     // Elements
-    ::std::function<void(XMLLoader &,
+    ::std::function<bool(XMLLoader &,
                          Context &,
                          const QString &,
                          const QMap<QString, QString> &)>
         m_onStartElement; //< Start element.
-    ::std::function<void(XMLLoader &, Context &, const QString &)>
+    ::std::function<bool(XMLLoader &, Context &, const QString &)>
         m_onStopElement; //< Stop element.
 
     // Characters
-    ::std::function<void(XMLLoader &, Context &, const QString &)>
+    ::std::function<bool(XMLLoader &, Context &, const QString &)>
         m_onCharacters; //< Character.
 
   protected:
@@ -62,13 +62,11 @@ class XMLLoader::Context {
      * @brief		Pop element.
      *
      * @param[in]	name		Name of element.
-     * @param[out]	remove		Remove flag, \c true if the context should be
-     *							removed.
      *
      * @return		If the name of element found, \c true is returned,
      *				otherwise returns \c false.
      */
-    bool pop(const QString &name, bool &remove);
+    bool popElement(const QString &name);
 
     // Document
     /**
@@ -77,15 +75,18 @@ class XMLLoader::Context {
      * @param[in]	onStartDocument		Callback.
      */
     void setOnStartDocument(
-        ::std::function<void(XMLLoader &, Context &)> onStartDocument);
+        ::std::function<bool(XMLLoader &, Context &)> onStartDocument);
 
     /**
      * @brief		On start document callback.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void onStartDocument(XMLLoader &loader, Context &context);
+    bool onStartDocument(XMLLoader &loader, Context &context);
 
     /**
      * @brief		Set on stop document callback.
@@ -93,15 +94,18 @@ class XMLLoader::Context {
      * @param[in]	onStopDocument		Callback.
      */
     void onSetStopDocument(
-        ::std::function<void(XMLLoader &, Context &)> onStopDocument);
+        ::std::function<bool(XMLLoader &, Context &)> onStopDocument);
 
     /**
      * @brief		On stop document callback.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void onStopDocument(XMLLoader &loader, Context &context);
+    bool onStopDocument(XMLLoader &loader, Context &context);
 
     // Elements
     /**
@@ -110,7 +114,7 @@ class XMLLoader::Context {
      * @param[in]	onStartElement		Callback.
      */
     void setOnStartElement(
-        ::std::function<void(XMLLoader &,
+        ::std::function<bool(XMLLoader &,
                              Context &,
                              const QString &,
                              const QMap<QString, QString> &)> onStartElement);
@@ -122,8 +126,11 @@ class XMLLoader::Context {
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void onStartElement(XMLLoader &                   loader,
+    bool onStartElement(XMLLoader &                   loader,
                         Context &                     context,
                         const QString &               name,
                         const QMap<QString, QString> &attr);
@@ -134,7 +141,7 @@ class XMLLoader::Context {
      * @param[in]	onStopElement		Callback.
      */
     void setOnStopElement(
-        ::std::function<void(XMLLoader &, Context &, const QString &)>
+        ::std::function<bool(XMLLoader &, Context &, const QString &)>
             onStopElement);
 
     /**
@@ -143,8 +150,11 @@ class XMLLoader::Context {
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void
+    bool
         onStopElement(XMLLoader &loader, Context &context, const QString &name);
 
     // Characters
@@ -154,7 +164,7 @@ class XMLLoader::Context {
      * @param[in]	onCharacters	Callback.
      */
     void setOnCharacters(
-        ::std::function<void(XMLLoader &, Context &, const QString &)>
+        ::std::function<bool(XMLLoader &, Context &, const QString &)>
             onCharacters);
 
     /**
@@ -163,8 +173,11 @@ class XMLLoader::Context {
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	text		Text.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void onCharacters(XMLLoader &loader, Context &context, const QString &text);
+    bool onCharacters(XMLLoader &loader, Context &context, const QString &text);
 
     /**
      * @brief		Destructor..

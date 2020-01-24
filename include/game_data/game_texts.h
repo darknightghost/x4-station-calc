@@ -10,6 +10,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
+#include <common.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
@@ -129,24 +130,76 @@ class GameTexts :
 
   private:
     /**
-     * @brief		Read text pages.
+     * @brief		Start element callback in root.
      *
-     * @param[in]	reader		XML reader.
-     * @param[in]	languageID	Language ID of the text.
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void readPage(QXmlStreamReader &reader, quint32 languageID);
+    bool onStartElementInRoot(XMLLoader &                   loader,
+                              XMLLoader::Context &          context,
+                              const QString &               name,
+                              const QMap<QString, QString> &attr);
 
     /**
-     * @brief		Read texts in the page.
+     * @brief		Start element callback in language.
      *
-     * @param[in]	reader		XML reader.
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	languageID	Language ID of the text.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInLanguage(XMLLoader &                   loader,
+                                  XMLLoader::Context &          context,
+                                  const QString &               name,
+                                  const QMap<QString, QString> &attr,
+                                  quint32                       languageID);
+
+    /**
+     * @brief		Start element callback in page.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
      * @param[in]	languageID	Language ID of the text.
      * @param[in]	page		Page of the text.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
      */
-    void readText(QXmlStreamReader &          reader,
-                  quint32                     languageID,
-                  ::std::shared_ptr<TextPage> page);
+    bool onStartElementInPage(XMLLoader &                   loader,
+                              XMLLoader::Context &          context,
+                              const QString &               name,
+                              const QMap<QString, QString> &attr,
+                              quint32                       languageID,
+                              ::std::shared_ptr<TextPage>   page);
 
+    /**
+     * @brief		Characters callback.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	s			Text.
+     * @param[in]	languageID	Language ID of the text.
+     * @param[in]	text		Text object.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onTextCharacters(XMLLoader &             loader,
+                          XMLLoader::Context &    context,
+                          const QString &         s,
+                          quint32                 languageID,
+                          ::std::shared_ptr<Text> text);
     /**
      * @brief		Parse text.
      *

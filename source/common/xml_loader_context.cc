@@ -1,3 +1,5 @@
+#include <QtCore/QDebug>
+
 #include <common/xml_loader_context.h>
 
 /**
@@ -27,18 +29,15 @@ void XMLLoader::Context::pushElement(const QString &name)
  * @brief		Pop element.
  *
  * @param[in]	name		Name of element.
- * @param[out]	remove		Remove flag, \c true if the context should be
- *							removed.
  *
  * @return		If the name of element found, \c true is returned,
  *				otherwise returns \c false.
  */
-bool XMLLoader::Context::pop(const QString &name, bool &remove)
+bool XMLLoader::Context::popElement(const QString &name)
 {
     while (! m_elementStack.empty()) {
         if (m_elementStack.back() == name) {
             m_elementStack.pop_back();
-            remove = m_elementStack.empty();
             return true;
 
         } else {
@@ -46,7 +45,6 @@ bool XMLLoader::Context::pop(const QString &name, bool &remove)
         }
     }
 
-    remove = true;
     return false;
 }
 
@@ -57,7 +55,7 @@ bool XMLLoader::Context::pop(const QString &name, bool &remove)
  * @param[in]	onStartDocument		Callback.
  */
 void XMLLoader::Context::setOnStartDocument(
-    ::std::function<void(XMLLoader &, Context &)> onStartDocument)
+    ::std::function<bool(XMLLoader &, Context &)> onStartDocument)
 {
     m_onStartDocument = onStartDocument;
 }
@@ -67,12 +65,17 @@ void XMLLoader::Context::setOnStartDocument(
  *
  * @param[in]	loader		XML loader.
  * @param[in]	context		Context.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
+bool XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
 {
     if (m_onStartDocument) {
-        m_onStartDocument(loader, context);
+        return m_onStartDocument(loader, context);
     }
+
+    return true;
 }
 
 /**
@@ -81,7 +84,7 @@ void XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
  * @param[in]	onStopDocument		Callback.
  */
 void XMLLoader::Context::onSetStopDocument(
-    ::std::function<void(XMLLoader &, Context &)> onStopDocument)
+    ::std::function<bool(XMLLoader &, Context &)> onStopDocument)
 {
     m_onStopDocument = onStopDocument;
 }
@@ -91,12 +94,17 @@ void XMLLoader::Context::onSetStopDocument(
  *
  * @param[in]	loader		XML loader.
  * @param[in]	context		Context.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
+bool XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
 {
     if (m_onStopDocument) {
-        m_onStopDocument(loader, context);
+        return m_onStopDocument(loader, context);
     }
+
+    return true;
 }
 
 // Elements
@@ -106,7 +114,7 @@ void XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
  * @param[in]	onStartElement		Callback.
  */
 void XMLLoader::Context::setOnStartElement(
-    ::std::function<void(XMLLoader &,
+    ::std::function<bool(XMLLoader &,
                          Context &,
                          const QString &,
                          const QMap<QString, QString> &)> onStartElement)
@@ -121,15 +129,20 @@ void XMLLoader::Context::setOnStartElement(
  * @param[in]	context		Context.
  * @param[in]	name		Name of the element.
  * @param[in]	attr		Attributes.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void XMLLoader::Context::onStartElement(XMLLoader &                   loader,
+bool XMLLoader::Context::onStartElement(XMLLoader &                   loader,
                                         Context &                     context,
                                         const QString &               name,
                                         const QMap<QString, QString> &attr)
 {
     if (m_onStartElement) {
-        m_onStartElement(loader, context, name, attr);
+        return m_onStartElement(loader, context, name, attr);
     }
+
+    return true;
 }
 
 /**
@@ -138,7 +151,7 @@ void XMLLoader::Context::onStartElement(XMLLoader &                   loader,
  * @param[in]	onStopElement		Callback.
  */
 void XMLLoader::Context::setOnStopElement(
-    ::std::function<void(XMLLoader &, Context &, const QString &)>
+    ::std::function<bool(XMLLoader &, Context &, const QString &)>
         onStopElement)
 {
     m_onStopElement = onStopElement;
@@ -150,14 +163,19 @@ void XMLLoader::Context::setOnStopElement(
  * @param[in]	loader		XML loader.
  * @param[in]	context		Context.
  * @param[in]	name		Name of the element.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void XMLLoader::Context::onStopElement(XMLLoader &    loader,
+bool XMLLoader::Context::onStopElement(XMLLoader &    loader,
                                        Context &      context,
                                        const QString &name)
 {
     if (m_onStopElement) {
-        m_onStopElement(loader, context, name);
+        return m_onStopElement(loader, context, name);
     }
+
+    return true;
 }
 
 // Characters
@@ -167,7 +185,7 @@ void XMLLoader::Context::onStopElement(XMLLoader &    loader,
  * @param[in]	onCharacters	Callback.
  */
 void XMLLoader::Context::setOnCharacters(
-    ::std::function<void(XMLLoader &, Context &, const QString &)> onCharacters)
+    ::std::function<bool(XMLLoader &, Context &, const QString &)> onCharacters)
 {
     m_onCharacters = onCharacters;
 }
@@ -178,17 +196,22 @@ void XMLLoader::Context::setOnCharacters(
  * @param[in]	loader		XML loader.
  * @param[in]	context		Context.
  * @param[in]	text		Text.
+ *
+ * @return		Return \c true if the parsing should be continued.
+ *				otherwise returns \c false.
  */
-void XMLLoader::Context::onCharacters(XMLLoader &    loader,
+bool XMLLoader::Context::onCharacters(XMLLoader &    loader,
                                       Context &      context,
                                       const QString &text)
 {
     if (m_onCharacters) {
-        m_onCharacters(loader, context, text);
+        return m_onCharacters(loader, context, text);
     }
+
+    return true;
 }
 
 /**
- * @brief		Destructor..
+ * @brief		Destructor.
  */
 XMLLoader::Context::~Context() {}

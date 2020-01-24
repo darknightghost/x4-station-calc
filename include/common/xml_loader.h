@@ -34,10 +34,13 @@ class XMLLoader {
     /**
      * @brief	Parse XML.
      *
-     * @param[in]	read			XML SAX reader..
+     * @param[in]	reader			XML SAX reader..
      * @param[in]	context			First context.
+     *
+     * @return		Returns \c true if the whole file has been parsed,
+     *				otherwise returns false.
      */
-    void parse(QXmlStreamReader &reader, ::std::unique_ptr<Context> context);
+    bool parse(QXmlStreamReader &reader, ::std::unique_ptr<Context> context);
 
     /**
      * @brief	Destructor.

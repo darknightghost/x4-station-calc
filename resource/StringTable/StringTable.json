@@ -124,10 +124,20 @@
 		"zh_TW" : "正在加載種族信息...",
 		"en_US" : "Loading game races..."
 	},
-	"STR_FAILED_LOAD_RACESS" :{
+	"STR_FAILED_LOAD_RACES" :{
 		"zh_CN" : "加载游戏种族信息失败!",
 		"zh_TW" : "加載遊戲種族信息失敗!",
 		"en_US" : "Failed to load game races!"
+	},
+	"STR_LOADING_WARES" :{
+		"zh_CN" : "正在加载物品信息...",
+		"zh_TW" : "正在加載物品信息...",
+		"en_US" : "Loading game wares..."
+	},
+	"STR_FAILED_LOAD_WARES" :{
+		"zh_CN" : "加载游戏物品信息失败!",
+		"zh_TW" : "加載遊戲物品信息失敗!",
+		"en_US" : "Failed to load game wares!"
 	},
 	"STR_TITLE_SELECT_GAME_PATH" : {
 		"zh_CN" : "选择游戏路径",

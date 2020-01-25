@@ -106,7 +106,22 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         if (races == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
                 QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_RACESS"));
+                                      STR("STR_FAILED_LOAD_RACES"));
+            }));
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
+        // Load game wares
+        ::std::shared_ptr<GameWares> wares
+            = GameWares::load(vfs, texts, [&](const QString &s) -> void {
+                  splash->setText(s);
+              });
+
+        if (wares == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_WARES"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -118,6 +133,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         m_macros     = macros;
         m_components = components;
         m_races      = races;
+        m_wares      = wares;
 
         break;
     }

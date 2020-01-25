@@ -22,6 +22,9 @@ GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
     // Open file.
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open("/index/macros.xml");
+    if (file == nullptr) {
+        return;
+    }
     QByteArray       data = file->readAll();
     QXmlStreamReader reader(data);
 

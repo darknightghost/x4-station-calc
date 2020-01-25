@@ -9,6 +9,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
+#include <common.h>
 #include <game_data/game_texts.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>

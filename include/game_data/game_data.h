@@ -13,6 +13,7 @@
 #include <game_data/game_races.h>
 #include <game_data/game_texts.h>
 #include <game_data/game_vfs.h>
+#include <game_data/game_wares.h>
 #include <interfaces/i_load_factory_func.h>
 #include <ui/splash/splash_widget.h>
 
@@ -34,6 +35,7 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     ::std::shared_ptr<GameMacros>     m_macros;     //< Game macros.
     ::std::shared_ptr<GameComponents> m_components; //< Game macros.
     ::std::shared_ptr<GameRaces>      m_races;      //< Game races.
+    ::std::shared_ptr<GameWares>      m_wares;      //< Game wares
 
   protected:
     /**

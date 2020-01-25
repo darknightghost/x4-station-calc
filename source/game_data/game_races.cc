@@ -24,6 +24,9 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
     // Open file.
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open("/libraries/races.xml");
+    if (file == nullptr) {
+        return;
+    }
     QByteArray       data = file->readAll();
     QXmlStreamReader reader(data);
 

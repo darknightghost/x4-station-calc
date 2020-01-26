@@ -22,4 +22,9 @@ class MainWindow : public QMainWindow {
      * @param[in]	path		Path of file.
      */
     void open(QString path);
+
+    /**
+     * @brief		Active window.
+     */
+    void active();
 };

@@ -60,4 +60,9 @@ class OpenFileListener : public QObject, public Singleton<OpenFileListener> {
      * @param[in]	path		Path of file.
      */
     void openFile(QString path);
+
+    /**
+     * @brief       Active main window signal.
+     */
+    void active();
 };

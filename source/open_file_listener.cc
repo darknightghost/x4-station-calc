@@ -90,7 +90,11 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
                 m_pathsLock.lock();
                 if (! m_block) {
                     while (! m_paths.empty()) {
-                        emit this->openFile(m_paths.front());
+                        if (m_paths.front() == "") {
+                            emit this->active();
+                        } else {
+                            emit this->openFile(m_paths.front());
+                        }
                         m_paths.pop_front();
                     }
                 }

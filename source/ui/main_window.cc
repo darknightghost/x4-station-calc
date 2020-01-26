@@ -15,6 +15,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     this->connect(OpenFileListener::instance().get(),
                   &OpenFileListener::openFile, this, &MainWindow::open,
                   Qt::ConnectionType::QueuedConnection);
+    this->connect(OpenFileListener::instance().get(), &OpenFileListener::active,
+                  this, &MainWindow::active,
+                  Qt::ConnectionType::QueuedConnection);
     OpenFileListener::instance()->unblock();
 }
 
@@ -31,4 +34,12 @@ MainWindow::~MainWindow() {}
 void MainWindow::open(QString path)
 {
     qDebug() << path;
+}
+
+/**
+ * @brief		Active window.
+ */
+void MainWindow::active()
+{
+    this->activateWindow();
 }

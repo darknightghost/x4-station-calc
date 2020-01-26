@@ -8,8 +8,10 @@
 #include <game_data/game_data.h>
 #include <global.h>
 #include <locale/string_table.h>
+#include <open_file_listener.h>
 #include <ui/language_setting_dialog.h>
 #include <ui/license_dialog.h>
+#include <ui/main_window.h>
 #include <ui/splash/splash_widget.h>
 
 int firstRun()
@@ -53,6 +55,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if (OpenFileListener::initialize() == nullptr) {
+        return 1;
+    } else {
+        if (OpenFileListener::instance()->opened()) {
+            return 0;
+        }
+    }
+
     // Check if it is the first time to run.
     if (Config::instance()->getBool("/firstRun", true)) {
         exitCode = firstRun();
@@ -64,7 +74,7 @@ int main(int argc, char *argv[])
 
     // Show splash and load data.
     SplashWidget splash;
-    splash.exec([&]() -> int {
+    int          ret = splash.exec([&]() -> int {
         // Load game data.
         if (GameData::initialize(&splash) == nullptr) {
             return 1;
@@ -72,8 +82,13 @@ int main(int argc, char *argv[])
             return 0;
         }
     });
+    if (ret != 0) {
+        return ret;
+    }
 
     // Show main window.
+    MainWindow mainWindow;
+    mainWindow.show();
 
-    return 0;
+    return app.exec();
 }

@@ -40,6 +40,7 @@ endif ()
 # Dependencies
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
+find_package (Qt5Network REQUIRED)
 find_package (Doxygen)
 
 if (NOT DOXYGEN_EXECUTABLE)
@@ -85,7 +86,9 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
 	Qt5::Core
-	Qt5::Widgets)
+	Qt5::Widgets
+	Qt5::Network
+	)
 
 #Doc
 if (DOXYGEN_EXECUTABLE)

@@ -69,6 +69,16 @@
 		"zh_TW" : "錯誤",
 		"en_US" : "Error"
 	},
+	"STR_FAILED_OPEN_SHARED_MEMORY" : {
+		"zh_CN" : "打开共享内存失败!",
+		"zh_TW" : "打開共享內存失敗!",
+		"en_US" : "Failed to open shared memory!"
+	},
+	"STR_FAILED_LISTEN_SOCKET" : {
+		"zh_CN" : "监听socket失败!",
+		"zh_TW" : "監聽socket失敗!",
+		"en_US" : "Failed to listen socket!"
+	},
 	"STR_FAILED_OPEN_FILE" : {
 		"zh_CN" : "打开文件\"%1\"失败!",
 		"zh_TW" : "打開文件\"%1\"失敗!",

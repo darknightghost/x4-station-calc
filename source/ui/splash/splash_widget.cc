@@ -70,6 +70,9 @@ int SplashWidget::exec(::std::function<int()> workFunc)
     int ret = m_thread->exitCode();
     delete m_thread;
     m_thread = nullptr;
+
+    m_closeable = true;
+    this->close();
     return ret;
 }
 

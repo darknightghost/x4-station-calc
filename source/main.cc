@@ -11,7 +11,7 @@
 #include <open_file_listener.h>
 #include <ui/language_setting_dialog.h>
 #include <ui/license_dialog.h>
-#include <ui/main_window.h>
+#include <ui/main_window/main_window.h>
 #include <ui/splash/splash_widget.h>
 
 /**

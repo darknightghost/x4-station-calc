@@ -3,5 +3,125 @@
 		"zh_CN" : "X4: 基石空间站计算工具",
 		"zh_TW" : "X4: 基石空間站計算工具",
 		"en_US" : "X4: Foundations Station Calculator"
+	},
+	"STR_MENU_FILE":{
+		"zh_CN" : "文件(&F)",
+		"zh_TW" : "文件(&F)",
+		"en_US" : "&File"
+	},
+	"STR_MENU_FILE_NEW":{
+		"zh_CN" : "新建(&N)",
+		"zh_TW" : "新建(&N)",
+		"en_US" : "&New"
+	},
+	"STR_MENU_FILE_OPEN":{
+		"zh_CN" : "打开(&O)",
+		"zh_TW" : "打開(&O)",
+		"en_US" : "&Open"
+	},
+	"STR_MENU_FILE_SAVE":{
+		"zh_CN" : "保存(&S)",
+		"zh_TW" : "存儲(&S)",
+		"en_US" : "&Save"
+	},
+	"STR_MENU_FILE_SAVE_AS":{
+		"zh_CN" : "另存为(&A)",
+		"zh_TW" : "存儲爲(&A)",
+		"en_US" : "Save &As"
+	},
+	"STR_MENU_FILE_CLOSE":{
+		"zh_CN" : "关闭(&C)",
+		"zh_TW" : "關閉(&C)",
+		"en_US" : "&Close"
+	},
+	"STR_MENU_FILE_EXIT":{
+		"zh_CN" : "退出(&E)",
+		"zh_TW" : "退出(&E)",
+		"en_US" : "&Exit"
+	},
+	"STR_MENU_EDIT":{
+		"zh_CN" : "编辑(&E)",
+		"zh_TW" : "編輯(&E)",
+		"en_US" : "&Edit"
+	},
+	"STR_MENU_EDIT_NEW_GROUP":{
+		"zh_CN" : "新建分组(&N)",
+		"zh_TW" : "新建分組(&N)",
+		"en_US" : "&New Group"
+	},
+	"STR_MENU_EDIT_UNDO":{
+		"zh_CN" : "撤销(&U)",
+		"zh_TW" : "撤銷(&U)",
+		"en_US" : "&Undo"
+	},
+	"STR_MENU_EDIT_REDO":{
+		"zh_CN" : "恢复(&R)",
+		"zh_TW" : "恢復(&R)",
+		"en_US" : "&Redo"
+	},
+	"STR_MENU_EDIT_CUT":{
+		"zh_CN" : "剪切(&C)",
+		"zh_TW" : "剪切(&C)",
+		"en_US" : "&Cut"
+	},
+	"STR_MENU_EDIT_COPY":{
+		"zh_CN" : "复制(&O)",
+		"zh_TW" : "複製(&O)",
+		"en_US" : "C&opy"
+	},
+	"STR_MENU_EDIT_PASTE":{
+		"zh_CN" : "粘贴(&P)",
+		"zh_TW" : "粘貼(&P)",
+		"en_US" : "&Paste"
+	},
+	"STR_MENU_EDIT_REMOVE":{
+		"zh_CN" : "删除(&R)",
+		"zh_TW" : "刪除(&R)",
+		"en_US" : "&Remove"
+	},
+	"STR_MENU_SETTINGS":{
+		"zh_CN" : "设置(&S)",
+		"zh_TW" : "設置(&S)",
+		"en_US" : "&Settings"
+	},
+	"STR_MENU_SETTINGS_LANGUAGE":{
+		"zh_CN" : "语言(&L)",
+		"zh_TW" : "語言(&L)",
+		"en_US" : "&Language"
+	},
+	"STR_MENU_SETTINGS_GAME_PATH":{
+		"zh_CN" : "游戏路径(&G)",
+		"zh_TW" : "遊戲路徑(&G)",
+		"en_US" : "&Game Path"
+	},
+	"STR_MENU_VIEW":{
+		"zh_CN" : "视图(&V)",
+		"zh_TW" : "視圖(&V)",
+		"en_US" : "&View"
+	},
+	"STR_MENU_VIEW_STATION_MODULES":{
+		"zh_CN" : "空间站模块(&S)",
+		"zh_TW" : "空間站模塊(&S)",
+		"en_US" : "&Station Modules"
+	},
+	"STR_MENU_VIEW_INFO":{
+		"zh_CN" : "信息(&I)",
+		"zh_TW" : "信息(&I)",
+		"en_US" : "&Info"
+	},
+	"STR_MENU_HELP":{
+		"zh_CN" : "帮助(&H)",
+		"zh_TW" : "幫助(&H)",
+		"en_US" : "&Help"
+	},
+	"STR_MENU_HELP_ABOUT":{
+		"zh_CN" : "关于(&A)",
+		"zh_TW" : "關於(&A)",
+		"en_US" : "&About"
+	},
+	"STR_MENU_HELP_CHECK_UPDATE":{
+		"zh_CN" : "检查更新(&V)",
+		"zh_TW" : "檢查更新(&V)",
+		"en_US" : "&Check Update"
 	}
 }

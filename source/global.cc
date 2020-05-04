@@ -15,10 +15,6 @@
 
 /**
  * @brief       Constructor.
- *
- * @param[in]   argc        argc in main.
- * @param[in]   argv        argv in main.
- * @param[out]  exitCode    Exitcode when error occured.
  */
 Global::Global(int &argc, char **&argv, int &exitCode)
 {
@@ -35,11 +31,11 @@ Global::Global(int &argc, char **&argv, int &exitCode)
     }
 
     if (m_hasFileToOpen) {
-        qDebug() << "Hase file to open : True.";
+        qDebug() << "Has file to open : True.";
         qDebug() << "File to open : " << m_fileToOpen << ".";
 
     } else {
-        qDebug() << "Hase file to open : False.";
+        qDebug() << "Has file to open : False.";
     }
 
     // Path of current file.
@@ -60,8 +56,6 @@ Global::Global(int &argc, char **&argv, int &exitCode)
 
 /**
  * @brief       Get the direcotry of current executable file.
- *
- * @return      Path of the file.
  */
 const QString &Global::execDir() const
 {
@@ -70,8 +64,6 @@ const QString &Global::execDir() const
 
 /**
  * @brief       Get path of config file.
- *
- * @return      Path of the file.
  */
 const QString &Global::configPath() const
 {
@@ -80,8 +72,6 @@ const QString &Global::configPath() const
 
 /**
  * @brief       Check if there is a file to open.
- *
- * @return      True if has a file to open, otherwise returns false..
  */
 bool Global::hasFileToOpen() const
 {
@@ -90,8 +80,6 @@ bool Global::hasFileToOpen() const
 
 /**
  * @brief       Get path of file to open.
- *
- * @return      Path of the file to open.
  */
 const QString &Global::fileToOpen() const
 {
@@ -105,8 +93,6 @@ Global::~Global() {}
 
 /**
  * @brief       Show help.
- *
- * @param[in]   arg0    The first argument in argv,
  */
 void Global::showHelp(const char *arg0)
 {
@@ -118,7 +104,7 @@ void Global::showHelp(const char *arg0)
     ss << "Usage: " << ::std::endl;
     ss << "    " << arg0 << " [OPTIONS] [FILE]" << ::std::endl;
     ss << ::std::endl;
-    ss << "Editor of stations in X4:Foundations." << ::std::endl;
+    ss << "Calculator of stations in X4:Foundations." << ::std::endl;
     ss << ::std::endl;
 
     // Options
@@ -237,13 +223,6 @@ void Global::showHelp(const char *arg0)
 
 /**
  * @brief       Parse arguments.
- *
- * @param[in]   argc        argc in main.
- * @param[in]   argv        argv in main.
- * @param[out]  exitCode    Exitcode when error occured.
- *
- * @return      True if the constructor should continue executing,
- *              otherwise returns false.
  */
 bool Global::parseArgs(int &argc, char **&argv, int &exitCode)
 {

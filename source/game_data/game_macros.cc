@@ -9,9 +9,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	setTextFunc		Callback to set text.
  */
 GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
                        ::std::function<void(const QString &)> setTextFunc)
@@ -42,8 +39,6 @@ GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
 
 /**
  * @brief	Get macro.
- *
- * @return	Value of macro.
  */
 QString GameMacros::macro(const QString &id)
 {
@@ -57,14 +52,6 @@ GameMacros::~GameMacros() {}
 
 /**
  * @brief		Start element callback in root.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameMacros::onStartElementInRoot(XMLLoader &                   loader,
                                       XMLLoader::Context &          context,
@@ -89,14 +76,6 @@ bool GameMacros::onStartElementInRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in index.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameMacros::onStartElementInIndex(XMLLoader &                   loader,
                                        XMLLoader::Context &          context,

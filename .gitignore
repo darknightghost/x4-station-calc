@@ -17,3 +17,4 @@ Makefile
 lib/*
 bin/*
 doc/*
+resource/resources.qrc

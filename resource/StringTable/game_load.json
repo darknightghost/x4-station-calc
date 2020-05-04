@@ -1,59 +1,4 @@
 {
-	"STR_TITLE_LANGUAGE" : {
-		"zh_CN" : "语言设置",
-		"zh_TW" : "語言設置",
-		"en_US" : "Language Settings"
-	},
-	"STR_LANGUAGE" : {
-		"zh_CN" : "语言 :",
-		"zh_TW" : "語言 :",
-		"en_US" : "Language :"
-	},
-	"STR_LANGUAGE_TYPE" : {
-		"zh_CN" : "简体中文",
-		"zh_TW" : "正體中文",
-		"en_US" : "English"
-	},
-	"STR_BTN_OK" : {
-		"zh_CN" : "确定(&O)",
-		"zh_TW" : "確定(&O)",
-		"en_US" : "&OK"
-	},
-	"STR_BTN_CANCEL" : {
-		"zh_CN" : "取消(&C)",
-		"zh_TW" : "取消(&C)",
-		"en_US" : "&Cancel"
-	},
-	"STR_TITLE_LICENSE" : {
-		"zh_CN" : "许可声明",
-		"zh_TW" : "許可聲明",
-		"en_US" : "License"
-	},
-	"STR_3RD_LICENSE" : {
-		"zh_CN" : "第三方库和资源许可",
-		"zh_TW" : "第三方庫和資源許可",
-		"en_US" : "License of Third-party Libraries and Resources"
-	},
-	"STR_BTN_AGREE" : {
-		"zh_CN" : "同意(&A)",
-		"zh_TW" : "同意(&A)",
-		"en_US" : "&Agree"
-	},
-	"STR_BTN_DISAGREE" : {
-		"zh_CN" : "不同意(&D)",
-		"zh_TW" : "不同意(&D)",
-		"en_US" : "&Disagree"
-	},
-	"STR_BTN_DISAGREE" : {
-		"zh_CN" : "不同意(&D)",
-		"zh_TW" : "不同意(&D)",
-		"en_US" : "&Disagree"
-	},
-	"STR_TITLE" : {
-		"zh_CN" : "X4: 基石空间站编辑工具",
-		"zh_TW" : "X4: 基石空間站編輯工具",
-		"en_US" : "X4: Foundations Station Editor"
-	},
 	"STR_CHECKING_GAME_PATH" :{
 		"zh_CN" : "正在检查游戏路径...",
 		"zh_TW" : "正在檢查遊戲路徑...",
@@ -63,11 +8,6 @@
 		"zh_CN" : "正在加载虚拟文件系统...",
 		"zh_TW" : "正在加載虛擬文件系統...",
 		"en_US" : "Loading virtual filesystem..."
-	},
-	"STR_ERROR" : {
-		"zh_CN" : "错误",
-		"zh_TW" : "錯誤",
-		"en_US" : "Error"
 	},
 	"STR_FAILED_OPEN_SHARED_MEMORY" : {
 		"zh_CN" : "打开共享内存失败!",
@@ -148,20 +88,5 @@
 		"zh_CN" : "加载游戏物品信息失败!",
 		"zh_TW" : "加載遊戲物品信息失敗!",
 		"en_US" : "Failed to load game wares!"
-	},
-	"STR_TITLE_SELECT_GAME_PATH" : {
-		"zh_CN" : "选择游戏路径",
-		"zh_TW" : "選擇遊戲路徑",
-		"en_US" : "Select Path of Game"
-	},
-	"STR_GAME_PATH" : {
-		"zh_CN" : "游戏路径 :",
-		"zh_TW" : "遊戲路徑 :",
-		"en_US" : "Path of Game :"
-	},
-	"STR_BTN_BROWSE" : {
-		"zh_CN" : "浏览(&B)",
-		"zh_TW" : "瀏覽(&B)",
-		"en_US" : "&Browse"
 	}
 }

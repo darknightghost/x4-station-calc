@@ -7,8 +7,6 @@ XMLLoader::XMLLoader() {}
 
 /**
  * @brief		Push context.
- *
- * @param[in]	context			Context to push.
  */
 void XMLLoader::pushContext(::std::unique_ptr<Context> context)
 {
@@ -17,12 +15,6 @@ void XMLLoader::pushContext(::std::unique_ptr<Context> context)
 
 /**
  * @brief	Parse XML.
- *
- * @param[in]	reader   		XML SAX reader..
- * @param[in]	context			First context.
- *
- * @return		Returns \c true if the whole file has been parsed,
- *				otherwise returns false.
  */
 bool XMLLoader::parse(QXmlStreamReader &         reader,
                       ::std::unique_ptr<Context> context)

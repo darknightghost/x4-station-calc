@@ -6,7 +6,7 @@
  */
 class IIsGood {
   protected:
-    bool m_good; //< Initialize result.
+    bool m_good; ///< Initialize result.
 
   public:
     /**

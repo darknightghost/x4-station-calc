@@ -14,26 +14,26 @@
 class XMLLoader::Context {
   protected:
     // Stack
-    QVector<QString> m_elementStack; //< Element stack.
+    QVector<QString> m_elementStack; ///< Element stack.
 
     // Document
     ::std::function<bool(XMLLoader &, Context &)>
-        m_onStartDocument; //< Start document.
+        m_onStartDocument; ///< Start document.
     ::std::function<bool(XMLLoader &, Context &)>
-        m_onStopDocument; //< Stop document.
+        m_onStopDocument; ///< Stop document.
 
     // Elements
     ::std::function<bool(XMLLoader &,
                          Context &,
                          const QString &,
                          const QMap<QString, QString> &)>
-        m_onStartElement; //< Start element.
+        m_onStartElement; ///< Start element.
     ::std::function<bool(XMLLoader &, Context &, const QString &)>
-        m_onStopElement; //< Stop element.
+        m_onStopElement; ///< Stop element.
 
     // Characters
     ::std::function<bool(XMLLoader &, Context &, const QString &)>
-        m_onCharacters; //< Character.
+        m_onCharacters; ///< Character.
 
   protected:
     /**

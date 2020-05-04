@@ -14,6 +14,9 @@
 #include <ui/main_window.h>
 #include <ui/splash/splash_widget.h>
 
+/**
+ * @brief	Called when the first time to run.
+ */
 int firstRun()
 {
     // Select language
@@ -31,6 +34,14 @@ int firstRun()
     return 0;
 }
 
+/**
+ * @brief		Entery.
+ *
+ * @param[in]	argc		Count of arguments.
+ * @param[in]	argv		Values of arguments.
+ *
+ * @return		Exit code.
+ */
 int main(int argc, char *argv[])
 {
     // Force UTF-8.
@@ -40,7 +51,7 @@ int main(int argc, char *argv[])
     int          fakeArgc   = 1;
     char *       fakeArgv[] = {argv[0], NULL};
     QApplication app(fakeArgc, fakeArgv);
-    app.setApplicationName("X4 Station Editor");
+    app.setApplicationName("X4 Station Calculator");
 
     // Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {

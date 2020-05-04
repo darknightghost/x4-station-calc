@@ -29,13 +29,13 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     SIGNLETON_OBJECT(GameData, SplashWidget *)
 
   private:
-    QString                           m_gamePath;   //< Game path.
-    ::std::shared_ptr<GameVFS>        m_vfs;        //< Game VFS
-    ::std::shared_ptr<GameTexts>      m_texts;      //< Game texts.
-    ::std::shared_ptr<GameMacros>     m_macros;     //< Game macros.
-    ::std::shared_ptr<GameComponents> m_components; //< Game macros.
-    ::std::shared_ptr<GameRaces>      m_races;      //< Game races.
-    ::std::shared_ptr<GameWares>      m_wares;      //< Game wares
+    QString                           m_gamePath;   ///< Game path.
+    ::std::shared_ptr<GameVFS>        m_vfs;        ///< Game VFS
+    ::std::shared_ptr<GameTexts>      m_texts;      ///< Game texts.
+    ::std::shared_ptr<GameMacros>     m_macros;     ///< Game macros.
+    ::std::shared_ptr<GameComponents> m_components; ///< Game macros.
+    ::std::shared_ptr<GameRaces>      m_races;      ///< Game races.
+    ::std::shared_ptr<GameWares>      m_wares;      ///< Game wares
 
   protected:
     /**

@@ -17,8 +17,6 @@ XMLLoader::Context::Context() {}
 
 /**
  * @brief		Push element.
- *
- * @param[in]	name		Name of element.
  */
 void XMLLoader::Context::pushElement(const QString &name)
 {
@@ -27,11 +25,6 @@ void XMLLoader::Context::pushElement(const QString &name)
 
 /**
  * @brief		Pop element.
- *
- * @param[in]	name		Name of element.
- *
- * @return		If the name of element found, \c true is returned,
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::popElement(const QString &name)
 {
@@ -51,8 +44,6 @@ bool XMLLoader::Context::popElement(const QString &name)
 // Document
 /**
  * @brief		Set on start document callback.
- *
- * @param[in]	onStartDocument		Callback.
  */
 void XMLLoader::Context::setOnStartDocument(
     ::std::function<bool(XMLLoader &, Context &)> onStartDocument)
@@ -62,12 +53,6 @@ void XMLLoader::Context::setOnStartDocument(
 
 /**
  * @brief		On start document callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
 {
@@ -80,8 +65,6 @@ bool XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
 
 /**
  * @brief		Set on stop document callback.
- *
- * @param[in]	onStopDocument		Callback.
  */
 void XMLLoader::Context::onSetStopDocument(
     ::std::function<bool(XMLLoader &, Context &)> onStopDocument)
@@ -91,12 +74,6 @@ void XMLLoader::Context::onSetStopDocument(
 
 /**
  * @brief		On stop document callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
 {
@@ -110,8 +87,6 @@ bool XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
 // Elements
 /**
  * @brief		Set on start element callback.
- *
- * @param[in]	onStartElement		Callback.
  */
 void XMLLoader::Context::setOnStartElement(
     ::std::function<bool(XMLLoader &,
@@ -124,14 +99,6 @@ void XMLLoader::Context::setOnStartElement(
 
 /**
  * @brief		On start element callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::onStartElement(XMLLoader &                   loader,
                                         Context &                     context,
@@ -147,8 +114,6 @@ bool XMLLoader::Context::onStartElement(XMLLoader &                   loader,
 
 /**
  * @brief		Set on stop element callback.
- *
- * @param[in]	onStopElement		Callback.
  */
 void XMLLoader::Context::setOnStopElement(
     ::std::function<bool(XMLLoader &, Context &, const QString &)>
@@ -159,13 +124,6 @@ void XMLLoader::Context::setOnStopElement(
 
 /**
  * @brief		On stop element callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::onStopElement(XMLLoader &    loader,
                                        Context &      context,
@@ -181,8 +139,6 @@ bool XMLLoader::Context::onStopElement(XMLLoader &    loader,
 // Characters
 /**
  * @brief		Set on characters callback.
- *
- * @param[in]	onCharacters	Callback.
  */
 void XMLLoader::Context::setOnCharacters(
     ::std::function<bool(XMLLoader &, Context &, const QString &)> onCharacters)
@@ -192,13 +148,6 @@ void XMLLoader::Context::setOnCharacters(
 
 /**
  * @brief		On characters callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	text		Text.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool XMLLoader::Context::onCharacters(XMLLoader &    loader,
                                       Context &      context,

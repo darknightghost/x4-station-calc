@@ -13,9 +13,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	splash		Splash widget.
- *
  */
 GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 {
@@ -143,12 +140,6 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
 /**
  * @brief		Check path of game.
- *
- * @param[in]	path	Path of the game.
- *
- * @return		True if the path of game is available, otherwise returns
- *				false.
- *
  */
 bool GameData::checkGamePath(const QString &path)
 {
@@ -158,12 +149,6 @@ bool GameData::checkGamePath(const QString &path)
 
 /**
  * @brief		Check path of game.
- *
- * @param[in]	path	Path of the game.
- *
- * @return		True if the path of game is available, otherwise returns
- * false.
- *
  */
 bool GameData::setGamePath(const QString &path)
 {
@@ -184,13 +169,6 @@ GameData::~GameData() {}
 
 /**
  * @brief		Check path of game.
- *
- * @param[in]	path		Path of the game.
- * @param[out]	catFiles	Cat files found.
- *
- * @return		True if the path of game is available, otherwise returns
- *				false.
- *
  */
 bool GameData::checkGamePath(const QString &                  path,
                              QMap<int, GameVFS::CatFileInfo> &catFiles)
@@ -286,10 +264,6 @@ bool GameData::checkGamePath(const QString &                  path,
 
 /**
  * @brief		Ask game path.
- *
- * @return		True if the path of game is selected, otherwise returns
- *				false.
- *
  */
 bool GameData::askGamePath()
 {
@@ -314,10 +288,6 @@ bool GameData::askGamePath()
 
 /**
  * @brief		Get number from string.
- *
- * @param[in]	str		String to get number.
- *
- * @return		Number got.
  */
 int GameData::getNumberFromStr(const QString &str)
 {

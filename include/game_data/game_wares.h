@@ -36,51 +36,51 @@ class GameWares :
      * @brief	Information of ware group.
      */
     struct WareGroup {
-        QString           id;   //< Ware ID.
-        GameTexts::IDPair name; //< Name.
-        QStringList       tags; //< Tags.
+        QString           id;   ///< Ware ID.
+        GameTexts::IDPair name; ///< Name.
+        QStringList       tags; ///< Tags.
     };
 
     /**
      * @brief	Resource.
      */
     struct Resource {
-        QString id;     //< Ware ID.
-        quint32 amount; //< Amount.
+        QString id;     ///< Ware ID.
+        quint32 amount; ///< Amount.
     };
 
     /**
      * @brief	Production information.
      */
     struct ProductionInfo {
-        quint32                              time;       //< Time per round(s).
-        quint32                              amount;     //< Amount per round.
-        QString                              method;     //< Method.
-        double                               workEffect; //< Effect of works.
-        QVector<::std::shared_ptr<Resource>> resources;  //< Resource.
+        quint32                              time;       ///< Time per round(s).
+        quint32                              amount;     ///< Amount per round.
+        QString                              method;     ///< Method.
+        double                               workEffect; ///< Effect of works.
+        QVector<::std::shared_ptr<Resource>> resources;  ///< Resource.
     };
 
     /**
      * @brief	Information of ware.
      */
     struct Ware {
-        QString           id;           //< Ware ID.
-        GameTexts::IDPair name;         //< Name.
-        GameTexts::IDPair description;  //< Description.
-        QString           group;        //< Group.
-        QString           transport;    //< Transport type.
-        quint32           volume;       //< Volume(m^3).
-        QStringList       tags;         //< Tags.
-        quint32           minPrice;     //< Minimun price(CR).
-        quint32           averagePrice; //< Average price(CR).
-        quint32           maxPrice;     //< Maxium price(CR).
+        QString           id;           ///< Ware ID.
+        GameTexts::IDPair name;         ///< Name.
+        GameTexts::IDPair description;  ///< Description.
+        QString           group;        ///< Group.
+        QString           transport;    ///< Transport type.
+        quint32           volume;       ///< Volume(m^3).
+        QStringList       tags;         ///< Tags.
+        quint32           minPrice;     ///< Minimun price(CR).
+        quint32           averagePrice; ///< Average price(CR).
+        quint32           maxPrice;     ///< Maxium price(CR).
         QVector<::std::shared_ptr<ProductionInfo>>
-            productionInfos; //< Production informations.
+            productionInfos; ///< Production informations.
     };
 
   private:
-    QMap<QString, ::std::shared_ptr<WareGroup>> m_wareGroups; //< Ware groups.
-    QMap<QString, ::std::shared_ptr<Ware>>      m_wares;      //< Wares.
+    QMap<QString, ::std::shared_ptr<WareGroup>> m_wareGroups; ///< Ware groups.
+    QMap<QString, ::std::shared_ptr<Ware>>      m_wares;      ///< Wares.
 
   protected:
     /**

@@ -19,10 +19,10 @@ class GameVFS : private IIsGood {
      *
      */
     struct CatFileInfo {
-        QString cat;    //< Name of cat file.
-        QString catSig; //< Name of sig file of cat file.
-        QString dat;    //< Name of dat file.
-        QString datSig; //< Name of sig file of dat file.
+        QString cat;    ///< Name of cat file.
+        QString catSig; ///< Name of sig file of cat file.
+        QString dat;    ///< Name of dat file.
+        QString datSig; ///< Name of sig file of dat file.
     };
 
     /**
@@ -61,15 +61,15 @@ class GameVFS : private IIsGood {
      * @brief	Dat file entery
      */
     struct DatFileEntery {
-        QString name;        //< Name.
-        bool    isDirectory; //< Directory flag.
-        QMap<QString, ::std::shared_ptr<DatFileEntery>> children; //< Children.
-        QMutex                                          lock;     //< Lock.
+        QString name;        ///< Name.
+        bool    isDirectory; ///< Directory flag.
+        QMap<QString, ::std::shared_ptr<DatFileEntery>> children; ///< Children.
+        QMutex                                          lock;     ///< Lock.
         struct _tmp1 {
-            QString datName; //< Name of dat file.
-            quint64 offset;  //< Offset.
-            quint64 size;    //< Size.
-        } fileInfo;          //< File infomation;
+            QString datName; ///< Name of dat file.
+            quint64 offset;  ///< Offset.
+            quint64 size;    ///< Size.
+        } fileInfo;          ///< File infomation;
 
         /**
          * @brief		Constructor.
@@ -107,9 +107,9 @@ class GameVFS : private IIsGood {
     };
 
   private:
-    QString                          m_gamePath; //< Game path.
-    ::std::shared_ptr<DatFileEntery> m_datEntry; //< Enteries.
-    ::std::weak_ptr<GameVFS>         m_this;     //< This reference.
+    QString                          m_gamePath; ///< Game path.
+    ::std::shared_ptr<DatFileEntery> m_datEntry; ///< Enteries.
+    ::std::weak_ptr<GameVFS>         m_this;     ///< This reference.
 
   private:
     /**
@@ -185,18 +185,18 @@ class GameVFS : private IIsGood {
  */
 class GameVFS::FileReader {
   protected:
-    QStringList                m_path; //< Path of the file.
-    QString                    m_name; //< Name of the file.
-    ::std::shared_ptr<GameVFS> m_vfs;  //< VFS.
+    QStringList                m_path; ///< Path of the file.
+    QString                    m_name; ///< Name of the file.
+    ::std::shared_ptr<GameVFS> m_vfs;  ///< VFS.
 
   public:
     /**
      * @brief	Whence.
      */
     enum Whence {
-        Set     = 0x01, //< From begining of the file.
-        Current = 0x02, //< From current position of the file.
-        End     = 0x03  //< From the end of the file.
+        Set     = 0x01, ///< From begining of the file.
+        Current = 0x02, ///< From current position of the file.
+        End     = 0x03  ///< From the end of the file.
     };
 
   public:
@@ -284,9 +284,9 @@ class GameVFS::FileReader {
  */
 class GameVFS::PackedFileReader : public GameVFS::FileReader {
   protected:
-    ::std::unique_ptr<QFile> m_file;   //< File object.
-    quint64                  m_offset; //< Offset.
-    quint64                  m_size;   //< File size.
+    ::std::unique_ptr<QFile> m_file;   ///< File object.
+    quint64                  m_offset; ///< Offset.
+    quint64                  m_size;   ///< File size.
 
   public:
     /**
@@ -360,7 +360,7 @@ class GameVFS::PackedFileReader : public GameVFS::FileReader {
  */
 class GameVFS::NormalFileReader : public GameVFS::FileReader {
   protected:
-    ::std::unique_ptr<QFile> m_file; //< File object.
+    ::std::unique_ptr<QFile> m_file; ///< File object.
 
   public:
     /**
@@ -434,16 +434,16 @@ class GameVFS::DirReader {
      * @brief	Type of directory entery.
      */
     enum EntryType {
-        File,     //< Normal file.
-        Directory //< Directory.
+        File,     ///< Normal file.
+        Directory ///< Directory.
     };
 
     /**
      * @brief	Directory entery.
      */
     struct DirEntry {
-        QString   name; //< Name.
-        EntryType type; //< Type.
+        QString   name; ///< Name.
+        EntryType type; ///< Type.
     };
 
     /**
@@ -454,10 +454,10 @@ class GameVFS::DirReader {
     typedef Iterator iterator;
 
   protected:
-    QStringList                          m_path;     //< Path of the file.
-    QString                              m_name;     //< Name of the file.
-    ::std::shared_ptr<GameVFS>           m_vfs;      //< VFS.
-    ::std::shared_ptr<QVector<DirEntry>> m_enteries; //< Enteries.
+    QStringList                          m_path;     ///< Path of the file.
+    QString                              m_name;     ///< Name of the file.
+    ::std::shared_ptr<GameVFS>           m_vfs;      ///< VFS.
+    ::std::shared_ptr<QVector<DirEntry>> m_enteries; ///< Enteries.
 
   public:
     /**
@@ -527,8 +527,8 @@ class GameVFS::DirReader {
  */
 class GameVFS::DirReader::Iterator {
   private:
-    ::std::shared_ptr<QVector<DirEntry>> m_enteries; //< Enteries.
-    QVector<DirEntry>::iterator          m_iterator; //< Iterator.
+    ::std::shared_ptr<QVector<DirEntry>> m_enteries; ///< Enteries.
+    QVector<DirEntry>::iterator          m_iterator; ///< Iterator.
 
   public:
     /**

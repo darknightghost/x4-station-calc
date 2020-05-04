@@ -1,0 +1,22 @@
+{
+	"STR_BTN_OK" : {
+		"zh_CN" : "确定(&O)",
+		"zh_TW" : "確定(&O)",
+		"en_US" : "&OK"
+	},
+	"STR_BTN_CANCEL" : {
+		"zh_CN" : "取消(&C)",
+		"zh_TW" : "取消(&C)",
+		"en_US" : "&Cancel"
+	},
+	"STR_ERROR" : {
+		"zh_CN" : "错误",
+		"zh_TW" : "錯誤",
+		"en_US" : "Error"
+	},
+	"STR_BTN_BROWSE" : {
+		"zh_CN" : "浏览(&B)",
+		"zh_TW" : "瀏覽(&B)",
+		"en_US" : "&Browse"
+	}
+}

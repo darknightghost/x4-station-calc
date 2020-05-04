@@ -33,13 +33,13 @@ class GameRaces :
      * @brief	Information of race.
      */
     struct Race {
-        QString           id;          //< Race ID.
-        GameTexts::IDPair name;        // Name.
-        GameTexts::IDPair description; // Description.
+        QString           id;          ///< Race ID.
+        GameTexts::IDPair name;        ///< Name.
+        GameTexts::IDPair description; ///< Description.
     };
 
   private:
-    QMap<QString, Race> m_races; //< Macros
+    QMap<QString, Race> m_races; ///< Macros
 
   protected:
     /**

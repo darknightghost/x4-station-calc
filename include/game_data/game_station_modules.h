@@ -51,42 +51,42 @@ class GameStationModules :
      * @brief	Class of station module.
      */
     enum StationModuleClass {
-        BuildModule,      //< Build module.
-        ConnectionModule, //< Connection module.
-        DefenceModule,    //< Defence module.
-        Dockarea,         //< Dockarea.
-        Habitation,       //< Habitation,
-        Production,       //< Production,
-        Storage           //< Storage.
+        BuildModule,      ///< Build module.
+        ConnectionModule, ///< Connection module.
+        DefenceModule,    ///< Defence module.
+        Dockarea,         ///< Dockarea.
+        Habitation,       ///< Habitation,
+        Production,       ///< Production,
+        Storage           ///< Storage.
     };
 
     /**
      * @brief	Information of station module.
      */
     struct StationModule {
-        QString            macro;       //< Macro of the
-        GameTexts::IDPair  name;        //< Module name.
-        StationModuleClass MuduleClass; //< Class of station module.
-        GameTexts::IDPair  description; //< Module desctiptio.
-        QVector<QString>   races;       //< Module races.
-        quint32            hull;        //< Hull.
-        quint32            workforce;   //< Workforce.
-        quint32            sShield;     //< Count of S shield.
-        quint32            sTurret;     //< Count of S turret.
-        quint32            mShield;     //< Count of M shield.
-        quint32            mTurret;     //< Count of M turret.
-        quint32            lShield;     //< Count of L shield.
-        quint32            lTurret;     //< Count of L turret.
+        QString            macro;       ///< Macro of the
+        GameTexts::IDPair  name;        ///< Module name.
+        StationModuleClass MuduleClass; ///< Class of station module.
+        GameTexts::IDPair  description; ///< Module desctiptio.
+        QVector<QString>   races;       ///< Module races.
+        quint32            hull;        ///< Hull.
+        quint32            workforce;   ///< Workforce.
+        quint32            sShield;     ///< Count of S shield.
+        quint32            sTurret;     ///< Count of S turret.
+        quint32            mShield;     ///< Count of M shield.
+        quint32            mTurret;     ///< Count of M turret.
+        quint32            lShield;     ///< Count of L shield.
+        quint32            lTurret;     ///< Count of L turret.
     };
 
   private:
     QMap<QString,
          ::std::shared_ptr<StationModule>>
-        m_modules; //< Station modules.
+        m_modules; ///< Station modules.
 
     QMap<QString,
          ::std::shared_ptr<StationModule>>
-        m_raceIndex; //< Station modules.
+        m_raceIndex; ///< Station modules.
 
   protected:
     /**

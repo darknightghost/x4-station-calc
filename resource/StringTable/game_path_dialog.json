@@ -1,0 +1,12 @@
+{
+	"STR_TITLE_SELECT_GAME_PATH" : {
+		"zh_CN" : "选择游戏路径",
+		"zh_TW" : "選擇遊戲路徑",
+		"en_US" : "Select Path of Game"
+	},
+	"STR_GAME_PATH" : {
+		"zh_CN" : "游戏路径 :",
+		"zh_TW" : "遊戲路徑 :",
+		"en_US" : "Path of Game :"
+	}
+}

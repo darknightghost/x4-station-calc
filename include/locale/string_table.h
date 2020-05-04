@@ -13,18 +13,18 @@ class StringTable : public QObject, public Singleton<StringTable> {
     Q_OBJECT
     SIGNLETON_OBJECT(StringTable)
   private:
-    QReadWriteLock                        m_lock;        //< Lock;
-    QMap<QString, QMap<QString, QString>> m_strings;     //< Strings.
-    QString                               m_language;    //< Language.
-    uint32_t                              m_languageID;  //< Language ID.
-    QMap<QString, QMap<QString, QString>> m_stringTable; //< String table.
-    QString                               m_notFoundStr; //< Default string.
-    QMap<QString, QString>                m_notFoundMap; //< Not found map.
+    QReadWriteLock                        m_lock;        ///< Lock;
+    QMap<QString, QMap<QString, QString>> m_strings;     ///< Strings.
+    QString                               m_language;    ///< Language.
+    uint32_t                              m_languageID;  ///< Language ID.
+    QMap<QString, QMap<QString, QString>> m_stringTable; ///< String table.
+    QString                               m_notFoundStr; ///< Default string.
+    QMap<QString, QString>                m_notFoundMap; ///< Not found map.
   private:
     static QMap<int, QString>
-        _languageTable; //< Convert qt language to language string.
+        _languageTable; ///< Convert qt language to language string.
     static QMap<QString, uint32_t>
-        _languageIDTable; //< Convert language string to ID.
+        _languageIDTable; ///< Convert language string to ID.
 
   protected:
     /**

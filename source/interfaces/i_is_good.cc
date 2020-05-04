@@ -7,8 +7,6 @@ IIsGood::IIsGood() : m_good(false) {}
 
 /**
  * @brief   Get initialize result.
- *
- * @return  Initialize result.
  */
 bool IIsGood::good()
 {

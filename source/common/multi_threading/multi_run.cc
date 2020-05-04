@@ -6,9 +6,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	task			Tash to run.
- * @param[in]	parent			Parent object.
  */
 MultiRunThread::MultiRunThread(::std::function<void()> task, QObject *parent) :
     QThread(parent), m_task(task)
@@ -29,8 +26,6 @@ void MultiRunThread::run()
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	task			Task to run.
  */
 MultiRun::MultiRun(::std::function<void()> task)
 {
@@ -42,8 +37,6 @@ MultiRun::MultiRun(::std::function<void()> task)
 
 /**
  * @brief		Run task.
- *
- * @param[in]	signleThread	True if run in signle thread.
  */
 void MultiRun::run(bool signleThread)
 {

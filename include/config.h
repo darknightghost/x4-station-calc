@@ -22,17 +22,17 @@ class Config : public Singleton<Config> {
      * @brief   Value types.
      */
     enum ValueType {
-        None   = 0x00, //< The value does not exists.
-        Bool   = 0x01, //< The value is a boolean.
-        Number = 0x02, //< The value is a number.
-        String = 0x03, //< The value is a string.
-        Node   = 0x04, //< The value is a config node.
+        None   = 0x00, ///< The value does not exists.
+        Bool   = 0x01, ///< The value is a boolean.
+        Number = 0x02, ///< The value is a number.
+        String = 0x03, ///< The value is a string.
+        Node   = 0x04, ///< The value is a config node.
     };
 
   private:
-    QJsonDocument             m_doc;        //< Document.
-    QReadWriteLock            m_lock;       //< Lock.
-    ::std::shared_ptr<Global> m_globalInfo; //< Global information.
+    QJsonDocument             m_doc;        ///< Document.
+    QReadWriteLock            m_lock;       ///< Lock.
+    ::std::shared_ptr<Global> m_globalInfo; ///< Global information.
 
   protected:
     /**

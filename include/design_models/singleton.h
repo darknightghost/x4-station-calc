@@ -12,8 +12,8 @@
 template<class T, typename... Args>
 class Singleton : virtual protected IIsGood {
   protected:
-    static ::std::shared_ptr<T> _instance;     //< Instance.
-    static ::std::mutex         _instanceLock; //< Instance lock.
+    static ::std::shared_ptr<T> _instance;     ///< Instance.
+    static ::std::mutex         _instanceLock; ///< Instance lock.
 
   protected:
     /**

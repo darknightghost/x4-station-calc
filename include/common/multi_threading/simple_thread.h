@@ -5,12 +5,12 @@
 #include <QtCore/QThread>
 
 /**
- * @breif		A simple thread whitch can be created easily.
+ * @brief		A simple thread whitch can be created easily.
  */
 template<typename... Args>
 class SimpleThread : virtual public QThread {
   protected:
-    ::std::function<void()> m_threadFunc; //< Thread function.
+    ::std::function<void()> m_threadFunc; ///< Thread function.
 
   public:
     /**

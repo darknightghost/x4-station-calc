@@ -30,8 +30,8 @@ class GameTexts :
      * @brief	Game text id pair.
      */
     struct IDPair {
-        qint32 pageID; //< Page id.
-        qint32 textID; //< Text id.
+        qint32 pageID; ///< Page id.
+        qint32 textID; ///< Text id.
 
         IDPair() : pageID(-1), textID(-1) {}
 
@@ -60,11 +60,11 @@ class GameTexts :
      * @brief	Text link.
      */
     struct TextLink {
-        bool    isRef; //< True if the link is a reference.
-        QString text;  //< String of the link if it is not a reference link.
+        bool    isRef; ///< True if the link is a reference.
+        QString text;  ///< String of the link if it is not a reference link.
         struct {
-            qint32 pageID; //< ID of referenced page.
-            qint32 textID; //< ID of referenced text.
+            qint32 pageID; ///< ID of referenced page.
+            qint32 textID; ///< ID of referenced text.
         } refInfo;         /*< Information of referenced string if the link is
                             *  a reference.
                             */
@@ -74,24 +74,24 @@ class GameTexts :
      * @brief	Text link.
      */
     struct Text {
-        qint32                           pageID; //< ID of page.
-        qint32                           textID; //< ID of text.
-        QMutex                           lock;   //< Lock.
-        QMap<quint32, QVector<TextLink>> links;  //< Links.
+        qint32                           pageID; ///< ID of page.
+        qint32                           textID; ///< ID of text.
+        QMutex                           lock;   ///< Lock.
+        QMap<quint32, QVector<TextLink>> links;  ///< Links.
     };
 
     /**
      * @brief	Text page.
      */
     struct TextPage {
-        qint32                                pageID; //< ID of page.
-        QMap<qint32, ::std::shared_ptr<Text>> texts;  //< Texts.
-        QMutex                                lock;   //< Lock.
+        qint32                                pageID; ///< ID of page.
+        QMap<qint32, ::std::shared_ptr<Text>> texts;  ///< Texts.
+        QMutex                                lock;   ///< Lock.
     };
 
   private:
-    QMap<qint32, ::std::shared_ptr<TextPage>> m_textPages; //< Text pages.
-    QMutex                                    m_pageLock;  //< Test page lock.
+    QMap<qint32, ::std::shared_ptr<TextPage>> m_textPages; ///< Text pages.
+    QMutex                                    m_pageLock;  ///< Test page lock.
 
   protected:
     /**

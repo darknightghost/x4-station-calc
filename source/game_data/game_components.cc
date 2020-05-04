@@ -9,9 +9,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	setTextFunc		Callback to set text.
  */
 GameComponents::GameComponents(
     ::std::shared_ptr<GameVFS>             vfs,
@@ -40,8 +37,6 @@ GameComponents::GameComponents(
 
 /**
  * @brief	Get component.
- *
- * @return	Value of component.
  */
 QString GameComponents::component(const QString &id)
 {
@@ -55,14 +50,6 @@ GameComponents::~GameComponents() {}
 
 /**
  * @brief		Start element callback in root.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameComponents::onStartElementInRoot(XMLLoader &                   loader,
                                           XMLLoader::Context &          context,
@@ -87,14 +74,6 @@ bool GameComponents::onStartElementInRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in index.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameComponents::onStartElementInIndex(XMLLoader &         loader,
                                            XMLLoader::Context &context,

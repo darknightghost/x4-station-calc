@@ -26,7 +26,7 @@ class GameComponents :
               ::std::function<void(const QString &)>);
 
   private:
-    QMap<QString, QString> m_components; //< Components
+    QMap<QString, QString> m_components; ///< Components
 
   protected:
     /**

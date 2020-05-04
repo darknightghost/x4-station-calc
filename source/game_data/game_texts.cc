@@ -9,9 +9,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	setTextFunc		Callback to set text.
  */
 GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
                      ::std::function<void(const QString &)> setTextFunc)
@@ -75,11 +72,6 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
 
 /**
  * @brief		Get text.
- *
- * @param[in]	pageID		Page ID of the text.
- * @param[in]	textID		ID of the text.
- *
- * @return		Text.
  */
 QString GameTexts::text(qint32 pageID, qint32 textID)
 {
@@ -112,10 +104,6 @@ QString GameTexts::text(qint32 pageID, qint32 textID)
 
 /**
  * @brief		Get text.
- *
- * @param[in]	idPair		ID.
- *
- * @return		Text.
  */
 QString GameTexts::text(const IDPair &idPair)
 {
@@ -129,14 +117,6 @@ GameTexts::~GameTexts() {}
 
 /**
  * @brief		Start element callback in root.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameTexts::onStartElementInRoot(XMLLoader &                   loader,
                                      XMLLoader::Context &          context,
@@ -170,15 +150,6 @@ bool GameTexts::onStartElementInRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in language.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	languageID	Language ID of the text.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
                                          XMLLoader::Context &          context,
@@ -228,16 +199,6 @@ bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in page.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	languageID	Language ID of the text.
- * @param[in]	page		Page of the text.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
                                      XMLLoader::Context &          context,
@@ -293,15 +254,6 @@ bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
 
 /**
  * @brief		Characters callback.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	s			Text.
- * @param[in]	languageID	Language ID of the text.
- * @param[in]	text		Text object.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameTexts::onTextCharacters(XMLLoader &             loader,
                                  XMLLoader::Context &    context,
@@ -324,8 +276,6 @@ bool GameTexts::onTextCharacters(XMLLoader &             loader,
 
 /**
  * @brief		Parse text.
- *
- * @return		Parsed text.
  */
 QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
 {
@@ -375,8 +325,6 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
 
 /**
  * @brief		Parse excape characters.
- *
- * @return		Parsed text.
  */
 QString GameTexts::parseEscape(const QString &s)
 {

@@ -17,14 +17,14 @@ class OpenFileListener : public QObject, public Singleton<OpenFileListener> {
     SIGNLETON_OBJECT(OpenFileListener)
 
   protected:
-    QQueue<QString>               m_paths;        //< Queue of paths.
-    QMutex                        m_pathsLock;    //< Paths lock.
-    ::std::shared_ptr<QTcpServer> m_server;       //< TCP server.
-    QSharedMemory *               m_sharedMemory; //< Shared memory.
-    bool                          m_opened;       //< Opened flag.
-    bool                          m_block;        //< Block flag.
-    volatile bool                 m_recv;         //< Receive flag.
-    SimpleThread<>                m_recvThread;   //< Receive thread;
+    QQueue<QString>               m_paths;        ///< Queue of paths.
+    QMutex                        m_pathsLock;    ///< Paths lock.
+    ::std::shared_ptr<QTcpServer> m_server;       ///< TCP server.
+    QSharedMemory *               m_sharedMemory; ///< Shared memory.
+    bool                          m_opened;       ///< Opened flag.
+    bool                          m_block;        ///< Block flag.
+    volatile bool                 m_recv;         ///< Receive flag.
+    SimpleThread<>                m_recvThread;   ///< Receive thread;
 
   protected:
     /**

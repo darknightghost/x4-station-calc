@@ -16,7 +16,7 @@ class XMLLoader {
     class Context;
 
   protected:
-    ::std::vector<::std::unique_ptr<Context>> m_contextStack; //< Contexts.
+    ::std::vector<::std::unique_ptr<Context>> m_contextStack; ///< Contexts.
 
   public:
     /**

@@ -26,7 +26,7 @@ class GameMacros :
               ::std::function<void(const QString &)>);
 
   private:
-    QMap<QString, QString> m_macros; //< Macros
+    QMap<QString, QString> m_macros; ///< Macros
 
   protected:
     /**

@@ -16,11 +16,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	gamePath		Path of game.
- * @param[in]	info			Cat files info.
- * @param[in]	setTextFunc		Callback to set text.
- * @param[in]	errFunc			Callback to show error.
  */
 GameVFS::GameVFS(const QString &                        gamePath,
                  const QMap<int, CatFileInfo> &         info,
@@ -206,14 +201,6 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	gamePath		Path of game.
- * @param[in]	info			Cat files info.
- * @param[in]	setTextFunc		Callback to set text.
- * @param[in]	errFunc			Callback to show error.
- *
- * @return		On success, a nmew object is returned. Otherwise returns
- *				nullptr.
  */
 ::std::shared_ptr<GameVFS>
     GameVFS::create(const QString &                        gamePath,
@@ -233,11 +220,6 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
 /**
  * @brief		Open file.
- *
- * @param[in]	path		Path of file.
- *
- * @return		On success, a \c FileReader object is returned. Otherwise
- *				returns nullptr.
  */
 ::std::shared_ptr<GameVFS::FileReader> GameVFS::open(const QString &path)
 {
@@ -295,11 +277,6 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
 /**
  * @brief		Open directory.
- *
- * @param[in]	path		Path of directory.
- *
- * @return		On success, a \c DirReader object is returned. Otherwise
- *				returns nullptr.
  */
 ::std::shared_ptr<GameVFS::DirReader> GameVFS::openDir(const QString &path)
 {
@@ -351,10 +328,6 @@ GameVFS::~GameVFS() {}
 
 /**
  * @brief		Open directory.
- *
- * @param[in]	line	Data in line.
- *
- * @return		Splitted data.
  */
 QStringList GameVFS::splitCatLine(const QString &line)
 {
@@ -436,9 +409,6 @@ QStringList GameVFS::splitCatLine(const QString &line)
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	path		Path of file.
- * @param[in]	vfs			VFS.
  */
 GameVFS::FileReader::FileReader(const QString &            path,
                                 ::std::shared_ptr<GameVFS> vfs) :
@@ -448,8 +418,6 @@ GameVFS::FileReader::FileReader(const QString &            path,
 
 /**
  * @brief	Get path of the file.
- *
- * @return	Path of the file.
  */
 QString GameVFS::FileReader::path() const
 {
@@ -464,8 +432,6 @@ QString GameVFS::FileReader::path() const
 
 /**
  * @brief	Get name of the file.
- *
- * @return	Name of the file.
  */
 const QString &GameVFS::FileReader::name() const
 {
@@ -474,8 +440,6 @@ const QString &GameVFS::FileReader::name() const
 
 /**
  * @brief		Read a line.
- *
- * @return		Data in a line.
  */
 QByteArray GameVFS::FileReader::readLine()
 {
@@ -498,12 +462,6 @@ GameVFS::FileReader::~FileReader() {}
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	path		Path of file.
- * @param[in]	file		Qt file object for data file.
- * @param[in]	offset		Begin offset.
- * @param[in]	size		File size.
- * @param[in]	vfs			VFS.
  */
 GameVFS::PackedFileReader::PackedFileReader(const QString &            path,
                                             ::std::unique_ptr<QFile>   file,
@@ -518,11 +476,6 @@ GameVFS::PackedFileReader::PackedFileReader(const QString &            path,
 
 /**
  * @brief		Read file.
- *
- * @param[out]	buffer		Buffer to restore data read.
- * @param[in]	size		Size of buffer.
- *
- * @return		Size read.
  */
 qint64 GameVFS::PackedFileReader::read(void *buffer, quint64 size)
 {
@@ -532,10 +485,6 @@ qint64 GameVFS::PackedFileReader::read(void *buffer, quint64 size)
 
 /**
  * @brief		Read file.
- *
- * @param[in]	size		Size to read.
- *
- * @return		Data read.
  */
 QByteArray GameVFS::PackedFileReader::read(quint64 size)
 {
@@ -545,8 +494,6 @@ QByteArray GameVFS::PackedFileReader::read(quint64 size)
 
 /**
  * @brief		Read all data after corrent position in the file.
- *
- * @return		Data read.
  */
 QByteArray GameVFS::PackedFileReader::readAll()
 {
@@ -556,11 +503,6 @@ QByteArray GameVFS::PackedFileReader::readAll()
 
 /**
  * @brief		Seek file.
- *
- * @param[in]	offset		Offset to seek.
- * @param[in]	whence		Where to begin.
- *
- * @return		Current position.
  */
 qint64 GameVFS::PackedFileReader::seek(qint64 offset, Whence whence)
 {
@@ -588,9 +530,6 @@ qint64 GameVFS::PackedFileReader::seek(qint64 offset, Whence whence)
 
 /**
  * @brief		Check if current position is at the end of current file.
- *
- * @return		If current position reachs the end of the file, true is
- *				returned. Otherwise returns false.
  */
 bool GameVFS::PackedFileReader::atEnd()
 {
@@ -604,10 +543,6 @@ GameVFS::PackedFileReader::~PackedFileReader() {}
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	path		Path of file.
- * @param[in]	file		Qt file object for data file.
- * @param[in]	vfs			VFS.
  */
 GameVFS::NormalFileReader::NormalFileReader(const QString &            path,
                                             ::std::unique_ptr<QFile>   file,
@@ -618,11 +553,6 @@ GameVFS::NormalFileReader::NormalFileReader(const QString &            path,
 
 /**
  * @brief		Read file.
- *
- * @param[out]	buffer		Buffer to restore data read.
- * @param[in]	size		Size of buffer.
- *
- * @return		Size read.
  */
 qint64 GameVFS::NormalFileReader::read(void *buffer, quint64 size)
 {
@@ -631,10 +561,6 @@ qint64 GameVFS::NormalFileReader::read(void *buffer, quint64 size)
 
 /**
  * @brief		Read file.
- *
- * @param[in]	size		Size to read.
- *
- * @return		Data read.
  */
 QByteArray GameVFS::NormalFileReader::read(quint64 size)
 {
@@ -643,8 +569,6 @@ QByteArray GameVFS::NormalFileReader::read(quint64 size)
 
 /**
  * @brief		Read all data after corrent position in the file.
- *
- * @return		Data read.
  */
 QByteArray GameVFS::NormalFileReader::readAll()
 {
@@ -653,11 +577,6 @@ QByteArray GameVFS::NormalFileReader::readAll()
 
 /**
  * @brief		Seek file.
- *
- * @param[in]	offset		Offset to seek.
- * @param[in]	whence		Where to begin.
- *
- * @return		Current position.
  */
 qint64 GameVFS::NormalFileReader::seek(qint64 offset, Whence whence)
 {
@@ -684,9 +603,6 @@ qint64 GameVFS::NormalFileReader::seek(qint64 offset, Whence whence)
 
 /**
  * @brief		Check if current position is at the end of current file.
- *
- * @return		If current position reachs the end of the file, true is
- *				returned. Otherwise returns false.
  */
 bool GameVFS::NormalFileReader::atEnd()
 {
@@ -700,11 +616,6 @@ GameVFS::NormalFileReader::~NormalFileReader() {}
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	path		Path of directory.
- * @param[in]	entry		Dat file entery. If not found, set it to
- *							nullptr.
- * @param[in]	vfs			VFS.
  */
 GameVFS::DirReader::DirReader(const QString &                  path,
                               ::std::shared_ptr<DatFileEntery> entry,
@@ -732,8 +643,6 @@ GameVFS::DirReader::DirReader(const QString &                  path,
 
 /**
  * @brief	Get name of the directory.
- *
- * @return	Name of the directory.
  */
 const QString &GameVFS::DirReader::name() const
 {
@@ -742,8 +651,6 @@ const QString &GameVFS::DirReader::name() const
 
 /**
  * @brief	Get path of the directory.
- *
- * @return	Path.
  */
 QString GameVFS::DirReader::path() const
 {
@@ -758,10 +665,6 @@ QString GameVFS::DirReader::path() const
 
 /**
  * @brief		Convert relative path to absolute path.
- *
- * @param[in]	path	Relative path.
- *
- * @return		Absolute path.
  */
 QString GameVFS::DirReader::absPath(const QString &path) const
 {
@@ -791,8 +694,6 @@ QString GameVFS::DirReader::absPath(const QString &path) const
 
 /**
  * @brief		Get iterator point to the first entery.
- *
- * @return		Iterator.
  */
 GameVFS::DirReader::iterator GameVFS::DirReader::begin()
 {
@@ -801,8 +702,6 @@ GameVFS::DirReader::iterator GameVFS::DirReader::begin()
 
 /**
  * @brief		Get iterator point to the end.
- *
- * @return		Iterator.
  */
 GameVFS::DirReader::iterator GameVFS::DirReader::end()
 {
@@ -811,8 +710,6 @@ GameVFS::DirReader::iterator GameVFS::DirReader::end()
 
 /**
  * @brief		Get number of files in the directory.
- *
- * @return		Number.
  */
 quint64 GameVFS::DirReader::count()
 {
@@ -831,9 +728,6 @@ GameVFS::DirReader::Iterator::Iterator() : m_enteries(nullptr) {}
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	enteries		Directory enteries.
- * @param[in]	iter			Iterator.
  */
 GameVFS::DirReader::Iterator::Iterator(
     ::std::shared_ptr<QVector<DirEntry>> enteries,
@@ -844,8 +738,6 @@ GameVFS::DirReader::Iterator::Iterator(
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	iter			Iterator to copy..
  */
 GameVFS::DirReader::Iterator::Iterator(const Iterator &iter) :
     m_enteries(iter.m_enteries), m_iterator(iter.m_iterator)

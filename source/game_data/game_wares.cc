@@ -4,10 +4,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	texts			Game texts.
- * @param[in]	setTextFunc		Callback to set text.
  */
 GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                      ::std::shared_ptr<GameTexts>           texts,
@@ -59,8 +55,6 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
 
 /**
  * @brief	Get ware group information.
- *
- * @return	Information of ware group.
  */
 const ::std::shared_ptr<GameWares::WareGroup>
     GameWares::wareGroup(const QString &id)
@@ -76,8 +70,6 @@ const ::std::shared_ptr<GameWares::WareGroup>
 
 /**
  * @brief	Get ware information.
- *
- * @return	Information of ware.
  */
 const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id)
 {
@@ -96,15 +88,6 @@ GameWares::~GameWares() {}
 
 /**
  * @brief		Start element callback in root of group file.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInGroupRoot(XMLLoader &                   loader,
                                           XMLLoader::Context &          context,
@@ -130,15 +113,6 @@ bool GameWares::onStartElementInGroupRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in groups.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInGroups(XMLLoader &                   loader,
                                        XMLLoader::Context &          context,
@@ -168,15 +142,6 @@ bool GameWares::onStartElementInGroups(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in the root node of wares.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInWaresRoot(XMLLoader &                   loader,
                                           XMLLoader::Context &          context,
@@ -201,15 +166,6 @@ bool GameWares::onStartElementInWaresRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in wares.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                                       XMLLoader::Context &          context,
@@ -300,15 +256,6 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in ware.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	ware		Ware.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInWare(XMLLoader &                   loader,
                                      XMLLoader::Context &          context,
@@ -372,15 +319,6 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in production.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- * @param[in]	info			Proituction info.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInProduction(
     XMLLoader &                       loader,
@@ -418,15 +356,6 @@ bool GameWares::onStartElementInProduction(
 
 /**
  * @brief		Start element callback in primary.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- * @param[in]	info			Proituction info.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInPrimary(XMLLoader &                   loader,
                                         XMLLoader::Context &          context,
@@ -445,15 +374,6 @@ bool GameWares::onStartElementInPrimary(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in effects.
- *
- * @param[in]	loader			XML loader.
- * @param[in]	context			Context.
- * @param[in]	name			Name of the element.
- * @param[in]	attr			Attributes.
- * @param[in]	info			Proituction info.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameWares::onStartElementInEffects(XMLLoader &                   loader,
                                         XMLLoader::Context &          context,

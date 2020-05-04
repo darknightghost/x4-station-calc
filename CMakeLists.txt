@@ -9,7 +9,6 @@ endif ()
 # Project
 project (x4-station-calc)
 
-
 message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
 message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")
 message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
@@ -38,6 +37,7 @@ if (WIN32)
 endif ()
 
 # Dependencies
+find_package (PythonInterp REQUIRED 3)
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Network REQUIRED)
@@ -50,23 +50,23 @@ endif()
 
 # Sources
 file (GLOB_RECURSE HEADERS
-	"include/*.h"
-	"include/*.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
 	)
 
 file (GLOB_RECURSE SRC
-	"source/*.c"
-	"source/*.cpp"
-	"source/*.cc"
-	"source/*.C"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.C"
 	)
 
 if (WIN32)
 	file (GLOB_RECURSE WINDOWS_SRC
-		"3rd-party/windows/*.c"
-		"3rd-party/windows/*.cpp"
-		"3rd-party/windows/*.cc"
-		"3rd-party/windows/*.C"
+		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.c"
+		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cc"
+		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.C"
 		)
 
 	list (APPEND SRC
@@ -75,9 +75,23 @@ if (WIN32)
 
 endif ()
 
+# Recources
+set (RESOURCE_LIST_FILE		"${CMAKE_CURRENT_SOURCE_DIR}/resource/resources.qrc")
+set (GENERATE_RESOURCE_CMD	"${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_resource.py")
+
+file (GLOB_RECURSE RESOURCES
+	"${CMAKE_CURRENT_SOURCE_DIR}/resource/*"
+	)
+list (REMOVE_ITEM RESOURCES		${RESOURCE_LIST_FILE})
+
+add_custom_command (
+	OUTPUT		${RESOURCE_LIST_FILE}
+	COMMAND		${GENERATE_RESOURCE_CMD} ${RESOURCES} -r "${CMAKE_CURRENT_SOURCE_DIR}/resource" -o "${RESOURCE_LIST_FILE}"
+	DEPENDS		${RESOURCES})
+
 # Qt wrappers
 qt5_wrap_cpp (WRAPPED_HEADERS ${HEADERS})
-qt5_add_resources (WRAPPED_RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/resource/resources.qrc")
+qt5_add_resources (WRAPPED_RESOURCE "${RESOURCE_LIST_FILE}")
 
 add_executable(${PROJECT_NAME}
 	${SRC}

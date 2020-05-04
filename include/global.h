@@ -19,18 +19,18 @@ class Global : public Singleton<Global, int &, char **&, int &> {
      * @brief   Argument info.
      */
     struct ArgInfo {
-        ::std::string           shortName; //< Short name.
-        ::std::string           longName;  //< Long name.
-        ::std::string           help;      //< Help.
-        ::std::function<bool()> handler;   //< Handler.
+        ::std::string           shortName; ///< Short name.
+        ::std::string           longName;  ///< Long name.
+        ::std::string           help;      ///< Help.
+        ::std::function<bool()> handler;   ///< Handler.
     };
 
   private:
-    ::std::map<char, ArgInfo> m_argMap;     //< Arguments.
-    QString                   m_execDir;    //< Path of current executable file.
-    QString                   m_configPath; //< Path of config file.
-    bool                      m_hasFileToOpen; //< Has file to open.
-    QString                   m_fileToOpen;    //< File to open.
+    ::std::map<char, ArgInfo> m_argMap;  ///< Arguments.
+    QString                   m_execDir; ///< Path of current executable file.
+    QString                   m_configPath;    ///< Path of config file.
+    bool                      m_hasFileToOpen; ///< Has file to open.
+    QString                   m_fileToOpen;    ///< File to open.
 
   protected:
     /**

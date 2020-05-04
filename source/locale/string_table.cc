@@ -1,4 +1,5 @@
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -47,52 +48,58 @@ StringTable::StringTable() :
     m_languageID = _languageIDTable[m_language];
     qDebug() << "Language : " << m_language << ".";
 
-    // Read string table.
-    QFile jsonFile(":/StringTable/StringTable.json");
-    if (! jsonFile.open(QFile::ReadOnly)) {
-        qDebug() << "Failed to open string table.";
-        return;
-    }
-    QByteArray jsonStr = jsonFile.readAll();
-    jsonFile.close();
-
-    // Parse string table
-    QJsonParseError err;
-    QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qDebug() << "Failed to parse string table : " << err.errorString();
-        return;
-    }
-    QJsonObject root = doc.object();
-    for (auto iter = root.begin(); iter != root.end(); iter++) {
-        QJsonValue value = iter.value();
-        if (! value.isObject()) {
-            qDebug() << "Illegal string, ID = " << iter.key() << ".";
+    // Read string tables.
+    QDir stringDir(":/StringTable");
+    for (QString &name : stringDir.entryList()) {
+        QString path = stringDir.absoluteFilePath(name);
+        qDebug() << "Loading string table :" << path;
+        QFile jsonFile(path);
+        if (! jsonFile.open(QFile::ReadOnly)) {
+            qDebug() << "Failed to open string table.";
             return;
         }
+        QByteArray jsonStr = jsonFile.readAll();
+        jsonFile.close();
 
-        m_stringTable[iter.key()] = QMap<QString, QString>();
-
-        QJsonObject strObject   = value.toObject();
-        bool        defaultFlag = false;
-        for (auto strIter = strObject.begin(); strIter != strObject.end();
-             strIter++) {
-            QJsonValue value = strIter.value();
-            if (! value.isString()) {
+        // Parse string table
+        QJsonParseError err;
+        QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &err);
+        if (err.error != QJsonParseError::NoError) {
+            qDebug() << "Failed to parse string table : " << err.errorString();
+            return;
+        }
+        QJsonObject root = doc.object();
+        for (auto iter = root.begin(); iter != root.end(); iter++) {
+            QJsonValue value = iter.value();
+            if (! value.isObject()) {
                 qDebug() << "Illegal string, ID = " << iter.key() << ".";
                 return;
             }
-            m_stringTable[iter.key()][strIter.key()]
-                = strIter.value().toString();
-            if (strIter.key() == "en_US") {
-                defaultFlag = true;
+
+            m_stringTable[iter.key()] = QMap<QString, QString>();
+
+            QJsonObject strObject   = value.toObject();
+            bool        defaultFlag = false;
+            for (auto strIter = strObject.begin(); strIter != strObject.end();
+                 strIter++) {
+                QJsonValue value = strIter.value();
+                if (! value.isString()) {
+                    qDebug() << "Illegal string, ID = " << iter.key() << ".";
+                    return;
+                }
+                m_stringTable[iter.key()][strIter.key()]
+                    = strIter.value().toString();
+                if (strIter.key() == "en_US") {
+                    defaultFlag = true;
+                }
             }
-        }
-        if (defaultFlag) {
-            qDebug() << "String" << iter.key() << "loaded.";
-        } else {
-            qDebug() << "String" << iter.key() << "requires \"en_US\" support.";
-            return;
+            if (defaultFlag) {
+                qDebug() << "String" << iter.key() << "loaded.";
+            } else {
+                qDebug() << "String" << iter.key()
+                         << "requires \"en_US\" support.";
+                return;
+            }
         }
     }
 
@@ -101,8 +108,6 @@ StringTable::StringTable() :
 
 /**
  * @brief	Get current language.
- *
- * @return	Current language.
  */
 const QString &StringTable::language()
 {
@@ -112,8 +117,6 @@ const QString &StringTable::language()
 
 /**
  * @brief	Get current language ID.
- *
- * @return	Current language ID.
  */
 uint32_t StringTable::languageId()
 {
@@ -123,10 +126,6 @@ uint32_t StringTable::languageId()
 
 /**
  * @brief		Get string.
- *
- * @param[in]	id		String ID.
- *
- * @return		String.
  */
 const QString &StringTable::getString(const QString &id)
 {
@@ -146,10 +145,6 @@ const QString &StringTable::getString(const QString &id)
 
 /**
  * @brief		Get string in all languages.
- *
- * @param[in]	id		String ID.
- *
- * @return		Map of strings.
  */
 const QMap<QString, QString> &StringTable::getStrings(const QString &id)
 {
@@ -168,8 +163,6 @@ const QMap<QString, QString> &StringTable::getStrings(const QString &id)
  * @brief       Set current language.
  *  Set current locale to locale. If the locale does not supported,
  *  current locale will be set to default locale.
- *
- * @param[in]   language		Language.
  *
  */
 void StringTable::setLanguage(const QString &language)
@@ -200,8 +193,6 @@ StringTable::~StringTable() {}
 
 /**
  * @brief	Get system locale.
- *
- * @return	System locale.
  */
 QString StringTable::systemLanguage()
 {

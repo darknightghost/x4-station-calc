@@ -9,10 +9,6 @@
 
 /**
  * @brief		Constructor.
- *
- * @param[in]	vfs				Virtual filesystem of the game.
- * @param[in]	texts			Game texts.
- * @param[in]	setTextFunc		Callback to set text.
  */
 GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
                      ::std::shared_ptr<GameTexts>           texts,
@@ -44,8 +40,6 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
 
 /**
  * @brief	Get race information.
- *
- * @return	Information of race.
  */
 const GameRaces::Race &GameRaces::race(const QString &id)
 {
@@ -59,15 +53,6 @@ GameRaces::~GameRaces() {}
 
 /**
  * @brief		Start element callback in root.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameRaces::onStartElementInRoot(XMLLoader &                   loader,
                                      XMLLoader::Context &          context,
@@ -93,15 +78,6 @@ bool GameRaces::onStartElementInRoot(XMLLoader &                   loader,
 
 /**
  * @brief		Start element callback in races.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	texts		Game texts.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 bool GameRaces::onStartElementInRaces(XMLLoader &                   loader,
                                       XMLLoader::Context &          context,

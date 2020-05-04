@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cstdint>
 #include <type_traits>
 
 /**
  * @brief		Get minimum value.
  *
+ * @tparam		T		Type of the value.
  * @param[in]	v1		First value.
  * @param[in]	v2		Second value.
  *
@@ -19,6 +21,8 @@ T min(T v1, T v2)
 /**
  * @brief		Get minimum value.
  *
+ * @tparam		T		Type of the value.
+ * @tparam		Args	Type of other argumets.
  * @param[in]	v1		First value.
  * @param[in]	v2		Second value.
  * @param[in]	v3		Third value.
@@ -36,6 +40,7 @@ T min(T v1, T v2, T v3, Args... args)
 /**
  * @brief		Get maxium value.
  *
+ * @tparam		T		Type of the value.
  * @param[in]	v1		First value.
  * @param[in]	v2		Second value.
  *
@@ -50,6 +55,8 @@ T max(T v1, T v2)
 /**
  * @brief		Get maxium value.
  *
+ * @tparam		T		Type of the value.
+ * @tparam		Args	Type of other argumets.
  * @param[in]	v1		First value.
  * @param[in]	v2		Second value.
  * @param[in]	v3		Third value.
@@ -67,6 +74,7 @@ T max(T v1, T v2, T v3, Args... args)
 /**
  * @brief		Implement of between.
  *
+ * @tparam		T		Type of the value.
  * @param[in]	value	Value.
  * @param[in]	b1		Border1.
  * @param[in]	b2		Border2.
@@ -86,6 +94,7 @@ bool betweenImpl(T value, T b1, T b2)
 /**
  * @brief		Check if the value between b1 and b2.
  *
+ * @tparam		T		Type of the value.
  * @param[in]	value	Value.
  * @param[in]	b1		Border1.
  * @param[in]	b2		Border2.

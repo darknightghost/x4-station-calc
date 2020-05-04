@@ -1,4 +1,9 @@
 {
+	"STR_LANGUAGE_TYPE" : {
+		"zh_CN" : "简体中文",
+		"zh_TW" : "正體中文",
+		"en_US" : "English"
+	},
 	"STR_BTN_OK" : {
 		"zh_CN" : "确定(&O)",
 		"zh_TW" : "確定(&O)",

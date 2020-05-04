@@ -9,6 +9,9 @@ class ILoadFactoryFunc;
 
 /**
  * @brief	Interface for factory function \c loac.
+ *
+ * @tparam	T		Type of the class implements this interface.
+ * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
 class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
@@ -36,11 +39,6 @@ class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
 
 /**
  * @brief		Load object.
- *
- * @param[in]	args		Arguments.
- *
- * @return		On success, a new object is reutnred. Otherwise returns
- *				nullptr.
  */
 template<class T, typename... Args>
 ::std::shared_ptr<T> ILoadFactoryFunc<T(Args...)>::load(Args... args)

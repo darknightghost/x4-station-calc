@@ -3,6 +3,7 @@
 #include <config.h>
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
 
 /**
@@ -117,7 +118,7 @@ void MainWindow::initMenu()
     m_mainMenu->addMenu(m_menuSettings);
 
     // Menu "Settings->Language".
-    m_menuSettingsLanguage = new QMenu();
+    m_menuSettingsLanguage = new LanguageMenu();
     m_menuSettings->addMenu(m_menuSettingsLanguage);
     m_menuSettings->addSeparator();
 

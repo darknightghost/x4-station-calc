@@ -8,6 +8,8 @@
 /**
  * @brief   Base class of signleton object.
  *
+ * @tparam	T		Type of the singleton object.
+ * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
 class Singleton : virtual protected IIsGood {
@@ -71,11 +73,6 @@ Singleton<T, Args...>::~Singleton()
 
 /**
  * @brief       Initialize the instance.
- *
- * @param[in]   args        Arguments of constructor.
- *
- * @return      On success or the instance exists, the method returns
- *              the initialized instance, otherwise returns nullptr.
  */
 template<class T, typename... Args>
 ::std::shared_ptr<T> Singleton<T, Args...>::initialize(Args... args)
@@ -96,9 +93,6 @@ template<class T, typename... Args>
 
 /**
  * @brief       Get instance.
- *
- * @return      If the instalce has been initialized, the method
- *              returns the instance, otherwise returns nullptr.
  */
 template<class T, typename... Args>
 ::std::shared_ptr<T> Singleton<T, Args...>::instance()

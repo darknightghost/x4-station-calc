@@ -6,6 +6,8 @@
 
 /**
  * @brief		A simple thread whitch can be created easily.
+ *
+ * @tparam		Args	Types of the arguments of the thread function.
  */
 template<typename... Args>
 class SimpleThread : virtual public QThread {

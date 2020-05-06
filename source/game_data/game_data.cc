@@ -124,13 +124,30 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
 
+        // Load station modules
+        ::std::shared_ptr<GameStationModules> stationModules
+            = GameStationModules::load(vfs, macros, texts, wares,
+                                       [&](const QString &s) -> void {
+                                           splash->setText(s);
+                                       });
+
+        if (stationModules == nullptr) {
+            splash->callFunc(::std::function<void()>([&]() -> void {
+                QMessageBox::critical(splash, STR("STR_ERROR"),
+                                      STR("STR_FAILED_LOAD_STATION_MODULES"));
+            }));
+            Config::instance()->setString("/gamePath", "");
+            continue;
+        }
+
         // Set value
-        m_vfs        = vfs;
-        m_texts      = texts;
-        m_macros     = macros;
-        m_components = components;
-        m_races      = races;
-        m_wares      = wares;
+        m_vfs            = vfs;
+        m_texts          = texts;
+        m_macros         = macros;
+        m_components     = components;
+        m_races          = races;
+        m_wares          = wares;
+        m_stationModules = stationModules;
 
         break;
     }

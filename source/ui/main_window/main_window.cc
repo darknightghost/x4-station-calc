@@ -1,4 +1,9 @@
 #include <QtCore/QDebug>
+#include <QtGui/QMoveEvent>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QWindowStateChangeEvent>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
 
 #include <config.h>
 #include <locale/string_table.h>
@@ -20,10 +25,29 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
                   Qt::ConnectionType::QueuedConnection);
     OpenFileListener::instance()->unblock();
 
-    // Initialize menus
+    // Initialize windows size and position.
+    QRect windowRect = QApplication::desktop()->geometry();
+    windowRect.setSize(windowRect.size() / 2);
+    windowRect.setX(windowRect.width() / 4);
+    windowRect.setY(windowRect.height() / 4);
+    windowRect.setX(
+        Config::instance()->getInt("/MainWindow/x", windowRect.x()));
+    windowRect.setY(
+        Config::instance()->getInt("/MainWindow/y", windowRect.y()));
+    windowRect.setWidth(
+        Config::instance()->getInt("/MainWindow/width", windowRect.width()));
+    windowRect.setHeight(
+        Config::instance()->getInt("/MainWindow/height", windowRect.height()));
+    this->setGeometry(windowRect);
+
+    // Window status.
+    this->setWindowState((Qt::WindowState)(Config::instance()->getInt(
+        "/MainWindow/state", Qt::WindowState::WindowNoState)));
+
+    // Initialize menus.
     this->initMenu();
 
-    // Set text
+    // Set text.
     this->onLanguageChanged();
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &MainWindow::onLanguageChanged);
@@ -155,9 +179,57 @@ void MainWindow::initMenu()
 }
 
 /**
+ * @brief		Resize event.
+ */
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if (! (this->windowState()
+           & (Qt::WindowState::WindowFullScreen
+              | Qt::WindowState::WindowMinimized
+              | Qt::WindowState::WindowMaximized))) {
+        Config::instance()->setInt("/MainWindow/width", event->size().width());
+        Config::instance()->setInt("/MainWindow/height",
+                                   event->size().height());
+    }
+    QMainWindow::resizeEvent(event);
+}
+
+/**
+ * @brief		Move event.
+ */
+void MainWindow::moveEvent(QMoveEvent *event)
+{
+    if (! (this->windowState()
+           & (Qt::WindowState::WindowFullScreen
+              | Qt::WindowState::WindowMinimized
+              | Qt::WindowState::WindowMaximized))) {
+        Config::instance()->setInt("/MainWindow/x", event->pos().x());
+        Config::instance()->setInt("/MainWindow/y", event->pos().y());
+    }
+    QMainWindow::moveEvent(event);
+}
+
+/**
+ * @brief		Change event.
+ */
+void MainWindow::changeEvent(QEvent *rawEvent)
+{
+    QMainWindow::changeEvent(rawEvent);
+
+    // After
+    switch (rawEvent->type()) {
+        case QEvent::Type::WindowStateChange: {
+            Config::instance()->setInt("/MainWindow/state",
+                                       this->windowState());
+        } break;
+
+        default:
+            break;
+    }
+}
+
+/**
  * @brief		Open file.
- *
- * @param[in]	path		Path of file.
  */
 void MainWindow::open(QString path)
 {

@@ -63,6 +63,27 @@ class MainWindow : public QMainWindow {
      */
     void initMenu();
 
+    /**
+     * @brief		Resize event.
+     *
+     * @param[in]	event		Event.
+     */
+    virtual void resizeEvent(QResizeEvent *event) override;
+
+    /**
+     * @brief		Move event.
+     *
+     * @param[in]	event		Event.
+     */
+    virtual void moveEvent(QMoveEvent *event) override;
+
+    /**
+     * @brief		Change event.
+     *
+     * @param[in]	event		Event.
+     */
+    virtual void changeEvent(QEvent *event) override;
+
   private slots:
     /**
      * @brief		Open file.

@@ -77,7 +77,7 @@ class Config : public Singleton<Config> {
     bool getBool(const QString &key, bool defaultVal);
 
     /**
-     * @brief       Get number value.
+     * @brief       Get float value.
      *
      * @param[in]   key         Key of the value.
      * @param[in]   defaultVal  Default value.
@@ -86,7 +86,19 @@ class Config : public Singleton<Config> {
      *              value does not exists or the type of value does not
      *              match, the default value is returned.
      */
-    double getNumber(const QString &key, double defaultVal);
+    double getFloat(const QString &key, double defaultVal);
+
+    /**
+     * @brief       Get integer value.
+     *
+     * @param[in]   key         Key of the value.
+     * @param[in]   defaultVal  Default value.
+     *
+     * @return      On success, the value of the key is returned. If the
+     *              value does not exists or the type of value does not
+     *              match, the default value is returned.
+     */
+    int64_t getInt(const QString &key, int64_t defaultVal);
 
     /**
      * @brief       Get string value.
@@ -110,12 +122,20 @@ class Config : public Singleton<Config> {
     void setBool(const QString &key, bool value);
 
     /**
-     * @brief       Set number value.
+     * @brief       Set float value.
      *
      * @param[in]   key         Key of the value.
      * @param[in]   value       Value to set.
      */
-    void setNumber(const QString &key, double value);
+    void setFloat(const QString &key, double value);
+
+    /**
+     * @brief       Set integer value.
+     *
+     * @param[in]   key         Key of the value.
+     * @param[in]   value       Value to set.
+     */
+    void setInt(const QString &key, int64_t value);
 
     /**
      * @brief       Set string value.

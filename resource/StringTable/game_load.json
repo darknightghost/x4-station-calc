@@ -88,5 +88,15 @@
 		"zh_CN" : "加载游戏物品信息失败!",
 		"zh_TW" : "加載遊戲物品信息失敗!",
 		"en_US" : "Failed to load game wares!"
+	},
+	"STR_LOADING_STATION_MODULES" :{
+		"zh_CN" : "正在加载空间站模块信息...",
+		"zh_TW" : "正在加載空間站模塊信息...",
+		"en_US" : "Loading informations of station modules..."
+	},
+	"STR_FAILED_LOAD_STATION_MODULES" :{
+		"zh_CN" : "加载空间站模块信息失败!",
+		"zh_TW" : "加載空間站模塊信息失敗!",
+		"en_US" : "Failed to load informations of station modules!"
 	}
 }

@@ -85,9 +85,9 @@ bool Config::getBool(const QString &key, bool defaultVal)
 }
 
 /**
- * @brief       Get number value.
+ * @brief       Get float value.
  */
-double Config::getNumber(const QString &key, double defaultVal)
+double Config::getFloat(const QString &key, double defaultVal)
 {
     // Split key.
     QVector<QString> splitedKey;
@@ -109,6 +109,33 @@ double Config::getNumber(const QString &key, double defaultVal)
 
     // Return
     return value.toDouble();
+}
+
+/**
+ * @brief       Get integer value.
+ */
+int64_t Config::getInt(const QString &key, int64_t defaultVal)
+{
+    // Split key.
+    QVector<QString> splitedKey;
+    if (! this->splitKey(key, splitedKey)) {
+        return defaultVal;
+    }
+
+    // Find value
+    QReadLocker locker(&m_lock);
+    QJsonValue  value;
+    if (! this->findNode(splitedKey, value)) {
+        return defaultVal;
+    }
+
+    // Check type.
+    if (this->valueType(value) != ValueType::Number) {
+        return defaultVal;
+    }
+
+    // Return
+    return value.toInt();
 }
 
 /**
@@ -156,9 +183,9 @@ void Config::setBool(const QString &key, bool value)
 }
 
 /**
- * @brief       Set number value.
+ * @brief       Set float value.
  */
-void Config::setNumber(const QString &key, double value)
+void Config::setFloat(const QString &key, double value)
 {
     // Split key.
     QVector<QString> splitedKey;
@@ -168,6 +195,22 @@ void Config::setNumber(const QString &key, double value)
 
     // Set value.
     QJsonValue v(value);
+    this->setNode(splitedKey, v);
+}
+
+/**
+ * @brief       Set number value.
+ */
+void Config::setInt(const QString &key, int64_t value)
+{
+    // Split key.
+    QVector<QString> splitedKey;
+    if (! this->splitKey(key, splitedKey)) {
+        return;
+    }
+
+    // Set value.
+    QJsonValue v((qint64)value);
     this->setNode(splitedKey, v);
 }
 

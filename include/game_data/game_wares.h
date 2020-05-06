@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <QtCore/QMap>
+#include <QtCore/QMetaEnum>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
 #include <QtCore/QVector>
@@ -23,6 +24,7 @@ class GameTexts;
  * @brief	Wares in game.
  */
 class GameWares :
+    virtual public QObject,
     public ILoadFactoryFunc<GameWares(::std::shared_ptr<GameVFS>,
                                       ::std::shared_ptr<GameTexts>,
                                       ::std::function<void(const QString &)>)> {
@@ -30,6 +32,8 @@ class GameWares :
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameTexts>,
               ::std::function<void(const QString &)>);
+
+    Q_OBJECT
 
   public:
     /**
@@ -53,6 +57,7 @@ class GameWares :
      * @brief	Production information.
      */
     struct ProductionInfo {
+        QString                              id;         ///< Ware ID.
         quint32                              time;       ///< Time per round(s).
         quint32                              amount;     ///< Amount per round.
         QString                              method;     ///< Method.
@@ -61,19 +66,29 @@ class GameWares :
     };
 
     /**
+     * @brief	Transport type.
+     */
+    enum TransportType {
+        Container, ///< Container.
+        Solid,     ///< Solid.
+        Liquid     ///< Liquid.
+    };
+    Q_ENUM(TransportType);
+
+    /**
      * @brief	Information of ware.
      */
     struct Ware {
-        QString           id;           ///< Ware ID.
-        GameTexts::IDPair name;         ///< Name.
-        GameTexts::IDPair description;  ///< Description.
-        QString           group;        ///< Group.
-        QString           transport;    ///< Transport type.
-        quint32           volume;       ///< Volume(m^3).
-        QStringList       tags;         ///< Tags.
-        quint32           minPrice;     ///< Minimun price(CR).
-        quint32           averagePrice; ///< Average price(CR).
-        quint32           maxPrice;     ///< Maxium price(CR).
+        QString           id;            ///< Ware ID.
+        GameTexts::IDPair name;          ///< Name.
+        GameTexts::IDPair description;   ///< Description.
+        QString           group;         ///< Group.
+        TransportType     transportType; ///< Transport type.
+        quint32           volume;        ///< Volume(m^3).
+        QStringList       tags;          ///< Tags.
+        quint32           minPrice;      ///< Minimun price(CR).
+        quint32           averagePrice;  ///< Average price(CR).
+        quint32           maxPrice;      ///< Maxium price(CR).
         QVector<::std::shared_ptr<ProductionInfo>>
             productionInfos; ///< Production informations.
     };

@@ -183,13 +183,26 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
             loader.pushContext(XMLLoader::Context::create());
             return true;
         }
+        TransportType transType;
+
+        if (attr["transport"] == "container") {
+            transType = TransportType::Container;
+        } else if (attr["transport"] == "liquid") {
+            transType = TransportType::Liquid;
+        } else if (attr["transport"] == "solid") {
+            transType = TransportType::Solid;
+        } else {
+            loader.pushContext(XMLLoader::Context::create());
+            return true;
+        }
+
         // Create ware
         ::std::shared_ptr<Ware> ware(new Ware(
             {attr["id"],
              attr["name"],
              attr["description"],
              attr["group"],
-             attr["transport"],
+             transType,
              attr["volume"].toUInt(),
              attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts),
              1,
@@ -200,9 +213,9 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
         m_wares[ware->id] = ware;
 
         context.setOnStopElement(::std::bind(
-            [this](XMLLoader &loader, XMLLoader::Context &context,
-                   const QString &name, ::std::shared_ptr<GameTexts> texts,
-                   ::std::shared_ptr<Ware> ware) -> bool {
+            [](XMLLoader &loader, XMLLoader::Context &context,
+               const QString &name, ::std::shared_ptr<GameTexts> texts,
+               ::std::shared_ptr<Ware> ware) -> bool {
                 UNREFERENCED_PARAMETER(loader);
                 if (name == "ware") {
                     // Append ware
@@ -214,7 +227,7 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                     qDebug() << "    description :"
                              << texts->text(ware->description);
                     qDebug() << "    group       :" << ware->group;
-                    qDebug() << "    transport   :" << ware->transport;
+                    qDebug() << "    transport   :" << ware->transportType;
                     qDebug() << "    volume      :" << ware->volume;
                     qDebug() << "    tags        :" << ware->tags;
                     qDebug() << "    minPrice    :" << ware->minPrice;
@@ -281,7 +294,8 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
 
     } else if (name == "production") {
         ::std::shared_ptr<ProductionInfo> info(
-            new ProductionInfo({attr["time"].toUInt(),
+            new ProductionInfo({ware->id,
+                                attr["time"].toUInt(),
                                 attr["amount"].toUInt(),
                                 attr["method"],
                                 1,
@@ -309,7 +323,6 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
             ::std::placeholders::_1, ::std::placeholders::_2,
             ::std::placeholders::_3, ::std::placeholders::_4, info));
         loader.pushContext(::std::move(context));
-
     } else {
         loader.pushContext(XMLLoader::Context::create());
     }

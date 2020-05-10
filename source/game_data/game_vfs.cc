@@ -18,7 +18,7 @@
  * @brief		Constructor.
  */
 GameVFS::GameVFS(const QString &                        gamePath,
-                 const QMap<int, CatFileInfo> &         info,
+                 const QMap<QString, CatFileInfo> &     info,
                  ::std::function<void(const QString &)> setTextFunc,
                  ::std::function<void(const QString &)> errFunc) :
     m_gamePath(gamePath),
@@ -120,8 +120,13 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
                 // Append file
                 // Split path
-                auto splittedPath = splittedLine[0].split(
+                auto basename = catDatInfo.cat.split(
                     '/', QString::SplitBehavior::SkipEmptyParts);
+                basename.pop_back();
+                auto splittedPath
+                    = basename
+                      + splittedLine[0].split(
+                          '/', QString::SplitBehavior::SkipEmptyParts);
                 if (splittedPath.empty()) {
                     break;
                 }
@@ -204,7 +209,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
  */
 ::std::shared_ptr<GameVFS>
     GameVFS::create(const QString &                        gamePath,
-                    const QMap<int, CatFileInfo> &         info,
+                    const QMap<QString, CatFileInfo> &     info,
                     ::std::function<void(const QString &)> setTextFunc,
                     ::std::function<void(const QString &)> errFunc)
 {

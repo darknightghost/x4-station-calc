@@ -21,7 +21,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         // Check game path
         m_gamePath = Config::instance()->getString("/gamePath", "");
-        QMap<int, GameVFS::CatFileInfo> catFiles;
+        QMap<QString, GameVFS::CatFileInfo> catFiles;
         if (! checkGamePath(m_gamePath, catFiles)) {
             if (splash->callFunc(::std::function<bool()>(
                     ::std::bind(&GameData::askGamePath, this)))) {
@@ -160,7 +160,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
  */
 bool GameData::checkGamePath(const QString &path)
 {
-    QMap<int, GameVFS::CatFileInfo> catFiles;
+    QMap<QString, GameVFS::CatFileInfo> catFiles;
     return this->checkGamePath(path, catFiles);
 }
 
@@ -169,7 +169,7 @@ bool GameData::checkGamePath(const QString &path)
  */
 bool GameData::setGamePath(const QString &path)
 {
-    QMap<int, GameVFS::CatFileInfo> catFiles;
+    QMap<QString, GameVFS::CatFileInfo> catFiles;
 
     if (! checkGamePath(path, catFiles)) {
         return false;
@@ -187,69 +187,90 @@ GameData::~GameData() {}
 /**
  * @brief		Check path of game.
  */
-bool GameData::checkGamePath(const QString &                  path,
-                             QMap<int, GameVFS::CatFileInfo> &catFiles)
+bool GameData::checkGamePath(const QString &                      path,
+                             QMap<QString, GameVFS::CatFileInfo> &catFiles)
 {
     // Prepare
-    QDir                            dir(path);
-    bool                            execFound = false;
-    QMap<int, GameVFS::CatFileInfo> catsFound;
+    QDir                                dir(path);
+    bool                                execFound = false;
+    QMap<QString, GameVFS::CatFileInfo> catsFound;
     qDebug() << "Checking game path...";
 
     // List files.
     // Filters
     QRegExp execFilter("x4|x4\\.exe");
     execFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp catFilter("\\d+\\.cat");
+    QRegExp catFilter("\\w+\\.cat");
     catFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp catSigFilter("\\d+_sig\\.cat");
-    catSigFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp datFilter("\\d+\\.dat");
+    QRegExp datFilter("\\w+\\.dat");
     datFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp datSigFilter("\\d+_sig\\.dat");
-    datSigFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
 
+    // Main
     for (auto &f :
-         dir.entryList(QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
-        if (execFilter.exactMatch(f)) {
-            qDebug() << "Game executable file :" << f << ".";
+         dir.entryInfoList(QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+        if (execFilter.exactMatch(f.fileName()) && ! f.isDir()) {
+            qDebug() << "Game executable file :" << f.fileName() << ".";
             execFound = true;
 
-        } else if (catFilter.exactMatch(f)) {
-            qDebug() << "Found cat file file :" << f << ".";
-            int  key  = this->getNumberFromStr(f);
-            auto iter = catsFound.find(key);
+        } else if (catFilter.exactMatch(f.fileName()) && ! f.isDir()) {
+            qDebug() << "Found cat file file :" << f.fileName() << ".";
+            QString key  = f.fileName().left(f.fileName().size() - 4);
+            auto    iter = catsFound.find(key);
             if (iter == catsFound.end()) {
                 catsFound[key] = GameVFS::CatFileInfo();
             }
-            catsFound[key].cat = f;
+            catsFound[key].cat = f.fileName();
 
-        } else if (catSigFilter.exactMatch(f)) {
-            qDebug() << "Found signature file of dat file :" << f << ".";
-            int  key  = this->getNumberFromStr(f);
-            auto iter = catsFound.find(key);
+        } else if (datFilter.exactMatch(f.fileName()) && ! f.isDir()) {
+            qDebug() << "Found dat file file :" << f.fileName() << ".";
+            QString key  = f.fileName().left(f.fileName().size() - 4);
+            auto    iter = catsFound.find(key);
             if (iter == catsFound.end()) {
                 catsFound[key] = GameVFS::CatFileInfo();
             }
-            catsFound[key].catSig = f;
+            catsFound[key].dat = f.fileName();
 
-        } else if (datFilter.exactMatch(f)) {
-            qDebug() << "Found dat file file :" << f << ".";
-            int  key  = this->getNumberFromStr(f);
-            auto iter = catsFound.find(key);
-            if (iter == catsFound.end()) {
-                catsFound[key] = GameVFS::CatFileInfo();
-            }
-            catsFound[key].dat = f;
+        } else if (f.fileName() == "extensions" && f.isDir()) {
+            // Extensions
+            QDir extensionsDir(f.absoluteFilePath());
+            for (auto &modEntry : extensionsDir.entryInfoList(
+                     QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+                if (modEntry.isDir() && modEntry.fileName() != "."
+                    && modEntry.fileName() != "..") {
+                    QDir modDir(modEntry.absoluteFilePath());
+                    for (auto &modFile : modDir.entryInfoList(
+                             QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+                        if (catFilter.exactMatch(modFile.fileName())
+                            && ! modFile.isDir()) {
+                            QString filename = QString("extensions/%1/%2")
+                                                   .arg(modEntry.fileName())
+                                                   .arg(modFile.fileName());
+                            qDebug()
+                                << "Found cat file file :" << filename << ".";
+                            QString key  = filename.left(filename.size() - 4);
+                            auto    iter = catsFound.find(key);
+                            if (iter == catsFound.end()) {
+                                catsFound[key] = GameVFS::CatFileInfo();
+                            }
+                            catsFound[key].cat = filename;
 
-        } else if (datSigFilter.exactMatch(f)) {
-            qDebug() << "Found signature file of dat file :" << f << ".";
-            int  key  = this->getNumberFromStr(f);
-            auto iter = catsFound.find(key);
-            if (iter == catsFound.end()) {
-                catsFound[key] = GameVFS::CatFileInfo();
+                        } else if (datFilter.exactMatch(modFile.fileName())
+                                   && ! modFile.isDir()) {
+                            QString filename = QString("extensions/%1/%2")
+                                                   .arg(modEntry.fileName())
+                                                   .arg(modFile.fileName());
+                            qDebug()
+                                << "Found dat file file :" << filename << ".";
+                            QString key  = filename.left(filename.size() - 4);
+                            auto    iter = catsFound.find(key);
+                            if (iter == catsFound.end()) {
+                                catsFound[key] = GameVFS::CatFileInfo();
+                            }
+                            catsFound[key].dat = filename;
+                        }
+                    }
+                }
             }
-            catsFound[key].datSig = f;
         }
     }
 
@@ -266,11 +287,9 @@ bool GameData::checkGamePath(const QString &                  path,
         return false;
     }
 
-    for (int i = 1; i < catsFound.size() + 1; i++) {
-        if (catsFound[i].cat == "" || catsFound[i].catSig == ""
-            || catsFound[i].dat == "" || catsFound[i].datSig == "") {
-            qDebug() << "Failed.";
-            return false;
+    for (auto &key : catsFound.keys()) {
+        if (catsFound[key].cat == "" || catsFound[key].dat == "") {
+            catsFound.remove(key);
         }
     }
 
@@ -301,21 +320,4 @@ bool GameData::askGamePath()
     Config::instance()->setString("/gamePath", m_gamePath);
 
     return true;
-}
-
-/**
- * @brief		Get number from string.
- */
-int GameData::getNumberFromStr(const QString &str)
-{
-    int ret = 0;
-    for (auto &c : str) {
-        if (c >= '0' && c <= '9') {
-            ret = ret * 10 + (c.toLatin1() - '0');
-        } else {
-            break;
-        }
-    }
-
-    return ret;
 }

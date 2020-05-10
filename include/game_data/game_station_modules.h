@@ -6,6 +6,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
+#include <QtCore/QSet>
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
@@ -65,7 +66,7 @@ class GameStationModules :
         StationModuleClass moduleClass;     ///< Class of station module.
         bool               playerModule;    ///< Player can build or not.
         GameTexts::IDPair  description;     ///< Module desctiption.
-        QStringList        races;           ///< Module races.
+        QSet<QString>      races;           ///< Module races.
         quint32            hull;            ///< Hull.
         quint32            explosiondamage; ///< Explosion damage.
     };
@@ -279,6 +280,26 @@ class GameStationModules :
                                        const QMap<QString, QString> &attr,
                                        ::std::shared_ptr<GameTexts>  texts,
                                        ::std::shared_ptr<GameWares>  wares);
+
+    /**
+     * @brief		Start element callback in macro.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	texts		Game texts.
+     * @param[in]	wares		Game wares.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInMacroOfMacro(XMLLoader &                      loader,
+                                      XMLLoader::Context &             context,
+                                      const QString &                  name,
+                                      const QMap<QString, QString> &   attr,
+                                      ::std::shared_ptr<GameWares>     wares,
+                                      ::std::shared_ptr<StationModule> module);
 
     /**
      * @brief		Load common data in propterties.

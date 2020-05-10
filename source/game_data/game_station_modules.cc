@@ -205,12 +205,6 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
             buildModule->moduleClass = StationModuleClass::BuildModule;
             module                   = buildModule;
 
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::
-                    onStartElementInBuiildModulePropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
-
         } else if (*iter == "connectionmodule") {
             ::std::shared_ptr<struct ConnectionModule> connectionModule(
                 new struct ConnectionModule);
@@ -218,23 +212,11 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
                 = StationModuleClass::ConnectionModule;
             module = connectionModule;
 
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::
-                    onStartElementInConnectionModulePropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
-
         } else if (*iter == "defencemodule") {
             ::std::shared_ptr<struct DefenceModule> defenceModule(
                 new struct DefenceModule);
             defenceModule->moduleClass = StationModuleClass::DefenceModule;
             module                     = defenceModule;
-
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::
-                    onStartElementInDefenceModulePropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
 
         } else if (*iter == "dockarea") {
             ::std::shared_ptr<struct DockareaModule> dockareaModule(
@@ -242,22 +224,11 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
             dockareaModule->moduleClass = StationModuleClass::Dockarea;
             module                      = dockareaModule;
 
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::onStartElementInDockareaPropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
-
         } else if (*iter == "habitation") {
             ::std::shared_ptr<struct HabitationModule> habitationModule(
                 new struct HabitationModule);
             habitationModule->moduleClass = StationModuleClass::Habitation;
             module                        = habitationModule;
-
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::
-                    onStartElementInHabitationPropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
 
         } else if (*iter == "production") {
             ::std::shared_ptr<struct ProductionModule> productionModule(
@@ -265,28 +236,21 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
             productionModule->moduleClass = StationModuleClass::Production;
             module                        = productionModule;
 
-            context->setOnStartElement(
-                ::std::bind(&GameStationModules::
-                                onStartElementInProductionPropertiesOfMacro,
-                            this, ::std::placeholders::_1,
-                            ::std::placeholders::_2, ::std::placeholders::_3,
-                            ::std::placeholders::_4, wares, module));
-
         } else if (*iter == "storage") {
             ::std::shared_ptr<struct StorageModule> storageModule(
                 new struct StorageModule);
             storageModule->moduleClass = StationModuleClass::Storage;
             module                     = storageModule;
 
-            context->setOnStartElement(::std::bind(
-                &GameStationModules::onStartElementInStoragePropertiesOfMacro,
-                this, ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, module));
-
         } else {
             loader.pushContext(::std::move(context));
             return true;
         }
+
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInMacroOfMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, wares, module));
 
         module->macro        = attr["name"];
         module->playerModule = false;
@@ -294,6 +258,7 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
                                             XMLLoader &, XMLLoader::Context &,
                                             const QString &name) -> bool {
             if (name == "macro" && module->playerModule) {
+                // Debug info.
                 qDebug() << "Module : {";
                 qDebug() << "    macro           : " << module->macro;
                 qDebug() << "    name            : "
@@ -315,6 +280,86 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
 }
 
 /**
+ * @brief		Start element callback in macro.
+ */
+bool GameStationModules::onStartElementInMacroOfMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<GameWares>     wares,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "properties") {
+        switch (module->moduleClass) {
+            case StationModuleClass::BuildModule:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInBuiildModulePropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::ConnectionModule:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInConnectionModulePropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::DefenceModule:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInDefenceModulePropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::Dockarea:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInDockareaPropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::Habitation:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInHabitationPropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::Production:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInProductionPropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, wares,
+                    module));
+                break;
+
+            case StationModuleClass::Storage:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInStoragePropertiesOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+
+                break;
+        }
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
  * @brief		Load common data in propterties.
  */
 bool GameStationModules::loadCommonPropertiesOfMacro(
@@ -328,7 +373,9 @@ bool GameStationModules::loadCommonPropertiesOfMacro(
         module->description = GameTexts::IDPair(attr["description"]);
         auto iter           = attr.find("makerrace");
         if (iter != attr.end()) {
-            module->races = iter->split(" ");
+            for (auto &s : iter->split(" ")) {
+                module->races.insert(s);
+            }
         }
 
     } else if (name == "build") {
@@ -356,6 +403,7 @@ bool GameStationModules::onStartElementInBuildOfMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
+
     if (name == "sets") {
         context->setOnStartElement(::std::bind(
             &GameStationModules::onStartElementInSetsOfMacro, this,
@@ -382,7 +430,6 @@ bool GameStationModules::onStartElementInSetsOfMacro(
         auto iter = attr.find("ref");
         if (iter != attr.end() && *iter == "headquarters_player") {
             module->playerModule = true;
-            qDebug() << "aaaaaaa";
         }
     }
     loader.pushContext(XMLLoader::Context::create());
@@ -403,6 +450,7 @@ bool GameStationModules::onStartElementInBuiildModulePropertiesOfMacro(
         = XMLLoader::Context::create();
     ::std::shared_ptr<struct BuildModule> buildModule
         = ::std::static_pointer_cast<struct BuildModule>(module);
+
     if (name == "workforce") {
         buildModule->workforce = attr["max"].toUInt();
 
@@ -443,6 +491,7 @@ bool GameStationModules::onStartElementInDefenceModulePropertiesOfMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
+
     this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
     loader.pushContext(::std::move(context));
     return true;
@@ -481,7 +530,7 @@ bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
     ::std::shared_ptr<struct HabitationModule> habitationModule
         = ::std::static_pointer_cast<struct HabitationModule>(module);
     if (name == "workforce") {
-        habitationModule->races.append(attr["race"]);
+        habitationModule->races.insert(attr["race"]);
         habitationModule->workforce = attr["capacity"].toULong();
 
     } else {

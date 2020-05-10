@@ -88,8 +88,8 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
      *				false.
      *
      */
-    bool checkGamePath(const QString &                  path,
-                       QMap<int, GameVFS::CatFileInfo> &catFiles);
+    bool checkGamePath(const QString &                      path,
+                       QMap<QString, GameVFS::CatFileInfo> &catFiles);
 
     /**
      * @brief		Ask game path.
@@ -98,15 +98,6 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
      *				false.
      */
     bool askGamePath();
-
-    /**
-     * @brief		Get number from string.
-     *
-     * @param[in]	str		String to get number.
-     *
-     * @return		Number got.
-     */
-    int getNumberFromStr(const QString &str);
 
   signals:
     /**

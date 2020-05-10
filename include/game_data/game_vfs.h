@@ -19,10 +19,8 @@ class GameVFS : private IIsGood {
      *
      */
     struct CatFileInfo {
-        QString cat;    ///< Name of cat file.
-        QString catSig; ///< Name of sig file of cat file.
-        QString dat;    ///< Name of dat file.
-        QString datSig; ///< Name of sig file of dat file.
+        QString cat; ///< Name of cat file.
+        QString dat; ///< Name of dat file.
     };
 
     /**
@@ -121,7 +119,7 @@ class GameVFS : private IIsGood {
      * @param[in]	errFunc			Callback to show error.
      */
     GameVFS(const QString &                        gamePath,
-            const QMap<int, CatFileInfo> &         info,
+            const QMap<QString, CatFileInfo> &     info,
             ::std::function<void(const QString &)> setTextFunc,
             ::std::function<void(const QString &)> errFunc);
 
@@ -139,7 +137,7 @@ class GameVFS : private IIsGood {
      */
     static ::std::shared_ptr<GameVFS>
         create(const QString &                        gamePath,
-               const QMap<int, CatFileInfo> &         info,
+               const QMap<QString, CatFileInfo> &     info,
                ::std::function<void(const QString &)> setTextFunc,
                ::std::function<void(const QString &)> errFunc);
 

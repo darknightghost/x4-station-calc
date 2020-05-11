@@ -34,6 +34,32 @@ GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
     XMLLoader loader;
     loader.parse(reader, ::std::move(context));
 
+    // Parse extension files
+    ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
+        = vfs->openDir("/extensions");
+    if (extensionsDir != nullptr) {
+        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
+                file = vfs->open(
+                    QString("/extensions/%1/index/macros.xml").arg(iter->name));
+                if (file == nullptr) {
+                    continue;
+                }
+                data = file->readAll();
+                QXmlStreamReader waresReader(data);
+
+                // Parse ware file
+                context = XMLLoader::Context::create();
+                context->setOnStartElement(::std::bind(
+                    &GameMacros::onStartElementInRoot, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+                loader.parse(waresReader, ::std::move(context));
+            }
+        }
+    }
+
     this->setGood();
 }
 

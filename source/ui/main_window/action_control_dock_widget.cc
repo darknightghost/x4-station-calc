@@ -1,4 +1,5 @@
 #include <QtGui/QCloseEvent>
+#include <QtGui/QResizeEvent>
 #include <QtWidgets/QAction>
 
 #include <ui/main_window/action_control_dock_widget.h>

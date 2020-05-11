@@ -81,27 +81,6 @@ class MainWindow : public QMainWindow {
     void initMenuToolBar();
 
     /**
-     * @brief		Resize event.
-     *
-     * @param[in]	event		Event.
-     */
-    virtual void resizeEvent(QResizeEvent *event) override;
-
-    /**
-     * @brief		Move event.
-     *
-     * @param[in]	event		Event.
-     */
-    virtual void moveEvent(QMoveEvent *event) override;
-
-    /**
-     * @brief		Change event.
-     *
-     * @param[in]	event		Event.
-     */
-    virtual void changeEvent(QEvent *event) override;
-
-    /**
      * @brief		Close event.
      *
      * @param[in]	event		Event.
@@ -121,7 +100,7 @@ class MainWindow : public QMainWindow {
      */
     void active();
 
-  public slots:
+  protected slots:
     /**
      * @brief		Change language.
      */

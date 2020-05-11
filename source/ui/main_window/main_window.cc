@@ -33,19 +33,17 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     windowRect.setSize(windowRect.size() / 2);
     windowRect.setX(windowRect.width() / 4);
     windowRect.setY(windowRect.height() / 4);
-    windowRect.setX(
-        Config::instance()->getInt("/MainWindow/x", windowRect.x()));
-    windowRect.setY(
-        Config::instance()->getInt("/MainWindow/y", windowRect.y()));
-    windowRect.setWidth(
-        Config::instance()->getInt("/MainWindow/width", windowRect.width()));
-    windowRect.setHeight(
-        Config::instance()->getInt("/MainWindow/height", windowRect.height()));
     this->setGeometry(windowRect);
+    this->restoreGeometry(QByteArray::fromHex(
+        Config::instance()
+            ->getString("/MainWindow/geometry", this->saveGeometry().toHex())
+            .toLocal8Bit()));
 
     // Window status.
-    this->setWindowState((Qt::WindowState)(Config::instance()->getInt(
-        "/MainWindow/state", Qt::WindowState::WindowNoState)));
+    this->restoreState(QByteArray::fromHex(
+        Config::instance()
+            ->getString("/MainWindow/status", this->saveState().toHex())
+            .toLocal8Bit()));
 
     // Initialize menus.
     this->initMenuToolBar();
@@ -55,11 +53,29 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
         = new StationModulesWidget(m_actionViewStationModules, this);
     this->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea,
                         m_stationModulesWidget, Qt::Orientation::Vertical);
+    m_stationModulesWidget->setObjectName("stationModulesWidget");
+
+    // Restore StationModulesWidget
+    m_stationModulesWidget->restoreGeometry(QByteArray::fromHex(
+        Config::instance()
+            ->getString("/MainWindow/StationModulesWidget/geometry",
+                        m_stationModulesWidget->saveGeometry().toHex())
+            .toLocal8Bit()));
+    this->restoreDockWidget(m_stationModulesWidget);
 
     // Information widget
     m_infoWidget = new InfoWidget(m_actionViewInfo, this);
     this->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea, m_infoWidget,
                         Qt::Orientation::Vertical);
+    m_infoWidget->setObjectName("infoWidget");
+
+    // Restore InfoWidget
+    m_infoWidget->restoreGeometry(QByteArray::fromHex(
+        Config::instance()
+            ->getString("/MainWindow/InfoWidget/geometry",
+                        m_infoWidget->saveGeometry().toHex())
+            .toLocal8Bit()));
+    this->restoreDockWidget(m_infoWidget);
 
     // Central widget
     m_centralWidget = new QTabWidget(this);
@@ -84,14 +100,15 @@ void MainWindow::initMenuToolBar()
     // Main menu.
     m_mainMenu = new QMenuBar(this);
     this->setMenuBar(m_mainMenu);
-    m_toolbarFile = new QToolBar(this);
-    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarFile);
-    m_toolbarFile->setFloatable(false);
 
     // File menu
     // Menu "File".
     m_menuFile = new QMenu(this);
     m_mainMenu->addMenu(m_menuFile);
+    m_toolbarFile = new QToolBar(this);
+    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarFile);
+    m_toolbarFile->setFloatable(false);
+    m_toolbarFile->setObjectName("toolbarFile");
 
     // Menu "File->New".
     m_acionFileNew = new QAction(this);
@@ -149,6 +166,7 @@ void MainWindow::initMenuToolBar()
     m_toolbarEdit = new QToolBar(this);
     this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarEdit);
     m_toolbarEdit->setFloatable(false);
+    m_toolbarEdit->setObjectName("toolbarEdit");
 
     // Menu "Edit->New Group".
     m_acionEditNewGroup = new QAction(this);
@@ -251,68 +269,31 @@ void MainWindow::initMenuToolBar()
 }
 
 /**
- * @brief		Resize event.
- */
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    if (! (this->windowState()
-           & (Qt::WindowState::WindowFullScreen
-              | Qt::WindowState::WindowMinimized
-              | Qt::WindowState::WindowMaximized))) {
-        Config::instance()->setInt("/MainWindow/width", event->size().width());
-        Config::instance()->setInt("/MainWindow/height",
-                                   event->size().height());
-    }
-    QMainWindow::resizeEvent(event);
-}
-
-/**
- * @brief		Move event.
- */
-void MainWindow::moveEvent(QMoveEvent *event)
-{
-    if (! (this->windowState()
-           & (Qt::WindowState::WindowFullScreen
-              | Qt::WindowState::WindowMinimized
-              | Qt::WindowState::WindowMaximized))) {
-        Config::instance()->setInt("/MainWindow/x", event->pos().x());
-        Config::instance()->setInt("/MainWindow/y", event->pos().y());
-    }
-    QMainWindow::moveEvent(event);
-}
-
-/**
- * @brief		Change event.
- */
-void MainWindow::changeEvent(QEvent *rawEvent)
-{
-    QMainWindow::changeEvent(rawEvent);
-
-    // After
-    switch (rawEvent->type()) {
-        case QEvent::Type::WindowStateChange: {
-            Config::instance()->setInt("/MainWindow/state",
-                                       this->windowState());
-        } break;
-
-        default:
-            break;
-    }
-
-    QMainWindow::changeEvent(rawEvent);
-}
-
-/**
  * @brief		Close event.
  *
  * @param[in]	event		Event.
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    // Save status.
+    Config::instance()->setString("/MainWindow/geometry",
+                                  this->saveGeometry().toHex());
+    Config::instance()->setString("/MainWindow/status",
+                                  this->saveState().toHex());
+    Config::instance()->setString(
+        "/MainWindow/StationModulesWidget/geometry",
+        m_stationModulesWidget->saveGeometry().toHex());
+    Config::instance()->setString("/MainWindow/InfoWidget/geometry",
+                                  m_infoWidget->saveGeometry().toHex());
+
+    // Station module widget
     m_stationModulesWidget->enableClose();
     m_stationModulesWidget->close();
+
+    // Info widget
     m_infoWidget->enableClose();
     m_infoWidget->close();
+
     event->accept();
 }
 

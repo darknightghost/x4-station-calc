@@ -5,7 +5,7 @@
 /**
  * @brief		Constructor.
  */
-LanguageMenu::LanguageMenu() : QMenu(nullptr)
+LanguageMenu::LanguageMenu(QWidget *parent) : QMenu(parent)
 {
     m_actionGroup = new QActionGroup(this);
     m_actionGroup->setExclusive(true);

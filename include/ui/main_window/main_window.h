@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QToolBar>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -13,23 +14,25 @@ class MainWindow : public QMainWindow {
     QMenuBar *m_mainMenu; ///< Main menu.
 
     // File menu
-    QMenu *  m_menuFile;        ///< Menu "File".
-    QAction *m_acionFileNew;    ///< Menu "File->New".
-    QAction *m_acionFileOpen;   ///< Menu "File->Open".
-    QAction *m_acionFileSave;   ///< Menu "File->Save".
-    QAction *m_acionFileSaveAs; ///< Menu "File->Save As".
-    QAction *m_acionFileClose;  ///< Menu "File->Close".
-    QAction *m_acionFileExit;   ///< Menu "File->Exit".
+    QMenu *   m_menuFile;        ///< Menu "File".
+    QToolBar *m_toolbarFile;     ///< Toolbar "File".
+    QAction * m_acionFileNew;    ///< Menu "File->New".
+    QAction * m_acionFileOpen;   ///< Menu "File->Open".
+    QAction * m_acionFileSave;   ///< Menu "File->Save".
+    QAction * m_acionFileSaveAs; ///< Menu "File->Save As".
+    QAction * m_acionFileClose;  ///< Menu "File->Close".
+    QAction * m_acionFileExit;   ///< Menu "File->Exit".
 
     // Edit menu
-    QMenu *  m_menuEdit;          ///< Menu "Edit".
-    QAction *m_acionEditNewGroup; ///< Menu "Edit->New Group".
-    QAction *m_acionEditUndo;     ///< Menu "Edit->Undo".
-    QAction *m_acionEditRedo;     ///< Menu "Edit->Redo".
-    QAction *m_acionEditCut;      ///< Menu "Edit->Cut".
-    QAction *m_acionEditCopy;     ///< Menu "Edit->Copy".
-    QAction *m_acionEditPaste;    ///< Menu "Edit->Paste".
-    QAction *m_acionEditRemove;   ///< Menu "Edit->Remove".
+    QMenu *   m_menuEdit;          ///< Menu "Edit".
+    QToolBar *m_toolbarEdit;       ///< Toolbar "Edit".
+    QAction * m_acionEditNewGroup; ///< Menu "Edit->New Group".
+    QAction * m_acionEditUndo;     ///< Menu "Edit->Undo".
+    QAction * m_acionEditRedo;     ///< Menu "Edit->Redo".
+    QAction * m_acionEditCut;      ///< Menu "Edit->Cut".
+    QAction * m_acionEditCopy;     ///< Menu "Edit->Copy".
+    QAction * m_acionEditPaste;    ///< Menu "Edit->Paste".
+    QAction * m_acionEditRemove;   ///< Menu "Edit->Remove".
 
     // Setting menu
     QMenu *  m_menuSettings;           ///< Menu "Settings".
@@ -61,7 +64,7 @@ class MainWindow : public QMainWindow {
     /**
      * @brief	Initialize Menu.
      */
-    void initMenu();
+    void initMenuToolBar();
 
     /**
      * @brief		Resize event.

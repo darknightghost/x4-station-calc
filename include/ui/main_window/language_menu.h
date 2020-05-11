@@ -16,8 +16,10 @@ class LanguageMenu : public QMenu {
   public:
     /**
      * @brief		Constructor.
+     *
+     * @param[in]	parent		Parent.
      */
-    LanguageMenu();
+    LanguageMenu(QWidget *parent = nullptr);
 
     /**
      * @brief		Destructor.

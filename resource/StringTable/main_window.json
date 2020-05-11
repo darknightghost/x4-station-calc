@@ -9,6 +9,11 @@
 		"zh_TW" : "文件(&F)",
 		"en_US" : "&File"
 	},
+    "STR_TOOLBAR_FILE": {
+        "zh_CN": "文件",
+		"zh_TW": "文件",
+        "en_US": "File"
+    },
 	"STR_MENU_FILE_NEW":{
 		"zh_CN" : "新建(&N)",
 		"zh_TW" : "新建(&N)",
@@ -44,6 +49,11 @@
 		"zh_TW" : "編輯(&E)",
 		"en_US" : "&Edit"
 	},
+    "STR_TOOLBAR_EDIT": {
+        "zh_CN": "编辑",
+		"zh_TW": "編輯",
+        "en_US": "Edit"
+    },
 	"STR_MENU_EDIT_NEW_GROUP":{
 		"zh_CN" : "新建分组(&N)",
 		"zh_TW" : "新建分組(&N)",

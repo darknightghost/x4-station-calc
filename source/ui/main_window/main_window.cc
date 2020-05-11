@@ -1,4 +1,6 @@
 #include <QtCore/QDebug>
+#include <QtGui/QIcon>
+#include <QtGui/QKeySequence>
 #include <QtGui/QMoveEvent>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QWindowStateChangeEvent>
@@ -45,7 +47,7 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
         "/MainWindow/state", Qt::WindowState::WindowNoState)));
 
     // Initialize menus.
-    this->initMenu();
+    this->initMenuToolBar();
 
     // Set text.
     this->onLanguageChanged();
@@ -61,121 +63,174 @@ MainWindow::~MainWindow() {}
 /**
  * @brief	Initialize Menu.
  */
-void MainWindow::initMenu()
+void MainWindow::initMenuToolBar()
 {
     // Main menu.
-    m_mainMenu = new QMenuBar();
+    m_mainMenu = new QMenuBar(this);
     this->setMenuBar(m_mainMenu);
+    m_toolbarFile = new QToolBar(this);
+    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarFile);
+    m_toolbarFile->setFloatable(false);
 
     // File menu
     // Menu "File".
-    m_menuFile = new QMenu();
+    m_menuFile = new QMenu(this);
     m_mainMenu->addMenu(m_menuFile);
 
     // Menu "File->New".
-    m_acionFileNew = new QAction();
+    m_acionFileNew = new QAction(this);
+    m_acionFileNew->setIcon(QIcon(":/Icons/FileNew.png"));
+    m_acionFileNew->setShortcut(QKeySequence::New);
     m_menuFile->addAction(m_acionFileNew);
+    m_toolbarFile->addAction(m_acionFileNew);
 
     // Menu "File->Open".
-    m_acionFileOpen = new QAction();
+    m_acionFileOpen = new QAction(this);
+    m_acionFileOpen->setIcon(QIcon(":/Icons/FileOpen.png"));
+    m_acionFileOpen->setShortcut(QKeySequence::Open);
     m_menuFile->addAction(m_acionFileOpen);
+    m_toolbarFile->addAction(m_acionFileOpen);
+
     m_menuFile->addSeparator();
+    m_toolbarFile->addSeparator();
 
     // Menu "File->Save".
-    m_acionFileSave = new QAction();
+    m_acionFileSave = new QAction(this);
+    m_acionFileSave->setIcon(QIcon(":/Icons/FileSave.png"));
+    m_acionFileSave->setShortcut(QKeySequence::Save);
     m_menuFile->addAction(m_acionFileSave);
+    m_toolbarFile->addAction(m_acionFileSave);
 
     // Menu "File->Save As".
-    m_acionFileSaveAs = new QAction();
+    m_acionFileSaveAs = new QAction(this);
+    m_acionFileSaveAs->setIcon(QIcon(":/Icons/FileSaveAs.png"));
+    m_acionFileSaveAs->setShortcut(QKeySequence::SaveAs);
     m_menuFile->addAction(m_acionFileSaveAs);
+    m_toolbarFile->addAction(m_acionFileSaveAs);
+
     m_menuFile->addSeparator();
 
     // Menu "File->Close".
-    m_acionFileClose = new QAction();
+    m_acionFileClose = new QAction(this);
+    m_acionFileClose->setIcon(QIcon(":/Icons/FileClose.png"));
+    m_acionFileClose->setShortcut(QKeySequence::Close);
     m_menuFile->addAction(m_acionFileClose);
+
     m_menuFile->addSeparator();
 
     // Menu "File->Exit".
-    m_acionFileExit = new QAction();
+    m_acionFileExit = new QAction(this);
+    m_acionFileExit->setIcon(QIcon(":/Icons/FileExit.png"));
+    m_acionFileExit->setShortcut(QKeySequence::Quit);
     m_menuFile->addAction(m_acionFileExit);
     this->connect(m_acionFileExit, &QAction::triggered, this,
                   &MainWindow::close);
 
     // Edit menu
     // Menu "Edit".
-    m_menuEdit = new QMenu();
+    m_menuEdit = new QMenu(this);
     m_mainMenu->addMenu(m_menuEdit);
+    m_toolbarEdit = new QToolBar(this);
+    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarEdit);
+    m_toolbarEdit->setFloatable(false);
 
     // Menu "Edit->New Group".
-    m_acionEditNewGroup = new QAction();
+    m_acionEditNewGroup = new QAction(this);
+    m_acionEditNewGroup->setIcon(QIcon(":/Icons/EditNewGroup.png"));
+    m_acionEditNewGroup->setShortcut(QKeySequence("Ctrl+G"));
     m_menuEdit->addAction(m_acionEditNewGroup);
+    m_toolbarEdit->addAction(m_acionEditNewGroup);
+
     m_menuEdit->addSeparator();
+    m_toolbarEdit->addSeparator();
 
     // Menu "Edit->Undo".
-    m_acionEditUndo = new QAction();
+    m_acionEditUndo = new QAction(this);
+    m_acionEditUndo->setIcon(QIcon(":/Icons/EditUndo.png"));
+    m_acionEditUndo->setShortcut(QKeySequence::Undo);
     m_menuEdit->addAction(m_acionEditUndo);
+    m_toolbarEdit->addAction(m_acionEditUndo);
 
     // Menu "Edit->Redo".
-    m_acionEditRedo = new QAction();
+    m_acionEditRedo = new QAction(this);
+    m_acionEditRedo->setIcon(QIcon(":/Icons/EditRedo.png"));
+    m_acionEditRedo->setShortcut(QKeySequence::Redo);
     m_menuEdit->addAction(m_acionEditRedo);
+    m_toolbarEdit->addAction(m_acionEditRedo);
+
     m_menuEdit->addSeparator();
+    m_toolbarEdit->addSeparator();
 
     // Menu "Edit->Cut".
-    m_acionEditCut = new QAction();
+    m_acionEditCut = new QAction(this);
+    m_acionEditCut->setIcon(QIcon(":/Icons/EditCut.png"));
+    m_acionEditCut->setShortcut(QKeySequence::Cut);
     m_menuEdit->addAction(m_acionEditCut);
+    m_toolbarEdit->addAction(m_acionEditCut);
 
     // Menu "Edit->Copy".
-    m_acionEditCopy = new QAction();
+    m_acionEditCopy = new QAction(this);
+    m_acionEditCopy->setIcon(QIcon(":/Icons/EditCopy.png"));
+    m_acionEditCopy->setShortcut(QKeySequence::Copy);
     m_menuEdit->addAction(m_acionEditCopy);
+    m_toolbarEdit->addAction(m_acionEditCopy);
 
     // Menu "Edit->Paste".
-    m_acionEditPaste = new QAction();
+    m_acionEditPaste = new QAction(this);
+    m_acionEditPaste->setIcon(QIcon(":/Icons/EditPaste.png"));
+    m_acionEditPaste->setShortcut(QKeySequence::Paste);
     m_menuEdit->addAction(m_acionEditPaste);
+    m_toolbarEdit->addAction(m_acionEditPaste);
+
     m_menuEdit->addSeparator();
+    m_toolbarEdit->addSeparator();
 
     // Menu "Edit->Remove".
-    m_acionEditRemove = new QAction();
+    m_acionEditRemove = new QAction(this);
+    m_acionEditRemove->setIcon(QIcon(":/Icons/EditRemove.png"));
+    m_acionEditRemove->setShortcut(QKeySequence("Ctrl+R"));
     m_menuEdit->addAction(m_acionEditRemove);
+    m_toolbarEdit->addAction(m_acionEditRemove);
 
     // Setting menu
     // Menu "Settings".
-    m_menuSettings = new QMenu();
+    m_menuSettings = new QMenu(this);
     m_mainMenu->addMenu(m_menuSettings);
 
     // Menu "Settings->Language".
-    m_menuSettingsLanguage = new LanguageMenu();
+    m_menuSettingsLanguage = new LanguageMenu(m_menuSettings);
     m_menuSettings->addMenu(m_menuSettingsLanguage);
     m_menuSettings->addSeparator();
 
     // Menu "Settings->Game Path".
-    m_actionSetttingGamePath = new QAction();
+    m_actionSetttingGamePath = new QAction(this);
     m_menuSettings->addAction(m_actionSetttingGamePath);
 
     // View menu
     // Menu "View".
-    m_menuView = new QMenu();
+    m_menuView = new QMenu(this);
     m_mainMenu->addMenu(m_menuView);
 
     // Menu "View->Station Modules".
-    m_actionViewStationModules = new QAction();
+    m_actionViewStationModules = new QAction(this);
     m_menuView->addAction(m_actionViewStationModules);
 
     // Menu "View->Info".
-    m_actionViewInfo = new QAction();
+    m_actionViewInfo = new QAction(this);
     m_menuView->addAction(m_actionViewInfo);
 
     // Help menu
     // Menu "Help".
-    m_menuHelp = new QMenu();
+    m_menuHelp = new QMenu(this);
     m_mainMenu->addMenu(m_menuHelp);
 
     // Menu "Help->About".
-    m_helpAbout = new QAction();
+    m_helpAbout = new QAction(this);
     m_menuHelp->addAction(m_helpAbout);
     m_menuHelp->addSeparator();
 
     // Menu "Help->Check Update".
-    m_helpCheckUpdate = new QAction();
+    m_helpCheckUpdate = new QAction(this);
     m_menuHelp->addAction(m_helpCheckUpdate);
 }
 
@@ -258,6 +313,9 @@ void MainWindow::onLanguageChanged()
     // Menu "File".
     m_menuFile->setTitle(STR("STR_MENU_FILE"));
 
+    // Toolbar "File".
+    m_toolbarFile->setWindowTitle(STR("STR_TOOLBAR_FILE"));
+
     // Menu "File->New".
     m_acionFileNew->setText(STR("STR_MENU_FILE_NEW"));
 
@@ -279,6 +337,9 @@ void MainWindow::onLanguageChanged()
     // Edit menu
     // Menu "Edit".
     m_menuEdit->setTitle(STR("STR_MENU_EDIT"));
+
+    // Toolbar "Edit".
+    m_toolbarEdit->setWindowTitle(STR("STR_TOOLBAR_EDIT"));
 
     // Menu "Edit->New Group".
     m_acionEditNewGroup->setText(STR("STR_MENU_EDIT_NEW_GROUP"));

@@ -71,7 +71,8 @@ class GameWares :
     enum TransportType {
         Container, ///< Container.
         Solid,     ///< Solid.
-        Liquid     ///< Liquid.
+        Liquid,    ///< Liquid.
+        Unknow     ///< Unknow type.
     };
     Q_ENUM(TransportType);
 

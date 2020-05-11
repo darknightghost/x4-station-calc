@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include <QtCore/QDebug>
 
 #include <game_data/game_station_modules.h>
@@ -29,6 +31,35 @@ GameStationModules::GameStationModules(
                     ::std::placeholders::_3, ::std::placeholders::_4, vfs,
                     macros, texts, wares));
     loader.parse(reader, ::std::move(context));
+
+    // Parse extension files
+    ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
+        = vfs->openDir("/extensions");
+    if (extensionsDir != nullptr) {
+        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
+                fileReader = vfs->open(
+                    QString("/extensions/%1/libraries/modulegroups.xml")
+                        .arg(iter->name));
+                if (fileReader == nullptr) {
+                    continue;
+                }
+
+                QXmlStreamReader reader(fileReader->readAll());
+
+                // Parse file
+                ::std::unique_ptr<XMLLoader::Context> context
+                    = XMLLoader::Context::create();
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::onStartElementInRootOfModuleGroups,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, vfs,
+                    macros, texts, wares));
+                loader.parse(reader, ::std::move(context));
+            }
+        }
+    }
 
     this->setGood();
 }
@@ -285,8 +316,8 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
 bool GameStationModules::onStartElementInMacroOfMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
+    const QString &name,
+    const QMap<QString, QString> &,
     ::std::shared_ptr<GameWares>     wares,
     ::std::shared_ptr<StationModule> module)
 {
@@ -332,7 +363,8 @@ bool GameStationModules::onStartElementInMacroOfMacro(
                     &GameStationModules::
                         onStartElementInHabitationPropertiesOfMacro,
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                    ::std::placeholders::_3, ::std::placeholders::_4, wares,
+                    module));
                 break;
 
             case StationModuleClass::Production:
@@ -522,6 +554,7 @@ bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
     XMLLoader::Context &,
     const QString &                  name,
     const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<GameWares>     wares,
     ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
@@ -530,8 +563,36 @@ bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
     ::std::shared_ptr<struct HabitationModule> habitationModule
         = ::std::static_pointer_cast<struct HabitationModule>(module);
     if (name == "workforce") {
+        /// Workforce
         habitationModule->races.insert(attr["race"]);
         habitationModule->workforce = attr["capacity"].toULong();
+
+        /// Supply
+        const ::std::shared_ptr<::GameWares::Ware> workunit
+            = wares->ware("workunit_busy");
+        for (auto &info : workunit->productionInfos) {
+            if (info->method == attr["race"]) {
+                ::std::shared_ptr<::GameWares::ProductionInfo> supplyInfo(
+                    new ::GameWares::ProductionInfo());
+                supplyInfo->id         = "";
+                supplyInfo->time       = info->time;
+                supplyInfo->amount     = attr["capacity"].toULong();
+                supplyInfo->method     = attr["race"];
+                supplyInfo->workEffect = 0;
+                for (auto &res : info->resources) {
+                    ::std::shared_ptr<GameWares::Resource> resource(
+                        new GameWares::Resource);
+                    resource->id = res->id;
+                    resource->amount
+                        = (quint32)::round(((long double)res->amount)
+                                           * supplyInfo->amount / info->amount);
+                    supplyInfo->resources.append(resource);
+                }
+
+                habitationModule->supplyInfo = supplyInfo;
+                break;
+            }
+        }
 
     } else {
         this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);

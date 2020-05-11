@@ -98,7 +98,8 @@ void MainWindow::initMenu()
     // Menu "File->Exit".
     m_acionFileExit = new QAction();
     m_menuFile->addAction(m_acionFileExit);
-    this->connect(m_acionFileExit, &QAction::toggled, this, &MainWindow::close);
+    this->connect(m_acionFileExit, &QAction::triggered, this,
+                  &MainWindow::close);
 
     // Edit menu
     // Menu "Edit".

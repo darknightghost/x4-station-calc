@@ -201,41 +201,66 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                                       ::std::shared_ptr<GameTexts>  texts)
 {
     if (name == "ware") {
-        if (attr.find("id") == attr.end() || attr.find("name") == attr.end()
-            || attr.find("description") == attr.end()
-            || attr.find("group") == attr.end()
-            || attr.find("transport") == attr.end()
-            || attr.find("volume") == attr.end()
-            || attr.find("tags") == attr.end()) {
+        if (attr.find("id") == attr.end()) {
             loader.pushContext(XMLLoader::Context::create());
             return true;
-        }
-        TransportType transType;
 
-        if (attr["transport"] == "container") {
-            transType = TransportType::Container;
-        } else if (attr["transport"] == "liquid") {
-            transType = TransportType::Liquid;
-        } else if (attr["transport"] == "solid") {
-            transType = TransportType::Solid;
-        } else {
+        } else if (attr["id"] != "workunit_busy"
+                   && (attr.find("name") == attr.end()
+                       || attr.find("description") == attr.end()
+                       || attr.find("group") == attr.end()
+                       || attr.find("transport") == attr.end()
+                       || attr.find("volume") == attr.end()
+                       || attr.find("tags") == attr.end())) {
             loader.pushContext(XMLLoader::Context::create());
             return true;
         }
+        ::std::shared_ptr<Ware> ware;
 
         // Create ware
-        ::std::shared_ptr<Ware> ware(new Ware(
-            {attr["id"],
-             attr["name"],
-             attr["description"],
-             attr["group"],
-             transType,
-             attr["volume"].toUInt(),
-             attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts),
-             1,
-             1,
-             1,
-             {}}));
+        if (attr["id"] == "workunit_busy") {
+            ware = ::std::shared_ptr<Ware>(
+                new Ware({attr["id"],
+                          attr["name"],
+                          QString(""),
+                          QString(""),
+                          TransportType::Unknow,
+                          attr["volume"].toUInt(),
+                          attr["tags"].split(
+                              " ", QString::SplitBehavior::SkipEmptyParts),
+                          1,
+                          1,
+                          1,
+                          {}}));
+
+        } else {
+            TransportType transType;
+
+            if (attr["transport"] == "container") {
+                transType = TransportType::Container;
+            } else if (attr["transport"] == "liquid") {
+                transType = TransportType::Liquid;
+            } else if (attr["transport"] == "solid") {
+                transType = TransportType::Solid;
+            } else {
+                loader.pushContext(XMLLoader::Context::create());
+                return true;
+            }
+
+            ware = ::std::shared_ptr<Ware>(
+                new Ware({attr["id"],
+                          attr["name"],
+                          attr["description"],
+                          attr["group"],
+                          transType,
+                          attr["volume"].toUInt(),
+                          attr["tags"].split(
+                              " ", QString::SplitBehavior::SkipEmptyParts),
+                          1,
+                          1,
+                          1,
+                          {}}));
+        }
 
         m_wares[ware->id] = ware;
 

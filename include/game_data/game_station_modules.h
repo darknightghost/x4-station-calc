@@ -98,6 +98,8 @@ class GameStationModules :
      */
     struct HabitationModule : public StationModule {
         quint64 workforce; ///< Workforce.
+        ::std::shared_ptr<GameWares::ProductionInfo>
+            supplyInfo; ///< Supply informations.
     };
 
     /**
@@ -400,6 +402,7 @@ class GameStationModules :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
+     * @param[in]	wares		Game wares.
      * @param[in]	module		Module.
      *
      * @return		Return \c true if the parsing should be continued.
@@ -410,6 +413,7 @@ class GameStationModules :
         XMLLoader::Context &             context,
         const QString &                  name,
         const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<GameWares>     wares,
         ::std::shared_ptr<StationModule> module);
 
     /**

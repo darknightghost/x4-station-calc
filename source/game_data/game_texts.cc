@@ -13,21 +13,55 @@
 GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
                      ::std::function<void(const QString &)> setTextFunc)
 {
+    QStringList textFiles;
+    QRegExp     nameFilter("\\d+-L\\d+\\.xml");
+    nameFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+
+    // Master files
     ::std::shared_ptr<GameVFS::DirReader> dirReader = vfs->openDir("t");
+    for (auto iter = dirReader->begin(); iter != dirReader->end(); ++iter) {
+        if (iter->type == ::GameVFS::DirReader::EntryType::File
+            && nameFilter.exactMatch(iter->name)) {
+            textFiles.append(dirReader->absPath(iter->name));
+        }
+    }
+
+    // Extension files
+    ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
+        = vfs->openDir("/extensions");
+    if (extensionsDir != nullptr) {
+        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
+                ::std::shared_ptr<GameVFS::DirReader> dirReader
+                    = vfs->openDir(QString("/extensions/%1/t").arg(iter->name));
+                if (dirReader == nullptr) {
+                    continue;
+                }
+                for (auto iter = dirReader->begin(); iter != dirReader->end();
+                     ++iter) {
+                    if (iter->type == ::GameVFS::DirReader::EntryType::File
+                        && nameFilter.exactMatch(iter->name)) {
+                        textFiles.append(dirReader->absPath(iter->name));
+                    }
+                }
+            }
+        }
+    }
 
     // Search file
-    auto                   allFileIter = dirReader->begin();
+    auto                   allFileIter = textFiles.begin();
     QMutex                 allFileIterLock;
     ::std::atomic<quint64> finishedCount;
-    size_t                 total = dirReader->count();
+    size_t                 total = textFiles.count();
     finishedCount                = 0;
     MultiRun loadTask(::std::function<void()>([&]() -> void {
-        GameVFS::DirReader::iterator fileIter;
+        QStringList::iterator fileIter;
         while (true) {
             // Get file
             {
                 QMutexLocker locker(&allFileIterLock);
-                if (allFileIter == dirReader->end()) {
+                if (allFileIter == textFiles.end()) {
                     return;
                 } else {
                     fileIter = allFileIter;
@@ -35,28 +69,23 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
                 }
             }
 
-            QRegExp nameFilter("\\d+-L\\d+\\.xml");
-            nameFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-            if (fileIter->type == GameVFS::DirReader::EntryType::File
-                && nameFilter.exactMatch(fileIter->name)) {
-                // Load file
-                qDebug() << "Loading file" << fileIter->name << ".";
+            // Load file
+            qDebug() << "Loading file" << *fileIter << ".";
 
-                // Open
-                ::std::shared_ptr<GameVFS::FileReader> fileReader
-                    = vfs->open(dirReader->absPath(fileIter->name));
+            // Open
+            ::std::shared_ptr<GameVFS::FileReader> fileReader
+                = vfs->open(*fileIter);
 
-                // Parse xml
-                QXmlStreamReader reader(fileReader->readAll());
-                XMLLoader        loader;
-                ::std::unique_ptr<XMLLoader::Context> context
-                    = XMLLoader::Context::create();
-                context->setOnStartElement(::std::bind(
-                    &GameTexts::onStartElementInRoot, this,
-                    ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4));
-                loader.parse(reader, ::std::move(context));
-            }
+            // Parse xml
+            QXmlStreamReader                      reader(fileReader->readAll());
+            XMLLoader                             loader;
+            ::std::unique_ptr<XMLLoader::Context> context
+                = XMLLoader::Context::create();
+            context->setOnStartElement(
+                ::std::bind(&GameTexts::onStartElementInRoot, this,
+                            ::std::placeholders::_1, ::std::placeholders::_2,
+                            ::std::placeholders::_3, ::std::placeholders::_4));
+            loader.parse(reader, ::std::move(context));
 
             finishedCount += 1;
             setTextFunc(

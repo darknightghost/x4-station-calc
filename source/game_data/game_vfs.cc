@@ -673,7 +673,11 @@ QString GameVFS::DirReader::path() const
  */
 QString GameVFS::DirReader::absPath(const QString &path) const
 {
-    QStringList dirList = m_path;
+    QStringList dirList;
+    if (path[0] != '/') {
+        dirList = m_path;
+    }
+
     for (auto &n : path.split('/', QString::SplitBehavior::SkipEmptyParts)) {
         if (n == ".") {
             continue;

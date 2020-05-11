@@ -1,4 +1,5 @@
 #include <QtCore/QDebug>
+#include <QtCore/QRegExp>
 
 #include <game_data/game_wares.h>
 
@@ -48,6 +49,32 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                     ::std::placeholders::_3, ::std::placeholders::_4, texts));
     if (! loader.parse(waresReader, ::std::move(context))) {
         return;
+    }
+
+    // Parse extension ware files
+    ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
+        = vfs->openDir("/extensions");
+    if (extensionsDir != nullptr) {
+        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
+                file = vfs->open(QString("/extensions/%1/libraries/wares.xml")
+                                     .arg(iter->name));
+                if (file == nullptr) {
+                    continue;
+                }
+                data = file->readAll();
+                QXmlStreamReader waresReader(data);
+
+                // Parse ware file
+                context = XMLLoader::Context::create();
+                context->setOnStartElement(::std::bind(
+                    &GameWares::onStartElementInExtensionsWaresRoot, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, texts));
+                loader.parse(waresReader, ::std::move(context));
+            }
+        }
     }
 
     this->setGood();
@@ -174,12 +201,12 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                                       ::std::shared_ptr<GameTexts>  texts)
 {
     if (name == "ware") {
-        if (attr.find("id") == attr.end() && attr.find("name") == attr.end()
-            && attr.find("description") == attr.end()
-            && attr.find("group") == attr.end()
-            && attr.find("transport") == attr.end()
-            && attr.find("volume") == attr.end()
-            && attr.find("tags") == attr.end()) {
+        if (attr.find("id") == attr.end() || attr.find("name") == attr.end()
+            || attr.find("description") == attr.end()
+            || attr.find("group") == attr.end()
+            || attr.find("transport") == attr.end()
+            || attr.find("volume") == attr.end()
+            || attr.find("tags") == attr.end()) {
             loader.pushContext(XMLLoader::Context::create());
             return true;
         }
@@ -401,5 +428,114 @@ bool GameWares::onStartElementInEffects(XMLLoader &                   loader,
         }
     }
     loader.pushContext(XMLLoader::Context::create());
+    return true;
+}
+
+/**
+ * @brief		Start element callback in the root node of wares of
+ *   			extensions.
+ */
+bool GameWares::onStartElementInExtensionsWaresRoot(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<GameTexts> texts)
+{
+    auto context = XMLLoader::Context::create();
+    if (name == "diff") {
+        context->setOnStartElement(::std::bind(
+            &GameWares::onStartElementInExtensionDiff, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, texts));
+    }
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in wares of extensions.
+ */
+bool GameWares::onStartElementInExtensionDiff(
+    XMLLoader &                   loader,
+    XMLLoader::Context &          currentContext,
+    const QString &               name,
+    const QMap<QString, QString> &attr,
+    ::std::shared_ptr<GameTexts>  texts)
+{
+    auto context = XMLLoader::Context::create();
+    // Filters
+    QRegExp wareFilter("\\/wares\\/ware\\[@id='(\\w+)'\\]");
+    wareFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    if (name == "add") {
+        if (attr["sel"] == "/wares") {
+            context->setOnStartElement(::std::bind(
+                &GameWares::onStartElementInWares, this,
+                ::std::placeholders::_1, ::std::placeholders::_2,
+                ::std::placeholders::_3, ::std::placeholders::_4, texts));
+        } else if (wareFilter.exactMatch(attr["sel"])) {
+            wareFilter.indexIn(attr["sel"]);
+            QString id = wareFilter.capturedTexts()[1];
+
+            auto iter = m_wares.find(id);
+            if (iter != m_wares.end()) {
+                ::std::shared_ptr<Ware> ware = *iter;
+                currentContext.setOnStopElement(::std::bind(
+                    [](XMLLoader &loader, XMLLoader::Context &context,
+                       const QString &name, ::std::shared_ptr<GameTexts> texts,
+                       ::std::shared_ptr<Ware> ware) -> bool {
+                        UNREFERENCED_PARAMETER(loader);
+                        if (name == "add") {
+                            // Append ware
+                            context.setOnStopElement(nullptr);
+
+                            qDebug() << "ware: {";
+                            qDebug() << "    id          :" << ware->id;
+                            qDebug() << "    name        :"
+                                     << texts->text(ware->name);
+                            qDebug() << "    description :"
+                                     << texts->text(ware->description);
+                            qDebug() << "    group       :" << ware->group;
+                            qDebug()
+                                << "    transport   :" << ware->transportType;
+                            qDebug() << "    volume      :" << ware->volume;
+                            qDebug() << "    tags        :" << ware->tags;
+                            qDebug() << "    minPrice    :" << ware->minPrice;
+                            qDebug()
+                                << "    averagePrice:" << ware->averagePrice;
+                            qDebug() << "    maxPrice    :" << ware->maxPrice;
+                            qDebug() << "    productionInfos:{";
+                            for (auto &info : ware->productionInfos) {
+                                qDebug() << "        time      :" << info->time;
+                                qDebug()
+                                    << "        method    :" << info->method;
+                                qDebug()
+                                    << "        amount    :" << info->amount;
+                                qDebug() << "        workEffect:"
+                                         << info->workEffect;
+                                qDebug() << "        resource  :{";
+                                for (auto &res : info->resources) {
+                                    qDebug() << "            {" << res->id
+                                             << ", " << res->amount << "},";
+                                }
+                                qDebug() << "        }";
+                            }
+                            qDebug() << "    }";
+                            qDebug() << "}";
+                        }
+
+                        return true;
+                    },
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, texts, ware));
+
+                context->setOnStartElement(::std::bind(
+                    &GameWares::onStartElementInWare, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, ware));
+            }
+        }
+    }
+    loader.pushContext(::std::move(context));
     return true;
 }

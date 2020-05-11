@@ -4,7 +4,11 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
+
+#include <ui/main_window/info_widget/info_widget.h>
+#include <ui/main_window/station_modules_widget/station_modules_widget.h>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -49,6 +53,16 @@ class MainWindow : public QMainWindow {
     QAction *m_helpAbout;       ///< Menu "Help->About".
     QAction *m_helpCheckUpdate; ///< Menu "Help->Check Update".
 
+    // Dock widgets
+    // Station module widget.
+    StationModulesWidget *m_stationModulesWidget; ///< Station modules widget.
+
+    // Info widget.
+    InfoWidget *m_infoWidget; ///< Information widget.
+
+    // Central widget
+    QTabWidget *m_centralWidget; ///< Central widget.
+
   public:
     /**
      * @brief		Constructor of main window.
@@ -86,6 +100,13 @@ class MainWindow : public QMainWindow {
      * @param[in]	event		Event.
      */
     virtual void changeEvent(QEvent *event) override;
+
+    /**
+     * @brief		Close event.
+     *
+     * @param[in]	event		Event.
+     */
+    virtual void closeEvent(QCloseEvent *event) override;
 
   private slots:
     /**

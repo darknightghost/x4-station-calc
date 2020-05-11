@@ -1,4 +1,5 @@
 #include <QtCore/QDebug>
+#include <QtGui/QCloseEvent>
 #include <QtGui/QIcon>
 #include <QtGui/QKeySequence>
 #include <QtGui/QMoveEvent>
@@ -48,6 +49,21 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
 
     // Initialize menus.
     this->initMenuToolBar();
+
+    // Station modules widget
+    m_stationModulesWidget
+        = new StationModulesWidget(m_actionViewStationModules, this);
+    this->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea,
+                        m_stationModulesWidget, Qt::Orientation::Vertical);
+
+    // Information widget
+    m_infoWidget = new InfoWidget(m_actionViewInfo, this);
+    this->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea, m_infoWidget,
+                        Qt::Orientation::Vertical);
+
+    // Central widget
+    m_centralWidget = new QTabWidget(this);
+    this->setCentralWidget(m_centralWidget);
 
     // Set text.
     this->onLanguageChanged();
@@ -282,6 +298,22 @@ void MainWindow::changeEvent(QEvent *rawEvent)
         default:
             break;
     }
+
+    QMainWindow::changeEvent(rawEvent);
+}
+
+/**
+ * @brief		Close event.
+ *
+ * @param[in]	event		Event.
+ */
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    m_stationModulesWidget->enableClose();
+    m_stationModulesWidget->close();
+    m_infoWidget->enableClose();
+    m_infoWidget->close();
+    event->accept();
 }
 
 /**

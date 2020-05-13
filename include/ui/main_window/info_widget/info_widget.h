@@ -2,6 +2,9 @@
 
 #include <ui/main_window/action_control_dock_widget.h>
 
+/**
+ * @brief	Information widget.
+ */
 class InfoWidget : public ActionControlDockWidget {
     Q_OBJECT
 

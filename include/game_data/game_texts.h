@@ -17,7 +17,7 @@
 class GameVFS;
 
 /**
- * @brief	Text in game.
+ * @brief	Texts in game.
  */
 class GameTexts :
     public ILoadFactoryFunc<GameTexts(::std::shared_ptr<GameVFS>,

@@ -22,7 +22,7 @@
 #define MIN_CAT_FILE_NUM 9
 
 /**
- * @brief   String table.
+ * @brief   Game datas.
  */
 class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     Q_OBJECT

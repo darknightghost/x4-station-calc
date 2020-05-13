@@ -7,6 +7,9 @@
 
 #include <locale/string_table.h>
 
+/**
+ * @brief	Language menu.
+ */
 class LanguageMenu : public QMenu {
     Q_OBJECT
   protected:

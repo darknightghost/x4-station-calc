@@ -12,6 +12,9 @@
 
 #include <interfaces/i_is_good.h>
 
+/**
+ * @brief	Virtual filesystem of the game.
+ */
 class GameVFS : private IIsGood {
   public:
     /**

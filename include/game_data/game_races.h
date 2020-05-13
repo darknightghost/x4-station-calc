@@ -17,7 +17,7 @@
 class GameVFS;
 
 /**
- * @brief	Macros in game.
+ * @brief	Races in game.
  */
 class GameRaces :
     public ILoadFactoryFunc<GameRaces(::std::shared_ptr<GameVFS>,

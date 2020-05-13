@@ -27,7 +27,7 @@ class GameTexts;
 class GameWares;
 
 /**
- * @brief	Macros in game.
+ * @brief	Station modules in game.
  */
 class GameStationModules :
     public ILoadFactoryFunc<GameStationModules(

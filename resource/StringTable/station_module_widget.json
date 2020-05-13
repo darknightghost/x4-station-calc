@@ -3,5 +3,35 @@
 		"zh_CN" : "空间站模块",
 		"zh_TW" : "空間站模塊",
 		"en_US" : "Station Modules"
+	},
+	"STR_SHOW_FILTER" : {
+		"zh_CN" : "显示过滤选项(&S)",
+		"zh_TW" : "顯示過濾選項(&S)",
+		"en_US" : "&Show Filter"
+	},
+	"STR_HIDE_FILTER" : {
+		"zh_CN" : "隐藏过滤选项(&H)",
+		"zh_TW" : "隱藏過濾選項(&H)",
+		"en_US" : "&Hide Filter"
+	},
+	"STR_ADD_TO_STATION" : {
+		"zh_CN" : "添加到空间站(&A)",
+		"zh_TW" : "添加到空間站(&A)",
+		"en_US" : "&Add to Station"
+	},
+	"STR_BY_RACE" : {
+		"zh_CN" : "按种族(&R)",
+		"zh_TW" : "按種族(&R)",
+		"en_US" : "By &Race"
+	},
+	"STR_BY_PRODUCT" : {
+		"zh_CN" : "按产品(&P)",
+		"zh_TW" : "按產品(&P)",
+		"en_US" : "By &Product"
+	},
+	"STR_BY_KEYWORD" : {
+		"zh_CN" : "按关键字(&K)",
+		"zh_TW" : "按關鍵字(&K)",
+		"en_US" : "By &Keyword"
 	}
 }

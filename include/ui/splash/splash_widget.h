@@ -17,6 +17,9 @@
 
 Q_DECLARE_METATYPE(::std::function<void()>);
 
+/**
+ * @brief		Splash widget.
+ */
 class SplashWidget : public QWidget {
     Q_OBJECT
   private:

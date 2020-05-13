@@ -5,6 +5,10 @@
 #include <QtCore/QThread>
 
 class SplashWidget;
+
+/**
+ * @brief	Working thread of splash widget.
+ */
 class SplashThread : public QThread {
     Q_OBJECT
   private:

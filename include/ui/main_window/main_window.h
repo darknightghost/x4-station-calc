@@ -10,6 +10,9 @@
 #include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/station_modules_widget/station_modules_widget.h>
 
+/**
+ * @brief	Main window.
+ */
 class MainWindow : public QMainWindow {
     Q_OBJECT
 

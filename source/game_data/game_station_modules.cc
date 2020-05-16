@@ -76,6 +76,22 @@ const QVector<::std::shared_ptr<GameStationModules::StationModule>> &
 }
 
 /**
+ * @brief		Get modules.
+ *
+ * @return		Modules.
+ */
+::std::shared_ptr<GameStationModules::StationModule>
+    GameStationModules::module(const QString &macro)
+{
+    auto iter = m_modulesIndex.find(macro);
+    if (iter != m_modulesIndex.end()) {
+        return *iter;
+    } else {
+        return nullptr;
+    }
+}
+
+/**
  * @brief		Destructor.
  */
 GameStationModules::~GameStationModules() {}
@@ -230,52 +246,57 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
         }
 
         ::std::shared_ptr<StationModule> module;
-        if (*iter == "buildmodule") {
-            ::std::shared_ptr<struct BuildModule> buildModule(
-                new struct BuildModule);
-            buildModule->moduleClass = StationModuleClass::BuildModule;
-            module                   = buildModule;
+        auto moduleiter = m_modulesIndex.find(attr["name"]);
+        if (moduleiter == m_modulesIndex.end()) {
+            if (*iter == "buildmodule") {
+                ::std::shared_ptr<struct BuildModule> buildModule(
+                    new struct BuildModule);
+                buildModule->moduleClass = StationModuleClass::BuildModule;
+                module                   = buildModule;
 
-        } else if (*iter == "connectionmodule") {
-            ::std::shared_ptr<struct ConnectionModule> connectionModule(
-                new struct ConnectionModule);
-            connectionModule->moduleClass
-                = StationModuleClass::ConnectionModule;
-            module = connectionModule;
+            } else if (*iter == "connectionmodule") {
+                ::std::shared_ptr<struct ConnectionModule> connectionModule(
+                    new struct ConnectionModule);
+                connectionModule->moduleClass
+                    = StationModuleClass::ConnectionModule;
+                module = connectionModule;
 
-        } else if (*iter == "defencemodule") {
-            ::std::shared_ptr<struct DefenceModule> defenceModule(
-                new struct DefenceModule);
-            defenceModule->moduleClass = StationModuleClass::DefenceModule;
-            module                     = defenceModule;
+            } else if (*iter == "defencemodule") {
+                ::std::shared_ptr<struct DefenceModule> defenceModule(
+                    new struct DefenceModule);
+                defenceModule->moduleClass = StationModuleClass::DefenceModule;
+                module                     = defenceModule;
 
-        } else if (*iter == "dockarea") {
-            ::std::shared_ptr<struct DockareaModule> dockareaModule(
-                new struct DockareaModule);
-            dockareaModule->moduleClass = StationModuleClass::Dockarea;
-            module                      = dockareaModule;
+            } else if (*iter == "dockarea" || *iter == "pier") {
+                ::std::shared_ptr<struct DockareaModule> dockareaModule(
+                    new struct DockareaModule);
+                dockareaModule->moduleClass = StationModuleClass::Dockarea;
+                module                      = dockareaModule;
 
-        } else if (*iter == "habitation") {
-            ::std::shared_ptr<struct HabitationModule> habitationModule(
-                new struct HabitationModule);
-            habitationModule->moduleClass = StationModuleClass::Habitation;
-            module                        = habitationModule;
+            } else if (*iter == "habitation") {
+                ::std::shared_ptr<struct HabitationModule> habitationModule(
+                    new struct HabitationModule);
+                habitationModule->moduleClass = StationModuleClass::Habitation;
+                module                        = habitationModule;
 
-        } else if (*iter == "production") {
-            ::std::shared_ptr<struct ProductionModule> productionModule(
-                new struct ProductionModule);
-            productionModule->moduleClass = StationModuleClass::Production;
-            module                        = productionModule;
+            } else if (*iter == "production") {
+                ::std::shared_ptr<struct ProductionModule> productionModule(
+                    new struct ProductionModule);
+                productionModule->moduleClass = StationModuleClass::Production;
+                module                        = productionModule;
 
-        } else if (*iter == "storage") {
-            ::std::shared_ptr<struct StorageModule> storageModule(
-                new struct StorageModule);
-            storageModule->moduleClass = StationModuleClass::Storage;
-            module                     = storageModule;
+            } else if (*iter == "storage") {
+                ::std::shared_ptr<struct StorageModule> storageModule(
+                    new struct StorageModule);
+                storageModule->moduleClass = StationModuleClass::Storage;
+                module                     = storageModule;
 
+            } else {
+                loader.pushContext(::std::move(context));
+                return true;
+            }
         } else {
-            loader.pushContext(::std::move(context));
-            return true;
+            module = *moduleiter;
         }
 
         context->setOnStartElement(::std::bind(
@@ -462,6 +483,10 @@ bool GameStationModules::onStartElementInSetsOfMacro(
         auto iter = attr.find("ref");
         if (iter != attr.end() && *iter == "headquarters_player") {
             module->playerModule = true;
+            if (m_modulesIndex.find(module->macro) == m_modulesIndex.end()) {
+                m_modules.push_back(module);
+                m_modulesIndex[module->macro] = module;
+            }
         }
     }
     loader.pushContext(XMLLoader::Context::create());

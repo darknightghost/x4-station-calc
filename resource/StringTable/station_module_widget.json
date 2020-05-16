@@ -33,5 +33,40 @@
 		"zh_CN" : "按关键字(&K)",
 		"zh_TW" : "按關鍵字(&K)",
 		"en_US" : "By &Keyword"
-	}
+	},
+    "STATION_TYPE_BUILD": {
+        "zh_CN": "建造模块",
+        "zh_TW": "建造模塊",
+        "en_US": "Build Modules"
+    },
+    "STATION_TYPE_DOCK": {
+        "zh_CN": "停靠模块",
+        "zh_TW": "停靠模塊",
+        "en_US": "Dock Modules"
+    },
+    "STATION_TYPE_PRODUCTION": {
+        "zh_CN": "生产模块",
+        "zh_TW": "生產模塊",
+        "en_US": "Production Modules"
+    },
+    "STATION_TYPE_STORAGE": {
+        "zh_CN": "仓储模块",
+        "zh_TW": "倉儲模塊",
+        "en_US": "Storage Modules"
+    },
+    "STATION_TYPE_HABITATION": {
+        "zh_CN": "居住模块",
+        "zh_TW": "居住模塊",
+        "en_US": "Habitation Modules"
+    },
+    "STATION_TYPE_DEFENCE": {
+        "zh_CN": "防御模块",
+        "zh_TW": "防禦模塊",
+        "en_US": "Defence Modules"
+    },
+    "STATION_TYPE_CONNECT": {
+        "zh_CN": "连接模块",
+        "zh_TW": "鏈接模塊",
+        "en_US": "Connection Modules"
+    }
 }

@@ -321,3 +321,59 @@ bool GameData::askGamePath()
 
     return true;
 }
+
+/*
+ * @brief	Get game VFS.
+ */
+::std::shared_ptr<GameVFS> GameData::vfs()
+{
+    return m_vfs;
+}
+
+/*
+ * @brief	Get game texts.
+ */
+::std::shared_ptr<GameTexts> GameData::texts()
+{
+    return m_texts;
+}
+
+/*
+ * @brief	Get game macros.
+ */
+::std::shared_ptr<GameMacros> GameData::macros()
+{
+    return m_macros;
+}
+
+/*
+ * @brief	Get game components.
+ */
+::std::shared_ptr<GameComponents> GameData::components()
+{
+    return m_components;
+}
+
+/*
+ * @brief	Get game races.
+ */
+::std::shared_ptr<GameRaces> GameData::races()
+{
+    return m_races;
+}
+
+/*
+ * @brief	Get game wares
+ */
+::std::shared_ptr<GameWares> GameData::wares()
+{
+    return m_wares;
+}
+
+/*
+ * @brief	Get station modules.
+ */
+::std::shared_ptr<GameStationModules> GameData::stationModules()
+{
+    return m_stationModules;
+}

@@ -128,3 +128,77 @@ bool between(
                                     long double, T>::type>::type>(value, b1,
                                                                   b2);
 }
+
+/**
+ * @brief		Check if the value is in the following values.
+ *
+ * @tparam		T		Type of the value.
+ * @tparam		T1		Type of the first following value.
+ * @tparam		Values	Type of the following values.
+ * @param[in]	value	Value to check.
+ * @param[in]	value1  The first following value.
+ * @param[in]	values	Following values.
+ *
+ * @return		If the value is in the following values, \c true is returned.
+ *				otherwise returns \c false.
+ */
+template<typename T, typename T1, typename... Values>
+bool in(T value, T1 value1, Values... values)
+{
+    if (value == value1) {
+        return true;
+    } else {
+        return in(value, values...);
+    }
+}
+
+/**
+ * @brief		End of the recursion.
+ *
+ * @tparam		T		Type of the value.
+ * @param[in]	value	Value to check.
+ *
+ * @return		\c false.
+ */
+template<typename T, typename... Values>
+bool in(T)
+{
+    return false;
+}
+
+/**
+ * @brief		Check if the value is not in the following values.
+ *
+ * @tparam		T		Type of the value.
+ * @tparam		T1		Type of the first following value.
+ * @tparam		Values	Type of the following values.
+ * @param[in]	value	Value to check.
+ * @param[in]	value1  The first following value.
+ * @param[in]	values	Following values.
+ *
+ * @return		If the value is not in the following values, \c true is
+ *				returned. otherwise returns \c false.
+ */
+template<typename T, typename T1, typename... Values>
+bool notIn(T value, T1 value1, Values... values)
+{
+    if (value == value1) {
+        return false;
+    } else {
+        return notIn(value, values...);
+    }
+}
+
+/**
+ * @brief		End of the recursion.
+ *
+ * @tparam		T		Type of the value.
+ * @param[in]	value	Value to check.
+ *
+ * @return		\c true.
+ */
+template<typename T, typename... Values>
+bool notIn(T)
+{
+    return true;
+}

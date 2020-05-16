@@ -184,6 +184,7 @@ void StringTable::setLanguage(const QString &language)
         Config::instance()->setString("/language", m_language);
     }
     emit this->languageChanged();
+    emit this->afterLanguageChanged();
 }
 
 /**

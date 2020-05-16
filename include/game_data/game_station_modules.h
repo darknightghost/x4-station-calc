@@ -122,6 +122,8 @@ class GameStationModules :
 
   private:
     QVector<::std::shared_ptr<StationModule>> m_modules; ///< Station modules.
+    QMap<QString, ::std::shared_ptr<StationModule>>
+        m_modulesIndex; ///< Station modules index.
 
   protected:
     /**
@@ -146,6 +148,13 @@ class GameStationModules :
      * @return		Modules.
      */
     const QVector<::std::shared_ptr<StationModule>> &modules() const;
+
+    /**
+     * @brief		Get modules.
+     *
+     * @return		Modules.
+     */
+    ::std::shared_ptr<StationModule> module(const QString &macro);
 
     /**
      * @brief		Destructor.

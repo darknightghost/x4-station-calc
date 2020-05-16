@@ -34,7 +34,7 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
     ::std::shared_ptr<GameVFS>        m_vfs;        ///< Game VFS
     ::std::shared_ptr<GameTexts>      m_texts;      ///< Game texts.
     ::std::shared_ptr<GameMacros>     m_macros;     ///< Game macros.
-    ::std::shared_ptr<GameComponents> m_components; ///< Game macros.
+    ::std::shared_ptr<GameComponents> m_components; ///< Game components.
     ::std::shared_ptr<GameRaces>      m_races;      ///< Game races.
     ::std::shared_ptr<GameWares>      m_wares;      ///< Game wares
     ::std::shared_ptr<GameStationModules>
@@ -76,6 +76,56 @@ class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
      * @brief Destructor.
      */
     virtual ~GameData();
+
+  public:
+    /*
+     * @brief	Get game VFS.
+     *
+     * @return	Game VFS.
+     */
+    ::std::shared_ptr<GameVFS> vfs();
+
+    /*
+     * @brief	Get game texts.
+     *
+     * @return	Game texts.
+     */
+    ::std::shared_ptr<GameTexts> texts();
+
+    /*
+     * @brief	Get game macros.
+     *
+     * @return	Game macros.
+     */
+    ::std::shared_ptr<GameMacros> macros();
+
+    /*
+     * @brief	Get game components.
+     *
+     * @return	Game components.
+     */
+    ::std::shared_ptr<GameComponents> components();
+
+    /*
+     * @brief	Get game races.
+     *
+     * @return	Game races.
+     */
+    ::std::shared_ptr<GameRaces> races();
+
+    /*
+     * @brief	Get game wares
+     *
+     * @return	Game wares
+     */
+    ::std::shared_ptr<GameWares> wares();
+
+    /*
+     * @brief	Get station modules.
+     *
+     * @return	Station modules.
+     */
+    ::std::shared_ptr<GameStationModules> stationModules();
 
   private:
     /**

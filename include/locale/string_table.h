@@ -82,6 +82,11 @@ class StringTable : public QObject, public Singleton<StringTable> {
      */
     void languageChanged();
 
+    /**
+     * @brief   Emit after languageChanged().
+     */
+    void afterLanguageChanged();
+
   public:
     /**
      * @brief Destructor.

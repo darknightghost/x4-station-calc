@@ -138,7 +138,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -146,8 +145,7 @@ class GameWares :
     bool onStartElementInGroupRoot(XMLLoader &                   loader,
                                    XMLLoader::Context &          context,
                                    const QString &               name,
-                                   const QMap<QString, QString> &attr,
-                                   ::std::shared_ptr<GameTexts>  texts);
+                                   const QMap<QString, QString> &attr);
 
     /**
      * @brief		Start element callback in groups.
@@ -156,7 +154,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -164,8 +161,7 @@ class GameWares :
     bool onStartElementInGroups(XMLLoader &                   loader,
                                 XMLLoader::Context &          context,
                                 const QString &               name,
-                                const QMap<QString, QString> &attr,
-                                ::std::shared_ptr<GameTexts>  texts);
+                                const QMap<QString, QString> &attr);
 
     /**
      * @brief		Start element callback in the root node of wares.
@@ -174,7 +170,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -182,8 +177,7 @@ class GameWares :
     bool onStartElementInWaresRoot(XMLLoader &                   loader,
                                    XMLLoader::Context &          context,
                                    const QString &               name,
-                                   const QMap<QString, QString> &attr,
-                                   ::std::shared_ptr<GameTexts>  texts);
+                                   const QMap<QString, QString> &attr);
 
     /**
      * @brief		Start element callback in wares.
@@ -192,7 +186,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -200,8 +193,7 @@ class GameWares :
     bool onStartElementInWares(XMLLoader &                   loader,
                                XMLLoader::Context &          context,
                                const QString &               name,
-                               const QMap<QString, QString> &attr,
-                               ::std::shared_ptr<GameTexts>  texts);
+                               const QMap<QString, QString> &attr);
 
     /**
      * @brief		Start element callback in ware.
@@ -283,7 +275,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -292,8 +283,7 @@ class GameWares :
         onStartElementInExtensionsWaresRoot(XMLLoader &         loader,
                                             XMLLoader::Context &context,
                                             const QString &     name,
-                                            const QMap<QString, QString> &attr,
-                                            ::std::shared_ptr<GameTexts> texts);
+                                            const QMap<QString, QString> &attr);
 
     /**
      * @brief		Start element callback in wares of extensions.
@@ -302,7 +292,6 @@ class GameWares :
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	texts		Game texts.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
@@ -310,6 +299,5 @@ class GameWares :
     bool onStartElementInExtensionDiff(XMLLoader &                   loader,
                                        XMLLoader::Context &          context,
                                        const QString &               name,
-                                       const QMap<QString, QString> &attr,
-                                       ::std::shared_ptr<GameTexts>  texts);
+                                       const QMap<QString, QString> &attr);
 };

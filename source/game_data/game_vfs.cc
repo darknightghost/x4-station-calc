@@ -259,9 +259,20 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
         auto pathIter = entry->children.find(name);
         if (pathIter == entry->children.end()) {
-            return nullptr;
+            bool found = false;
+            for (auto &key : entry->children.keys()) {
+                if (key.toLower() == name.toLower()) {
+                    entry = entry->children[key];
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                return nullptr;
+            }
+        } else {
+            entry = *pathIter;
         }
-        entry = *pathIter;
     }
     if (entry->isDirectory) {
         return nullptr;

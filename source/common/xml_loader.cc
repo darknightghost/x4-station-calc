@@ -10,6 +10,7 @@ XMLLoader::XMLLoader() {}
  */
 void XMLLoader::pushContext(::std::unique_ptr<Context> context)
 {
+    Q_ASSERT(context != nullptr);
     m_contextStack.push_back(::std::move(context));
 }
 
@@ -106,3 +107,11 @@ bool XMLLoader::parse(QXmlStreamReader &         reader,
  * @brief	Destructor.
  */
 XMLLoader::~XMLLoader() {}
+
+/**
+ * @brief		Operator [].
+ */
+::std::any &XMLLoader::operator[](const QString &key)
+{
+    return m_values[key];
+}

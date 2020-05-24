@@ -3,5 +3,46 @@
 		"zh_CN" : "信息",
 		"zh_TW" : "信息",
 		"en_US" : "Infomation"
+	},
+	"STR_INFO_NAME" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_DESCRIPTION" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_STATION_MODULE_TYPE" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_RACE" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_HULL" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_EXPLOSION_DAMAGE" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_STORAGE_TYPE" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
+	},
+	"STR_INFO_VOLUME" : {
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Infomation"
 	}
+
 }

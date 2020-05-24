@@ -126,7 +126,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         // Load station modules
         ::std::shared_ptr<GameStationModules> stationModules
-            = GameStationModules::load(vfs, macros, texts, wares,
+            = GameStationModules::load(vfs, macros, texts, wares, components,
                                        [&](const QString &s) -> void {
                                            splash->setText(s);
                                        });

@@ -1,8 +1,11 @@
 #pragma once
 
+#include <any>
+#include <map>
 #include <memory>
 #include <vector>
 
+#include <QtCore/QString>
 #include <QtCore/QXmlStreamReader>
 
 /**
@@ -17,6 +20,7 @@ class XMLLoader {
 
   protected:
     ::std::vector<::std::unique_ptr<Context>> m_contextStack; ///< Contexts.
+    ::std::map<QString, ::std::any>           m_values;       ///< Values.
 
   public:
     /**
@@ -46,6 +50,15 @@ class XMLLoader {
      * @brief	Destructor.
      */
     virtual ~XMLLoader();
+
+    /**
+     * @brief		Operator [].
+     *
+     * @param[in]	key		Key of the value.
+     *
+     * @return		Value.
+     */
+    ::std::any &operator[](const QString &key);
 };
 
 #include <common/xml_loader_context.h>

@@ -8,7 +8,7 @@
 #include <locale/string_table.h>
 
 /**
- * #brief	Tree widget item of station modules.
+ * @brief	Tree widget item of station modules.
  */
 class StationModulesTreeWidgetItem : public QTreeWidgetItem {
   protected:

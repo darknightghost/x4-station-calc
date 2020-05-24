@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include <QtCore/QDebug>
+#include <QtCore/QSet>
 
 #include <game_data/game_station_modules.h>
 
@@ -12,6 +13,7 @@ GameStationModules::GameStationModules(
     ::std::shared_ptr<GameMacros>          macros,
     ::std::shared_ptr<GameTexts>           texts,
     ::std::shared_ptr<GameWares>           wares,
+    ::std::shared_ptr<GameComponents>      components,
     ::std::function<void(const QString &)> setTextFunc)
 {
     qDebug() << "Loading station modules...";
@@ -28,8 +30,12 @@ GameStationModules::GameStationModules(
     context->setOnStartElement(
         ::std::bind(&GameStationModules::onStartElementInRootOfModuleGroups,
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, vfs,
-                    macros, texts, wares));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+    loader["vfs"]        = vfs;
+    loader["macros"]     = macros;
+    loader["texts"]      = texts;
+    loader["wares"]      = wares;
+    loader["components"] = components;
     loader.parse(reader, ::std::move(context));
 
     // Parse extension files
@@ -54,8 +60,7 @@ GameStationModules::GameStationModules(
                 context->setOnStartElement(::std::bind(
                     &GameStationModules::onStartElementInRootOfModuleGroups,
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, vfs,
-                    macros, texts, wares));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
                 loader.parse(reader, ::std::move(context));
             }
         }
@@ -103,11 +108,7 @@ bool GameStationModules::onStartElementInGroupsOfModuleGroups(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
-    const QMap<QString, QString> &,
-    ::std::shared_ptr<GameVFS>    vfs,
-    ::std::shared_ptr<GameMacros> macros,
-    ::std::shared_ptr<GameTexts>  texts,
-    ::std::shared_ptr<GameWares>  wares)
+    const QMap<QString, QString> &)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
@@ -115,8 +116,7 @@ bool GameStationModules::onStartElementInGroupsOfModuleGroups(
         context->setOnStartElement(::std::bind(
             &GameStationModules::onStartElementInGroupOfModuleGroups, this,
             ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, vfs, macros,
-            texts, wares));
+            ::std::placeholders::_3, ::std::placeholders::_4));
     }
     loader.pushContext(::std::move(context));
     return true;
@@ -129,11 +129,7 @@ bool GameStationModules::onStartElementInRootOfModuleGroups(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
-    const QMap<QString, QString> &,
-    ::std::shared_ptr<GameVFS>    vfs,
-    ::std::shared_ptr<GameMacros> macros,
-    ::std::shared_ptr<GameTexts>  texts,
-    ::std::shared_ptr<GameWares>  wares)
+    const QMap<QString, QString> &)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
@@ -141,8 +137,7 @@ bool GameStationModules::onStartElementInRootOfModuleGroups(
         context->setOnStartElement(::std::bind(
             &GameStationModules::onStartElementInGroupsOfModuleGroups, this,
             ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, vfs, macros,
-            texts, wares));
+            ::std::placeholders::_3, ::std::placeholders::_4));
     }
     loader.pushContext(::std::move(context));
     return true;
@@ -155,16 +150,23 @@ bool GameStationModules::onStartElementInGroupOfModuleGroups(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &               name,
-    const QMap<QString, QString> &attr,
-    ::std::shared_ptr<GameVFS>    vfs,
-    ::std::shared_ptr<GameMacros> macros,
-    ::std::shared_ptr<GameTexts>  texts,
-    ::std::shared_ptr<GameWares>  wares)
+    const QMap<QString, QString> &attr)
 {
+    ::std::shared_ptr<GameVFS> vfs
+        = ::std::any_cast<::std::shared_ptr<GameVFS>>(loader["vfs"]);
+    ::std::shared_ptr<GameMacros> macros
+        = ::std::any_cast<::std::shared_ptr<GameMacros>>(loader["macros"]);
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
+    ::std::shared_ptr<GameWares> wares
+        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
+    ::std::shared_ptr<GameComponents> components
+        = ::std::any_cast<::std::shared_ptr<GameComponents>>(
+            loader["components"]);
     if (name == "select") {
         auto iter = attr.find("macro");
         if (iter != attr.end()) {
-            this->loadMacro(*iter, vfs, macros, texts, wares);
+            this->loadMacro(*iter, vfs, macros, texts, wares, components);
         }
     }
     loader.pushContext(XMLLoader::Context::create());
@@ -174,11 +176,12 @@ bool GameStationModules::onStartElementInGroupOfModuleGroups(
 /**
  * @brief		Load macro.
  */
-void GameStationModules::loadMacro(const QString &               macro,
-                                   ::std::shared_ptr<GameVFS>    vfs,
-                                   ::std::shared_ptr<GameMacros> macros,
-                                   ::std::shared_ptr<GameTexts>  texts,
-                                   ::std::shared_ptr<GameWares>  wares)
+void GameStationModules::loadMacro(const QString &                   macro,
+                                   ::std::shared_ptr<GameVFS>        vfs,
+                                   ::std::shared_ptr<GameMacros>     macros,
+                                   ::std::shared_ptr<GameTexts>      texts,
+                                   ::std::shared_ptr<GameWares>      wares,
+                                   ::std::shared_ptr<GameComponents> components)
 {
     qDebug() << "Loading station module macro" << macro;
     ::std::shared_ptr<GameVFS::FileReader> file
@@ -191,10 +194,15 @@ void GameStationModules::loadMacro(const QString &               macro,
     XMLLoader                             loader;
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
-    context->setOnStartElement(::std::bind(
-        &GameStationModules::onStartElementInRootOfMacro, this,
-        ::std::placeholders::_1, ::std::placeholders::_2,
-        ::std::placeholders::_3, ::std::placeholders::_4, texts, wares));
+    context->setOnStartElement(
+        ::std::bind(&GameStationModules::onStartElementInRootOfMacro, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+    loader["vfs"]        = vfs;
+    loader["macros"]     = macros;
+    loader["texts"]      = texts;
+    loader["wares"]      = wares;
+    loader["components"] = components;
     loader.parse(reader, ::std::move(context));
 }
 
@@ -205,18 +213,16 @@ bool GameStationModules::onStartElementInRootOfMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
-    const QMap<QString, QString> &,
-    ::std::shared_ptr<GameTexts> texts,
-    ::std::shared_ptr<GameWares> wares)
+    const QMap<QString, QString> &)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
     if (name == "macros") {
-        context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInMacrosOfMacro, this,
-            ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, texts, wares));
+        context->setOnStartElement(
+            ::std::bind(&GameStationModules::onStartElementInMacrosOfMacro,
+                        this, ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
     }
 
     loader.pushContext(::std::move(context));
@@ -230,9 +236,7 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
     XMLLoader &                   loader,
     XMLLoader::Context &          currentContext,
     const QString &               name,
-    const QMap<QString, QString> &attr,
-    ::std::shared_ptr<GameTexts>  texts,
-    ::std::shared_ptr<GameWares>  wares)
+    const QMap<QString, QString> &attr)
 
 {
     ::std::unique_ptr<XMLLoader::Context> context
@@ -252,6 +256,13 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
                 ::std::shared_ptr<struct BuildModule> buildModule(
                     new struct BuildModule);
                 buildModule->moduleClass = StationModuleClass::BuildModule;
+                buildModule->sDockNum    = 0;
+                buildModule->sCapacity   = 0;
+                buildModule->mDockNum    = 0;
+                buildModule->mCapacity   = 0;
+                buildModule->lDockNum    = 0;
+                buildModule->xlDockNum   = 0;
+                buildModule->lXlDockNum  = 0;
                 module                   = buildModule;
 
             } else if (*iter == "connectionmodule") {
@@ -271,6 +282,13 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
                 ::std::shared_ptr<struct DockareaModule> dockareaModule(
                     new struct DockareaModule);
                 dockareaModule->moduleClass = StationModuleClass::Dockarea;
+                dockareaModule->sDockNum    = 0;
+                dockareaModule->sCapacity   = 0;
+                dockareaModule->mDockNum    = 0;
+                dockareaModule->mCapacity   = 0;
+                dockareaModule->lDockNum    = 0;
+                dockareaModule->xlDockNum   = 0;
+                dockareaModule->lXlDockNum  = 0;
                 module                      = dockareaModule;
 
             } else if (*iter == "habitation") {
@@ -302,13 +320,16 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
         context->setOnStartElement(::std::bind(
             &GameStationModules::onStartElementInMacroOfMacro, this,
             ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, wares, module));
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
 
         module->macro        = attr["name"];
         module->playerModule = false;
-        currentContext.setOnStopElement([module, texts](
-                                            XMLLoader &, XMLLoader::Context &,
-                                            const QString &name) -> bool {
+        currentContext.setOnStopElement([module](XMLLoader &loader,
+                                                 XMLLoader::Context &,
+                                                 const QString &name) -> bool {
+            ::std::shared_ptr<GameTexts> texts
+                = ::std::any_cast<::std::shared_ptr<GameTexts>>(
+                    loader["texts"]);
             if (name == "macro" && module->playerModule) {
                 // Debug info.
                 qDebug() << "Module : {";
@@ -321,6 +342,71 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
                 qDebug() << "    races           : " << module->races;
                 qDebug() << "    hull            : " << module->hull;
                 qDebug() << "    explosiondamage : " << module->explosiondamage;
+                switch (module->moduleClass) {
+                    case StationModuleClass::BuildModule: {
+                        ::std::shared_ptr<struct BuildModule> buildModule
+                            = ::std::static_pointer_cast<struct BuildModule>(
+                                module);
+                        qDebug() << "    workforce       : "
+                                 << buildModule->workforce;
+                    }
+
+                    case StationModuleClass::Dockarea: {
+                        ::std::shared_ptr<struct DockareaModule> dockareaModule
+                            = ::std::static_pointer_cast<struct DockareaModule>(
+                                module);
+                        if (dockareaModule->sDockNum > 0) {
+                            qDebug() << "    sDockNum        : "
+                                     << dockareaModule->sDockNum;
+                        }
+                        if (dockareaModule->sCapacity > 0) {
+                            qDebug() << "    sCapacity       : "
+                                     << dockareaModule->sCapacity;
+                        }
+                        if (dockareaModule->mDockNum > 0) {
+                            qDebug() << "    mDockNum        : "
+                                     << dockareaModule->mDockNum;
+                        }
+                        if (dockareaModule->mCapacity > 0) {
+                            qDebug() << "    mCapacity       : "
+                                     << dockareaModule->mCapacity;
+                        }
+                        if (dockareaModule->lDockNum > 0) {
+                            qDebug() << "    lDockNum        : "
+                                     << dockareaModule->lDockNum;
+                        }
+                        if (dockareaModule->xlDockNum > 0) {
+                            qDebug() << "    xlDockNum       : "
+                                     << dockareaModule->xlDockNum;
+                        }
+                        if (dockareaModule->lXlDockNum > 0) {
+                            qDebug() << "    lXlsDockNum     : "
+                                     << dockareaModule->lXlDockNum;
+                        }
+                    }
+
+                    break;
+
+                    case StationModuleClass::ConnectionModule: {
+                    } break;
+
+                    case StationModuleClass::DefenceModule:
+                        break;
+
+                    case StationModuleClass::Habitation: {
+                        ::std::shared_ptr<struct HabitationModule>
+                            habitationModule = ::std::static_pointer_cast<
+                                struct HabitationModule>(module);
+                        qDebug() << "    workforce       : "
+                                 << habitationModule->workforce;
+                    } break;
+
+                    case StationModuleClass::Production:
+                        break;
+
+                    case StationModuleClass::Storage:
+                        break;
+                }
                 qDebug() << "}";
             }
             return true;
@@ -339,7 +425,6 @@ bool GameStationModules::onStartElementInMacroOfMacro(
     XMLLoader::Context &,
     const QString &name,
     const QMap<QString, QString> &,
-    ::std::shared_ptr<GameWares>     wares,
     ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
@@ -384,8 +469,7 @@ bool GameStationModules::onStartElementInMacroOfMacro(
                     &GameStationModules::
                         onStartElementInHabitationPropertiesOfMacro,
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, wares,
-                    module));
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
                 break;
 
             case StationModuleClass::Production:
@@ -393,8 +477,7 @@ bool GameStationModules::onStartElementInMacroOfMacro(
                     &GameStationModules::
                         onStartElementInProductionPropertiesOfMacro,
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, wares,
-                    module));
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
                 break;
 
             case StationModuleClass::Storage:
@@ -404,6 +487,27 @@ bool GameStationModules::onStartElementInMacroOfMacro(
                     this, ::std::placeholders::_1, ::std::placeholders::_2,
                     ::std::placeholders::_3, ::std::placeholders::_4, module));
 
+                break;
+        }
+    } else if (name == "connections") {
+        switch (module->moduleClass) {
+            case StationModuleClass::Dockarea:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInDockareaConnectionsOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            case StationModuleClass::BuildModule:
+                context->setOnStartElement(::std::bind(
+                    &GameStationModules::
+                        onStartElementInDockareaConnectionsOfMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+                break;
+
+            default:
                 break;
         }
     }
@@ -572,6 +676,53 @@ bool GameStationModules::onStartElementInDockareaPropertiesOfMacro(
 }
 
 /**
+ * @brief		Start element callback in connections.
+ */
+bool GameStationModules::onStartElementInDockareaConnectionsOfMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+    if (name == "connection") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInDockareaConnectionOfMacro,
+            this, ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in connection.
+ */
+bool GameStationModules::onStartElementInDockareaConnectionOfMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "macro") {
+        this->loadDockingBay(
+            attr["ref"],
+            ::std::any_cast<::std::shared_ptr<GameVFS>>(loader["vfs"]),
+            ::std::any_cast<::std::shared_ptr<GameMacros>>(loader["macros"]),
+            ::std::static_pointer_cast<struct DockareaModule>(module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
  * @brief		Start element callback in propterties.
  */
 bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
@@ -579,9 +730,10 @@ bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
     XMLLoader::Context &,
     const QString &                  name,
     const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<GameWares>     wares,
     ::std::shared_ptr<StationModule> module)
 {
+    ::std::shared_ptr<GameWares> wares
+        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
@@ -628,16 +780,6 @@ bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
 
 /**
  * @brief		Start element callback in propterties.
- *
- * @param[in]	loader		XML loader.
- * @param[in]	context		Context.
- * @param[in]	name		Name of the element.
- * @param[in]	attr		Attributes.
- * @param[in]	wares		Game wares.
- * @param[in]	module		Module.
- *
- * @return		Return \c true if the parsing should be continued.
- *				otherwise returns \c false.
  */
 
 bool GameStationModules::onStartElementInProductionPropertiesOfMacro(
@@ -645,7 +787,6 @@ bool GameStationModules::onStartElementInProductionPropertiesOfMacro(
     XMLLoader::Context &,
     const QString &                  name,
     const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<GameWares>     wares,
     ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
@@ -659,7 +800,7 @@ bool GameStationModules::onStartElementInProductionPropertiesOfMacro(
             ::std::bind(&GameStationModules::onStartElementInProductionOfMacro,
                         this, ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, ::std::placeholders::_4,
-                        productionModule, wares));
+                        productionModule));
 
     } else {
         this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
@@ -709,9 +850,10 @@ bool GameStationModules::onStartElementInProductionOfMacro(
     XMLLoader::Context &,
     const QString &                            name,
     const QMap<QString, QString> &             attr,
-    ::std::shared_ptr<struct ProductionModule> module,
-    ::std::shared_ptr<GameWares>               wares)
+    ::std::shared_ptr<struct ProductionModule> module)
 {
+    ::std::shared_ptr<GameWares> wares
+        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
     if (name == "queue") {
         QString method = "default";
         auto    iter   = attr.find("method");
@@ -728,5 +870,199 @@ bool GameStationModules::onStartElementInProductionOfMacro(
         }
     }
     loader.pushContext(XMLLoader::Context::create());
+    return true;
+}
+
+/**
+ * @brief		Load docking bay.
+ */
+void GameStationModules::loadDockingBay(
+    const QString &                          macro,
+    ::std::shared_ptr<GameVFS>               vfs,
+    ::std::shared_ptr<GameMacros>            macros,
+    ::std::shared_ptr<struct DockareaModule> module)
+{
+    ::std::shared_ptr<GameVFS::FileReader> file
+        = vfs->open(macros->macro(macro) + ".xml");
+    if (file == nullptr) {
+        return;
+    }
+
+    QXmlStreamReader                      reader(file->readAll());
+    XMLLoader                             loader;
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+    context->setOnStartElement(
+        ::std::bind(&GameStationModules::onStartElementInRootOfDockingBay, this,
+                    ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+    loader.parse(reader, ::std::move(context));
+}
+
+/**
+ * @brief		Start element callback in root.
+ */
+bool GameStationModules::onStartElementInRootOfDockingBay(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<struct DockareaModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "macros") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInMacrosOfDockingBay, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+
+    return true;
+}
+
+/**
+ * @brief		Start element callback in macros.
+ */
+bool GameStationModules::onStartElementInMacrosOfDockingBay(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                          name,
+    const QMap<QString, QString> &           attr,
+    ::std::shared_ptr<struct DockareaModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "macro") {
+        auto iter = attr.find("class");
+        if (iter != attr.end() && *iter == "dockingbay") {
+            context->setOnStartElement(::std::bind(
+                &GameStationModules::onStartElementInMacroOfDockingBay, this,
+                ::std::placeholders::_1, ::std::placeholders::_2,
+                ::std::placeholders::_3, ::std::placeholders::_4, module));
+        }
+    }
+
+    loader.pushContext(::std::move(context));
+
+    return true;
+}
+
+/**
+ * @brief		Start element callback in macro.
+ */
+bool GameStationModules::onStartElementInMacroOfDockingBay(
+    XMLLoader &         loader,
+    XMLLoader::Context &oldContext,
+    const QString &     name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<struct DockareaModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "properties") {
+        ::std::shared_ptr<TmpDockingBayInfo> info
+            = ::std::shared_ptr<TmpDockingBayInfo>(
+                new TmpDockingBayInfo({0, 0, TmpDockingBayInfo::S}));
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInPropertiesOfDockingBay, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module, info));
+
+        oldContext.setOnStopElement(::std::bind(
+            [](XMLLoader &, XMLLoader::Context &, const QString &name,
+               ::std::shared_ptr<struct DockareaModule> module,
+               ::std::shared_ptr<TmpDockingBayInfo>     info) -> bool {
+                if (name == "properties") {
+                    switch (info->type) {
+                        case TmpDockingBayInfo::S:
+                            module->sDockNum += info->count;
+                            module->sCapacity += info->capacity;
+                            break;
+
+                        case TmpDockingBayInfo::M:
+                            module->mDockNum += info->count;
+                            module->mCapacity += info->capacity;
+                            break;
+
+                        case TmpDockingBayInfo::L:
+                            module->lDockNum += info->count;
+                            break;
+
+                        case TmpDockingBayInfo::XL:
+                            module->xlDockNum += info->count;
+                            break;
+
+                        case TmpDockingBayInfo::L_XL:
+                            module->lXlDockNum += info->count;
+                            break;
+                    }
+                }
+                return true;
+            },
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, module, info));
+    }
+
+    loader.pushContext(::std::move(context));
+
+    return true;
+}
+
+/**
+ * @brief		Start element callback in properties.
+ */
+bool GameStationModules::onStartElementInPropertiesOfDockingBay(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &               name,
+    const QMap<QString, QString> &attr,
+    ::std::shared_ptr<struct DockareaModule>,
+    ::std::shared_ptr<TmpDockingBayInfo> info)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+    if (name == "dock") {
+        auto iter = attr.find("external");
+        if (iter != attr.end()) {
+            info->count = iter->toUInt();
+        }
+
+        iter = attr.find("capacity");
+        if (iter != attr.end()) {
+            info->capacity = iter->toUInt();
+        }
+    } else if (name == "docksize") {
+        QSet<QString> tags;
+        for (auto &tag :
+             attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts)) {
+            tags.insert(tag);
+        }
+        if (tags.find("dock_s") != tags.end()) {
+            info->type = TmpDockingBayInfo::S;
+
+        } else if (tags.find("dock_m") != tags.end()) {
+            info->type = TmpDockingBayInfo::M;
+
+        } else if (tags.find("dock_l") != tags.end()) {
+            info->type = TmpDockingBayInfo::L;
+
+            if (tags.find("dock_xl") != tags.end()) {
+                info->type = TmpDockingBayInfo::L_XL;
+
+            } else {
+                info->type = TmpDockingBayInfo::L;
+            }
+        } else {
+            info->type = TmpDockingBayInfo::XL;
+        }
+    }
+
+    loader.pushContext(::std::move(context));
     return true;
 }

@@ -27,8 +27,9 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
     context->setOnStartElement(
         ::std::bind(&GameWares::onStartElementInGroupRoot, this,
                     ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, texts));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
     XMLLoader loader;
+    loader["texts"] = texts;
     if (! loader.parse(groupReader, ::std::move(context))) {
         return;
     }
@@ -46,7 +47,8 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
     context->setOnStartElement(
         ::std::bind(&GameWares::onStartElementInWaresRoot, this,
                     ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, texts));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+    loader["texts"] = texts;
     if (! loader.parse(waresReader, ::std::move(context))) {
         return;
     }
@@ -71,7 +73,8 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                 context->setOnStartElement(::std::bind(
                     &GameWares::onStartElementInExtensionsWaresRoot, this,
                     ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, texts));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
+                loader["texts"] = texts;
                 loader.parse(waresReader, ::std::move(context));
             }
         }
@@ -116,20 +119,17 @@ GameWares::~GameWares() {}
 /**
  * @brief		Start element callback in root of group file.
  */
-bool GameWares::onStartElementInGroupRoot(XMLLoader &                   loader,
-                                          XMLLoader::Context &          context,
-                                          const QString &               name,
-                                          const QMap<QString, QString> &attr,
-                                          ::std::shared_ptr<GameTexts>  texts)
+bool GameWares::onStartElementInGroupRoot(XMLLoader &loader,
+                                          XMLLoader::Context &,
+                                          const QString &name,
+                                          const QMap<QString, QString> &)
 {
-    UNREFERENCED_PARAMETER(context);
-    UNREFERENCED_PARAMETER(attr);
     if (name == "groups") {
         auto context = XMLLoader::Context::create();
-        context->setOnStartElement(::std::bind(
-            &GameWares::onStartElementInGroups, this, ::std::placeholders::_1,
-            ::std::placeholders::_2, ::std::placeholders::_3,
-            ::std::placeholders::_4, texts));
+        context->setOnStartElement(
+            ::std::bind(&GameWares::onStartElementInGroups, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
 
     } else {
@@ -141,13 +141,13 @@ bool GameWares::onStartElementInGroupRoot(XMLLoader &                   loader,
 /**
  * @brief		Start element callback in groups.
  */
-bool GameWares::onStartElementInGroups(XMLLoader &                   loader,
-                                       XMLLoader::Context &          context,
+bool GameWares::onStartElementInGroups(XMLLoader &loader,
+                                       XMLLoader::Context &,
                                        const QString &               name,
-                                       const QMap<QString, QString> &attr,
-                                       ::std::shared_ptr<GameTexts>  texts)
+                                       const QMap<QString, QString> &attr)
 {
-    UNREFERENCED_PARAMETER(context);
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
     if (name == "group") {
         if (attr.find("id") == attr.end() || attr.find("name") == attr.end()
             || attr.find("tags") == attr.end()) {
@@ -170,20 +170,17 @@ bool GameWares::onStartElementInGroups(XMLLoader &                   loader,
 /**
  * @brief		Start element callback in the root node of wares.
  */
-bool GameWares::onStartElementInWaresRoot(XMLLoader &                   loader,
-                                          XMLLoader::Context &          context,
-                                          const QString &               name,
-                                          const QMap<QString, QString> &attr,
-                                          ::std::shared_ptr<GameTexts>  texts)
+bool GameWares::onStartElementInWaresRoot(XMLLoader &loader,
+                                          XMLLoader::Context &,
+                                          const QString &name,
+                                          const QMap<QString, QString> &)
 {
-    UNREFERENCED_PARAMETER(context);
-    UNREFERENCED_PARAMETER(attr);
     if (name == "wares") {
         auto context = XMLLoader::Context::create();
-        context->setOnStartElement(::std::bind(
-            &GameWares::onStartElementInWares, this, ::std::placeholders::_1,
-            ::std::placeholders::_2, ::std::placeholders::_3,
-            ::std::placeholders::_4, texts));
+        context->setOnStartElement(
+            ::std::bind(&GameWares::onStartElementInWares, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
     } else {
         loader.pushContext(XMLLoader::Context::create());
@@ -197,8 +194,7 @@ bool GameWares::onStartElementInWaresRoot(XMLLoader &                   loader,
 bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                                       XMLLoader::Context &          context,
                                       const QString &               name,
-                                      const QMap<QString, QString> &attr,
-                                      ::std::shared_ptr<GameTexts>  texts)
+                                      const QMap<QString, QString> &attr)
 {
     if (name == "ware") {
         if (attr.find("id") == attr.end()) {
@@ -266,9 +262,10 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
 
         context.setOnStopElement(::std::bind(
             [](XMLLoader &loader, XMLLoader::Context &context,
-               const QString &name, ::std::shared_ptr<GameTexts> texts,
-               ::std::shared_ptr<Ware> ware) -> bool {
-                UNREFERENCED_PARAMETER(loader);
+               const QString &name, ::std::shared_ptr<Ware> ware) -> bool {
+                ::std::shared_ptr<GameTexts> texts
+                    = ::std::any_cast<::std::shared_ptr<GameTexts>>(
+                        loader["texts"]);
                 if (name == "ware") {
                     // Append ware
                     context.setOnStopElement(nullptr);
@@ -305,7 +302,7 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                 return true;
             },
             ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, texts, ware));
+            ::std::placeholders::_3, ware));
         // Push context
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(::std::bind(
@@ -356,17 +353,15 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
         ware->productionInfos.append(info);
 
         context.setOnStopElement(::std::bind(
-            [](XMLLoader &loader, XMLLoader::Context &context,
-               const QString &name, ::std::shared_ptr<Ware> ware,
-               ::std::shared_ptr<ProductionInfo> info) -> bool {
-                UNREFERENCED_PARAMETER(loader);
+            [](XMLLoader &, XMLLoader::Context &context,
+               const QString &name) -> bool {
                 if (name == "production") {
                     context.setOnStopElement(nullptr);
                 }
                 return true;
             },
             ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ware, info));
+            ::std::placeholders::_3));
 
         // Push context
         auto context = XMLLoader::Context::create();
@@ -464,15 +459,14 @@ bool GameWares::onStartElementInExtensionsWaresRoot(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
-    const QMap<QString, QString> &,
-    ::std::shared_ptr<GameTexts> texts)
+    const QMap<QString, QString> &)
 {
     auto context = XMLLoader::Context::create();
     if (name == "diff") {
-        context->setOnStartElement(::std::bind(
-            &GameWares::onStartElementInExtensionDiff, this,
-            ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, texts));
+        context->setOnStartElement(
+            ::std::bind(&GameWares::onStartElementInExtensionDiff, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
     }
     loader.pushContext(::std::move(context));
     return true;
@@ -485,8 +479,7 @@ bool GameWares::onStartElementInExtensionDiff(
     XMLLoader &                   loader,
     XMLLoader::Context &          currentContext,
     const QString &               name,
-    const QMap<QString, QString> &attr,
-    ::std::shared_ptr<GameTexts>  texts)
+    const QMap<QString, QString> &attr)
 {
     auto context = XMLLoader::Context::create();
     // Filters
@@ -494,10 +487,10 @@ bool GameWares::onStartElementInExtensionDiff(
     wareFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
     if (name == "add") {
         if (attr["sel"] == "/wares") {
-            context->setOnStartElement(::std::bind(
-                &GameWares::onStartElementInWares, this,
-                ::std::placeholders::_1, ::std::placeholders::_2,
-                ::std::placeholders::_3, ::std::placeholders::_4, texts));
+            context->setOnStartElement(
+                ::std::bind(&GameWares::onStartElementInWares, this,
+                            ::std::placeholders::_1, ::std::placeholders::_2,
+                            ::std::placeholders::_3, ::std::placeholders::_4));
         } else if (wareFilter.exactMatch(attr["sel"])) {
             wareFilter.indexIn(attr["sel"]);
             QString id = wareFilter.capturedTexts()[1];
@@ -507,9 +500,11 @@ bool GameWares::onStartElementInExtensionDiff(
                 ::std::shared_ptr<Ware> ware = *iter;
                 currentContext.setOnStopElement(::std::bind(
                     [](XMLLoader &loader, XMLLoader::Context &context,
-                       const QString &name, ::std::shared_ptr<GameTexts> texts,
+                       const QString &         name,
                        ::std::shared_ptr<Ware> ware) -> bool {
-                        UNREFERENCED_PARAMETER(loader);
+                        ::std::shared_ptr<GameTexts> texts
+                            = ::std::any_cast<::std::shared_ptr<GameTexts>>(
+                                loader["texts"]);
                         if (name == "add") {
                             // Append ware
                             context.setOnStopElement(nullptr);
@@ -552,7 +547,7 @@ bool GameWares::onStartElementInExtensionDiff(
                         return true;
                     },
                     ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, texts, ware));
+                    ::std::placeholders::_3, ware));
 
                 context->setOnStartElement(::std::bind(
                     &GameWares::onStartElementInWare, this,

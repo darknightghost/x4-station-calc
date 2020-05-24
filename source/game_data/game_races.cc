@@ -31,8 +31,9 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
     context->setOnStartElement(
         ::std::bind(&GameRaces::onStartElementInRoot, this,
                     ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, texts));
+                    ::std::placeholders::_3, ::std::placeholders::_4));
     XMLLoader loader;
+    loader["texts"] = texts;
     loader.parse(reader, ::std::move(context));
 
     this->setGood();
@@ -54,20 +55,17 @@ GameRaces::~GameRaces() {}
 /**
  * @brief		Start element callback in root.
  */
-bool GameRaces::onStartElementInRoot(XMLLoader &                   loader,
-                                     XMLLoader::Context &          context,
-                                     const QString &               name,
-                                     const QMap<QString, QString> &attr,
-                                     ::std::shared_ptr<GameTexts>  texts)
+bool GameRaces::onStartElementInRoot(XMLLoader &loader,
+                                     XMLLoader::Context &,
+                                     const QString &name,
+                                     const QMap<QString, QString> &)
 {
-    UNREFERENCED_PARAMETER(context);
-    UNREFERENCED_PARAMETER(attr);
     if (name == "races") {
         auto context = XMLLoader::Context::create();
-        context->setOnStartElement(::std::bind(
-            &GameRaces::onStartElementInRaces, this, ::std::placeholders::_1,
-            ::std::placeholders::_2, ::std::placeholders::_3,
-            ::std::placeholders::_4, texts));
+        context->setOnStartElement(
+            ::std::bind(&GameRaces::onStartElementInRaces, this,
+                        ::std::placeholders::_1, ::std::placeholders::_2,
+                        ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
 
     } else {
@@ -79,13 +77,13 @@ bool GameRaces::onStartElementInRoot(XMLLoader &                   loader,
 /**
  * @brief		Start element callback in races.
  */
-bool GameRaces::onStartElementInRaces(XMLLoader &                   loader,
-                                      XMLLoader::Context &          context,
+bool GameRaces::onStartElementInRaces(XMLLoader &loader,
+                                      XMLLoader::Context &,
                                       const QString &               name,
-                                      const QMap<QString, QString> &attr,
-                                      ::std::shared_ptr<GameTexts>  texts)
+                                      const QMap<QString, QString> &attr)
 {
-    UNREFERENCED_PARAMETER(context);
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
     if (name == "race" && attr.find("id") != attr.end()
         && attr.find("name") != attr.end()
         && attr.find("description") != attr.end()) {

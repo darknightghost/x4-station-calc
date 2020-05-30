@@ -180,101 +180,83 @@ StationModulesWidget::~StationModulesWidget() {}
  */
 void StationModulesWidget::loadStationModules()
 {
-    for (::std::shared_ptr<GameStationModules::StationModule> baseModule :
+    for (::std::shared_ptr<GameStationModules::StationModule> module :
          GameData::instance()->stationModules()->modules()) {
-        for (auto &race : baseModule->races) {
-            if (race != "" && race != "default") {
-                m_races.insert(race);
-            }
+        for (auto &race : module->races) {
+            m_races.insert(race);
         }
-        switch (baseModule->moduleClass) {
-            case GameStationModules::StationModuleClass::BuildModule: {
-                ::std::shared_ptr<struct GameStationModules::BuildModule> module
-                    = ::std::static_pointer_cast<
-                        struct GameStationModules::BuildModule>(baseModule);
+        switch (module->moduleClass) {
+            case GameStationModules::StationModule::StationModuleClass::
+                BuildModule: {
                 StationModulesTreeWidgetItem *item
-                    = new StationModulesTreeWidgetItem(m_itemBuild, baseModule);
+                    = new StationModulesTreeWidgetItem(m_itemBuild, module);
                 m_itemBuild->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
             } break;
 
-            case GameStationModules::StationModuleClass::ConnectionModule: {
-                ::std::shared_ptr<struct GameStationModules::ConnectionModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::ConnectionModule>(
-                        baseModule);
+            case GameStationModules::StationModule::StationModuleClass::
+                ConnectionModule: {
                 StationModulesTreeWidgetItem *item
-                    = new StationModulesTreeWidgetItem(m_itemConnect,
-                                                       baseModule);
+                    = new StationModulesTreeWidgetItem(m_itemConnect, module);
                 m_itemConnect->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
             } break;
 
-            case GameStationModules::StationModuleClass::DefenceModule: {
-                ::std::shared_ptr<struct GameStationModules::DefenceModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::DefenceModule>(baseModule);
+            case GameStationModules::StationModule::StationModuleClass::
+                DefenceModule: {
                 StationModulesTreeWidgetItem *item
-                    = new StationModulesTreeWidgetItem(m_itemDefence,
-                                                       baseModule);
+                    = new StationModulesTreeWidgetItem(m_itemDefence, module);
                 m_itemDefence->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
             } break;
 
-            case GameStationModules::StationModuleClass::Dockarea: {
-                ::std::shared_ptr<struct GameStationModules::DockareaModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::DockareaModule>(baseModule);
+            case GameStationModules::StationModule::StationModuleClass::
+                Dockarea: {
                 StationModulesTreeWidgetItem *item
-                    = new StationModulesTreeWidgetItem(m_itemDock, baseModule);
+                    = new StationModulesTreeWidgetItem(m_itemDock, module);
                 m_itemDock->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
             } break;
 
-            case GameStationModules::StationModuleClass::Habitation: {
-                ::std::shared_ptr<struct GameStationModules::HabitationModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::HabitationModule>(
-                        baseModule);
+            case GameStationModules::StationModule::StationModuleClass::
+                Habitation: {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemHabitation,
-                                                       baseModule);
+                                                       module);
                 m_itemHabitation->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
             } break;
 
-            case GameStationModules::StationModuleClass::Production: {
-                ::std::shared_ptr<struct GameStationModules::ProductionModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::ProductionModule>(
-                        baseModule);
-
-                if (module->product == "") {
+            case GameStationModules::StationModule::StationModuleClass::
+                Production: {
+                auto iter = module->properties.find(
+                    GameStationModules::Property::Type::SupplyProduct);
+                if (iter == module->properties.end()) {
                     break;
                 }
 
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemProduction,
-                                                       baseModule);
+                                                       module);
                 m_itemProduction->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
-                m_products.insert(module->product);
+                ::std::shared_ptr<GameStationModules::SupplyProduct> property
+                    = ::std::static_pointer_cast<
+                        GameStationModules::SupplyProduct>(*iter);
+                m_products.insert(property->product);
 
             } break;
 
-            case GameStationModules::StationModuleClass::Storage: {
-                ::std::shared_ptr<struct GameStationModules::StorageModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::StorageModule>(baseModule);
+            case GameStationModules::StationModule::StationModuleClass::
+                Storage: {
                 StationModulesTreeWidgetItem *item
-                    = new StationModulesTreeWidgetItem(m_itemStorage,
-                                                       baseModule);
+                    = new StationModulesTreeWidgetItem(m_itemStorage, module);
                 m_itemStorage->insertChild(-1, item);
                 m_moduleItems.push_back(item);
 
@@ -389,12 +371,16 @@ void StationModulesWidget::filterModules()
 
         if (m_chkByProduction->isChecked()) {
             if (moduleItem->module()->moduleClass
-                == GameStationModules::StationModuleClass::Production) {
-                ::std::shared_ptr<struct GameStationModules::ProductionModule>
-                    module = ::std::static_pointer_cast<
-                        struct GameStationModules::ProductionModule>(
-                        moduleItem->module());
-                if (module->product
+                == GameStationModules::StationModule::StationModuleClass::
+                    Production) {
+                ::std::shared_ptr<GameStationModules::StationModule> module
+                    = moduleItem->module();
+                ::std::shared_ptr<GameStationModules::SupplyProduct> property
+                    = ::std::static_pointer_cast<
+                        GameStationModules::SupplyProduct>(
+                        module->properties[GameStationModules::Property::Type::
+                                               SupplyProduct]);
+                if (property->product
                     != m_comboByProduction->currentData().toString()) {
                     moduleItem->setHidden(true);
                     continue;

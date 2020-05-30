@@ -7,6 +7,14 @@
 #include <game_data/game_races.h>
 #include <locale/string_table.h>
 
+/// Player races.
+QSet<QString> GameRaces::_playerRaces = {
+    "argon",
+    //"boron",
+    "paranid", "split", "teladi",
+    //"terran"
+};
+
 /**
  * @brief		Constructor.
  */
@@ -45,6 +53,14 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
 const GameRaces::Race &GameRaces::race(const QString &id)
 {
     return m_races[id];
+}
+
+/**
+ * @brief	Get player races.
+ */
+const QSet<QString> &GameRaces::playerRaces()
+{
+    return _playerRaces;
 }
 
 /**

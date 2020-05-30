@@ -6,6 +6,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
+#include <QtCore/QSet>
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
 
@@ -39,7 +40,8 @@ class GameRaces :
     };
 
   private:
-    QMap<QString, Race> m_races; ///< Macros
+    QMap<QString, Race>  m_races;      ///< Macros
+    static QSet<QString> _playerRaces; ///< Player races.
 
   protected:
     /**
@@ -60,6 +62,13 @@ class GameRaces :
      * @return	Information of race.
      */
     const Race &race(const QString &id);
+
+    /**
+     * @brief	Get player races.
+     *
+     * @return	Player races.
+     */
+    static const QSet<QString> &playerRaces();
 
     /**
      * @brief		Destructor.

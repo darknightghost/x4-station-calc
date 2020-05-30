@@ -4,6 +4,9 @@
 #include <memory>
 
 #include <QtCore/QMap>
+#include <QtCore/QMetaEnum>
+#include <QtCore/QMetaObject>
+#include <QtCore/QMetaType>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
 #include <QtCore/QSet>
@@ -18,6 +21,7 @@
 
 #include <game_data/game_components.h>
 #include <game_data/game_macros.h>
+#include <game_data/game_races.h>
 #include <game_data/game_texts.h>
 #include <game_data/game_wares.h>
 
@@ -48,87 +52,377 @@ class GameStationModules :
 
   public:
     /**
-     * @brief	Class of station module.
+     * @brief	Station module property.
      */
-    enum StationModuleClass {
-        BuildModule,      ///< Build module.
-        ConnectionModule, ///< Connection module.
-        DefenceModule,    ///< Defence module.
-        Dockarea,         ///< Dockarea.
-        Habitation,       ///< Habitation,
-        Production,       ///< Production,
-        Storage           ///< Storage.
+    struct Property {
+        /**
+         * @brief		Property type.
+         */
+        enum Type {
+            MTurret,          ///< Has M turret.
+            MShield,          ///< Has M shield.
+            LTurret,          ///< Has L turret.
+            LShield,          ///< Has L shield.
+            SDock,            ///< Has S docking bay.
+            SShipCargo,       ///< Has S ship cargo.
+            MDock,            ///< Has M docking bay.
+            MShipCargo,       ///< Has M ship cargo.
+            LDock,            ///< Has L docking bay.
+            XLDock,           ///< Has XL docking bay.
+            LXLDock,          ///< Has L/XL docking bay.
+            SLaunchTube,      ///< Has S launch tube.
+            MLaunchTube,      ///< Has M launch tube.
+            SupplyWorkforce,  ///< Supply workforce.
+            RequireWorkforce, ///< Require workforce.
+            SupplyProduct,    ///< Supply product.
+            Cargo,            ///< Has cargo.
+        };
+        Type type; ///< Property type.
+
+        /**
+         * @brief		Constructor.
+         *
+         * @param[in]	type	Property type.
+         */
+        Property(Type propertyType) : type(propertyType) {}
+
+        /**
+         * @brief		Desctructor.
+         */
+        virtual ~Property() {};
     };
 
     /**
      * @brief	Informations of station modules.
      */
     struct StationModule {
+        /**
+         * @brief	Class of station modules.
+         */
+        enum StationModuleClass {
+            Unknow,           ///< Unknow.
+            BuildModule,      ///< Build module.
+            ConnectionModule, ///< Connection module.
+            DefenceModule,    ///< Defence module.
+            Dockarea,         ///< Dockarea.
+            Habitation,       ///< Habitation,
+            Production,       ///< Production,
+            Storage           ///< Storage.
+        };
+
         QString            macro;           ///< Macro of the module.
+        QString            component;       ///< Component of the module.
         GameTexts::IDPair  name;            ///< Module name.
         StationModuleClass moduleClass;     ///< Class of station module.
         bool               playerModule;    ///< Player can build or not.
         GameTexts::IDPair  description;     ///< Module desctiption.
-        QSet<QString>      races;           ///< Module races.
+        bool               racialLimited;   ///< The module is racial limited.
+        QSet<QString>      races;           ///< Module race.
         quint32            hull;            ///< Hull.
         quint32            explosiondamage; ///< Explosion damage.
+        QMap<Property::Type, ::std::shared_ptr<Property>>
+            properties; ///< Properties.
     };
 
     /**
-     * @brief	Informations of connection modules.
+     * @brief     Has M turret.
      */
-    struct ConnectionModule : public StationModule {};
+    struct HasMTurret : public Property {
+        quint64 count; ///< Count of the turret.
 
-    /**
-     * @brief	Informations of defence modules.
-     */
-    struct DefenceModule : public StationModule {};
+        /**
+         * @brief		Constructor.
+         */
+        HasMTurret() : Property(Property::Type::MTurret), count(0) {}
 
-    /**
-     * @brief	Informations of dockarea modules.
-     */
-    struct DockareaModule : public StationModule {
-        quint64 sDockNum;   ///< Number of s docking bay.
-        quint64 sCapacity;  ///< S ship capacity.
-        quint64 mDockNum;   ///< Number of M docking bay.
-        quint64 mCapacity;  ///< M ship capacity.
-        quint64 lDockNum;   ///< Number of L docking bay.
-        quint64 xlDockNum;  ///< Number of XL docking bay.
-        quint64 lXlDockNum; ///< Number of L/XL docking bay.
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasMTurret() {}
     };
 
     /**
-     * @brief	Informations of build modules.
+     * @brief     Has M shield.
      */
-    struct BuildModule : public DockareaModule {
-        quint64 workforce; ///< Workforce.
+    struct HasMShield : public Property {
+        quint64 count; ///< Count of the shield.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasMShield() : Property(Property::Type::MShield), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasMShield() {}
     };
 
     /**
-     * @brief	Informations of habitation modules.
+     * @brief     Has L turret.
      */
-    struct HabitationModule : public StationModule {
-        quint64 workforce; ///< Workforce.
+    struct HasLTurret : public Property {
+        quint64 count; ///< Count of the turret.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasLTurret() : Property(Property::Type::LTurret), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasLTurret() {}
+    };
+
+    /**
+     * @brief     Has L shield.
+     */
+    struct HasLShield : public Property {
+        quint64 count; ///< Count of the shield.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasLShield() : Property(Property::Type::LShield), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasLShield() {}
+    };
+
+    /**
+     * @brief     Has S docking bay.
+     */
+    struct HasSDock : public Property {
+        quint64 count; ///< Count of the docking bay.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasSDock() : Property(Property::Type::SDock), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasSDock() {}
+    };
+
+    /**
+     * @brief     Has S ship capacity.
+     */
+    struct HasSShipCargo : public Property {
+        quint64 capacity; ///< Ship capacity.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasSShipCargo() : Property(Property::Type::SShipCargo), capacity(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasSShipCargo() {}
+    };
+
+    /**
+     * @brief     Has M docking bay.
+     */
+    struct HasMDock : public Property {
+        quint64 count; ///< Count of the docking bay.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasMDock() : Property(Property::Type::MDock), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasMDock() {}
+    };
+
+    /**
+     * @brief     Has M ship capacity.
+     */
+    struct HasMShipCargo : public Property {
+        quint64 capacity; ///< Ship capacity.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasMShipCargo() : Property(Property::Type::MShipCargo), capacity(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasMShipCargo() {}
+    };
+
+    /**
+     * @brief     Has L docking bay.
+     */
+    struct HasLDock : public Property {
+        quint64 count; ///< Count of the L docking bay.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasLDock() : Property(Property::Type::LDock), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasLDock() {}
+    };
+
+    /**
+     * @brief     Has XL docking bay.
+     */
+    struct HasXLDock : public Property {
+        quint64 count; ///< Count of the XL docking bay.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasXLDock() : Property(Property::Type::XLDock), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasXLDock() {}
+    };
+
+    /**
+     * @brief     Has L/XL docking bay.
+     */
+    struct HasLXLDock : public Property {
+        quint64 count; ///< Count of the L/XL docking bay.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasLXLDock() : Property(Property::Type::LXLDock), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasLXLDock() {}
+    };
+
+    /**
+     * @brief     Has S launch tube.
+     */
+    struct HasSLaunchTube : public Property {
+        quint64 count; ///< Count of the S launch tube.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasSLaunchTube() : Property(Property::Type::SLaunchTube), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasSLaunchTube() {}
+    };
+
+    /**
+     * @brief     Has M launch tube.
+     */
+    struct HasMLaunchTube : public Property {
+        quint64 count; ///< Count of the M launch tube.
+
+        /**
+         * @brief		Constructor.
+         */
+        HasMLaunchTube() : Property(Property::Type::MLaunchTube), count(0) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasMLaunchTube() {}
+    };
+
+    /**
+     * @brief     Support workforce.
+     */
+    struct SupplyWorkforce : public Property {
+        quint64 workforce; ///< Workforce can supply.
         ::std::shared_ptr<GameWares::ProductionInfo>
             supplyInfo; ///< Supply informations.
+
+        /**
+         * @brief		Constructor.
+         */
+        SupplyWorkforce() :
+            Property(Property::Type::SupplyWorkforce), workforce(0)
+        {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~SupplyWorkforce() {}
     };
 
     /**
-     * @brief	Informations of production modules.
+     * @brief     Require workforce.
      */
-    struct ProductionModule : public StationModule {
-        quint64 workforce; ///< Workforce.
-        QString product;   ///< ID of the product.
-        QVector<::std::shared_ptr<GameWares::ProductionInfo>>
-            productionInfos; ///< Production informations.
+    struct RequireWorkforce : public Property {
+        quint64 workforce; ///< Workforce required.
+
+        /**
+         * @brief		Constructor.
+         */
+        RequireWorkforce() :
+            Property(Property::Type::RequireWorkforce), workforce(0)
+        {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~RequireWorkforce() {}
     };
 
     /**
-     * @brief	Informations of storage modules.
+     * @brief     Supply product.
      */
-    struct StorageModule : public StationModule {
+    struct SupplyProduct : public Property {
+        QString product; ///< ID of the product.
+        ::std::shared_ptr<GameWares::ProductionInfo>
+            productionInfo; ///< Production information.
+
+        /**
+         * @brief		Constructor.
+         */
+        SupplyProduct() : Property(Property::Type::SupplyProduct) {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~SupplyProduct() {}
+    };
+
+    /**
+     * @brief     Has cargo.
+     */
+    struct HasCargo : public Property {
         GameWares::TransportType cargoType; ///< Type of cargo.
         quint64                  cargoSize; ///< Cargo size(m^3).
+
+        /**
+         * @brief		Constructor.
+         */
+        HasCargo() :
+            Property(Property::Type::Cargo),
+            cargoType(GameWares::TransportType::Unknow), cargoSize(0)
+        {}
+
+        /**
+         * @brief		Destructor.
+         */
+        virtual ~HasCargo() {}
     };
 
     /**
@@ -144,6 +438,10 @@ class GameStationModules :
     QVector<::std::shared_ptr<StationModule>> m_modules; ///< Station modules.
     QMap<QString, ::std::shared_ptr<StationModule>>
         m_modulesIndex; ///< Station modules index.
+    QMap<QString, QVector<::std::shared_ptr<StationModule>>>
+        m_componentTmpIndex; ///< Temporart component index.
+    static QMap<QString, StationModule::StationModuleClass>
+        _classMap; ///< Station module class map.
 
   protected:
     /**
@@ -252,7 +550,7 @@ class GameStationModules :
                    ::std::shared_ptr<GameComponents> components);
 
     /**
-     * @brief		Start element callback in macro.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
@@ -262,13 +560,13 @@ class GameStationModules :
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInRootOfMacro(XMLLoader &                   loader,
-                                     XMLLoader::Context &          context,
-                                     const QString &               name,
-                                     const QMap<QString, QString> &attr);
+    bool onStartElementInRootOfModuleMacro(XMLLoader &         loader,
+                                           XMLLoader::Context &context,
+                                           const QString &     name,
+                                           const QMap<QString, QString> &attr);
 
     /**
-     * @brief		Start element callback in macro.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
@@ -278,58 +576,25 @@ class GameStationModules :
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInMacrosOfMacro(XMLLoader &                   loader,
-                                       XMLLoader::Context &          context,
-                                       const QString &               name,
-                                       const QMap<QString, QString> &attr);
+    bool
+        onStartElementInMacrosOfModuleMacro(XMLLoader &         loader,
+                                            XMLLoader::Context &context,
+                                            const QString &     name,
+                                            const QMap<QString, QString> &attr);
 
     /**
-     * @brief		Start element callback in macro.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	wares		Game wares.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInMacroOfMacro(XMLLoader &                      loader,
-                                      XMLLoader::Context &             context,
-                                      const QString &                  name,
-                                      const QMap<QString, QString> &   attr,
-                                      ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Load common data in propterties.
-     *
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool loadCommonPropertiesOfMacro(XMLLoader::Context *             context,
-                                     const QString &                  name,
-                                     const QMap<QString, QString> &   attr,
-                                     ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Start element callback in propterties.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInBuiildModulePropertiesOfMacro(
+    bool onStartElementInMacroOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -337,18 +602,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in propterties.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInConnectionModulePropertiesOfMacro(
+    bool onStartElementInPropertiesOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -356,18 +621,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in propterties.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInDefenceModulePropertiesOfMacro(
+    bool onStartElementInBuildOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -375,18 +640,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in propterties.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInDockareaPropertiesOfMacro(
+    bool onStartElementInSetsOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -394,18 +659,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in connections.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInDockareaConnectionsOfMacro(
+    bool onStartElementInProductionOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -413,18 +678,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in connection.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInDockareaConnectionOfMacro(
+    bool onStartElementInConnectionsOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -432,18 +697,18 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in propterties.
+     * @brief		Start element callback in module macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInHabitationPropertiesOfMacro(
+    bool onStartElementInConnectionOfModuleMacro(
         XMLLoader &                      loader,
         XMLLoader::Context &             context,
         const QString &                  name,
@@ -451,186 +716,194 @@ class GameStationModules :
         ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in propterties.
+     * @brief		Load macro in connections of module macro.
      *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInProductionPropertiesOfMacro(
-        XMLLoader &                      loader,
-        XMLLoader::Context &             context,
-        const QString &                  name,
-        const QMap<QString, QString> &   attr,
-        ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Start element callback in propterties.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInStoragePropertiesOfMacro(
-        XMLLoader &                      loader,
-        XMLLoader::Context &             context,
-        const QString &                  name,
-        const QMap<QString, QString> &   attr,
-        ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Start element callback in production.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInProductionOfMacro(
-        XMLLoader &                                loader,
-        XMLLoader::Context &                       context,
-        const QString &                            name,
-        const QMap<QString, QString> &             attr,
-        ::std::shared_ptr<struct ProductionModule> module);
-
-    /**
-     * @brief		Start element callback in build.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInBuildOfMacro(XMLLoader &                      loader,
-                                      XMLLoader::Context &             context,
-                                      const QString &                  name,
-                                      const QMap<QString, QString> &   attr,
-                                      ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Start element callback in sets.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInSetsOfMacro(XMLLoader &                      loader,
-                                     XMLLoader::Context &             context,
-                                     const QString &                  name,
-                                     const QMap<QString, QString> &   attr,
-                                     ::std::shared_ptr<StationModule> module);
-
-    /**
-     * @brief		Load docking bay.
-     *
-     * @param[in]	macro		Macro to load.
+     * @param[in]	macro		Maro to load.
+     * @param[in]	module		Station module.
      * @param[in]	vfs			Virtual filesystem of the game.
      * @param[in]	macros		Game macros.
-     * @param[in]	module		Module.
+     * @param[in]	texts		Game texts.
+     * @param[in]	wares		Game wares.
+     * @param[in]	components	Game components.
      */
-    void loadDockingBay(const QString &                          macro,
-                        ::std::shared_ptr<GameVFS>               vfs,
-                        ::std::shared_ptr<GameMacros>            macros,
-                        ::std::shared_ptr<struct DockareaModule> module);
+    void loadConnectionMacro(const QString &                   macro,
+                             ::std::shared_ptr<StationModule>  module,
+                             ::std::shared_ptr<GameVFS>        vfs,
+                             ::std::shared_ptr<GameMacros>     macros,
+                             ::std::shared_ptr<GameTexts>      texts,
+                             ::std::shared_ptr<GameWares>      wares,
+                             ::std::shared_ptr<GameComponents> components);
 
     /**
-     * @brief		Start element callback in root.
+     * @brief		Start element callback in connection macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInRootOfDockingBay(
-        XMLLoader &                              loader,
-        XMLLoader::Context &                     context,
-        const QString &                          name,
-        const QMap<QString, QString> &           attr,
-        ::std::shared_ptr<struct DockareaModule> module);
+    bool onStartElementInRootOfConnectionMacro(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in macros.
+     * @brief		Start element callback in connection macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInMacrosOfDockingBay(
-        XMLLoader &                              loader,
-        XMLLoader::Context &                     context,
-        const QString &                          name,
-        const QMap<QString, QString> &           attr,
-        ::std::shared_ptr<struct DockareaModule> module);
+    bool onStartElementInMacrosOfConnectionMacro(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in macro.
+     * @brief		Start element callback in connection macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
+     * @param[in]	module		Station module.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInMacroOfDockingBay(
-        XMLLoader &                              loader,
-        XMLLoader::Context &                     context,
-        const QString &                          name,
-        const QMap<QString, QString> &           attr,
-        ::std::shared_ptr<struct DockareaModule> module);
+    bool onStartElementInMacroOfConnectionMacro(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
 
     /**
-     * @brief		Start element callback in properties.
+     * @brief		Start element callback in connection macro.
      *
      * @param[in]	loader		XML loader.
      * @param[in]	context		Context.
      * @param[in]	name		Name of the element.
      * @param[in]	attr		Attributes.
-     * @param[in]	module		Module.
-     * @param[in]	info		Information of the docking bay.
+     * @param[in]	module		Station module.
+     * @param[in]	info		Docking bay information.
      *
      * @return		Return \c true if the parsing should be continued.
      *				otherwise returns \c false.
      */
-    bool onStartElementInPropertiesOfDockingBay(
-        XMLLoader &                              loader,
-        XMLLoader::Context &                     context,
-        const QString &                          name,
-        const QMap<QString, QString> &           attr,
-        ::std::shared_ptr<struct DockareaModule> module,
-        ::std::shared_ptr<TmpDockingBayInfo>     info);
+    bool onStartElementInnPropertiesOfConnectionMacro(
+        XMLLoader &                          loader,
+        XMLLoader::Context &                 context,
+        const QString &                      name,
+        const QMap<QString, QString> &       attr,
+        ::std::shared_ptr<StationModule>     module,
+        ::std::shared_ptr<TmpDockingBayInfo> info);
+
+    /**
+     * @brief		Load component.
+     *
+     * @param[in]	component	Component to load.
+     * @param[in]	module		Station module.
+     * @param[in]	vfs			Virtual filesystem of the game.
+     * @param[in]	macros		Game macros.
+     * @param[in]	texts		Game texts.
+     * @param[in]	wares		Game wares.
+     * @param[in]	components	Game components.
+     */
+    void loadComponent(const QString &                   component,
+                       ::std::shared_ptr<StationModule>  module,
+                       ::std::shared_ptr<GameVFS>        vfs,
+                       ::std::shared_ptr<GameMacros>     macros,
+                       ::std::shared_ptr<GameTexts>      texts,
+                       ::std::shared_ptr<GameWares>      wares,
+                       ::std::shared_ptr<GameComponents> components);
+
+    /**
+     * @brief		Start element callback in module component.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	module		Station module.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInRootOfModuleComponent(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
+
+    /**
+     * @brief		Start element callback in module component.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	module		Station module.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInComponentsOfModuleComponent(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
+
+    /**
+     * @brief		Start element callback in module component.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	module		Station module.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInComponentOfModuleComponent(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
+
+    /**
+     * @brief		Start element callback in module component.
+     *
+     * @param[in]	loader		XML loader.
+     * @param[in]	context		Context.
+     * @param[in]	name		Name of the element.
+     * @param[in]	attr		Attributes.
+     * @param[in]	module		Station module.
+     *
+     * @return		Return \c true if the parsing should be continued.
+     *				otherwise returns \c false.
+     */
+    bool onStartElementInConnectionsOfModuleComponent(
+        XMLLoader &                      loader,
+        XMLLoader::Context &             context,
+        const QString &                  name,
+        const QMap<QString, QString> &   attr,
+        ::std::shared_ptr<StationModule> module);
 };

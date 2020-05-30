@@ -1,9 +1,44 @@
 #include <cmath>
 
 #include <QtCore/QDebug>
+#include <QtCore/QRegExp>
 #include <QtCore/QSet>
 
 #include <game_data/game_station_modules.h>
+
+QMap<QString, GameStationModules::StationModule::StationModuleClass>
+    GameStationModules::_classMap = {
+        {
+            "buildmodule",
+            GameStationModules::StationModule::StationModuleClass::BuildModule,
+        },
+        {
+            "connectionmodule",
+            GameStationModules::StationModule::StationModuleClass::
+                ConnectionModule,
+        },
+        {
+            "defencemodule",
+            GameStationModules::StationModule::StationModuleClass::
+                DefenceModule,
+        },
+        {
+            "dockarea",
+            GameStationModules::StationModule::StationModuleClass::Dockarea,
+        },
+        {
+            "habitation",
+            GameStationModules::StationModule::StationModuleClass::Habitation,
+        },
+        {
+            "production",
+            GameStationModules::StationModule::StationModuleClass::Production,
+        },
+        {
+            "storage",
+            GameStationModules::StationModule::StationModuleClass::Storage,
+        },
+};
 
 /**
  * @brief		Constructor.
@@ -183,7 +218,7 @@ void GameStationModules::loadMacro(const QString &                   macro,
                                    ::std::shared_ptr<GameWares>      wares,
                                    ::std::shared_ptr<GameComponents> components)
 {
-    qDebug() << "Loading station module macro" << macro;
+    qDebug() << "Loading station module macro" << macro << "...";
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open(macros->macro(macro) + ".xml");
     if (file == nullptr) {
@@ -195,8 +230,8 @@ void GameStationModules::loadMacro(const QString &                   macro,
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
     context->setOnStartElement(
-        ::std::bind(&GameStationModules::onStartElementInRootOfMacro, this,
-                    ::std::placeholders::_1, ::std::placeholders::_2,
+        ::std::bind(&GameStationModules::onStartElementInRootOfModuleMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
                     ::std::placeholders::_3, ::std::placeholders::_4));
     loader["vfs"]        = vfs;
     loader["macros"]     = macros;
@@ -207,9 +242,9 @@ void GameStationModules::loadMacro(const QString &                   macro,
 }
 
 /**
- * @brief		Start element callback in macro.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::onStartElementInRootOfMacro(
+bool GameStationModules::onStartElementInRootOfModuleMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
@@ -219,10 +254,10 @@ bool GameStationModules::onStartElementInRootOfMacro(
         = XMLLoader::Context::create();
 
     if (name == "macros") {
-        context->setOnStartElement(
-            ::std::bind(&GameStationModules::onStartElementInMacrosOfMacro,
-                        this, ::std::placeholders::_1, ::std::placeholders::_2,
-                        ::std::placeholders::_3, ::std::placeholders::_4));
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInMacrosOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4));
     }
 
     loader.pushContext(::std::move(context));
@@ -230,187 +265,481 @@ bool GameStationModules::onStartElementInRootOfMacro(
 }
 
 /**
- * @brief		Start element callback in macro.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::onStartElementInMacrosOfMacro(
+bool GameStationModules::onStartElementInMacrosOfModuleMacro(
     XMLLoader &                   loader,
     XMLLoader::Context &          currentContext,
     const QString &               name,
     const QMap<QString, QString> &attr)
-
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
     if (name == "macro") {
-        auto iter = attr.find("class");
-        if (iter == attr.end()) {
-            loader.pushContext(::std::move(context));
-            return true;
-        }
+        ::std::shared_ptr<StationModule> module(new StationModule);
 
-        ::std::shared_ptr<StationModule> module;
-        auto moduleiter = m_modulesIndex.find(attr["name"]);
-        if (moduleiter == m_modulesIndex.end()) {
-            if (*iter == "buildmodule") {
-                ::std::shared_ptr<struct BuildModule> buildModule(
-                    new struct BuildModule);
-                buildModule->moduleClass = StationModuleClass::BuildModule;
-                buildModule->sDockNum    = 0;
-                buildModule->sCapacity   = 0;
-                buildModule->mDockNum    = 0;
-                buildModule->mCapacity   = 0;
-                buildModule->lDockNum    = 0;
-                buildModule->xlDockNum   = 0;
-                buildModule->lXlDockNum  = 0;
-                module                   = buildModule;
+        // Initialize properties.
+        module->macro           = attr["name"];
+        module->playerModule    = false;
+        module->hull            = 0;
+        module->explosiondamage = 0;
+        module->racialLimited   = false;
 
-            } else if (*iter == "connectionmodule") {
-                ::std::shared_ptr<struct ConnectionModule> connectionModule(
-                    new struct ConnectionModule);
-                connectionModule->moduleClass
-                    = StationModuleClass::ConnectionModule;
-                module = connectionModule;
+        // Get module class.
+        auto classIter = _classMap.find(attr["class"]);
+        if (classIter != _classMap.end()) {
+            module->moduleClass = *classIter;
 
-            } else if (*iter == "defencemodule") {
-                ::std::shared_ptr<struct DefenceModule> defenceModule(
-                    new struct DefenceModule);
-                defenceModule->moduleClass = StationModuleClass::DefenceModule;
-                module                     = defenceModule;
+            context->setOnStartElement(::std::bind(
+                &GameStationModules::onStartElementInMacroOfModuleMacro, this,
+                ::std::placeholders::_1, ::std::placeholders::_2,
+                ::std::placeholders::_3, ::std::placeholders::_4, module));
+            currentContext.setOnStopElement([this, module](
+                                                XMLLoader &loader,
+                                                XMLLoader::Context
+                                                    &          currentContext,
+                                                const QString &name) -> bool {
+                if (name == "macro") {
+                    if (module->playerModule) {
+                        // Add module.
+                        m_modules.push_back(module);
+                        m_modulesIndex[module->macro] = module;
 
-            } else if (*iter == "dockarea" || *iter == "pier") {
-                ::std::shared_ptr<struct DockareaModule> dockareaModule(
-                    new struct DockareaModule);
-                dockareaModule->moduleClass = StationModuleClass::Dockarea;
-                dockareaModule->sDockNum    = 0;
-                dockareaModule->sCapacity   = 0;
-                dockareaModule->mDockNum    = 0;
-                dockareaModule->mCapacity   = 0;
-                dockareaModule->lDockNum    = 0;
-                dockareaModule->xlDockNum   = 0;
-                dockareaModule->lXlDockNum  = 0;
-                module                      = dockareaModule;
+                        // Print information
+                        ::std::shared_ptr<GameTexts> texts
+                            = ::std::any_cast<::std::shared_ptr<GameTexts>>(
+                                loader["texts"]);
+                        qDebug() << "module :{";
+                        qDebug() << "    "
+                                 << "macro           :" << module->macro;
+                        qDebug() << "    "
+                                 << "component       :" << module->component;
+                        qDebug()
+                            << "    "
+                            << "name            :" << texts->text(module->name);
+                        qDebug() << "    "
+                                 << "description     :"
+                                 << texts->text(module->description);
+                        switch (module->moduleClass) {
+                            case StationModule::StationModuleClass::Unknow:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "Unknow";
+                                break;
 
-            } else if (*iter == "habitation") {
-                ::std::shared_ptr<struct HabitationModule> habitationModule(
-                    new struct HabitationModule);
-                habitationModule->moduleClass = StationModuleClass::Habitation;
-                module                        = habitationModule;
+                            case StationModule::StationModuleClass::BuildModule:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "BuildModule";
+                                break;
 
-            } else if (*iter == "production") {
-                ::std::shared_ptr<struct ProductionModule> productionModule(
-                    new struct ProductionModule);
-                productionModule->moduleClass = StationModuleClass::Production;
-                module                        = productionModule;
+                            case StationModule::StationModuleClass::
+                                ConnectionModule:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "ConnectionModule";
+                                break;
 
-            } else if (*iter == "storage") {
-                ::std::shared_ptr<struct StorageModule> storageModule(
-                    new struct StorageModule);
-                storageModule->moduleClass = StationModuleClass::Storage;
-                module                     = storageModule;
+                            case StationModule::StationModuleClass::
+                                DefenceModule:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "DefenceModule";
+                                break;
 
-            } else {
-                loader.pushContext(::std::move(context));
-                return true;
-            }
-        } else {
-            module = *moduleiter;
-        }
+                            case StationModule::StationModuleClass::Dockarea:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "Dockarea";
+                                break;
 
-        context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInMacroOfMacro, this,
-            ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, module));
+                            case StationModule::StationModuleClass::Habitation:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "Habitation";
+                                break;
 
-        module->macro        = attr["name"];
-        module->playerModule = false;
-        currentContext.setOnStopElement([module](XMLLoader &loader,
-                                                 XMLLoader::Context &,
-                                                 const QString &name) -> bool {
-            ::std::shared_ptr<GameTexts> texts
-                = ::std::any_cast<::std::shared_ptr<GameTexts>>(
-                    loader["texts"]);
-            if (name == "macro" && module->playerModule) {
-                // Debug info.
-                qDebug() << "Module : {";
-                qDebug() << "    macro           : " << module->macro;
-                qDebug() << "    name            : "
-                         << texts->text(module->name);
-                qDebug() << "    moduleClass     : " << module->moduleClass;
-                qDebug() << "    desctiption     : "
-                         << texts->text(module->description);
-                qDebug() << "    races           : " << module->races;
-                qDebug() << "    hull            : " << module->hull;
-                qDebug() << "    explosiondamage : " << module->explosiondamage;
-                switch (module->moduleClass) {
-                    case StationModuleClass::BuildModule: {
-                        ::std::shared_ptr<struct BuildModule> buildModule
-                            = ::std::static_pointer_cast<struct BuildModule>(
-                                module);
-                        qDebug() << "    workforce       : "
-                                 << buildModule->workforce;
+                            case StationModule::StationModuleClass::Production:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "Production";
+                                break;
+
+                            case StationModule::StationModuleClass::Storage:
+                                qDebug() << "    "
+                                         << "class           : "
+                                         << "Storage";
+                                break;
+                        }
+                        if (module->racialLimited) {
+                            qDebug() << "    "
+                                     << "races           : " << module->races;
+                        } else {
+                            qDebug() << "    "
+                                     << "races           : "
+                                     << "generic";
+                        }
+                        qDebug() << "    "
+                                 << "hull            : " << module->hull;
+                        qDebug()
+                            << "    "
+                            << "explosiondamage : " << module->explosiondamage;
+                        qDebug() << "    "
+                                 << "propertues      : {";
+                        for (auto &baseProperty : module->properties) {
+                            switch (baseProperty->type) {
+                                case Property::Type::MTurret: {
+                                    ::std::shared_ptr<HasMTurret> property
+                                        = ::std::static_pointer_cast<
+                                            HasMTurret>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "m turret           : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::MShield: {
+                                    ::std::shared_ptr<HasMShield> property
+                                        = ::std::static_pointer_cast<
+                                            HasMShield>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "m shield           : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::LTurret: {
+                                    ::std::shared_ptr<HasLTurret> property
+                                        = ::std::static_pointer_cast<
+                                            HasLTurret>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "l turret           : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::LShield: {
+                                    ::std::shared_ptr<HasLShield> property
+                                        = ::std::static_pointer_cast<
+                                            HasLShield>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "l shield           : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::SDock: {
+                                    ::std::shared_ptr<HasSDock> property
+                                        = ::std::static_pointer_cast<HasSDock>(
+                                            baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "s docking bay      : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::SShipCargo: {
+                                    ::std::shared_ptr<HasSShipCargo> property
+                                        = ::std::static_pointer_cast<
+                                            HasSShipCargo>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "s ship cargo       : "
+                                             << property->capacity;
+                                } break;
+
+                                case Property::Type::MDock: {
+                                    ::std::shared_ptr<HasMDock> property
+                                        = ::std::static_pointer_cast<HasMDock>(
+                                            baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "m docking bay      : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::MShipCargo: {
+                                    ::std::shared_ptr<HasMShipCargo> property
+                                        = ::std::static_pointer_cast<
+                                            HasMShipCargo>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "m ship cargo       : "
+                                             << property->capacity;
+                                } break;
+
+                                case Property::Type::LDock: {
+                                    ::std::shared_ptr<HasLDock> property
+                                        = ::std::static_pointer_cast<HasLDock>(
+                                            baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "l docking bay      : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::XLDock: {
+                                    ::std::shared_ptr<HasXLDock> property
+                                        = ::std::static_pointer_cast<HasXLDock>(
+                                            baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "xl docking bay     : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::LXLDock: {
+                                    ::std::shared_ptr<HasLXLDock> property
+                                        = ::std::static_pointer_cast<
+                                            HasLXLDock>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "l/xl docking bay   : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::SLaunchTube: {
+                                    ::std::shared_ptr<HasSLaunchTube> property
+                                        = ::std::static_pointer_cast<
+                                            HasSLaunchTube>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "s launch tube      : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::MLaunchTube: {
+                                    ::std::shared_ptr<HasMLaunchTube> property
+                                        = ::std::static_pointer_cast<
+                                            HasMLaunchTube>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "m launch tube      : "
+                                             << property->count;
+                                } break;
+
+                                case Property::Type::SupplyWorkforce: {
+                                    ::std::shared_ptr<SupplyWorkforce> property
+                                        = ::std::static_pointer_cast<
+                                            SupplyWorkforce>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "supply workforce   : {";
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "workforce : "
+                                             << property->workforce;
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "supplies  : [";
+                                    for (auto &resource :
+                                         property->supplyInfo->resources) {
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "{";
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "id     : " << resource->id;
+                                        qDebug()
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "amount : "
+                                            << ::round((
+                                                   double)(((long double)
+                                                                resource
+                                                                    ->amount)
+                                                           * property->workforce
+                                                           * 3600
+                                                           / property
+                                                                 ->supplyInfo
+                                                                 ->amount
+                                                           / property
+                                                                 ->supplyInfo
+                                                                 ->time))
+                                            << "/h";
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "}";
+                                    }
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "]";
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "}";
+                                } break;
+
+                                case Property::Type::RequireWorkforce: {
+                                    ::std::shared_ptr<RequireWorkforce> property
+                                        = ::std::static_pointer_cast<
+                                            RequireWorkforce>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "workforce required : "
+                                             << property->workforce;
+                                } break;
+
+                                case Property::Type::SupplyProduct: {
+                                    ::std::shared_ptr<SupplyProduct> property
+                                        = ::std::static_pointer_cast<
+                                            SupplyProduct>(baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "product            : {";
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "id               :"
+                                             << property->product;
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "time per round   :"
+                                             << property->productionInfo->time
+                                             << "s";
+                                    qDebug()
+                                        << "    "
+                                        << "    "
+                                        << "    "
+                                        << "amount per round :"
+                                        << property->productionInfo->amount
+                                        << " - "
+                                        << ::round(
+                                               property->productionInfo->amount
+                                               * (property->productionInfo
+                                                      ->workEffect
+                                                  + 1.0));
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "resources        : [";
+                                    for (auto &resource :
+                                         property->productionInfo->resources) {
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "{";
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "id     : " << resource->id;
+                                        qDebug()
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "    "
+                                            << "amount : "
+                                            << ::round((
+                                                   double)(((long double)
+                                                                resource
+                                                                    ->amount)
+                                                           * 3600
+                                                           / property
+                                                                 ->productionInfo
+                                                                 ->time))
+                                            << "/h - "
+                                            << ::round(
+                                                   (double)(((long double)
+                                                                 resource
+                                                                     ->amount)
+                                                            * 3600
+                                                            / property
+                                                                  ->productionInfo
+                                                                  ->time)
+                                                   * (1.0
+                                                      + property->productionInfo
+                                                            ->workEffect))
+                                            << "/h";
+                                        qDebug() << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "    "
+                                                 << "}";
+                                    }
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "]";
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "}";
+                                } break;
+
+                                case Property::Type::Cargo: {
+                                    ::std::shared_ptr<HasCargo> property
+                                        = ::std::static_pointer_cast<HasCargo>(
+                                            baseProperty);
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "cargo              : {";
+                                    switch (property->cargoType) {
+                                        case GameWares::TransportType::
+                                            Container:
+                                            qDebug() << "    "
+                                                     << "    "
+                                                     << "    "
+                                                     << "type : Container";
+                                            break;
+
+                                        case GameWares::TransportType::Solid:
+                                            qDebug() << "    "
+                                                     << "    "
+                                                     << "    "
+                                                     << "type : Solid";
+                                            break;
+
+                                        case GameWares::TransportType::Liquid:
+                                            qDebug() << "    "
+                                                     << "    "
+                                                     << "    "
+                                                     << "type : Liquid";
+                                            break;
+
+                                        case GameWares::TransportType::Unknow:
+                                            qDebug() << "    "
+                                                     << "    "
+                                                     << "    "
+                                                     << "type : Unknow";
+                                            break;
+                                    }
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "    "
+                                             << "size : " << property->cargoSize
+                                             << " m^3";
+                                    qDebug() << "    "
+                                             << "    "
+                                             << "}";
+                                } break;
+                            }
+                        }
+                        qDebug() << "    "
+                                 << "}";
+                        qDebug() << "}";
                     }
-
-                    case StationModuleClass::Dockarea: {
-                        ::std::shared_ptr<struct DockareaModule> dockareaModule
-                            = ::std::static_pointer_cast<struct DockareaModule>(
-                                module);
-                        if (dockareaModule->sDockNum > 0) {
-                            qDebug() << "    sDockNum        : "
-                                     << dockareaModule->sDockNum;
-                        }
-                        if (dockareaModule->sCapacity > 0) {
-                            qDebug() << "    sCapacity       : "
-                                     << dockareaModule->sCapacity;
-                        }
-                        if (dockareaModule->mDockNum > 0) {
-                            qDebug() << "    mDockNum        : "
-                                     << dockareaModule->mDockNum;
-                        }
-                        if (dockareaModule->mCapacity > 0) {
-                            qDebug() << "    mCapacity       : "
-                                     << dockareaModule->mCapacity;
-                        }
-                        if (dockareaModule->lDockNum > 0) {
-                            qDebug() << "    lDockNum        : "
-                                     << dockareaModule->lDockNum;
-                        }
-                        if (dockareaModule->xlDockNum > 0) {
-                            qDebug() << "    xlDockNum       : "
-                                     << dockareaModule->xlDockNum;
-                        }
-                        if (dockareaModule->lXlDockNum > 0) {
-                            qDebug() << "    lXlsDockNum     : "
-                                     << dockareaModule->lXlDockNum;
-                        }
-                    }
-
-                    break;
-
-                    case StationModuleClass::ConnectionModule: {
-                    } break;
-
-                    case StationModuleClass::DefenceModule:
-                        break;
-
-                    case StationModuleClass::Habitation: {
-                        ::std::shared_ptr<struct HabitationModule>
-                            habitationModule = ::std::static_pointer_cast<
-                                struct HabitationModule>(module);
-                        qDebug() << "    workforce       : "
-                                 << habitationModule->workforce;
-                    } break;
-
-                    case StationModuleClass::Production:
-                        break;
-
-                    case StationModuleClass::Storage:
-                        break;
+                    currentContext.setOnStopElement(nullptr);
                 }
-                qDebug() << "}";
-            }
-            return true;
-        });
+                return true;
+            });
+        }
     }
 
     loader.pushContext(::std::move(context));
@@ -418,98 +747,220 @@ bool GameStationModules::onStartElementInMacrosOfMacro(
 }
 
 /**
- * @brief		Start element callback in macro.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::onStartElementInMacroOfMacro(
+bool GameStationModules::onStartElementInMacroOfModuleMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
-    const QString &name,
-    const QMap<QString, QString> &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<StationModule> module)
+{
+    // Get environemnt.
+    ::std::shared_ptr<GameVFS> vfs
+        = ::std::any_cast<::std::shared_ptr<GameVFS>>(loader["vfs"]);
+    ::std::shared_ptr<GameMacros> macros
+        = ::std::any_cast<::std::shared_ptr<GameMacros>>(loader["macros"]);
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
+    ::std::shared_ptr<GameWares> wares
+        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
+    ::std::shared_ptr<GameComponents> components
+        = ::std::any_cast<::std::shared_ptr<GameComponents>>(
+            loader["components"]);
+
+    // Parse node.
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "component") {
+        module->component = attr["ref"];
+        auto iter         = m_componentTmpIndex.find(attr["ref"]);
+        if (iter == m_componentTmpIndex.end()) {
+            m_componentTmpIndex[module->component] = {module};
+
+        } else {
+            m_componentTmpIndex[module->component].push_back(module);
+        }
+
+        this->loadComponent(attr["ref"], module, vfs, macros, texts, wares,
+                            components);
+
+    } else if (name == "properties") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInPropertiesOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+
+    } else if (name == "connections") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInConnectionsOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in module macro.
+ */
+bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
     ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
-    if (name == "properties") {
-        switch (module->moduleClass) {
-            case StationModuleClass::BuildModule:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInBuiildModulePropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::ConnectionModule:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInConnectionModulePropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::DefenceModule:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInDefenceModulePropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::Dockarea:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInDockareaPropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::Habitation:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInHabitationPropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::Production:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInProductionPropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::Storage:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInStoragePropertiesOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-
-                break;
+    if (name == "identification") {
+        module->name        = GameTexts::IDPair(attr["name"]);
+        module->description = GameTexts::IDPair(attr["description"]);
+        auto iter           = attr.find("makerrace");
+        if (iter == attr.end()) {
+            module->races         = GameRaces::playerRaces();
+            module->racialLimited = false;
+        } else {
+            module->races         = {*iter};
+            module->racialLimited = true;
         }
-    } else if (name == "connections") {
-        switch (module->moduleClass) {
-            case StationModuleClass::Dockarea:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInDockareaConnectionsOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            case StationModuleClass::BuildModule:
-                context->setOnStartElement(::std::bind(
-                    &GameStationModules::
-                        onStartElementInDockareaConnectionsOfMacro,
-                    this, ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4, module));
-                break;
-
-            default:
-                break;
+        for (auto &otherModule : m_componentTmpIndex[module->component]) {
+            if (otherModule == module) {
+                continue;
+            }
+            if (module->racialLimited && (! otherModule->racialLimited)) {
+                for (auto &race : module->races) {
+                    auto iter = otherModule->races.find(race);
+                    if (iter != otherModule->races.end()) {
+                        otherModule->races.erase(iter);
+                    }
+                }
+            }
+            if ((! module->racialLimited) && otherModule->racialLimited) {
+                for (auto &race : otherModule->races) {
+                    auto iter = module->races.find(race);
+                    if (iter != module->races.end()) {
+                        module->races.erase(iter);
+                    }
+                }
+            }
         }
+
+    } else if (name == "build") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInBuildOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+
+    } else if (name == "hull") {
+        module->hull = attr["max"].toUInt();
+
+    } else if (name == "explosiondamage") {
+        module->explosiondamage = attr["value"].toUInt();
+
+    } else if (name == "workforce") {
+        if (attr.find("max") == attr.end()) {
+            // Supply.
+            ::std::shared_ptr<SupplyWorkforce> property;
+            auto                               iter
+                = module->properties.find(Property::Type::SupplyWorkforce);
+            if (iter == module->properties.end()) {
+                property
+                    = ::std::shared_ptr<SupplyWorkforce>(new SupplyWorkforce);
+                module->properties[property->type] = property;
+            } else {
+                property = ::std::static_pointer_cast<SupplyWorkforce>(*iter);
+            }
+            property->workforce = attr["capacity"].toUInt();
+
+            /// Supply
+            ::std::shared_ptr<GameWares> wares
+                = ::std::any_cast<::std::shared_ptr<GameWares>>(
+                    loader["wares"]);
+            const ::std::shared_ptr<::GameWares::Ware> workunit
+                = wares->ware("workunit_busy");
+            for (auto &info : workunit->productionInfos) {
+                if (info->method == attr["race"]) {
+                    ::std::shared_ptr<::GameWares::ProductionInfo> supplyInfo(
+                        new ::GameWares::ProductionInfo());
+                    supplyInfo->id         = "";
+                    supplyInfo->time       = info->time;
+                    supplyInfo->amount     = attr["capacity"].toULong();
+                    supplyInfo->method     = attr["race"];
+                    supplyInfo->workEffect = 0;
+                    for (auto &res : info->resources) {
+                        ::std::shared_ptr<GameWares::Resource> resource(
+                            new GameWares::Resource);
+                        resource->id     = res->id;
+                        resource->amount = (quint32)::round(
+                            ((long double)res->amount) * supplyInfo->amount
+                            / info->amount);
+                        supplyInfo->resources.append(resource);
+                    }
+
+                    property->supplyInfo = supplyInfo;
+                    break;
+                }
+            }
+            if (property->supplyInfo == nullptr) {
+                module->properties.remove(Property::Type::SupplyWorkforce);
+            }
+
+        } else {
+            // Require.
+            ::std::shared_ptr<RequireWorkforce> property;
+            auto                                iter
+                = module->properties.find(Property::Type::RequireWorkforce);
+            if (iter == module->properties.end()) {
+                property
+                    = ::std::shared_ptr<RequireWorkforce>(new RequireWorkforce);
+                module->properties[property->type] = property;
+            } else {
+                property = ::std::static_pointer_cast<RequireWorkforce>(*iter);
+            }
+
+            property->workforce = attr["max"].toUInt();
+        }
+
+    } else if (name == "production") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInProductionOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+
+    } else if (name == "cargo") {
+        ::std::shared_ptr<HasCargo> property;
+        auto iter = module->properties.find(Property::Type::Cargo);
+        if (iter == module->properties.end()) {
+            property = ::std::shared_ptr<HasCargo>(new HasCargo);
+            module->properties[property->type] = property;
+
+        } else {
+            property = ::std::static_pointer_cast<HasCargo>(*iter);
+        }
+
+        auto tags
+            = attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts);
+        for (QString tag : tags) {
+            if (tag == "container") {
+                property->cargoType = GameWares::TransportType::Container;
+
+            } else if (tag == "solid") {
+                property->cargoType = GameWares::TransportType::Solid;
+
+            } else if (tag == "liquid") {
+                property->cargoType = GameWares::TransportType::Liquid;
+            }
+        }
+
+        if (property->cargoType == GameWares::TransportType::Unknow) {
+            module->properties.remove(Property::Type::Cargo);
+        }
+
+        property->cargoSize = attr["max"].toUInt();
     }
 
     loader.pushContext(::std::move(context));
@@ -517,41 +968,9 @@ bool GameStationModules::onStartElementInMacroOfMacro(
 }
 
 /**
- * @brief		Load common data in propterties.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::loadCommonPropertiesOfMacro(
-    XMLLoader::Context *             context,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    if (name == "identification") {
-        module->name        = GameTexts::IDPair(attr["name"]);
-        module->description = GameTexts::IDPair(attr["description"]);
-        auto iter           = attr.find("makerrace");
-        if (iter != attr.end()) {
-            for (auto &s : iter->split(" ")) {
-                module->races.insert(s);
-            }
-        }
-
-    } else if (name == "build") {
-        context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInBuildOfMacro, this,
-            ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, module));
-
-    } else if (name == "hull") {
-        module->hull = attr["max"].toUInt();
-    }
-
-    return true;
-}
-
-/**
- * @brief		Start element callback in build.
- */
-bool GameStationModules::onStartElementInBuildOfMacro(
+bool GameStationModules::onStartElementInBuildOfModuleMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
@@ -563,87 +982,42 @@ bool GameStationModules::onStartElementInBuildOfMacro(
 
     if (name == "sets") {
         context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInSetsOfMacro, this,
+            &GameStationModules::onStartElementInSetsOfModuleMacro, this,
             ::std::placeholders::_1, ::std::placeholders::_2,
             ::std::placeholders::_3, ::std::placeholders::_4, module));
     }
 
     loader.pushContext(::std::move(context));
-
     return true;
 }
 
 /**
- * @brief		Start element callback in sets.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::onStartElementInSetsOfMacro(
+bool GameStationModules::onStartElementInSetsOfModuleMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &                  name,
     const QMap<QString, QString> &   attr,
     ::std::shared_ptr<StationModule> module)
 {
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
     if (name == "set") {
-        auto iter = attr.find("ref");
-        if (iter != attr.end() && *iter == "headquarters_player") {
+        if (attr["ref"] == "headquarters_player") {
             module->playerModule = true;
-            if (m_modulesIndex.find(module->macro) == m_modulesIndex.end()) {
-                m_modules.push_back(module);
-                m_modulesIndex[module->macro] = module;
-            }
         }
     }
-    loader.pushContext(XMLLoader::Context::create());
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-bool GameStationModules::onStartElementInBuiildModulePropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-    ::std::shared_ptr<struct BuildModule> buildModule
-        = ::std::static_pointer_cast<struct BuildModule>(module);
-
-    if (name == "workforce") {
-        buildModule->workforce = attr["max"].toUInt();
-
-    } else {
-        this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    }
 
     loader.pushContext(::std::move(context));
     return true;
 }
 
 /**
- * @brief		Start element callback in propterties.
+ * @brief		Start element callback in module macro.
  */
-bool GameStationModules::onStartElementInConnectionModulePropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-    this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-bool GameStationModules::onStartElementInDefenceModulePropertiesOfMacro(
+bool GameStationModules::onStartElementInProductionOfModuleMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &                  name,
@@ -653,208 +1027,10 @@ bool GameStationModules::onStartElementInDefenceModulePropertiesOfMacro(
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
-    this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-bool GameStationModules::onStartElementInDockareaPropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-    this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in connections.
- */
-bool GameStationModules::onStartElementInDockareaConnectionsOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &name,
-    const QMap<QString, QString> &,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-    if (name == "connection") {
-        context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInDockareaConnectionOfMacro,
-            this, ::std::placeholders::_1, ::std::placeholders::_2,
-            ::std::placeholders::_3, ::std::placeholders::_4, module));
-    }
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in connection.
- */
-bool GameStationModules::onStartElementInDockareaConnectionOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-
-    if (name == "macro") {
-        this->loadDockingBay(
-            attr["ref"],
-            ::std::any_cast<::std::shared_ptr<GameVFS>>(loader["vfs"]),
-            ::std::any_cast<::std::shared_ptr<GameMacros>>(loader["macros"]),
-            ::std::static_pointer_cast<struct DockareaModule>(module));
-    }
-
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-bool GameStationModules::onStartElementInHabitationPropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::shared_ptr<GameWares> wares
-        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-
-    ::std::shared_ptr<struct HabitationModule> habitationModule
-        = ::std::static_pointer_cast<struct HabitationModule>(module);
-    if (name == "workforce") {
-        /// Workforce
-        habitationModule->races.insert(attr["race"]);
-        habitationModule->workforce = attr["capacity"].toULong();
-
-        /// Supply
-        const ::std::shared_ptr<::GameWares::Ware> workunit
-            = wares->ware("workunit_busy");
-        for (auto &info : workunit->productionInfos) {
-            if (info->method == attr["race"]) {
-                ::std::shared_ptr<::GameWares::ProductionInfo> supplyInfo(
-                    new ::GameWares::ProductionInfo());
-                supplyInfo->id         = "";
-                supplyInfo->time       = info->time;
-                supplyInfo->amount     = attr["capacity"].toULong();
-                supplyInfo->method     = attr["race"];
-                supplyInfo->workEffect = 0;
-                for (auto &res : info->resources) {
-                    ::std::shared_ptr<GameWares::Resource> resource(
-                        new GameWares::Resource);
-                    resource->id = res->id;
-                    resource->amount
-                        = (quint32)::round(((long double)res->amount)
-                                           * supplyInfo->amount / info->amount);
-                    supplyInfo->resources.append(resource);
-                }
-
-                habitationModule->supplyInfo = supplyInfo;
-                break;
-            }
-        }
-
-    } else {
-        this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    }
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-
-bool GameStationModules::onStartElementInProductionPropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-
-    ::std::shared_ptr<struct ProductionModule> productionModule
-        = ::std::static_pointer_cast<struct ProductionModule>(module);
-    if (name == "production") {
-        productionModule->product = attr["wares"];
-        context->setOnStartElement(
-            ::std::bind(&GameStationModules::onStartElementInProductionOfMacro,
-                        this, ::std::placeholders::_1, ::std::placeholders::_2,
-                        ::std::placeholders::_3, ::std::placeholders::_4,
-                        productionModule));
-
-    } else {
-        this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    }
-    loader.pushContext(::std::move(context));
-    return true;
-}
-
-/**
- * @brief		Start element callback in propterties.
- */
-bool GameStationModules::onStartElementInStoragePropertiesOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                  name,
-    const QMap<QString, QString> &   attr,
-    ::std::shared_ptr<StationModule> module)
-{
-    ::std::unique_ptr<XMLLoader::Context> context
-        = XMLLoader::Context::create();
-
-    ::std::shared_ptr<struct StorageModule> storageModule
-        = ::std::static_pointer_cast<struct StorageModule>(module);
-    if (name == "cargo") {
-        storageModule->cargoSize = attr["max"].toULong();
-        if (attr["tags"] == "container") {
-            storageModule->cargoType = GameWares::TransportType::Container;
-
-        } else if (attr["tags"] == "liquid") {
-            storageModule->cargoType = GameWares::TransportType::Liquid;
-
-        } else if (attr["tags"] == "solid") {
-            storageModule->cargoType = GameWares::TransportType::Solid;
-        }
-
-    } else {
-        this->loadCommonPropertiesOfMacro(context.get(), name, attr, module);
-    }
-    loader.pushContext(::std::move(context));
-    return true;
-}
-/**
- * @brief		Start element callback in production.
- */
-bool GameStationModules::onStartElementInProductionOfMacro(
-    XMLLoader &loader,
-    XMLLoader::Context &,
-    const QString &                            name,
-    const QMap<QString, QString> &             attr,
-    ::std::shared_ptr<struct ProductionModule> module)
-{
-    ::std::shared_ptr<GameWares> wares
-        = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
     if (name == "queue") {
+        ::std::shared_ptr<GameWares> wares
+            = ::std::any_cast<::std::shared_ptr<GameWares>>(loader["wares"]);
+
         QString method = "default";
         auto    iter   = attr.find("method");
         if (iter != attr.end()) {
@@ -865,23 +1041,134 @@ bool GameStationModules::onStartElementInProductionOfMacro(
         for (::std::shared_ptr<GameWares::ProductionInfo> productionInfo :
              ware->productionInfos) {
             if (productionInfo->method == method) {
-                module->productionInfos.append(productionInfo);
+                ::std::shared_ptr<SupplyProduct> property;
+                auto                             iter
+                    = module->properties.find(Property::Type::SupplyProduct);
+                if (iter == module->properties.end()) {
+                    property
+                        = ::std::shared_ptr<SupplyProduct>(new SupplyProduct);
+                    module->properties[property->type] = property;
+                } else {
+                    property = ::std::static_pointer_cast<SupplyProduct>(*iter);
+                }
+
+                property->product        = attr["ware"];
+                property->productionInfo = productionInfo;
+                break;
             }
         }
     }
-    loader.pushContext(XMLLoader::Context::create());
+
+    loader.pushContext(::std::move(context));
     return true;
 }
 
 /**
- * @brief		Load docking bay.
+ * @brief		Start element callback in module macro.
  */
-void GameStationModules::loadDockingBay(
-    const QString &                          macro,
-    ::std::shared_ptr<GameVFS>               vfs,
-    ::std::shared_ptr<GameMacros>            macros,
-    ::std::shared_ptr<struct DockareaModule> module)
+bool GameStationModules::onStartElementInConnectionsOfModuleMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<StationModule> module)
 {
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "connection") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInConnectionOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in module macro.
+ */
+bool GameStationModules::onStartElementInConnectionOfModuleMacro(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "macro") {
+        QString reference = attr["ref"];
+        QRegExp sTubeExp("launchtube_\\w+_s_\\w+_macro");
+        sTubeExp.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+        QRegExp mTubeExp("launchtube_\\w+_m_\\w+_macro");
+        mTubeExp.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+        if (sTubeExp.exactMatch(reference)) {
+            ::std::shared_ptr<HasSLaunchTube> property;
+            auto iter = module->properties.find(Property::Type::SLaunchTube);
+            if (iter == module->properties.end()) {
+                property
+                    = ::std::shared_ptr<HasSLaunchTube>(new HasSLaunchTube);
+                module->properties[property->type] = property;
+            } else {
+                property = ::std::static_pointer_cast<HasSLaunchTube>(*iter);
+            }
+
+            ++(property->count);
+
+        } else if (mTubeExp.exactMatch(reference)) {
+            ::std::shared_ptr<HasMLaunchTube> property;
+            auto iter = module->properties.find(Property::Type::MLaunchTube);
+            if (iter == module->properties.end()) {
+                property
+                    = ::std::shared_ptr<HasMLaunchTube>(new HasMLaunchTube);
+                module->properties[property->type] = property;
+            } else {
+                property = ::std::static_pointer_cast<HasMLaunchTube>(*iter);
+            }
+
+            ++(property->count);
+
+        } else {
+            ::std::shared_ptr<GameVFS> vfs
+                = ::std::any_cast<::std::shared_ptr<GameVFS>>(loader["vfs"]);
+            ::std::shared_ptr<GameMacros> macros
+                = ::std::any_cast<::std::shared_ptr<GameMacros>>(
+                    loader["macros"]);
+            ::std::shared_ptr<GameTexts> texts
+                = ::std::any_cast<::std::shared_ptr<GameTexts>>(
+                    loader["texts"]);
+            ::std::shared_ptr<GameWares> wares
+                = ::std::any_cast<::std::shared_ptr<GameWares>>(
+                    loader["wares"]);
+            ::std::shared_ptr<GameComponents> components
+                = ::std::any_cast<::std::shared_ptr<GameComponents>>(
+                    loader["components"]);
+            this->loadConnectionMacro(reference, module, vfs, macros, texts,
+                                      wares, components);
+        }
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Load macro in connections of module macro.
+ */
+void GameStationModules::loadConnectionMacro(
+    const QString &                   macro,
+    ::std::shared_ptr<StationModule>  module,
+    ::std::shared_ptr<GameVFS>        vfs,
+    ::std::shared_ptr<GameMacros>     macros,
+    ::std::shared_ptr<GameTexts>      texts,
+    ::std::shared_ptr<GameWares>      wares,
+    ::std::shared_ptr<GameComponents> components)
+{
+    qDebug() << "Loading macro in connection" << macro << "...";
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open(macros->macro(macro) + ".xml");
     if (file == nullptr) {
@@ -893,74 +1180,78 @@ void GameStationModules::loadDockingBay(
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
     context->setOnStartElement(
-        ::std::bind(&GameStationModules::onStartElementInRootOfDockingBay, this,
-                    ::std::placeholders::_1, ::std::placeholders::_2,
+        ::std::bind(&GameStationModules::onStartElementInRootOfConnectionMacro,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
                     ::std::placeholders::_3, ::std::placeholders::_4, module));
+    loader["vfs"]        = vfs;
+    loader["macros"]     = macros;
+    loader["texts"]      = texts;
+    loader["wares"]      = wares;
+    loader["components"] = components;
     loader.parse(reader, ::std::move(context));
 }
 
 /**
- * @brief		Start element callback in root.
+ * @brief		Start element callback in connection macro.
  */
-bool GameStationModules::onStartElementInRootOfDockingBay(
+bool GameStationModules::onStartElementInRootOfConnectionMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &name,
     const QMap<QString, QString> &,
-    ::std::shared_ptr<struct DockareaModule> module)
+    ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
     if (name == "macros") {
         context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInMacrosOfDockingBay, this,
+            &GameStationModules::onStartElementInMacrosOfConnectionMacro, this,
             ::std::placeholders::_1, ::std::placeholders::_2,
             ::std::placeholders::_3, ::std::placeholders::_4, module));
     }
 
     loader.pushContext(::std::move(context));
-
     return true;
 }
 
 /**
- * @brief		Start element callback in macros.
+ * @brief		Start element callback in connection macro.
  */
-bool GameStationModules::onStartElementInMacrosOfDockingBay(
+bool GameStationModules::onStartElementInMacrosOfConnectionMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
-    const QString &                          name,
-    const QMap<QString, QString> &           attr,
-    ::std::shared_ptr<struct DockareaModule> module)
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
 
     if (name == "macro") {
         auto iter = attr.find("class");
+
         if (iter != attr.end() && *iter == "dockingbay") {
             context->setOnStartElement(::std::bind(
-                &GameStationModules::onStartElementInMacroOfDockingBay, this,
-                ::std::placeholders::_1, ::std::placeholders::_2,
+                &GameStationModules::onStartElementInMacroOfConnectionMacro,
+                this, ::std::placeholders::_1, ::std::placeholders::_2,
                 ::std::placeholders::_3, ::std::placeholders::_4, module));
         }
     }
 
     loader.pushContext(::std::move(context));
-
     return true;
 }
 
 /**
- * @brief		Start element callback in macro.
+ * @brief		Start element callback in connection macro.
  */
-bool GameStationModules::onStartElementInMacroOfDockingBay(
+bool GameStationModules::onStartElementInMacroOfConnectionMacro(
     XMLLoader &         loader,
-    XMLLoader::Context &oldContext,
+    XMLLoader::Context &currentContext,
     const QString &     name,
     const QMap<QString, QString> &,
-    ::std::shared_ptr<struct DockareaModule> module)
+    ::std::shared_ptr<StationModule> module)
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
@@ -970,36 +1261,145 @@ bool GameStationModules::onStartElementInMacroOfDockingBay(
             = ::std::shared_ptr<TmpDockingBayInfo>(
                 new TmpDockingBayInfo({0, 0, TmpDockingBayInfo::S}));
         context->setOnStartElement(::std::bind(
-            &GameStationModules::onStartElementInPropertiesOfDockingBay, this,
-            ::std::placeholders::_1, ::std::placeholders::_2,
+            &GameStationModules::onStartElementInnPropertiesOfConnectionMacro,
+            this, ::std::placeholders::_1, ::std::placeholders::_2,
             ::std::placeholders::_3, ::std::placeholders::_4, module, info));
 
-        oldContext.setOnStopElement(::std::bind(
+        currentContext.setOnStopElement(::std::bind(
             [](XMLLoader &, XMLLoader::Context &, const QString &name,
-               ::std::shared_ptr<struct DockareaModule> module,
-               ::std::shared_ptr<TmpDockingBayInfo>     info) -> bool {
+               ::std::shared_ptr<StationModule>     module,
+               ::std::shared_ptr<TmpDockingBayInfo> info) -> bool {
                 if (name == "properties") {
                     switch (info->type) {
                         case TmpDockingBayInfo::S:
-                            module->sDockNum += info->count;
-                            module->sCapacity += info->capacity;
+                            if (info->count > 0) {
+                                // S docking bay.
+                                ::std::shared_ptr<HasSDock> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::SDock);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasSDock>(
+                                        new HasSDock);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property
+                                        = ::std::static_pointer_cast<HasSDock>(
+                                            *iter);
+                                }
+                                property->count += info->count;
+                            }
+                            if (info->capacity > 0) {
+                                // S ship cargo.
+                                ::std::shared_ptr<HasSShipCargo> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::SShipCargo);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasSShipCargo>(
+                                        new HasSShipCargo);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property = ::std::static_pointer_cast<
+                                        HasSShipCargo>(*iter);
+                                }
+                                property->capacity += info->capacity;
+                            }
                             break;
 
                         case TmpDockingBayInfo::M:
-                            module->mDockNum += info->count;
-                            module->mCapacity += info->capacity;
+                            if (info->count > 0) {
+                                // M docking bay.
+                                ::std::shared_ptr<HasMDock> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::MDock);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasMDock>(
+                                        new HasMDock);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property
+                                        = ::std::static_pointer_cast<HasMDock>(
+                                            *iter);
+                                }
+                                property->count += info->count;
+                            }
+                            if (info->capacity > 0) {
+                                // M ship cargo.
+                                ::std::shared_ptr<HasMShipCargo> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::MShipCargo);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasMShipCargo>(
+                                        new HasMShipCargo);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property = ::std::static_pointer_cast<
+                                        HasMShipCargo>(*iter);
+                                }
+                                property->capacity += info->capacity;
+                            }
                             break;
 
                         case TmpDockingBayInfo::L:
-                            module->lDockNum += info->count;
+                            if (info->count > 0) {
+                                // L docking bay.
+                                ::std::shared_ptr<HasLDock> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::LDock);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasLDock>(
+                                        new HasLDock);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property
+                                        = ::std::static_pointer_cast<HasLDock>(
+                                            *iter);
+                                }
+                                property->count += info->count;
+                            }
                             break;
 
                         case TmpDockingBayInfo::XL:
-                            module->xlDockNum += info->count;
+                            if (info->count > 0) {
+                                // XL docking bay.
+                                ::std::shared_ptr<HasXLDock> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::XLDock);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasXLDock>(
+                                        new HasXLDock);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property
+                                        = ::std::static_pointer_cast<HasXLDock>(
+                                            *iter);
+                                }
+                                property->count += info->count;
+                            }
                             break;
 
                         case TmpDockingBayInfo::L_XL:
-                            module->lXlDockNum += info->count;
+                            if (info->count > 0) {
+                                // L/XL docking bay.
+                                ::std::shared_ptr<HasLXLDock> property;
+                                auto iter = module->properties.find(
+                                    Property::Type::LXLDock);
+                                if (iter == module->properties.end()) {
+                                    property = ::std::shared_ptr<HasLXLDock>(
+                                        new HasLXLDock);
+                                    module->properties[property->type]
+                                        = property;
+                                } else {
+                                    property = ::std::static_pointer_cast<
+                                        HasLXLDock>(*iter);
+                                }
+                                property->count += info->count;
+                            }
                             break;
                     }
                 }
@@ -1015,14 +1415,14 @@ bool GameStationModules::onStartElementInMacroOfDockingBay(
 }
 
 /**
- * @brief		Start element callback in properties.
+ * @brief		Start element callback in connection macro.
  */
-bool GameStationModules::onStartElementInPropertiesOfDockingBay(
+bool GameStationModules::onStartElementInnPropertiesOfConnectionMacro(
     XMLLoader &loader,
     XMLLoader::Context &,
     const QString &               name,
     const QMap<QString, QString> &attr,
-    ::std::shared_ptr<struct DockareaModule>,
+    ::std::shared_ptr<StationModule>,
     ::std::shared_ptr<TmpDockingBayInfo> info)
 {
     ::std::unique_ptr<XMLLoader::Context> context
@@ -1060,6 +1460,225 @@ bool GameStationModules::onStartElementInPropertiesOfDockingBay(
             }
         } else {
             info->type = TmpDockingBayInfo::XL;
+        }
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Load component.
+ */
+void GameStationModules::loadComponent(
+    const QString &                   component,
+    ::std::shared_ptr<StationModule>  module,
+    ::std::shared_ptr<GameVFS>        vfs,
+    ::std::shared_ptr<GameMacros>     macros,
+    ::std::shared_ptr<GameTexts>      texts,
+    ::std::shared_ptr<GameWares>      wares,
+    ::std::shared_ptr<GameComponents> components)
+{
+    qDebug() << "Loading component" << component << "...";
+    ::std::shared_ptr<GameVFS::FileReader> file
+        = vfs->open(components->component(component) + ".xml");
+    if (file == nullptr) {
+        return;
+    }
+
+    QXmlStreamReader                      reader(file->readAll());
+    XMLLoader                             loader;
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+    context->setOnStartElement(
+        ::std::bind(&GameStationModules::onStartElementInRootOfModuleComponent,
+                    this, ::std::placeholders::_1, ::std::placeholders::_2,
+                    ::std::placeholders::_3, ::std::placeholders::_4, module));
+    loader["vfs"]        = vfs;
+    loader["macros"]     = macros;
+    loader["texts"]      = texts;
+    loader["wares"]      = wares;
+    loader["components"] = components;
+    loader.parse(reader, ::std::move(context));
+}
+
+/**
+ * @brief		Start element callback in module component.
+ */
+bool GameStationModules::onStartElementInRootOfModuleComponent(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "components") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInComponentsOfModuleComponent,
+            this, ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in module component.
+ */
+bool GameStationModules::onStartElementInComponentsOfModuleComponent(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "component") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInComponentOfModuleComponent,
+            this, ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in module component.
+ */
+bool GameStationModules::onStartElementInComponentOfModuleComponent(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &name,
+    const QMap<QString, QString> &,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "properties") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInPropertiesOfModuleMacro, this,
+            ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    } else if (name == "connections") {
+        context->setOnStartElement(::std::bind(
+            &GameStationModules::onStartElementInConnectionsOfModuleComponent,
+            this, ::std::placeholders::_1, ::std::placeholders::_2,
+            ::std::placeholders::_3, ::std::placeholders::_4, module));
+    }
+
+    loader.pushContext(::std::move(context));
+    return true;
+}
+
+/**
+ * @brief		Start element callback in module component.
+ */
+bool GameStationModules::onStartElementInConnectionsOfModuleComponent(
+    XMLLoader &loader,
+    XMLLoader::Context &,
+    const QString &                  name,
+    const QMap<QString, QString> &   attr,
+    ::std::shared_ptr<StationModule> module)
+{
+    ::std::unique_ptr<XMLLoader::Context> context
+        = XMLLoader::Context::create();
+
+    if (name == "connection") {
+        auto iter = attr.find("tags");
+        if (iter != attr.end()) {
+            auto tags
+                = iter->split(" ", QString::SplitBehavior::SkipEmptyParts);
+            bool foundTurret = false;
+            bool foundShield = false;
+            bool foundMedium = false;
+            bool foundLarge  = false;
+            for (auto &tag : tags) {
+                if (tag == "turret") {
+                    foundTurret = true;
+
+                } else if (tag == "shield") {
+                    foundShield = true;
+
+                } else if (tag == "medium") {
+                    foundMedium = true;
+
+                } else if (tag == "large") {
+                    foundLarge = true;
+                }
+            }
+            if (foundTurret) {
+                if (foundMedium) {
+                    // M turret.
+                    ::std::shared_ptr<HasMTurret> property;
+                    auto                          iter
+                        = module->properties.find(Property::Type::MTurret);
+                    if (iter == module->properties.end()) {
+                        property
+                            = ::std::shared_ptr<HasMTurret>(new HasMTurret);
+                        module->properties[property->type] = property;
+                    } else {
+                        property
+                            = ::std::static_pointer_cast<HasMTurret>(*iter);
+                    }
+                    ++(property->count);
+
+                } else if (foundLarge) {
+                    // L turret.
+                    ::std::shared_ptr<HasLTurret> property;
+                    auto                          iter
+                        = module->properties.find(Property::Type::LTurret);
+                    if (iter == module->properties.end()) {
+                        property
+                            = ::std::shared_ptr<HasLTurret>(new HasLTurret);
+                        module->properties[property->type] = property;
+                    } else {
+                        property
+                            = ::std::static_pointer_cast<HasLTurret>(*iter);
+                    }
+                    ++(property->count);
+                }
+
+            } else if (foundLarge) {
+                if (foundMedium) {
+                    // M shield.
+                    ::std::shared_ptr<HasMShield> property;
+                    auto                          iter
+                        = module->properties.find(Property::Type::MShield);
+                    if (iter == module->properties.end()) {
+                        property
+                            = ::std::shared_ptr<HasMShield>(new HasMShield);
+                        module->properties[property->type] = property;
+                    } else {
+                        property
+                            = ::std::static_pointer_cast<HasMShield>(*iter);
+                    }
+                    ++(property->count);
+
+                } else if (foundLarge) {
+                    // L shield.
+                    ::std::shared_ptr<HasLShield> property;
+                    auto                          iter
+                        = module->properties.find(Property::Type::LShield);
+                    if (iter == module->properties.end()) {
+                        property
+                            = ::std::shared_ptr<HasLShield>(new HasLShield);
+                        module->properties[property->type] = property;
+                    } else {
+                        property
+                            = ::std::static_pointer_cast<HasLShield>(*iter);
+                    }
+                    ++(property->count);
+                }
+            }
         }
     }
 

@@ -101,6 +101,7 @@ GameStationModules::GameStationModules(
         }
     }
 
+    m_componentTmpIndex.clear();
     this->setGood();
 }
 
@@ -218,6 +219,10 @@ void GameStationModules::loadMacro(const QString &                   macro,
                                    ::std::shared_ptr<GameWares>      wares,
                                    ::std::shared_ptr<GameComponents> components)
 {
+    if (m_modulesIndex.find(macro) != m_modulesIndex.end()) {
+        return;
+    }
+
     qDebug() << "Loading station module macro" << macro << "...";
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open(macros->macro(macro) + ".xml");
@@ -303,8 +308,8 @@ bool GameStationModules::onStartElementInMacrosOfModuleMacro(
                 if (name == "macro") {
                     if (module->playerModule) {
                         // Add module.
-                        m_modules.push_back(module);
                         m_modulesIndex[module->macro] = module;
+                        m_modules.push_back(module);
 
                         // Print information
                         ::std::shared_ptr<GameTexts> texts

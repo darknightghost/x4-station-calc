@@ -18,14 +18,15 @@ class SaveModule :
     LOAD_FUNC(SaveModule, QJsonObject &, QVersionNumber &);
 
   protected:
-    QString m_module; ///< Module ID.
-    quint64 m_amount; ///< Amount.
+    QString                       m_module;    ///< Module macro.
+    quint64                       m_amount;    ///< Amount.
+    static QMap<QString, QString> _idMacroMap; ///< ID to macro map.
 
   protected:
     /**
      * @brief		Create a module information.
      *
-     * @param[in]	module		Module ID.
+     * @param[in]	module		Module macro.
      */
     SaveModule(const QString &module);
 

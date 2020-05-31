@@ -25,8 +25,7 @@ class Save {
     /**
      * @brief		Load a save file.
      *
-     * @param[in]	entry		Entery of the module.
-     * @param[in]	version		Version of the input save file.
+     * @param[in]	path		Path of the save file.
      */
     Save(const QString &path);
 

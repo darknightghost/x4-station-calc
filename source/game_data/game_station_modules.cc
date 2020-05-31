@@ -27,6 +27,10 @@ QMap<QString, GameStationModules::StationModule::StationModuleClass>
             GameStationModules::StationModule::StationModuleClass::Dockarea,
         },
         {
+            "pier",
+            GameStationModules::StationModule::StationModuleClass::Dockarea,
+        },
+        {
             "habitation",
             GameStationModules::StationModule::StationModuleClass::Habitation,
         },

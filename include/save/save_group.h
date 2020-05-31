@@ -22,7 +22,7 @@ class SaveGroup :
     QMap<::std::shared_ptr<SaveModule>, int>
         m_modulesIndex; ///< Index of modules.
     QMap<QString, ::std::shared_ptr<SaveModule>>
-        m_modulesIDIndex; ///< ID index of modules.
+        m_modulesMacroIndex; ///< Macro index of modules.
 
   protected:
     /**
@@ -58,19 +58,20 @@ class SaveGroup :
     /**
      * @brief		Add module.
      *
-     * @param[in]	id		Module id.
+     * @param[in]	macro	Module macro.
      * @param[in]	count	Count of the module.
      *
      * @return		New module information. If failed, \c nullptr is returned.
      */
-    ::std::shared_ptr<SaveModule> addModule(const QString &id, quint64 count);
+    ::std::shared_ptr<SaveModule> addModule(const QString &macro,
+                                            quint64        count);
 
     /**
      * @brief		Remove module.
      *
-     * @param[in]	id		Module id.
+     * @param[in]	macro		Module macro.
      */
-    void removeModule(const QString &id);
+    void removeModule(const QString &macro);
 
     /**
      * @brief		Parse to json object.

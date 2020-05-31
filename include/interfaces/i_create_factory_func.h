@@ -5,43 +5,43 @@
 #include <interfaces/i_is_good.h>
 
 template<class>
-class ILoadFactoryFunc;
+class ICreateFactoryFunc;
 
 /**
- * @brief	Interface for factory function \c load.
+ * @brief	Interface for factory function \c create.
  *
  * @tparam	T		Type of the class implements this interface.
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
+class ICreateFactoryFunc<T(Args...)> : virtual protected IIsGood {
   public:
     /**
      * @brief	Constructor.
      */
-    ILoadFactoryFunc() : IIsGood() {}
+    ICreateFactoryFunc() : IIsGood() {}
 
     /**
-     * @brief		Load object.
+     * @brief		Create object.
      *
      * @param[in]	args		Arguments.
      *
      * @return		On success, a new object is reutnred. Otherwise returns
      *				nullptr.
      */
-    static ::std::shared_ptr<T> load(Args... args);
+    static ::std::shared_ptr<T> create(Args... args);
 
     /**
      * @brief	Destructor..
      */
-    virtual ~ILoadFactoryFunc() {}
+    virtual ~ICreateFactoryFunc() {}
 };
 
 /**
- * @brief		Load object.
+ * @brief		Create object.
  */
 template<class T, typename... Args>
-::std::shared_ptr<T> ILoadFactoryFunc<T(Args...)>::load(Args... args)
+::std::shared_ptr<T> ICreateFactoryFunc<T(Args...)>::create(Args... args)
 {
     ::std::shared_ptr<T> ret(new T(args...));
 
@@ -53,4 +53,4 @@ template<class T, typename... Args>
     }
 }
 
-#define LOAD_FUNC(T, ...) friend class ILoadFactoryFunc<T(__VA_ARGS__)>;
+#define CREATE_FUNC(T, ...) friend class ICreateFactoryFunc<T(__VA_ARGS__)>;

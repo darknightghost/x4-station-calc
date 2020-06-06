@@ -1,0 +1,12 @@
+{
+	"STR_NEW_GROUP_NAME" : {
+		"zh_CN" : "新分组",
+		"zh_TW" : "新分組",
+		"en_US" : "New Group"
+	},
+	"STR_NEW_STATION" : {
+		"zh_CN" : "新空间站",
+		"zh_TW" : "新空間站",
+		"en_US" : "New Station"
+	}
+}

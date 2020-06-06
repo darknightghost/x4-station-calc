@@ -11,7 +11,15 @@
 /**
  * @brief		Save.
  */
-class Save {
+class Save :
+    virtual public ICreateFactoryFunc<Save()>,
+    virtual public ILoadFactoryFunc<Save(const QString &)> {
+    CREATE_FUNC(Save);
+    LOAD_FUNC(Save, const QString &);
+
+  public:
+    static const SaveVersion _currentVersion; ///< Current version.
+
   protected:
     QString                                 m_path;   ///< Path of the file.
     QVector<::std::shared_ptr<SaveGroup>>   m_groups; ///< Groups.
@@ -50,27 +58,38 @@ class Save {
     const QVector<::std::shared_ptr<SaveGroup>> &groups() const;
 
     /**
-     * @brief		Set group index.
+     * @brief		Get group.
      *
-     * @param[in]	group	Group.
-     * @param[in]	index	Index in the group, if index = -1, the module will
-     *						be move to the end of the group.
+     * @param[in]	index	Index of the group.
+     *
+     * @return		Group.
      */
-    void setIndex(::std::shared_ptr<SaveGroup> group, int index);
+    ::std::shared_ptr<SaveGroup> group(int index);
 
     /**
-     * @brief		Add group.
+     * @brief		Set group index.
      *
-     * @param[in]	group	Group.
+     * @param[in]	oldIndex	Old index.
+     * @param[in]	index		New index.
      */
-    void addGroup(::std::shared_ptr<SaveGroup> group);
+    void setIndex(int oldIndex, int index);
+
+    /**
+     * @brief		Insert group.
+     *
+     * @param[in]	index	Index to insert.
+     * @param[in]	group	Group.
+     *
+     * @return		Group index.
+     */
+    int insertGroup(int index, ::std::shared_ptr<SaveGroup> group);
 
     /**
      * @brief		Remove module.
      *
-     * @param[in]	group	Group.
+     * @param[in]	index		Group index.
      */
-    void removeGroup(::std::shared_ptr<SaveGroup> group);
+    void removeGroup(int index);
 
     /**
      * @brief		Write save file.

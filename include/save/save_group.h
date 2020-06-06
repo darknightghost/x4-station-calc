@@ -13,16 +13,14 @@
 class SaveGroup :
     virtual public ICreateFactoryFunc<SaveGroup()>,
     virtual public ILoadFactoryFunc<SaveGroup(QJsonObject &,
-                                              QVersionNumber &)> {
+                                              const SaveVersion &)> {
     CREATE_FUNC(SaveGroup);
-    LOAD_FUNC(SaveGroup, QJsonObject &, QVersionNumber &);
+    LOAD_FUNC(SaveGroup, QJsonObject &, const SaveVersion &);
 
   protected:
+    QString                                m_name;    ///< Name of group.
     QVector<::std::shared_ptr<SaveModule>> m_modules; ///< Modules in the group.
-    QMap<::std::shared_ptr<SaveModule>, int>
-        m_modulesIndex; ///< Index of modules.
-    QMap<QString, ::std::shared_ptr<SaveModule>>
-        m_modulesMacroIndex; ///< Macro index of modules.
+    QMap<QString, int> m_modulesMacroIndex; ///< Macro index of modules.
 
   protected:
     /**
@@ -36,42 +34,51 @@ class SaveGroup :
      * @param[in]	entry		Entery of the module.
      * @param[in]	version		Version of the input save file.
      */
-    SaveGroup(QJsonObject &entry, QVersionNumber &version);
+    SaveGroup(QJsonObject &entry, const SaveVersion &version);
 
   public:
     /**
-     * @brief		Get modules.
+     * @brief		Get module.
      *
-     * @return		List of modules.
+     * @return		Modules.
      */
     const QVector<::std::shared_ptr<SaveModule>> &modules() const;
 
     /**
-     * @brief		Set module index.
+     * @brief		Get modules.
      *
-     * @param[in]	module	Module.
-     * @param[in]	index	Index in the group, if index = -1, the module will
-     *						be move to the end of the group.
+     * @param[in]	index		Index of the module.
+     *
+     * @return		List of modules.
      */
-    void setIndex(::std::shared_ptr<SaveModule> module, int index);
+    std::shared_ptr<SaveModule> module(int index);
 
     /**
-     * @brief		Add module.
+     * @brief		Set module index.
      *
+     * @param[in]	oldIndex	Old index.
+     * @param[in]	index		Index in the group, if index = -1, the module
+     *							will be move to the end of the group.
+     */
+    void setIndex(int oldIndex, int index);
+
+    /**
+     * @brief		Insert module.
+     *
+     * @param[in]	index	Index to insert.
      * @param[in]	macro	Module macro.
      * @param[in]	count	Count of the module.
      *
-     * @return		New module information. If failed, \c nullptr is returned.
+     * @return		Index of the new module. If failed, \c -1 is returned.
      */
-    ::std::shared_ptr<SaveModule> addModule(const QString &macro,
-                                            quint64        count);
+    int insertModule(int index, const QString &macro, quint64 count);
 
     /**
      * @brief		Remove module.
      *
-     * @param[in]	macro		Module macro.
+     * @param[in]	index		Module index.
      */
-    void removeModule(const QString &macro);
+    void removeModule(int index);
 
     /**
      * @brief		Parse to json object.

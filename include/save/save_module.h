@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QtCore/QJsonObject>
+#include <QtCore/QMap>
 #include <QtCore/QString>
-#include <QtCore/QVersionNumber>
 
 #include <interfaces/i_create_factory_func.h>
 #include <interfaces/i_load_factory_func.h>
+#include <save/save_version.h>
 
 /**
  * @brief		Module information in a save file.
@@ -13,9 +14,9 @@
 class SaveModule :
     virtual public ICreateFactoryFunc<SaveModule(const QString &)>,
     virtual public ILoadFactoryFunc<SaveModule(QJsonObject &,
-                                               QVersionNumber &)> {
+                                               const SaveVersion &)> {
     CREATE_FUNC(SaveModule, const QString &);
-    LOAD_FUNC(SaveModule, QJsonObject &, QVersionNumber &);
+    LOAD_FUNC(SaveModule, QJsonObject &, const SaveVersion &);
 
   protected:
     QString                       m_module;    ///< Module macro.
@@ -36,7 +37,7 @@ class SaveModule :
      * @param[in]	entry		Entery of the module.
      * @param[in]	version		Version of the input save file.
      */
-    SaveModule(QJsonObject &entry, QVersionNumber &version);
+    SaveModule(QJsonObject &entry, const SaveVersion &version);
 
   public:
     /**
@@ -71,4 +72,10 @@ class SaveModule :
      * @brief		Destructor.
      */
     virtual ~SaveModule();
+
+  private:
+    /**
+     * @brief	Load id map of old version.
+     */
+    void load0_x_x();
 };

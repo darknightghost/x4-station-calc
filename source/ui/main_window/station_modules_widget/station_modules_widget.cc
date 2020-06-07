@@ -1,3 +1,4 @@
+#include <QtCore/QDebug>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
@@ -156,7 +157,7 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
     this->connect(m_btnAddToStation, &QPushButton::clicked, this,
                   &StationModulesWidget::onAddToStationClicked);
 
-    this->connect(m_treeStationModules, &QTreeWidget::itemClicked, this,
+    this->connect(m_treeStationModules, &QTreeWidget::itemDoubleClicked, this,
                   &StationModulesWidget::onItemClicked);
 }
 
@@ -261,6 +262,9 @@ void StationModulesWidget::loadStationModules()
                 m_moduleItems.push_back(item);
 
             } break;
+
+            default:
+                break;
         }
     }
 }
@@ -494,6 +498,7 @@ void StationModulesWidget::onItemClicked(QTreeWidgetItem *item)
     } else {
         StationModulesTreeWidgetItem *moduleItem
             = (StationModulesTreeWidgetItem *)item;
-        emit this->stationModuleClicked(moduleItem->module()->macro);
+        qDebug() << moduleItem->module()->macro << "clicked.";
+        emit this->stationModuleClicked(moduleItem->module()->macro, false);
     }
 }

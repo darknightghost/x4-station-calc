@@ -5,44 +5,173 @@
 		"en_US" : "Infomation"
 	},
 	"STR_INFO_NAME" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "名称",
+		"zh_TW" : "名稱",
+		"en_US" : "Name"
 	},
 	"STR_INFO_DESCRIPTION" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "描述",
+		"zh_TW" : "描述",
+		"en_US" : "Description"
 	},
-	"STR_INFO_STATION_MODULE_TYPE" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+	"STR_INFO_STATION_TYPE" : {
+		"zh_CN" : "类型",
+		"zh_TW" : "類型",
+		"en_US" : "Type"
 	},
 	"STR_INFO_RACE" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "种族",
+		"zh_TW" : "種族",
+		"en_US" : "Race(s)"
 	},
 	"STR_INFO_HULL" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "船体",
+		"zh_TW" : "船體",
+		"en_US" : "Hull"
 	},
 	"STR_INFO_EXPLOSION_DAMAGE" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "爆炸伤害",
+		"zh_TW" : "爆炸傷害",
+		"en_US" : "Explosion Damage"
 	},
-	"STR_INFO_STORAGE_TYPE" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+	"STR_INFO_M_TURRET" : {
+		"zh_CN" : "M炮塔",
+		"zh_TW" : "M炮塔",
+		"en_US" : "M Turret"
+	},
+	"STR_INFO_M_SHIELD" : {
+		"zh_CN" : "M护盾",
+		"zh_TW" : "M護盾",
+		"en_US" : "M Shield"
+	},
+	"STR_INFO_L_TURRET" : {
+		"zh_CN" : "L炮塔",
+		"zh_TW" : "L炮塔",
+		"en_US" : "L Turret"
+	},
+	"STR_INFO_L_SHIELD" : {
+		"zh_CN" : "L护盾",
+		"zh_TW" : "L護盾",
+		"en_US" : "L Shield"
+	},
+	"STR_INFO_S_DOCK" : {
+		"zh_CN" : "S港口",
+		"zh_TW" : "S港口",
+		"en_US" : "S Docking Bay"
+	},
+	"STR_INFO_S_LAUNCH_TUBE" : {
+		"zh_CN" : "S发射管",
+		"zh_TW" : "S發射管",
+		"en_US" : "S Launch Tube"
+	},
+	"STR_INFO_M_LAUNCH_TUBE" : {
+		"zh_CN" : "M发射管",
+		"zh_TW" : "M發射管",
+		"en_US" : "M Launch Tube"
+	},
+	"STR_INFO_S_SHIP_CAPACITY" : {
+		"zh_CN" : "S飞船容量",
+		"zh_TW" : "S飛船容量",
+		"en_US" : "S Ship Capacity"
+	},
+	"STR_INFO_M_DOCK" : {
+		"zh_CN" : "M港口",
+		"zh_TW" : "M港口",
+		"en_US" : "M Docking Bay"
+	},
+	"STR_INFO_M_SHIP_CAPACITY" : {
+		"zh_CN" : "M飞船容量",
+		"zh_TW" : "M飛船容量",
+		"en_US" : "M Ship Capacity"
+	},
+	"STR_INFO_L_DOCK" : {
+		"zh_CN" : "L港口",
+		"zh_TW" : "L港口",
+		"en_US" : "L Docking Bay"
+	},
+	"STR_INFO_XL_DOCK" : {
+		"zh_CN" : "XL港口",
+		"zh_TW" : "XL港口",
+		"en_US" : "XL Docking Bay"
+	},
+	"STR_INFO_L_XL_DOCK" : {
+		"zh_CN" : "L/XL港口",
+		"zh_TW" : "L/XL港口",
+		"en_US" : "L/XL Docking Bay"
+	},
+	"STR_INFO_SUPPLY_WORKFORCE" : {
+		"zh_CN" : "提供劳动力",
+		"zh_TW" : "提供勞動力",
+		"en_US" : "Workforce Supplied"
+	},
+	"STR_INFO_REQUIRE_WORKFORCE" : {
+		"zh_CN" : "需要劳动力",
+		"zh_TW" : "需要勞動力",
+		"en_US" : "Workforce Required"
+	},
+	"STR_INFO_PRODUCT" : {
+		"zh_CN" : "产品",
+		"zh_TW" : "產品",
+		"en_US" : "Product"
+	},
+	"STR_INFO_RESOURCE" : {
+		"zh_CN" : "资源",
+		"zh_TW" : "資源",
+		"en_US" : "Resource"
+	},
+	"STR_INFO_RESOURCE" : {
+		"zh_CN" : "资源",
+		"zh_TW" : "資源",
+		"en_US" : "Resource"
+	},
+	"STR_INFO_CARGO_TYPE" : {
+		"zh_CN" : "货仓类型",
+		"zh_TW" : "貨倉類型",
+		"en_US" : "Cargo Type"
+	},
+	"STR_INFO_CARGO_TYPE_CONTAINER" : {
+		"zh_CN" : "集装",
+		"zh_TW" : "集裝",
+		"en_US" : "Container"
+	},
+	"STR_INFO_CARGO_TYPE_SOLID" : {
+		"zh_CN" : "固体",
+		"zh_TW" : "固體",
+		"en_US" : "Solid"
+	},
+	"STR_INFO_CARGO_TYPE_LIQUID" : {
+		"zh_CN" : "液体",
+		"zh_TW" : "液體",
+		"en_US" : "Liquid"
+	},
+	"STR_INFO_CARGO_SIZE" : {
+		"zh_CN" : "货仓容量",
+		"zh_TW" : "貨倉容量",
+		"en_US" : "Cargo Size"
+	},
+	"STR_INFO_TRANSPORT_TYPE" : {
+		"zh_CN" : "运输类型",
+		"zh_TW" : "運輸類型",
+		"en_US" : "Transport Type"
 	},
 	"STR_INFO_VOLUME" : {
-		"zh_CN" : "信息",
-		"zh_TW" : "信息",
-		"en_US" : "Infomation"
+		"zh_CN" : "体积",
+		"zh_TW" : "體積",
+		"en_US" : "Volume"
+	},
+	"STR_INFO_MIN_PRICE" : {
+		"zh_CN" : "最低价格",
+		"zh_TW" : "最低倆個",
+		"en_US" : "Minimum Price"
+	},
+	"STR_INFO_AVERAGE_PRICE" : {
+		"zh_CN" : "平均价格",
+		"zh_TW" : "平均倆個",
+		"en_US" : "Average Price"
+	},
+	"STR_INFO_MAX_PRICE" : {
+		"zh_CN" : "最低价格",
+		"zh_TW" : "最高倆個",
+		"en_US" : "Maximum Price"
 	}
-
 }

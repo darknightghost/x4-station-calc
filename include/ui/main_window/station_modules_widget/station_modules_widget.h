@@ -84,9 +84,10 @@ class StationModulesWidget : public ActionControlDockWidget {
     /**
      * @brief		Emit when a station module has been clicked.
      *
-     * @param[in]	macro	Macro of the module.
+     * @param[in]	macro		Macro of the module.
+     * @param[in]	falseVal	Always \c false.
      */
-    void stationModuleClicked(QString macro);
+    void stationModuleClicked(QString macro, bool falseVal);
 
     /**
      * @brief		Emit when add to station button clicked.

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+
+#include <QtCore/QMap>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QTreeWidget>
@@ -18,6 +21,7 @@ class InfoWidget : public ActionControlDockWidget {
      * @brief	History type.
      */
     enum HistoryType {
+        Race,         ///< Race.
         Ware,         ///< Ware.
         StationModule ///< Station module.
     };
@@ -26,8 +30,8 @@ class InfoWidget : public ActionControlDockWidget {
      * @brief	History.
      */
     struct History {
-        HistoryType type; ///< History type.
-        QString     id;   ///< ID/macro of the object.
+        HistoryType type;  ///< History type.
+        QString     macro; ///< Macro of the object.
     };
 
   protected:
@@ -75,14 +79,62 @@ class InfoWidget : public ActionControlDockWidget {
     /**
      * @brief		Show information of ware.
      *
-     * @param[in]	id				Ware ID.
+     * @param[in]	macro			Ware ID.
      * @param[in]	keepPrevious	Keep previous history.
      */
-    void showWareInfo(QString id, bool keepPrevious = false);
+    void showWareInfo(QString macro, bool keepPrevious = false);
+
+    /**
+     * @brief		Show information of race.
+     *
+     * @param[in]	macro			race ID.
+     * @param[in]	keepPrevious	Keep previous history.
+     */
+    void showRaceInfo(QString macro, bool keepPrevious = false);
 
   private:
     /**
-     * @brief		Show information.
+     * @brief		Update.
      */
-    void showInfo();
+    void update();
+
+    /**
+     * @brief		Update information of station module.
+     *
+     * @param[in]	macro		Macro of station module.
+     */
+    void updateModule(const QString &macro);
+
+    /**
+     * @brief		Update information of ware.
+     *
+     * @param[in]	macro		Macro of ware.
+     */
+    void updateWare(const QString &macro);
+
+    /**
+     * @brief		Update information of race.
+     *
+     * @param[in]	macro		Macro of race.
+     */
+    void updateRace(const QString &macro);
+
+  private slots:
+    /**
+     * @brief		On item double clicked.
+     *
+     * @param[in]	item	Item clicked.
+     * @param[in]	column	Column clicked.
+     */
+    void onItemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    /**
+     * @brief	On button back clicked.
+     */
+    void onBtnBackClicked();
+
+    /**
+     * @brief	On button forward clicked.
+     */
+    void onBtnForwardClicked();
 };

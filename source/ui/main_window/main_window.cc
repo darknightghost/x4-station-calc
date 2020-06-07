@@ -68,6 +68,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     this->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea, m_infoWidget,
                         Qt::Orientation::Vertical);
     m_infoWidget->setObjectName("infoWidget");
+    this->connect(m_stationModulesWidget,
+                  &StationModulesWidget::stationModuleClicked, m_infoWidget,
+                  &InfoWidget::showStationModuleInfo);
 
     // Restore InfoWidget
     m_infoWidget->restoreGeometry(QByteArray::fromHex(

@@ -6,10 +6,7 @@
 
 /**
  * @brief		A simple thread whitch can be created easily.
- *
- * @tparam		Args	Types of the arguments of the thread function.
  */
-template<typename... Args>
 class SimpleThread : virtual public QThread {
   protected:
     ::std::function<void()> m_threadFunc; ///< Thread function.
@@ -17,30 +14,31 @@ class SimpleThread : virtual public QThread {
   public:
     /**
      * @brief		Constructor.
+     *
+     * @param[in]	parent		Parent.
      */
-    SimpleThread() : QThread(nullptr) {}
+    SimpleThread(QObject *parent = nullptr) : QThread(parent) {}
 
     /**
      * @brief		Constructor.
      *
      * @param[in]	func		Thread function.
-     * @param[in]	args		Arguments.
+     * @param[in]	parent		Parent.
      */
-    SimpleThread(::std::function<void(Args...)> func, Args... args) :
-        QThread(nullptr)
+    SimpleThread(::std::function<void()> func, QObject *parent = nullptr) :
+        QThread(parent)
     {
-        m_threadFunc = ::std::bind(func, args...);
+        m_threadFunc = func;
     }
 
     /**
      * @brief		Set thread function.
      *
      * @param[in]	func		Thread function.
-     * @param[in]	args		Arguments.
      */
-    void setThreadFunc(::std::function<void(Args...)> func, Args... args)
+    void setThreadFunc(::std::function<void()> func)
     {
-        m_threadFunc = ::std::bind(func, args...);
+        m_threadFunc = func;
     }
 
     /**

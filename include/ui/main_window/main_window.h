@@ -15,31 +15,38 @@
  */
 class MainWindow : public QMainWindow {
     Q_OBJECT
+  public:
+    /**
+     * @brief		Actions in edit menu.
+     */
+    struct EditActions {
+        QAction *actionEditNewGroup; ///< Menu "Edit->New Group".
+        QAction *actionEditUndo;     ///< Menu "Edit->Undo".
+        QAction *actionEditRedo;     ///< Menu "Edit->Redo".
+        QAction *actionEditCut;      ///< Menu "Edit->Cut".
+        QAction *actionEditCopy;     ///< Menu "Edit->Copy".
+        QAction *actionEditPaste;    ///< Menu "Edit->Paste".
+        QAction *actionEditRemove;   ///< Menu "Edit->Remove".
+    };
 
   private:
     // Menu
     QMenuBar *m_mainMenu; ///< Main menu.
 
     // File menu
-    QMenu *   m_menuFile;        ///< Menu "File".
-    QToolBar *m_toolbarFile;     ///< Toolbar "File".
-    QAction * m_acionFileNew;    ///< Menu "File->New".
-    QAction * m_acionFileOpen;   ///< Menu "File->Open".
-    QAction * m_acionFileSave;   ///< Menu "File->Save".
-    QAction * m_acionFileSaveAs; ///< Menu "File->Save As".
-    QAction * m_acionFileClose;  ///< Menu "File->Close".
-    QAction * m_acionFileExit;   ///< Menu "File->Exit".
+    QMenu *   m_menuFile;         ///< Menu "File".
+    QToolBar *m_toolbarFile;      ///< Toolbar "File".
+    QAction * m_actionFileNew;    ///< Menu "File->New".
+    QAction * m_actionFileOpen;   ///< Menu "File->Open".
+    QAction * m_actionFileSave;   ///< Menu "File->Save".
+    QAction * m_actionFileSaveAs; ///< Menu "File->Save As".
+    QAction * m_actionFileClose;  ///< Menu "File->Close".
+    QAction * m_actionFileExit;   ///< Menu "File->Exit".
 
     // Edit menu
-    QMenu *   m_menuEdit;          ///< Menu "Edit".
-    QToolBar *m_toolbarEdit;       ///< Toolbar "Edit".
-    QAction * m_acionEditNewGroup; ///< Menu "Edit->New Group".
-    QAction * m_acionEditUndo;     ///< Menu "Edit->Undo".
-    QAction * m_acionEditRedo;     ///< Menu "Edit->Redo".
-    QAction * m_acionEditCut;      ///< Menu "Edit->Cut".
-    QAction * m_acionEditCopy;     ///< Menu "Edit->Copy".
-    QAction * m_acionEditPaste;    ///< Menu "Edit->Paste".
-    QAction * m_acionEditRemove;   ///< Menu "Edit->Remove".
+    QMenu *     m_menuEdit;    ///< Menu "Edit".
+    QToolBar *  m_toolbarEdit; ///< Toolbar "Edit".
+    EditActions m_editActions; ///< Edit actions.
 
     // Setting menu
     QMenu *  m_menuSettings;           ///< Menu "Settings".

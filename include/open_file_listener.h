@@ -24,7 +24,7 @@ class OpenFileListener : public QObject, public Singleton<OpenFileListener> {
     bool                          m_opened;       ///< Opened flag.
     bool                          m_block;        ///< Block flag.
     volatile bool                 m_recv;         ///< Receive flag.
-    SimpleThread<>                m_recvThread;   ///< Receive thread;
+    SimpleThread                  m_recvThread;   ///< Receive thread;
 
   protected:
     /**

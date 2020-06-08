@@ -81,7 +81,11 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     this->restoreDockWidget(m_infoWidget);
 
     // Central widget
-    m_centralWidget = new QTabWidget(this);
+    m_centralWidget = new QMdiArea(this);
+    m_centralWidget->setViewMode(QMdiArea::TabbedView);
+    m_centralWidget->setTabPosition(QTabWidget::TabPosition::North);
+    m_centralWidget->setTabsClosable(true);
+    m_centralWidget->setTabsMovable(true);
     this->setCentralWidget(m_centralWidget);
 
     // Set text.

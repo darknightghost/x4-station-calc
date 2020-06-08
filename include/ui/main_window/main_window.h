@@ -2,9 +2,9 @@
 
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMdiArea>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
 
 #include <ui/main_window/info_widget/info_widget.h>
@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow {
     InfoWidget *m_infoWidget; ///< Information widget.
 
     // Central widget
-    QTabWidget *m_centralWidget; ///< Central widget.
+    QMdiArea *m_centralWidget; ///< Central widget.
 
   public:
     /**

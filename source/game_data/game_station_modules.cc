@@ -892,7 +892,7 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
             const ::std::shared_ptr<::GameWares::Ware> workunit
                 = wares->ware("workunit_busy");
             for (auto &info : workunit->productionInfos) {
-                if (info->method == attr["race"]) {
+                if (info->method == attr["race"] || info->method == "default") {
                     ::std::shared_ptr<::GameWares::ProductionInfo> supplyInfo(
                         new ::GameWares::ProductionInfo());
                     supplyInfo->id         = "";
@@ -911,7 +911,9 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
                     }
 
                     property->supplyInfo = supplyInfo;
-                    break;
+                    if (info->method == attr["race"]) {
+                        break;
+                    }
                 }
             }
             if (property->supplyInfo == nullptr) {

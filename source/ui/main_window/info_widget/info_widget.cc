@@ -41,6 +41,9 @@ InfoWidget::InfoWidget(QAction *       statusAction,
     m_treeInfo = new QTreeWidget(m_widget);
     m_layout->addWidget(m_treeInfo, 1, 0, 1, 3);
     m_treeInfo->header()->setVisible(false);
+    m_treeInfo->header()->setSectionResizeMode(
+        QHeaderView::ResizeMode::ResizeToContents);
+    m_treeInfo->header()->setStretchLastSection(true);
     m_treeInfo->setColumnCount(2);
     m_treeInfo->setSelectionMode(
         QAbstractItemView::SelectionMode::SingleSelection);
@@ -169,6 +172,7 @@ void InfoWidget::update()
     }
 
     this->onLanguageChanged();
+    m_treeInfo->expandAll();
 
     return;
 }

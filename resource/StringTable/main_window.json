@@ -133,5 +133,25 @@
 		"zh_CN" : "检查更新(&V)",
 		"zh_TW" : "檢查更新(&V)",
 		"en_US" : "&Check Update"
+	},
+	"STR_SAVE_FILE_FILTER" : {
+		"zh_CN" : "空间站 (*.x4station)",
+		"zh_TW" : "空間站 (*.x4station)",
+		"en_US" : "Station (*.x4station)"
+	},
+	"STR_OPEN_STATION" : {
+		"zh_CN" : "打开空间站",
+		"zh_TW" : "打開空間站",
+		"en_US" : "Open Station"
+	},
+	"STR_ERROR" : {
+		"zh_CN" : "错误",
+		"zh_TW" : "錯誤",
+		"en_US" : "Error"
+	},
+	"STR_FAILED_OPEN_FILE" : {
+		"zh_CN" : "打开文件\"%1\"失败!",
+		"zh_TW" : "打開文件\"%1\"失敗!",
+		"en_US" : "Failed to open file \"%1\"!"
 	}
 }

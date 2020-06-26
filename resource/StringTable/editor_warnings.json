@@ -1,0 +1,22 @@
+{
+	"STR_EDITOR_WARING_NOT_ENOUGH_WORKFORCE" : {
+		"zh_CN" : "劳动力不足.",
+		"zh_TW" : "勞動力不足",
+		"en_US" : "Not enough workforce."
+	},
+	"STR_EDITOR_WARING_MISSING_CONTAINER_STORAGE" : {
+		"zh_CN" : "缺少集装仓储.",
+		"zh_TW" : "缺少集裝倉儲.",
+		"en_US" : "Missing container storage."
+	},
+	"STR_EDITOR_WARING_MISSING_SOLID_STORAGE" : {
+		"zh_CN" : "缺少固体仓储.",
+		"zh_TW" : "缺少固體倉儲.",
+		"en_US" : "Missing solid storage."
+	},
+	"STR_EDITOR_WARING_MISSING_LIQUID_STORAGE" : {
+		"zh_CN" : "缺少液体仓储.",
+		"zh_TW" : "缺少液體倉儲.",
+		"en_US" : "Missing liquid storage."
+	}
+}

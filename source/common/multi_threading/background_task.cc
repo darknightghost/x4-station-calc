@@ -29,7 +29,7 @@ void BackgroundTaskThread::run()
  * @brief		Constructor.
  */
 BackgroundTask::BackgroundTask(RunType runType, QObject *parent) :
-    QObject(parent), m_runType(runType)
+    QObject(parent), m_runType(runType), m_threadCount(0)
 {}
 
 /**

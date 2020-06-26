@@ -106,6 +106,16 @@ class MainWindow : public QMainWindow {
     void open(QString path);
 
     /**
+     * @brief		Create new file.
+     */
+    void newAction();
+
+    /**
+     * @brief		Open file.
+     */
+    void openAction();
+
+    /**
      * @brief		Active window.
      */
     void active();

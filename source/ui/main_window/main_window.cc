@@ -1,4 +1,6 @@
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QIcon>
 #include <QtGui/QKeySequence>
@@ -7,10 +9,13 @@
 #include <QtGui/QWindowStateChangeEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
 
@@ -27,6 +32,12 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
                   this, &MainWindow::active,
                   Qt::ConnectionType::QueuedConnection);
     OpenFileListener::instance()->unblock();
+
+    // Set style sheet
+    QFile styleFile(":/StyleSheet/main_window.qss");
+    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
+                   | QIODevice::OpenModeFlag::Text);
+    this->setStyleSheet(styleFile.readAll());
 
     // Initialize windows size and position.
     QRect windowRect = QApplication::desktop()->geometry();
@@ -86,6 +97,7 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     m_centralWidget->setTabPosition(QTabWidget::TabPosition::North);
     m_centralWidget->setTabsClosable(true);
     m_centralWidget->setTabsMovable(true);
+    m_centralWidget->setDocumentMode(true);
     this->setCentralWidget(m_centralWidget);
 
     // Set text.
@@ -123,6 +135,8 @@ void MainWindow::initMenuToolBar()
     m_actionFileNew->setShortcut(QKeySequence::New);
     m_menuFile->addAction(m_actionFileNew);
     m_toolbarFile->addAction(m_actionFileNew);
+    this->connect(m_actionFileNew, &QAction::triggered, this,
+                  &MainWindow::newAction);
 
     // Menu "File->Open".
     m_actionFileOpen = new QAction(this);
@@ -130,6 +144,8 @@ void MainWindow::initMenuToolBar()
     m_actionFileOpen->setShortcut(QKeySequence::Open);
     m_menuFile->addAction(m_actionFileOpen);
     m_toolbarFile->addAction(m_actionFileOpen);
+    this->connect(m_actionFileOpen, &QAction::triggered, this,
+                  &MainWindow::openAction);
 
     m_menuFile->addSeparator();
     m_toolbarFile->addSeparator();
@@ -138,6 +154,7 @@ void MainWindow::initMenuToolBar()
     m_actionFileSave = new QAction(this);
     m_actionFileSave->setIcon(QIcon(":/Icons/FileSave.png"));
     m_actionFileSave->setShortcut(QKeySequence::Save);
+    m_actionFileSave->setEnabled(false);
     m_menuFile->addAction(m_actionFileSave);
     m_toolbarFile->addAction(m_actionFileSave);
 
@@ -145,6 +162,7 @@ void MainWindow::initMenuToolBar()
     m_actionFileSaveAs = new QAction(this);
     m_actionFileSaveAs->setIcon(QIcon(":/Icons/FileSaveAs.png"));
     m_actionFileSaveAs->setShortcut(QKeySequence::SaveAs);
+    m_actionFileSaveAs->setEnabled(false);
     m_menuFile->addAction(m_actionFileSaveAs);
     m_toolbarFile->addAction(m_actionFileSaveAs);
 
@@ -154,6 +172,7 @@ void MainWindow::initMenuToolBar()
     m_actionFileClose = new QAction(this);
     m_actionFileClose->setIcon(QIcon(":/Icons/FileClose.png"));
     m_actionFileClose->setShortcut(QKeySequence::Close);
+    m_actionFileClose->setEnabled(false);
     m_menuFile->addAction(m_actionFileClose);
 
     m_menuFile->addSeparator();
@@ -180,6 +199,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditNewGroup->setIcon(
         QIcon(":/Icons/EditNewGroup.png"));
     m_editActions.actionEditNewGroup->setShortcut(QKeySequence("Ctrl+G"));
+    m_editActions.actionEditNewGroup->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditNewGroup);
     m_toolbarEdit->addAction(m_editActions.actionEditNewGroup);
 
@@ -190,6 +210,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditUndo = new QAction(this);
     m_editActions.actionEditUndo->setIcon(QIcon(":/Icons/EditUndo.png"));
     m_editActions.actionEditUndo->setShortcut(QKeySequence::Undo);
+    m_editActions.actionEditUndo->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditUndo);
     m_toolbarEdit->addAction(m_editActions.actionEditUndo);
 
@@ -197,6 +218,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditRedo = new QAction(this);
     m_editActions.actionEditRedo->setIcon(QIcon(":/Icons/EditRedo.png"));
     m_editActions.actionEditRedo->setShortcut(QKeySequence::Redo);
+    m_editActions.actionEditRedo->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditRedo);
     m_toolbarEdit->addAction(m_editActions.actionEditRedo);
 
@@ -207,6 +229,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditCut = new QAction(this);
     m_editActions.actionEditCut->setIcon(QIcon(":/Icons/EditCut.png"));
     m_editActions.actionEditCut->setShortcut(QKeySequence::Cut);
+    m_editActions.actionEditCut->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditCut);
     m_toolbarEdit->addAction(m_editActions.actionEditCut);
 
@@ -214,6 +237,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditCopy = new QAction(this);
     m_editActions.actionEditCopy->setIcon(QIcon(":/Icons/EditCopy.png"));
     m_editActions.actionEditCopy->setShortcut(QKeySequence::Copy);
+    m_editActions.actionEditCopy->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditCopy);
     m_toolbarEdit->addAction(m_editActions.actionEditCopy);
 
@@ -221,6 +245,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditPaste = new QAction(this);
     m_editActions.actionEditPaste->setIcon(QIcon(":/Icons/EditPaste.png"));
     m_editActions.actionEditPaste->setShortcut(QKeySequence::Paste);
+    m_editActions.actionEditPaste->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditPaste);
     m_toolbarEdit->addAction(m_editActions.actionEditPaste);
 
@@ -231,6 +256,7 @@ void MainWindow::initMenuToolBar()
     m_editActions.actionEditRemove = new QAction(this);
     m_editActions.actionEditRemove->setIcon(QIcon(":/Icons/EditRemove.png"));
     m_editActions.actionEditRemove->setShortcut(QKeySequence("Ctrl+R"));
+    m_editActions.actionEditRemove->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditRemove);
     m_toolbarEdit->addAction(m_editActions.actionEditRemove);
 
@@ -283,6 +309,20 @@ void MainWindow::initMenuToolBar()
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    // Close all opend files.
+    for (auto &subWindow : m_centralWidget->subWindowList()) {
+        EditorWidget *editorWidget
+            = static_cast<EditorWidget *>(subWindow->widget());
+
+        if (editorWidget->closeSave()) {
+            editorWidget->close();
+            subWindow->close();
+
+        } else {
+            event->ignore();
+        }
+    }
+
     // Save status.
     Config::instance()->setString("/MainWindow/geometry",
                                   this->saveGeometry().toHex());
@@ -310,7 +350,50 @@ void MainWindow::closeEvent(QCloseEvent *event)
  */
 void MainWindow::open(QString path)
 {
-    qDebug() << path;
+    ::std::shared_ptr<Save> save = Save::load(path);
+    if (save == nullptr) {
+        QMessageBox::critical(this, STR("STR_ERROR"),
+                              STR("STR_FAILED_OPEN_FILE").arg(path));
+
+    } else {
+        QMdiSubWindow *container = new QMdiSubWindow();
+        m_centralWidget->addSubWindow(container);
+        EditorWidget *editorWidget
+            = new EditorWidget(save, &m_editActions, container);
+        m_centralWidget->setActiveSubWindow(container);
+        editorWidget->show();
+    }
+}
+
+/**
+ * @brief		Create new file.
+ */
+void MainWindow::newAction()
+{
+    ::std::shared_ptr<Save> save      = Save::create();
+    QMdiSubWindow *         container = new QMdiSubWindow();
+    m_centralWidget->addSubWindow(container);
+    EditorWidget *editorWidget
+        = new EditorWidget(save, &m_editActions, container);
+    m_centralWidget->setActiveSubWindow(container);
+    editorWidget->show();
+}
+
+/**
+ * @brief		Open file.
+ */
+void MainWindow::openAction()
+{
+    QString path = QFileDialog::getOpenFileName(
+        this, STR("STR_OPEN_STATION"),
+        Config::instance()->getString("/openPath", QDir::homePath()),
+        STR("STR_SAVE_FILE_FILTER"));
+    if (path != "") {
+        QString dir = QDir(path).absolutePath();
+        dir         = dir.left(dir.lastIndexOf("/"));
+        Config::instance()->setString("/openPath", dir);
+        this->open(path);
+    }
 }
 
 /**

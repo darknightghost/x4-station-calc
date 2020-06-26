@@ -1,0 +1,12 @@
+{
+	"STR_NEW_STATION" : {
+		"zh_CN" : "新空间站",
+		"zh_TW" : "新空間站",
+		"en_US" : "New Station"
+	},
+	"STR_SAVE_STATION" : {
+		"zh_CN" : "保存空间站",
+		"zh_TW" : "存儲空間站",
+		"en_US" : "Save Station"
+	}
+}

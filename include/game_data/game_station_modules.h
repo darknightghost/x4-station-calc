@@ -82,7 +82,7 @@ class GameStationModules :
         /**
          * @brief		Constructor.
          *
-         * @param[in]	type	Property type.
+         * @param[in]	propertyType	Property type.
          */
         Property(Type propertyType) : type(propertyType) {}
 

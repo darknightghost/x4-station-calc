@@ -13,7 +13,10 @@ const SaveVersion Save::_currentVersion(1, 0, 0);
 /**
  * @brief		Create a save.
  */
-Save::Save() {}
+Save::Save()
+{
+    this->setGood();
+}
 
 /**
  * @brief		Load a save file.

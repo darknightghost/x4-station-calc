@@ -38,6 +38,20 @@ class SaveGroup :
 
   public:
     /**
+     * @brief		Get name of the group.
+     *
+     * @return		Name of the group.
+     */
+    const QString &name() const;
+
+    /**
+     * @brief		Set name of the group.
+     *
+     * @param[in]	name	New name.
+     */
+    void setName(QString name);
+
+    /**
      * @brief		Get module.
      *
      * @return		Modules.

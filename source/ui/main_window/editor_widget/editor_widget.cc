@@ -42,9 +42,20 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_treeEditor->header()->setStretchLastSection(true);
     m_layout->addWidget(m_treeEditor);
 
+    // Items.
+    m_itemModules = new QTreeWidgetItem();
+    m_itemModules->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_treeEditor->addTopLevelItem(m_itemModules);
+
+    m_itemSummary = new QTreeWidgetItem();
+    m_itemSummary->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_treeEditor->addTopLevelItem(m_itemSummary);
+
     // Change language.
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &EditorWidget::onLanguageChanged);
+
+    this->onLanguageChanged();
 }
 
 /**
@@ -144,7 +155,11 @@ void EditorWidget::saveAs() {}
 /**
  * @brief		Change language.
  */
-void EditorWidget::onLanguageChanged() {}
+void EditorWidget::onLanguageChanged()
+{
+    m_itemModules->setText(0, STR("STR_STATION_MODULES"));
+    m_itemSummary->setText(0, STR("STR_SUMMARY"));
+}
 
 /**
  * @brief	Clear all warning informations.

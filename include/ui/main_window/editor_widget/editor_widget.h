@@ -38,6 +38,10 @@ class EditorWidget : public QWidget {
     QVector<::std::shared_ptr<Operation>>
         m_operationStack; ///< Operation stack.
 
+    // Items
+    QTreeWidgetItem *m_itemModules; ///< Station modules.
+    QTreeWidgetItem *m_itemSummary; ///< Summary.
+
   public:
     /**
      * @brief		Constructor.

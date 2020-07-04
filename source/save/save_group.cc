@@ -67,6 +67,22 @@ SaveGroup::SaveGroup(QJsonObject &entry, const SaveVersion &version)
 }
 
 /**
+ * @brief		Get name of the group.
+ */
+const QString &SaveGroup::name() const
+{
+    return m_name;
+}
+
+/**
+ * @brief		Set name of the group.
+ */
+void SaveGroup::setName(QString name)
+{
+    m_name = ::std::move(name);
+}
+
+/**
  * @brief		Get modules.
  */
 const QVector<::std::shared_ptr<SaveModule>> &SaveGroup::modules() const

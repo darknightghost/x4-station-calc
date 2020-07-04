@@ -8,5 +8,30 @@
 		"zh_CN" : "保存空间站",
 		"zh_TW" : "存儲空間站",
 		"en_US" : "Save Station"
+	},
+	"STR_STATION_MODULES" : {
+		"zh_CN" : "空间站模块",
+		"zh_TW" : "空間站模塊",
+		"en_US" : "Station Modules"
+	},
+	"STR_SUMMARY" : {
+		"zh_CN" : "统计信息",
+		"zh_TW" : "統計信息",
+		"en_US" : "Summary"
+	},
+	"STR_WEAPONS" : {
+		"zh_CN" : "武器",
+		"zh_TW" : "武器",
+		"en_US" : "Weapons"
+	},
+	"STR_SHIELDS" : {
+		"zh_CN" : "护盾",
+		"zh_TW" : "護盾",
+		"en_US" : "Shields"
+	},
+	"STR_STORAGE" : {
+		"zh_CN" : "仓储",
+		"zh_TW" : "倉儲",
+		"en_US" : "Storage"
 	}
 }

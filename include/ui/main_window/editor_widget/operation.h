@@ -42,3 +42,5 @@ class OperationBase :
      */
     virtual ~OperationBase() {};
 };
+
+#include <ui/main_window/editor_widget/operation/rename_group_operation.h>

@@ -227,8 +227,8 @@ void Global::showHelp(const char *arg0)
 bool Global::parseArgs(int &argc, char **&argv, int &exitCode)
 {
     // Make description.
-    ::std::ostringstream             shortArgs;
-    ::std::unique_ptr<struct option> longArgs(
+    ::std::ostringstream               shortArgs;
+    ::std::unique_ptr<struct option[]> longArgs(
         new struct option[m_argMap.size() + 1]);
     int count = 0;
 
@@ -245,7 +245,6 @@ bool Global::parseArgs(int &argc, char **&argv, int &exitCode)
                                  }(iter->second.shortName),
                                  NULL, iter->first};
         count++;
-        ;
     }
 
     longArgs.get()[count] = {NULL, 0, NULL, 0};

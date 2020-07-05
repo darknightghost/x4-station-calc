@@ -1,6 +1,6 @@
 #include <QtGui/QResizeEvent>
 
-#include <ui/main_window/info_widget/square_button.h>
+#include <ui/controls/square_button.h>
 
 /**
  * @brief		Constructor.

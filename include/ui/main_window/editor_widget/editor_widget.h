@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <QtCore/QMap>
 #include <QtCore/QVector>
 #include <QtGui/QCloseEvent>
 #include <QtWidgets/QLabel>
@@ -13,6 +14,7 @@
 #include <common/generic_string.h>
 #include <common/multi_threading.h>
 #include <save/save.h>
+#include <ui/main_window/editor_widget/group_item.h>
 #include <ui/main_window/editor_widget/operation.h>
 #include <ui/main_window/editor_widget/warning_widget.h>
 #include <ui/main_window/main_window.h>
@@ -39,7 +41,9 @@ class EditorWidget : public QWidget {
     QVector<::std::shared_ptr<Operation>> m_redoStack; ///< Redo stack.
 
     // Items
-    QTreeWidgetItem *m_itemModules; ///< Station modules.
+    QTreeWidgetItem *                    m_itemModules; ///< Station modules.
+    QMap<GroupItem *, GroupItemWidget *> m_groupItems;  ///< Group items.
+
     QTreeWidgetItem *m_itemSummary; ///< Summary.
 
   public:
@@ -156,4 +160,12 @@ class EditorWidget : public QWidget {
      * @param[in]	id		String id.
      */
     void addWarning(QString id);
+
+    /**
+     * @brief		Called when item changed.
+     *
+     * @param[in]	item	Item.
+     * @param[in]	column	Column.
+     */
+    void onItemChanged(QTreeWidgetItem *item, int column);
 };

@@ -8,8 +8,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
 
+#include <ui/controls/square_button.h>
 #include <ui/main_window/action_control_dock_widget.h>
-#include <ui/main_window/info_widget/square_button.h>
 
 /**
  * @brief	Information widget.

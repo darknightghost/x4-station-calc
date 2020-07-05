@@ -2,18 +2,32 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
 set (CMAKE_CXX_STANDARD 17) 
 
+# Project
+project (x4-station-calc)
+
 # Build type
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE "Debug")
 
 endif ()
 
-# Project
-project (x4-station-calc)
-
 message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
 message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")
 message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
+
+# Enable address sanitizer in debug mode if possible.
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"
+			OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"
+			OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+		# Enable address sanitizer.
+		add_compile_options (-fno-omit-frame-pointer -fsanitize=address)
+		add_link_options (-fno-omit-frame-pointer -fsanitize=address)
+		message (STATUS "Address sanitizer is enabled.")
+
+	endif()
+
+endif ()
 
 # Environment
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")

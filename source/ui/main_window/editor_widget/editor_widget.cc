@@ -1,9 +1,9 @@
+#include <QtCore/QDebug>
 #include <QtGui/QCloseEvent>
 #include <QtWidgets/QHeaderView>
 
 #include <locale/string_table.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
-#include <ui/main_window/editor_widget/group_item.h>
 
 /**
  * @brief		Constructor.
@@ -41,7 +41,10 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_treeEditor->header()->setSectionResizeMode(
         QHeaderView::ResizeMode::ResizeToContents);
     m_treeEditor->header()->setStretchLastSection(true);
+    m_treeEditor->setColumnCount(3);
     m_layout->addWidget(m_treeEditor);
+    this->connect(m_treeEditor, &QTreeWidget::itemChanged, this,
+                  &EditorWidget::onItemChanged);
 
     // Items.
     m_itemModules = new QTreeWidgetItem();
@@ -72,8 +75,14 @@ EditorWidget::~EditorWidget() {}
  */
 void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 {
-    m_undoStack.push_back(operation);
-    operation->doOperation();
+    if (operation->doOperation()) {
+        m_undoStack.push_back(operation);
+        qDebug() << "Operation done.";
+        m_dirty = true;
+
+    } else {
+        qDebug() << "Operation failed.";
+    }
 }
 
 /**
@@ -107,6 +116,10 @@ void EditorWidget::loadGroups()
     for (::std::shared_ptr<SaveGroup> group : m_save->groups()) {
         GroupItem *item = new GroupItem(group);
         m_itemModules->addChild(item);
+        GroupItemWidget *widget = new GroupItemWidget(item);
+        item->treeWidget()->setItemWidget(item, 1, widget);
+        widget->show();
+        m_groupItems[item] = widget;
     }
 }
 
@@ -197,4 +210,22 @@ void EditorWidget::addWarning(QString id)
         ::std::shared_ptr<GenericString>(new LocaleString(id)));
     m_layout->insertWidget(0, warningWidget);
     m_widgetsWarningInfos.push_back(warningWidget);
+}
+
+/**
+ * @brief		Called when item changed.
+ */
+void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
+{
+    if (m_groupItems.find(static_cast<GroupItem *>(item)) != m_groupItems.end()
+        && column == 0) {
+        GroupItem *groupItem = static_cast<GroupItem *>(item);
+        if (groupItem->text(0) != groupItem->group()->name()) {
+            ::std::shared_ptr<Operation> operation
+                = RenameGroupOperation::create(
+                    groupItem, groupItem->group()->name(), groupItem->text(0));
+            this->doOperation(operation);
+            qDebug() << "Group name edited.";
+        }
+    }
 }

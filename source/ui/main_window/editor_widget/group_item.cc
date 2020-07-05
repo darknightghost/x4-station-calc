@@ -21,3 +21,19 @@ GroupItem::GroupItem(::std::shared_ptr<SaveGroup> group) : m_group(group)
  * @brief		Destructor.
  */
 GroupItem::~GroupItem() {}
+
+/**
+ * @brief		Set enable status of up button.
+ */
+void GroupItem::setMoveUpEnabled(bool enabled)
+{
+    (void)(enabled);
+}
+
+/**
+ * @brief	Set enable status of down button.
+ */
+void GroupItem::setMoveDownEnabled(bool enabled)
+{
+    (void)(enabled);
+}

@@ -7,7 +7,9 @@
 /**
  * @brief	Item of modules group.
  */
-class GroupItem : public QTreeWidgetItem {
+class GroupItem : public QObject, public QTreeWidgetItem {
+    Q_OBJECT;
+
   private:
     ::std::shared_ptr<SaveGroup> m_group; ///<  Group.
 
@@ -30,4 +32,30 @@ class GroupItem : public QTreeWidgetItem {
      * @brief		Destructor.
      */
     virtual ~GroupItem();
+
+  signals:
+    /**
+     * @brief	Move up.
+     */
+    void moveUp(GroupItem *item);
+
+    /**
+     * @brief	Move down.
+     */
+    void moveDown(GroupItem *item);
+
+  public slots:
+    /**
+     * @brief		Set enable status of up button.
+     *
+     * @param[in]	enabled		Enable status.
+     */
+    void setMoveUpEnabled(bool enabled);
+
+    /**
+     * @brief	Set enable status of down button.
+     *
+     * @param[in]	enabled		Enable status.
+     */
+    void setMoveDownEnabled(bool enabled);
 };

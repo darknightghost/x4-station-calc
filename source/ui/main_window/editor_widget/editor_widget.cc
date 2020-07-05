@@ -3,6 +3,7 @@
 
 #include <locale/string_table.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
+#include <ui/main_window/editor_widget/group_item.h>
 
 /**
  * @brief		Constructor.
@@ -46,6 +47,7 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_itemModules = new QTreeWidgetItem();
     m_itemModules->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_treeEditor->addTopLevelItem(m_itemModules);
+    this->loadGroups();
 
     m_itemSummary = new QTreeWidgetItem();
     m_itemSummary->setFlags(Qt::ItemFlag::ItemIsEnabled);
@@ -56,6 +58,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   this, &EditorWidget::onLanguageChanged);
 
     this->onLanguageChanged();
+
+    m_treeEditor->expandAll();
 }
 
 /**
@@ -68,7 +72,7 @@ EditorWidget::~EditorWidget() {}
  */
 void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 {
-    m_operationStack.push_back(operation);
+    m_undoStack.push_back(operation);
     operation->doOperation();
 }
 
@@ -94,6 +98,17 @@ bool EditorWidget::closeSave()
  * @brief	Check save file.
  */
 void EditorWidget::checkSave() {}
+
+/**
+ * @brief	Load groups.
+ */
+void EditorWidget::loadGroups()
+{
+    for (::std::shared_ptr<SaveGroup> group : m_save->groups()) {
+        GroupItem *item = new GroupItem(group);
+        m_itemModules->addChild(item);
+    }
+}
 
 /**
  * @brief		Close event.

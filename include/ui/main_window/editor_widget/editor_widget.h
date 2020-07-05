@@ -35,8 +35,8 @@ class EditorWidget : public QWidget {
     QTreeWidget *            m_treeEditor;          ///< Editor.
 
     // Operation stack.
-    QVector<::std::shared_ptr<Operation>>
-        m_operationStack; ///< Operation stack.
+    QVector<::std::shared_ptr<Operation>> m_undoStack; ///< Undo stack.
+    QVector<::std::shared_ptr<Operation>> m_redoStack; ///< Redo stack.
 
     // Items
     QTreeWidgetItem *m_itemModules; ///< Station modules.
@@ -71,6 +71,11 @@ class EditorWidget : public QWidget {
      * @brief	Check save file.
      */
     void checkSave();
+
+    /**
+     * @brief	Load groups.
+     */
+    void loadGroups();
 
   private:
     /**

@@ -57,8 +57,16 @@ class Operation {
  */
 template<typename T, typename... Args>
 class OperationBase :
-    virtual public Operation,
+    public Operation,
     virtual public ICreateFactoryFunc<T(Args...)> {
+  protected:
+    /**
+     * @brief       Constructor.
+     *
+     * @param[in]   editorWidget      Editor widget.
+     */
+    OperationBase(EditorWidget *editorWidget) : Operation(editorWidget) {}
+
   public:
     /**
      * @brief		Destructor.

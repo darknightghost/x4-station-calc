@@ -7,7 +7,11 @@ RenameGroupOperation::RenameGroupOperation(int            index,
                                            const QString &oldName,
                                            const QString &newName,
                                            EditorWidget * editorWidget) :
-    Operation(editorWidget),
+    OperationBase<RenameGroupOperation,
+                  int,
+                  const QString &,
+                  const QString &,
+                  EditorWidget *>(editorWidget),
     m_index(index), m_oldName(oldName), m_newName(newName)
 {
     this->setGood();

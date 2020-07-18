@@ -33,6 +33,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
                   Qt::ConnectionType::QueuedConnection);
     OpenFileListener::instance()->unblock();
 
+    // Set icon
+    this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
+
     // Set style sheet
     QFile styleFile(":/StyleSheet/main_window.qss");
     styleFile.open(QIODevice::OpenModeFlag::ReadOnly

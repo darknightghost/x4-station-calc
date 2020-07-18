@@ -9,30 +9,34 @@
  */
 class RenameGroupOperation :
     virtual public OperationBase<RenameGroupOperation,
-                                 GroupItem *,
+                                 int,
                                  const QString &,
-                                 const QString &> {
+                                 const QString &,
+                                 EditorWidget *> {
     CREATE_FUNC(RenameGroupOperation,
-                GroupItem *,
+                int,
                 const QString &,
-                const QString &);
+                const QString &,
+                EditorWidget *);
 
   private:
-    GenericReference<GroupItem> m_groupItem; ///< Group item.
-    QString                     m_oldName;   ///< Old name.
-    QString                     m_newName;   ///< New name.
+    int     m_index;   ///< Index of group item.
+    QString m_oldName; ///< Old name.
+    QString m_newName; ///< New name.
 
   private:
     /**
      * @brief		Constructor.
      *
-     * @param[in]	groupItem		Group item.
+     * @param[in]	index           Index of group.
      * @param[in]	oldName			Old group name.
      * @param[in]	newName			New group name.
+     * @param[in]	editorWidget    Editor widget.
      */
-    RenameGroupOperation(GroupItem *    groupItem,
+    RenameGroupOperation(int            index,
                          const QString &oldName,
-                         const QString &newName);
+                         const QString &newName,
+                         EditorWidget * editorWidget);
 
   public:
     /**

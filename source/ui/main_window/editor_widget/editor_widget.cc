@@ -1,5 +1,6 @@
 #include <QtCore/QDebug>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QFocusEvent>
 #include <QtWidgets/QHeaderView>
 
 #include <locale/string_table.h>
@@ -47,9 +48,9 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   &EditorWidget::onItemChanged);
 
     // Items.
-    m_itemModules = new QTreeWidgetItem();
-    m_itemModules->setFlags(Qt::ItemFlag::ItemIsEnabled);
-    m_treeEditor->addTopLevelItem(m_itemModules);
+    m_itemGroups = new QTreeWidgetItem();
+    m_itemGroups->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_treeEditor->addTopLevelItem(m_itemGroups);
     this->loadGroups();
 
     m_itemSummary = new QTreeWidgetItem();
@@ -76,14 +77,56 @@ EditorWidget::~EditorWidget() {}
 void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 {
     if (operation->doOperation()) {
+        m_redoStack.clear();
         m_undoStack.push_back(operation);
         qDebug() << "Operation done.";
         m_dirty = true;
+        this->updateUndoRedoStatus();
 
     } else {
         qDebug() << "Operation failed.";
     }
 }
+
+/**
+ * @brief       Update newGroup action statis.
+ */
+void EditorWidget::updateNewGroup() {}
+
+/**
+ * @brief       Update undo/redo action statis.
+ */
+void EditorWidget::updateUndoRedoStatus()
+{
+    if (m_undoStack.empty()) {
+        m_editActions->actionEditUndo->setEnabled(false);
+
+    } else {
+        m_editActions->actionEditUndo->setEnabled(true);
+    }
+
+    if (m_redoStack.empty()) {
+        m_editActions->actionEditRedo->setEnabled(false);
+
+    } else {
+        m_editActions->actionEditRedo->setEnabled(true);
+    }
+}
+
+/**
+ * @brief       Update cut/copy action statis.
+ */
+void EditorWidget::updateCutCopyStatus() {}
+
+/**
+ * @brief       Update paste action statis.
+ */
+void EditorWidget::updatePasteStatus() {}
+
+/**
+ * @brief       Update remove action statis.
+ */
+void EditorWidget::updateRemoveStatus() {}
 
 /**
  * @brief	Close save file.
@@ -115,7 +158,7 @@ void EditorWidget::loadGroups()
 {
     for (::std::shared_ptr<SaveGroup> group : m_save->groups()) {
         GroupItem *item = new GroupItem(group);
-        m_itemModules->addChild(item);
+        m_itemGroups->addChild(item);
         GroupItemWidget *widget = new GroupItemWidget(item);
         item->treeWidget()->setItemWidget(item, 1, widget);
         widget->show();
@@ -143,12 +186,44 @@ void EditorWidget::newGroup() {}
 /**
  * @brief		Undo.
  */
-void EditorWidget::undo() {}
+void EditorWidget::undo()
+{
+    if (m_undoStack.empty()) {
+        return;
+    }
+
+    // Get opetarion.
+    ::std::shared_ptr<Operation> op = m_undoStack.takeLast();
+
+    // Undo.
+    op->undoOperation();
+
+    // Add to redo stack.
+    m_redoStack.push_back(op);
+
+    this->updateUndoRedoStatus();
+}
 
 /**
  * @brief		Redo.
  */
-void EditorWidget::redo() {}
+void EditorWidget::redo()
+{
+    if (m_redoStack.empty()) {
+        return;
+    }
+
+    // Get opetarion.
+    ::std::shared_ptr<Operation> op = m_redoStack.takeLast();
+
+    // Redo.
+    op->doOperation();
+
+    // Add to redo stack.
+    m_undoStack.push_back(op);
+
+    this->updateUndoRedoStatus();
+}
 
 /**
  * @brief		Cut.
@@ -185,7 +260,7 @@ void EditorWidget::saveAs() {}
  */
 void EditorWidget::onLanguageChanged()
 {
-    m_itemModules->setText(0, STR("STR_STATION_MODULES"));
+    m_itemGroups->setText(0, STR("STR_STATION_MODULES"));
     m_itemSummary->setText(0, STR("STR_SUMMARY"));
 }
 
@@ -219,13 +294,74 @@ void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
 {
     if (m_groupItems.find(static_cast<GroupItem *>(item)) != m_groupItems.end()
         && column == 0) {
+        int        index     = m_itemGroups->indexOfChild(item);
         GroupItem *groupItem = static_cast<GroupItem *>(item);
         if (groupItem->text(0) != groupItem->group()->name()) {
             ::std::shared_ptr<Operation> operation
-                = RenameGroupOperation::create(
-                    groupItem, groupItem->group()->name(), groupItem->text(0));
+                = RenameGroupOperation::create(index,
+                                               groupItem->group()->name(),
+                                               groupItem->text(0), this);
             this->doOperation(operation);
             qDebug() << "Group name edited.";
         }
     }
+}
+
+/**
+ * @brief       Active editor widget.
+ */
+void EditorWidget::active()
+{
+    // Connect actions.
+    this->disconnect(m_editActions->actionEditNewGroup, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditNewGroup, &QAction::triggered, this,
+                  &EditorWidget::newGroup);
+
+    this->disconnect(m_editActions->actionEditUndo, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditUndo, &QAction::triggered, this,
+                  &EditorWidget::undo);
+
+    this->disconnect(m_editActions->actionEditRedo, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditRedo, &QAction::triggered, this,
+                  &EditorWidget::redo);
+
+    this->disconnect(m_editActions->actionEditCut, &QAction::triggered, nullptr,
+                     nullptr);
+    this->connect(m_editActions->actionEditCut, &QAction::triggered, this,
+                  &EditorWidget::cut);
+
+    this->disconnect(m_editActions->actionEditCopy, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditCopy, &QAction::triggered, this,
+                  &EditorWidget::copy);
+
+    this->disconnect(m_editActions->actionEditPaste, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditPaste, &QAction::triggered, this,
+                  &EditorWidget::paste);
+
+    this->disconnect(m_editActions->actionEditRemove, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_editActions->actionEditRemove, &QAction::triggered, this,
+                  &EditorWidget::remove);
+
+    // Update actions status.
+    this->updateNewGroup();
+    this->updateUndoRedoStatus();
+    this->updateCutCopyStatus();
+    this->updatePasteStatus();
+    this->updateRemoveStatus();
+
+    qDebug() << "Editor actived : " << this;
+}
+
+/**
+ * @brief       Get group item by index.
+ */
+GroupItem *EditorWidget::getGroupItemByIndex(int index)
+{
+    return static_cast<GroupItem *>(m_itemGroups->child(index));
 }

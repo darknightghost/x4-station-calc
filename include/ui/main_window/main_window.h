@@ -120,6 +120,13 @@ class MainWindow : public QMainWindow {
      */
     void active();
 
+    /**
+     * @brief       Editor window activated.
+     *
+     * @param[in]   window      Window actived.
+     */
+    void editorActived(QMdiSubWindow *window);
+
   protected slots:
     /**
      * @brief		Change language.

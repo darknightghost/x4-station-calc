@@ -2,11 +2,34 @@
 
 #include <interfaces/i_create_factory_func.h>
 
+class EditorWidget;
+
 /**
  * @brief	Operation.
  */
 class Operation {
+  protected:
+    EditorWidget *m_editorWidget; ///< Editor widget.
+
+  protected:
+    /**
+     * @brief       Constructor.
+     *
+     * @param[in]   editorWidget      Editor widget.
+     */
+    Operation(EditorWidget *editorWidget) : m_editorWidget(editorWidget) {}
+
   public:
+    /**
+     * @brief       Get editor widget.
+     *
+     * @return      Editor widget.
+     */
+    inline EditorWidget *editorWidget()
+    {
+        return m_editorWidget;
+    }
+
     /**
      * @brief	Do operation.
      *
@@ -42,5 +65,7 @@ class OperationBase :
      */
     virtual ~OperationBase() {};
 };
+
+#include <ui/main_window/editor_widget/editor_widget.h>
 
 #include <ui/main_window/editor_widget/operation/rename_group_operation.h>

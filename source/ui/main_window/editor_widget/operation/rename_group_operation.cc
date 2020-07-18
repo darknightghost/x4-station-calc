@@ -3,11 +3,12 @@
 /**
  * @brief		Constructor.
  */
-RenameGroupOperation::RenameGroupOperation(GroupItem *    groupItem,
+RenameGroupOperation::RenameGroupOperation(int            index,
                                            const QString &oldName,
-                                           const QString &newName) :
-    m_groupItem(groupItem),
-    m_oldName(oldName), m_newName(newName)
+                                           const QString &newName,
+                                           EditorWidget * editorWidget) :
+    Operation(editorWidget),
+    m_index(index), m_oldName(oldName), m_newName(newName)
 {
     this->setGood();
 }
@@ -17,8 +18,11 @@ RenameGroupOperation::RenameGroupOperation(GroupItem *    groupItem,
  */
 bool RenameGroupOperation::doOperation()
 {
-    m_groupItem->group()->setName(m_newName);
-    m_groupItem->updateGroupName();
+    GroupItem *groupItem = editorWidget()->getGroupItemByIndex(m_index);
+
+    groupItem->group()->setName(m_newName);
+    groupItem->updateGroupName();
+
     return true;
 }
 
@@ -27,8 +31,10 @@ bool RenameGroupOperation::doOperation()
  */
 void RenameGroupOperation::undoOperation()
 {
-    m_groupItem->group()->setName(m_oldName);
-    m_groupItem->updateGroupName();
+    GroupItem *groupItem = editorWidget()->getGroupItemByIndex(m_index);
+
+    groupItem->group()->setName(m_oldName);
+    groupItem->updateGroupName();
 
     return;
 }

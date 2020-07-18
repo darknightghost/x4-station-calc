@@ -99,6 +99,8 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     m_centralWidget->setTabsMovable(true);
     m_centralWidget->setDocumentMode(true);
     this->setCentralWidget(m_centralWidget);
+    this->connect(m_centralWidget, &QMdiArea::subWindowActivated, this,
+                  &MainWindow::editorActived);
 
     // Set text.
     this->onLanguageChanged();
@@ -402,6 +404,16 @@ void MainWindow::openAction()
 void MainWindow::active()
 {
     this->activateWindow();
+}
+
+/**
+ * @brief       Editor window activated.
+ */
+void MainWindow::editorActived(QMdiSubWindow *window)
+{
+    if (window != nullptr) {
+        static_cast<EditorWidget *>(window->widget())->active();
+    }
 }
 
 /**

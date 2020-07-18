@@ -41,8 +41,8 @@ class EditorWidget : public QWidget {
     QVector<::std::shared_ptr<Operation>> m_redoStack; ///< Redo stack.
 
     // Items
-    QTreeWidgetItem *                    m_itemModules; ///< Station modules.
-    QMap<GroupItem *, GroupItemWidget *> m_groupItems;  ///< Group items.
+    QTreeWidgetItem *m_itemGroups; ///< Station module groups.
+    QMap<GroupItem *, GroupItemWidget *> m_groupItems; ///< Group items.
 
     QTreeWidgetItem *m_itemSummary; ///< Summary.
 
@@ -88,6 +88,31 @@ class EditorWidget : public QWidget {
      * @param[in]	operation		Operation.
      */
     void doOperation(::std::shared_ptr<Operation> operation);
+
+    /**
+     * @brief       Update newGroup action statis.
+     */
+    void updateNewGroup();
+
+    /**
+     * @brief       Update undo/redo action statis.
+     */
+    void updateUndoRedoStatus();
+
+    /**
+     * @brief       Update cut/copy action statis.
+     */
+    void updateCutCopyStatus();
+
+    /**
+     * @brief       Update paste action statis.
+     */
+    void updatePasteStatus();
+
+    /**
+     * @brief       Update remove action statis.
+     */
+    void updateRemoveStatus();
 
   private:
     /**
@@ -168,4 +193,19 @@ class EditorWidget : public QWidget {
      * @param[in]	column	Column.
      */
     void onItemChanged(QTreeWidgetItem *item, int column);
+
+  public:
+    /**
+     * @brief       Active editor widget.
+     */
+    void active();
+
+    /**
+     * @brief       Get group item by index.
+     *
+     * @param[in]   index   Index of the item.
+     *
+     * @return      Group item.
+     */
+    GroupItem *getGroupItemByIndex(int index);
 };

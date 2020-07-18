@@ -83,12 +83,13 @@ if (WIN32)
 		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cc"
 		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.C"
+        "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.rc"
 		)
 
 	list (APPEND SRC
 		${WINDOWS_SRC}
 		)
-
+    
 endif ()
 
 # Recources

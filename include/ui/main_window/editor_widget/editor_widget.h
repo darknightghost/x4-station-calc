@@ -27,7 +27,7 @@ class EditorWidget : public QWidget {
 
   private:
     ::std::shared_ptr<Save>  m_save;            ///< Save file.
-    bool                     m_dirty;           ///< Dirty flag.
+    int                      m_savedUndoCount;  ///< Undo stack size when saved.
     MainWindow::EditActions *m_editActions;     ///< Edit actions.
     BackgroundTask *         m_backgroundTasks; ///< Background tasks.
 

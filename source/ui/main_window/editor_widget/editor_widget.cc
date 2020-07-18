@@ -13,7 +13,7 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                            MainWindow::EditActions *editActions,
                            QMdiSubWindow *          parent) :
     QWidget(parent),
-    m_save(save), m_dirty(false), m_editActions(editActions),
+    m_save(save), m_savedUndoCount(0), m_editActions(editActions),
     m_backgroundTasks(new BackgroundTask(BackgroundTask::RunType::Newest, this))
 {
     this->connect(this, &EditorWidget::windowTitleChanged, parent,
@@ -80,7 +80,6 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
         m_redoStack.clear();
         m_undoStack.push_back(operation);
         qDebug() << "Operation done.";
-        m_dirty = true;
         this->updateUndoRedoStatus();
 
     } else {
@@ -136,9 +135,9 @@ bool EditorWidget::closeSave()
     if (m_save == nullptr) {
         return true;
     }
-    if (m_dirty) {
+    if (m_savedUndoCount != m_undoStack.size()) {
         this->save();
-        if (m_dirty) {
+        if (m_savedUndoCount != m_undoStack.size()) {
             return false;
         }
     }
@@ -248,7 +247,10 @@ void EditorWidget::remove() {}
 /**
  * @brief		Save.
  */
-void EditorWidget::save() {}
+void EditorWidget::save()
+{
+    m_savedUndoCount = m_undoStack.size();
+}
 
 /**
  * @brief		Save as.

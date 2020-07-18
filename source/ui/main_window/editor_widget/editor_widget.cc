@@ -11,8 +11,11 @@
  */
 EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                            MainWindow::EditActions *editActions,
+                           InfoWidget *             infoWidget,
+                           StationModulesWidget *   stationModulesWidget,
                            QMdiSubWindow *          parent) :
     QWidget(parent),
+    m_stationModulesWidget(stationModulesWidget), m_infoWidget(infoWidget),
     m_save(save), m_savedUndoCount(0), m_editActions(editActions),
     m_backgroundTasks(new BackgroundTask(BackgroundTask::RunType::Newest, this))
 {
@@ -46,6 +49,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_layout->addWidget(m_treeEditor);
     this->connect(m_treeEditor, &QTreeWidget::itemChanged, this,
                   &EditorWidget::onItemChanged);
+    this->connect(m_treeEditor, &QTreeWidget::itemDoubleClicked, this,
+                  &EditorWidget::onItemDoubleClicked);
 
     // Items.
     m_itemGroups = new QTreeWidgetItem();
@@ -155,13 +160,30 @@ void EditorWidget::checkSave() {}
  */
 void EditorWidget::loadGroups()
 {
+    // Load groups.
     for (::std::shared_ptr<SaveGroup> group : m_save->groups()) {
-        GroupItem *item = new GroupItem(group);
-        m_itemGroups->addChild(item);
-        GroupItemWidget *widget = new GroupItemWidget(item);
-        item->treeWidget()->setItemWidget(item, 1, widget);
-        widget->show();
-        m_groupItems[item] = widget;
+        GroupItem *groupItem = new GroupItem(group);
+        m_itemGroups->addChild(groupItem);
+        GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
+        groupItem->treeWidget()->setItemWidget(groupItem, 1, groupWidget);
+        groupWidget->show();
+        ::std::shared_ptr<GroupInfo> groupInfo(
+            new GroupInfo({groupItem, groupWidget, {}, {}}));
+        m_groupItems[groupItem] = groupInfo;
+
+        // Load modules.
+        for (::std::shared_ptr<SaveModule> module : group->modules()) {
+            ModuleItem *moduleItem = new ModuleItem(module);
+            groupItem->addChild(moduleItem);
+            ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
+            moduleItem->treeWidget()->setItemWidget(moduleItem, 1,
+                                                    moduleWidget);
+            moduleWidget->show();
+            ::std::shared_ptr<ModuleInfo> moduleInfo(
+                new ModuleInfo({moduleItem, moduleWidget}));
+            groupInfo->moduleInfos.append(moduleInfo);
+            groupInfo->moduleMacroMap[module->module()] = moduleInfo;
+        }
     }
 }
 
@@ -176,6 +198,11 @@ void EditorWidget::closeEvent(QCloseEvent *event)
         event->ignore();
     }
 }
+
+/**
+ * @brief	    Add module.
+ */
+void EditorWidget::addModule(const QString &macro) {}
 
 /**
  * @brief		Create new group.
@@ -294,10 +321,9 @@ void EditorWidget::addWarning(QString id)
  */
 void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
 {
-    if (m_groupItems.find(static_cast<GroupItem *>(item)) != m_groupItems.end()
-        && column == 0) {
-        int        index     = m_itemGroups->indexOfChild(item);
-        GroupItem *groupItem = static_cast<GroupItem *>(item);
+    GroupItem *groupItem = dynamic_cast<GroupItem *>(item);
+    if (groupItem != nullptr && column == 0) {
+        int index = m_itemGroups->indexOfChild(item);
         if (groupItem->text(0) != groupItem->group()->name()) {
             ::std::shared_ptr<Operation> operation
                 = RenameGroupOperation::create(index,
@@ -306,6 +332,26 @@ void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
             this->doOperation(operation);
             qDebug() << "Group name edited.";
         }
+    }
+}
+
+/**
+ * @brief		Called when item double clicked.
+ *
+ * @param[in]	item	Item.
+ * @param[in]	column	Column.
+ */
+void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    if (column != 0) {
+        return;
+    }
+
+    // Module item.
+    ModuleItem *moduleItem = dynamic_cast<ModuleItem *>(item);
+    if (moduleItem != nullptr) {
+        m_infoWidget->showStationModuleInfo(moduleItem->module()->module());
+        return;
     }
 }
 
@@ -358,12 +404,4 @@ void EditorWidget::active()
     this->updateRemoveStatus();
 
     qDebug() << "Editor actived : " << this;
-}
-
-/**
- * @brief       Get group item by index.
- */
-GroupItem *EditorWidget::getGroupItemByIndex(int index)
-{
-    return static_cast<GroupItem *>(m_itemGroups->child(index));
 }

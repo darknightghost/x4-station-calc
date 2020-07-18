@@ -18,7 +18,8 @@ RenameGroupOperation::RenameGroupOperation(int            index,
  */
 bool RenameGroupOperation::doOperation()
 {
-    GroupItem *groupItem = editorWidget()->getGroupItemByIndex(m_index);
+    GroupItem *groupItem = static_cast<GroupItem *>(
+        editorWidget()->m_itemGroups->child(m_index));
 
     groupItem->group()->setName(m_newName);
     groupItem->updateGroupName();
@@ -31,7 +32,8 @@ bool RenameGroupOperation::doOperation()
  */
 void RenameGroupOperation::undoOperation()
 {
-    GroupItem *groupItem = editorWidget()->getGroupItemByIndex(m_index);
+    GroupItem *groupItem = static_cast<GroupItem *>(
+        editorWidget()->m_itemGroups->child(m_index));
 
     groupItem->group()->setName(m_oldName);
     groupItem->updateGroupName();

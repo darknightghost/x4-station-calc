@@ -15,17 +15,45 @@
 #include <common/multi_threading.h>
 #include <save/save.h>
 #include <ui/main_window/editor_widget/group_item.h>
+#include <ui/main_window/editor_widget/module_item.h>
 #include <ui/main_window/editor_widget/operation.h>
 #include <ui/main_window/editor_widget/warning_widget.h>
+#include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/main_window.h>
+#include <ui/main_window/station_modules_widget/station_modules_widget.h>
 
 /**
  * @brief		Save editor widget.
  */
 class EditorWidget : public QWidget {
     Q_OBJECT;
+    friend class RenameGroupOperation;
 
   private:
+    /**
+     * @brief   Module information.
+     */
+    struct ModuleInfo {
+        ModuleItem *      moduleItem;   ///< Item.
+        ModuleItemWidget *moduleWidget; ///< Widget.
+    };
+
+    /**
+     * @brief   Group information.
+     */
+    struct GroupInfo {
+        GroupItem *      groupItem;   ///< Group item.
+        GroupItemWidget *groupWidget; ///< Group widget.
+        QVector<::std::shared_ptr<ModuleInfo>>
+            moduleInfos; ///< Module informations.
+        QMap<QString, ::std::shared_ptr<ModuleInfo>>
+            moduleMacroMap; ///< Macro map.
+    };
+
+  private:
+    StationModulesWidget *m_stationModulesWidget; ///< Station modules widget.
+    InfoWidget *          m_infoWidget;           ///< Info widget.
+
     ::std::shared_ptr<Save>  m_save;            ///< Save file.
     int                      m_savedUndoCount;  ///< Undo stack size when saved.
     MainWindow::EditActions *m_editActions;     ///< Edit actions.
@@ -42,7 +70,8 @@ class EditorWidget : public QWidget {
 
     // Items
     QTreeWidgetItem *m_itemGroups; ///< Station module groups.
-    QMap<GroupItem *, GroupItemWidget *> m_groupItems; ///< Group items.
+    QMap<GroupItem *, ::std::shared_ptr<GroupInfo>>
+        m_groupItems; ///< Group items.
 
     QTreeWidgetItem *m_itemSummary; ///< Summary.
 
@@ -50,12 +79,16 @@ class EditorWidget : public QWidget {
     /**
      * @brief		Constructor.
      *
-     * @param[in]	save			Save file.
-     * @param[in]	editActions		Edit actions.
-     * @param[in]	parent			Parent.
+     * @param[in]	save			        Save file.
+     * @param[in]	editActions		        Edit actions.
+     * @param[in]	infoWidget              Info widget.
+     * @param[in]	stationModulesWidget    Station modules widget.
+     * @param[in]	parent			        Parent.
      */
     EditorWidget(::std::shared_ptr<Save>  save,
                  MainWindow::EditActions *editActions,
+                 InfoWidget *             infoWidget,
+                 StationModulesWidget *   stationModulesWidget,
                  QMdiSubWindow *          parent);
 
     /**
@@ -123,6 +156,13 @@ class EditorWidget : public QWidget {
     virtual void closeEvent(QCloseEvent *event) override;
 
   public slots:
+    /**
+     * @brief	    Add module.
+     *
+     * @param[in]   macro       Macro of the module.
+     */
+    void addModule(const QString &macro);
+
     /**
      * @brief		Create new group.
      */
@@ -194,18 +234,17 @@ class EditorWidget : public QWidget {
      */
     void onItemChanged(QTreeWidgetItem *item, int column);
 
+    /**
+     * @brief		Called when item double clicked.
+     *
+     * @param[in]	item	Item.
+     * @param[in]	column	Column.
+     */
+    void onItemDoubleClicked(QTreeWidgetItem *item, int column);
+
   public:
     /**
      * @brief       Active editor widget.
      */
     void active();
-
-    /**
-     * @brief       Get group item by index.
-     *
-     * @param[in]   index   Index of the item.
-     *
-     * @return      Group item.
-     */
-    GroupItem *getGroupItemByIndex(int index);
 };

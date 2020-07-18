@@ -52,8 +52,8 @@ class Operation {
 /**
  * @brief	Base class of all operations.
  *
- * @tpatam	T		Type of operation.
- * @tpatam	Args	Types of parameters of constructor.
+ * @tparam	T		Type of operation.
+ * @tparam	Args	Types of parameters of constructor.
  */
 template<typename T, typename... Args>
 class OperationBase :

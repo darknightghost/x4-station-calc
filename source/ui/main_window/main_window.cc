@@ -361,7 +361,8 @@ void MainWindow::open(QString path)
         QMdiSubWindow *container = new QMdiSubWindow();
         m_centralWidget->addSubWindow(container);
         EditorWidget *editorWidget
-            = new EditorWidget(save, &m_editActions, container);
+            = new EditorWidget(save, &m_editActions, m_infoWidget,
+                               m_stationModulesWidget, container);
         m_centralWidget->setActiveSubWindow(container);
         editorWidget->show();
     }
@@ -375,8 +376,8 @@ void MainWindow::newAction()
     ::std::shared_ptr<Save> save      = Save::create();
     QMdiSubWindow *         container = new QMdiSubWindow();
     m_centralWidget->addSubWindow(container);
-    EditorWidget *editorWidget
-        = new EditorWidget(save, &m_editActions, container);
+    EditorWidget *editorWidget = new EditorWidget(
+        save, &m_editActions, m_infoWidget, m_stationModulesWidget, container);
     m_centralWidget->setActiveSubWindow(container);
     editorWidget->show();
 }

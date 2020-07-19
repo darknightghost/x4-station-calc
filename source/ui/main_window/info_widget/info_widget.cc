@@ -47,6 +47,7 @@ InfoWidget::InfoWidget(QAction *       statusAction,
     m_treeInfo->setColumnCount(2);
     m_treeInfo->setSelectionMode(
         QAbstractItemView::SelectionMode::SingleSelection);
+    m_treeInfo->setUniformRowHeights(false);
     this->connect(m_treeInfo, &QTreeWidget::itemDoubleClicked, this,
                   &InfoWidget::onItemDoubleClicked);
 

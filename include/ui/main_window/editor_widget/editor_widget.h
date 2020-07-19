@@ -16,7 +16,6 @@
 #include <save/save.h>
 #include <ui/main_window/editor_widget/group_item.h>
 #include <ui/main_window/editor_widget/module_item.h>
-#include <ui/main_window/editor_widget/operation.h>
 #include <ui/main_window/editor_widget/warning_widget.h>
 #include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/main_window.h>
@@ -27,7 +26,13 @@
  */
 class EditorWidget : public QWidget {
     Q_OBJECT;
-    friend class RenameGroupOperation;
+
+  private:
+    class Operation;
+    template<typename T, typename... Args>
+    class OperationBase;
+    class ChangeModuleAmountOperation;
+    class RenameGroupOperation;
 
   private:
     /**
@@ -44,7 +49,7 @@ class EditorWidget : public QWidget {
     struct GroupInfo {
         GroupItem *      groupItem;   ///< Group item.
         GroupItemWidget *groupWidget; ///< Group widget.
-        QVector<::std::shared_ptr<ModuleInfo>>
+        QMap<ModuleItem *, ::std::shared_ptr<ModuleInfo>>
             moduleInfos; ///< Module informations.
         QMap<QString, ::std::shared_ptr<ModuleInfo>>
             moduleMacroMap; ///< Macro map.
@@ -242,9 +247,24 @@ class EditorWidget : public QWidget {
      */
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
 
+    /**
+     * @brief	    on amount changed.
+     *
+     * @param[in]	groupItem	    Group item.
+     * @param[in]	moduleItem	    Module item.
+     * @param[in]   oldAmount       Old amount.
+     * @param[in]   newAmount       New amount.
+     */
+    void onChangeAmount(GroupItem * groupItem,
+                        ModuleItem *moduleItem,
+                        quint64     oldAmount,
+                        quint64     newAmount);
+
   public:
     /**
      * @brief       Active editor widget.
      */
     void active();
 };
+
+#include <ui/main_window/editor_widget/operation.h>

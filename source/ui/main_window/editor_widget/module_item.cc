@@ -64,15 +64,11 @@ ModuleItemWidget::ModuleItemWidget(ModuleItem *item) : m_item(item)
     this->setLayout(m_layout);
 
     // Spinbox.
-    m_spinAmount = new QSpinBox(this);
-    m_spinAmount->setRange(1, 65535);
-    m_spinAmount->setSingleStep(1);
+    m_spinAmount = new AmountSpinBox(this);
     m_layout->QLayout::addWidget(m_spinAmount);
     m_spinAmount->setValue((int)m_item->moduleAmount());
-    this->connect(m_spinAmount, QOverload<int>::of(&QSpinBox::valueChanged),
-                  [=](int i) -> void {
-                      this->onSpinboxValueChanged(i);
-                  });
+    this->connect(m_spinAmount, &AmountSpinBox::amountEdited, this,
+                  &ModuleItemWidget::onSpinboxValueChanged);
 
     // Button Up.
     m_btnUp = new SquareButton(QIcon(":/Icons/Up.png"));
@@ -122,6 +118,14 @@ void ModuleItemWidget::setDownBtnEnabled(bool enabled)
 }
 
 /**
+ * @brief       Update amount.
+ */
+void ModuleItemWidget::updateAmount()
+{
+    m_spinAmount->setValue((int)m_item->moduleAmount());
+}
+
+/**
  * @brief       On language changed.
  */
 void ModuleItemWidget::onLanguageChanged()
@@ -158,5 +162,9 @@ void ModuleItemWidget::onRemoveBtnClicked()
  */
 void ModuleItemWidget::onSpinboxValueChanged(int i)
 {
-    emit this->changeAmount(m_item->moduleAmount(), i);
+    int oldCount = m_item->moduleAmount();
+
+    if (oldCount != i) {
+        emit this->changeAmount(oldCount, i);
+    }
 }

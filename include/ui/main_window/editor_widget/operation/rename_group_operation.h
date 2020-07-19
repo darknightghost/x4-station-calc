@@ -7,13 +7,14 @@
 /**
  * @brief		Operation to rename modules group.
  */
-class RenameGroupOperation :
-    virtual public OperationBase<RenameGroupOperation,
-                                 int,
-                                 const QString &,
-                                 const QString &,
-                                 EditorWidget *> {
-    CREATE_FUNC(RenameGroupOperation,
+class EditorWidget::RenameGroupOperation :
+    virtual public EditorWidget::OperationBase<
+        EditorWidget::RenameGroupOperation,
+        int,
+        const QString &,
+        const QString &,
+        EditorWidget *> {
+    CREATE_FUNC(EditorWidget::RenameGroupOperation,
                 int,
                 const QString &,
                 const QString &,

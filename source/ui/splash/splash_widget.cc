@@ -2,6 +2,7 @@
 #include <QtCore/QReadLocker>
 #include <QtCore/QWriteLocker>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QIcon>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPainter>
 #include <QtWidgets/QApplication>
@@ -22,6 +23,8 @@ SplashWidget::SplashWidget(QWidget *parent) :
     m_eventLoop(new QEventLoop(this))
 {
     qRegisterMetaType<::std::function<void()>>("::std::function<void()>");
+
+    this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
 
     /// Set flags
     this->setWindowFlags(Qt::WindowType::FramelessWindowHint

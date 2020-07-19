@@ -3,15 +3,16 @@
 /**
  * @brief		Constructor.
  */
-RenameGroupOperation::RenameGroupOperation(int            index,
-                                           const QString &oldName,
-                                           const QString &newName,
-                                           EditorWidget * editorWidget) :
-    OperationBase<RenameGroupOperation,
-                  int,
-                  const QString &,
-                  const QString &,
-                  EditorWidget *>(editorWidget),
+EditorWidget::RenameGroupOperation::RenameGroupOperation(
+    int            index,
+    const QString &oldName,
+    const QString &newName,
+    EditorWidget * editorWidget) :
+    EditorWidget::OperationBase<EditorWidget::RenameGroupOperation,
+                                int,
+                                const QString &,
+                                const QString &,
+                                EditorWidget *>(editorWidget),
     m_index(index), m_oldName(oldName), m_newName(newName)
 {
     this->setGood();
@@ -20,7 +21,7 @@ RenameGroupOperation::RenameGroupOperation(int            index,
 /**
  * @brief	Do operation.
  */
-bool RenameGroupOperation::doOperation()
+bool EditorWidget::RenameGroupOperation::doOperation()
 {
     GroupItem *groupItem = static_cast<GroupItem *>(
         editorWidget()->m_itemGroups->child(m_index));
@@ -34,7 +35,7 @@ bool RenameGroupOperation::doOperation()
 /**
  * @brief	Undo operation.
  */
-void RenameGroupOperation::undoOperation()
+void EditorWidget::RenameGroupOperation::undoOperation()
 {
     GroupItem *groupItem = static_cast<GroupItem *>(
         editorWidget()->m_itemGroups->child(m_index));
@@ -48,4 +49,4 @@ void RenameGroupOperation::undoOperation()
 /**
  * @brief	Destructor.
  */
-RenameGroupOperation::~RenameGroupOperation() {}
+EditorWidget::RenameGroupOperation::~RenameGroupOperation() {}

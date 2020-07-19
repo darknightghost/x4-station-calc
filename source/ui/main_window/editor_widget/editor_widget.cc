@@ -181,8 +181,15 @@ void EditorWidget::loadGroups()
             moduleWidget->show();
             ::std::shared_ptr<ModuleInfo> moduleInfo(
                 new ModuleInfo({moduleItem, moduleWidget}));
-            groupInfo->moduleInfos.append(moduleInfo);
+            groupInfo->moduleInfos[moduleItem]          = moduleInfo;
             groupInfo->moduleMacroMap[module->module()] = moduleInfo;
+
+            this->connect(moduleWidget, &ModuleItemWidget::changeAmount,
+                          [this, groupItem, moduleItem](int oldAmount,
+                                                        int newAmount) -> void {
+                              this->onChangeAmount(groupItem, moduleItem,
+                                                   oldAmount, newAmount);
+                          });
         }
     }
 }
@@ -337,9 +344,6 @@ void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
 
 /**
  * @brief		Called when item double clicked.
- *
- * @param[in]	item	Item.
- * @param[in]	column	Column.
  */
 void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
@@ -353,6 +357,22 @@ void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         m_infoWidget->showStationModuleInfo(moduleItem->module()->module());
         return;
     }
+}
+
+/**
+ * @brief	    on amount changed.
+ */
+void EditorWidget::onChangeAmount(GroupItem * groupItem,
+                                  ModuleItem *moduleItem,
+                                  quint64     oldAmount,
+                                  quint64     newAmount)
+{
+    ::std::shared_ptr<Operation> operation
+        = ChangeModuleAmountOperation::create(
+            m_itemGroups->indexOfChild(groupItem),
+            groupItem->indexOfChild(moduleItem), oldAmount, newAmount, this);
+
+    this->doOperation(operation);
 }
 
 /**

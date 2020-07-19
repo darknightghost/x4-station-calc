@@ -1,13 +1,12 @@
 #pragma once
 
 #include <interfaces/i_create_factory_func.h>
-
-class EditorWidget;
+#include <ui/main_window/editor_widget/editor_widget.h>
 
 /**
  * @brief	Operation.
  */
-class Operation {
+class EditorWidget::Operation {
   protected:
     EditorWidget *m_editorWidget; ///< Editor widget.
 
@@ -56,8 +55,8 @@ class Operation {
  * @tparam	Args	Types of parameters of constructor.
  */
 template<typename T, typename... Args>
-class OperationBase :
-    public Operation,
+class EditorWidget::OperationBase :
+    public EditorWidget::Operation,
     virtual public ICreateFactoryFunc<T(Args...)> {
   protected:
     /**
@@ -74,6 +73,5 @@ class OperationBase :
     virtual ~OperationBase() {};
 };
 
-#include <ui/main_window/editor_widget/editor_widget.h>
-
+#include <ui/main_window/editor_widget/operation/change_module_amount_operation.h>
 #include <ui/main_window/editor_widget/operation/rename_group_operation.h>

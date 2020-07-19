@@ -6,6 +6,7 @@
 
 #include <save/save_module.h>
 #include <ui/controls/square_button.h>
+#include <ui/main_window/editor_widget/amount_spin_box.h>
 
 /**
  * @brief	Item of modules module.
@@ -57,12 +58,12 @@ class ModuleItemWidget : public QWidget {
     Q_OBJECT;
 
   private:
-    ModuleItem *  m_item;       ///< Item.
-    QHBoxLayout * m_layout;     ///< Layout.
-    QSpinBox *    m_spinAmount; ///< Spinbox amount.
-    SquareButton *m_btnUp;      ///< Button up.
-    SquareButton *m_btnDown;    ///< Button down.
-    SquareButton *m_btnRemove;  ///< Button remove.
+    ModuleItem *   m_item;       ///< Item.
+    QHBoxLayout *  m_layout;     ///< Layout.
+    AmountSpinBox *m_spinAmount; ///< Spinbox amount.
+    SquareButton * m_btnUp;      ///< Button up.
+    SquareButton * m_btnDown;    ///< Button down.
+    SquareButton * m_btnRemove;  ///< Button remove.
 
   public:
     /**
@@ -91,6 +92,11 @@ class ModuleItemWidget : public QWidget {
      * @param[in]	enabled		Enable status.
      */
     void setDownBtnEnabled(bool enabled);
+
+    /**
+     * @brief       Update amount.
+     */
+    void updateAmount();
 
   private slots:
     /**

@@ -68,6 +68,7 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     this->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea,
                         m_stationModulesWidget, Qt::Orientation::Vertical);
     m_stationModulesWidget->setObjectName("stationModulesWidget");
+    m_stationModulesWidget->setAddToStationStatus(false);
 
     // Restore StationModulesWidget
     m_stationModulesWidget->restoreGeometry(QByteArray::fromHex(
@@ -415,8 +416,14 @@ void MainWindow::active()
  */
 void MainWindow::editorActived(QMdiSubWindow *window)
 {
-    if (window != nullptr) {
+    if (window == nullptr) {
+        m_stationModulesWidget->setAddToStationStatus(false);
+        m_editActions.actionEditNewGroup->setEnabled(false);
+
+    } else {
         static_cast<EditorWidget *>(window->widget())->active();
+        m_stationModulesWidget->setAddToStationStatus(true);
+        m_editActions.actionEditNewGroup->setEnabled(true);
     }
 }
 

@@ -32,6 +32,7 @@ class EditorWidget : public QWidget {
     template<typename T, typename... Args>
     class OperationBase;
     class ChangeModuleAmountOperation;
+    class RemoveOperation;
     class RenameGroupOperation;
 
   private:
@@ -128,27 +129,22 @@ class EditorWidget : public QWidget {
     void doOperation(::std::shared_ptr<Operation> operation);
 
     /**
-     * @brief       Update newGroup action statis.
-     */
-    void updateNewGroup();
-
-    /**
-     * @brief       Update undo/redo action statis.
+     * @brief       Update undo/redo action status.
      */
     void updateUndoRedoStatus();
 
     /**
-     * @brief       Update cut/copy action statis.
+     * @brief       Update cut/copy action status.
      */
     void updateCutCopyStatus();
 
     /**
-     * @brief       Update paste action statis.
+     * @brief       Update paste action status.
      */
     void updatePasteStatus();
 
     /**
-     * @brief       Update remove action statis.
+     * @brief       Update remove action status.
      */
     void updateRemoveStatus();
 
@@ -164,9 +160,9 @@ class EditorWidget : public QWidget {
     /**
      * @brief	    Add module.
      *
-     * @param[in]   macro       Macro of the module.
+     * @param[in]   macros       Macros of the modules.
      */
-    void addModule(const QString &macro);
+    void addModules(const QStringList &macro);
 
     /**
      * @brief		Create new group.

@@ -59,6 +59,8 @@ ModuleItem::~ModuleItem() {}
  */
 ModuleItemWidget::ModuleItemWidget(ModuleItem *item) : m_item(item)
 {
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     // Layout.
     m_layout = new QHBoxLayout(this);
     this->setLayout(m_layout);

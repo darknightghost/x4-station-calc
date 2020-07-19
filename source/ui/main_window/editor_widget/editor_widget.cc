@@ -93,11 +93,6 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 }
 
 /**
- * @brief       Update newGroup action statis.
- */
-void EditorWidget::updateNewGroup() {}
-
-/**
  * @brief       Update undo/redo action statis.
  */
 void EditorWidget::updateUndoRedoStatus()
@@ -209,7 +204,7 @@ void EditorWidget::closeEvent(QCloseEvent *event)
 /**
  * @brief	    Add module.
  */
-void EditorWidget::addModule(const QString &macro) {}
+void EditorWidget::addModules(const QStringList &macro) {}
 
 /**
  * @brief		Create new group.
@@ -381,6 +376,11 @@ void EditorWidget::onChangeAmount(GroupItem * groupItem,
 void EditorWidget::active()
 {
     // Connect actions.
+    this->disconnect(m_stationModulesWidget,
+                     &StationModulesWidget::addToStation, nullptr, nullptr);
+    this->connect(m_stationModulesWidget, &StationModulesWidget::addToStation,
+                  this, &EditorWidget::addModules);
+
     this->disconnect(m_editActions->actionEditNewGroup, &QAction::triggered,
                      nullptr, nullptr);
     this->connect(m_editActions->actionEditNewGroup, &QAction::triggered, this,
@@ -417,7 +417,6 @@ void EditorWidget::active()
                   &EditorWidget::remove);
 
     // Update actions status.
-    this->updateNewGroup();
     this->updateUndoRedoStatus();
     this->updateCutCopyStatus();
     this->updatePasteStatus();

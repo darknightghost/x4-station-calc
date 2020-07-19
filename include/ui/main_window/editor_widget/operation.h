@@ -74,4 +74,5 @@ class EditorWidget::OperationBase :
 };
 
 #include <ui/main_window/editor_widget/operation/change_module_amount_operation.h>
+#include <ui/main_window/editor_widget/operation/remove_operation.h>
 #include <ui/main_window/editor_widget/operation/rename_group_operation.h>

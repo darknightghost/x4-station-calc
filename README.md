@@ -19,7 +19,7 @@
 1. `cd build`
 1. `cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release ..`(You should change the  -G option to the version of the Vsiual Studio on your computer).
 1. `cmake .`
-1. `cmake --build .`
+1. `cmake --build . --config Release`
 
 ##### Linux
 1. `mkdir build`

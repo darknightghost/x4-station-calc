@@ -46,6 +46,7 @@ class EditorWidget::RemoveOperation :
     struct GroupToRemove {
         int     groupIndex; ///< Index of the group.
         QString name;       ///< Group name.
+        bool    expanded;   ///< Expand status.
         QVector<::std::shared_ptr<ModuleInGroup>>
             modules; ///< Modules ion the group.
     };

@@ -140,7 +140,7 @@ void ModuleItemWidget::onLanguageChanged()
  */
 void ModuleItemWidget::onUpBtnClicked()
 {
-    emit this->upBtnClicked();
+    emit this->upBtnClicked(m_item);
 }
 
 /**
@@ -148,7 +148,7 @@ void ModuleItemWidget::onUpBtnClicked()
  */
 void ModuleItemWidget::onDownBtnClicked()
 {
-    emit this->downBtnClicked();
+    emit this->downBtnClicked(m_item);
 }
 
 /**
@@ -156,7 +156,7 @@ void ModuleItemWidget::onDownBtnClicked()
  */
 void ModuleItemWidget::onRemoveBtnClicked()
 {
-    emit this->removeBtnClicked();
+    emit this->removeBtnClicked(m_item);
 }
 
 /**
@@ -167,6 +167,6 @@ void ModuleItemWidget::onSpinboxValueChanged(int i)
     int oldCount = m_item->moduleAmount();
 
     if (oldCount != i) {
-        emit this->changeAmount(oldCount, i);
+        emit this->changeAmount(oldCount, i, m_item);
     }
 }

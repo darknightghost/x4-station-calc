@@ -98,17 +98,23 @@ class GroupItemWidget : public QWidget {
 
   signals:
     /**
-     * @brief	"Up" button clicked.
+     * @brief	    "Up" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void upBtnClicked();
+    void upBtnClicked(GroupItem *item);
 
     /**
-     * @brief	"Down" button clicked.
+     * @brief	    "Down" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void downBtnClicked();
+    void downBtnClicked(GroupItem *item);
 
     /**
-     * @brief	"Remove" button clicked.
+     * @brief	    "Remove" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void removeBtnClicked();
+    void removeBtnClicked(GroupItem *item);
 };

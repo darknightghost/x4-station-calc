@@ -29,7 +29,10 @@ EditorWidget::RemoveOperation::RemoveOperation(
         // Add new group.
         groupIndexes.insert(groupIndex);
         ::std::shared_ptr<GroupToRemove> groupInfo(
-            new GroupToRemove({groupIndex, groupItem->group()->name(), {}}));
+            new GroupToRemove({groupIndex,
+                               groupItem->group()->name(),
+                               groupItem->isExpanded(),
+                               {}}));
 
         // Scan modules.
         for (int i = 0; i < groupItem->childCount(); ++i) {
@@ -118,6 +121,7 @@ bool EditorWidget::RemoveOperation::doOperation()
         for (auto moduleIndex :
              editorWidget->m_groupItems[groupItem]->moduleInfos) {
             moduleIndex->moduleWidget->close();
+            groupItem->removeChild(moduleIndex->moduleItem);
         }
 
         // Remove from index.
@@ -163,6 +167,10 @@ void EditorWidget::RemoveOperation::undoOperation()
         editorWidget->m_itemGroups->insertChild(groupInfo->groupIndex,
                                                 groupItem);
         editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
+        groupItem->setExpanded(groupInfo->expanded);
+
+        editorWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+                              editorWidget, &EditorWidget::removeGroupItem);
 
         // Add modules.
         for (auto &moduleInfo : groupInfo->modules) {
@@ -187,6 +195,12 @@ void EditorWidget::RemoveOperation::undoOperation()
             groupItem->addChild(moduleItem);
             editorWidget->m_treeEditor->setItemWidget(moduleItem, 1,
                                                       moduleWidget);
+
+            editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
+                                  editorWidget, &EditorWidget::onChangeAmount);
+            editorWidget->connect(
+                moduleWidget, &ModuleItemWidget::removeBtnClicked, editorWidget,
+                &EditorWidget::removeModuleItem);
         }
     }
 
@@ -219,6 +233,11 @@ void EditorWidget::RemoveOperation::undoOperation()
         // Add to editor.
         groupItem->insertChild(index, moduleItem);
         editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
+
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
+                              editorWidget, &EditorWidget::onChangeAmount);
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+                              editorWidget, &EditorWidget::removeModuleItem);
     }
 }
 

@@ -88,7 +88,7 @@ void GroupItemWidget::setDownBtnEnabled(bool enabled)
  */
 void GroupItemWidget::onUpBtnClicked()
 {
-    emit this->upBtnClicked();
+    emit this->upBtnClicked(m_item);
 }
 
 /**
@@ -96,7 +96,7 @@ void GroupItemWidget::onUpBtnClicked()
  */
 void GroupItemWidget::onDownBtnClicked()
 {
-    emit this->downBtnClicked();
+    emit this->downBtnClicked(m_item);
 }
 
 /**
@@ -104,5 +104,5 @@ void GroupItemWidget::onDownBtnClicked()
  */
 void GroupItemWidget::onRemoveBtnClicked()
 {
-    emit this->removeBtnClicked();
+    emit this->removeBtnClicked(m_item);
 }

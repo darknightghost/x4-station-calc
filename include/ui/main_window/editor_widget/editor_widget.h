@@ -120,7 +120,7 @@ class EditorWidget : public QWidget {
      */
     void loadGroups();
 
-  private:
+  private slots:
     /**
      * @brief		Do operation.
      *
@@ -134,19 +134,14 @@ class EditorWidget : public QWidget {
     void updateUndoRedoStatus();
 
     /**
-     * @brief       Update cut/copy action status.
+     * @brief       Update cut/copy/remove action status.
      */
-    void updateCutCopyStatus();
+    void updateCutCopyRemoveStatus();
 
     /**
      * @brief       Update paste action status.
      */
     void updatePasteStatus();
-
-    /**
-     * @brief       Update remove action status.
-     */
-    void updateRemoveStatus();
 
   private:
     /**
@@ -200,6 +195,20 @@ class EditorWidget : public QWidget {
     void remove();
 
     /**
+     * @brief		Remove group item.
+     *
+     * @param[in]   item    Item.
+     */
+    void removeGroupItem(GroupItem *item);
+
+    /**
+     * @brief		Remove module item.
+     *
+     * @param[in]   item    Item.
+     */
+    void removeModuleItem(ModuleItem *item);
+
+    /**
      * @brief		Save.
      */
     void save();
@@ -244,17 +253,15 @@ class EditorWidget : public QWidget {
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
 
     /**
-     * @brief	    on amount changed.
+     * @brief	    On amount changed.
      *
-     * @param[in]	groupItem	    Group item.
-     * @param[in]	moduleItem	    Module item.
      * @param[in]   oldAmount       Old amount.
      * @param[in]   newAmount       New amount.
+     * @param[in]	moduleItem	    Module item.
      */
-    void onChangeAmount(GroupItem * groupItem,
-                        ModuleItem *moduleItem,
-                        quint64     oldAmount,
-                        quint64     newAmount);
+    void onChangeAmount(quint64     oldAmount,
+                        quint64     newAmount,
+                        ModuleItem *moduleItem);
 
   public:
     /**

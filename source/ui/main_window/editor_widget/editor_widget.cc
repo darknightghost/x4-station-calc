@@ -17,7 +17,9 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     QWidget(parent),
     m_stationModulesWidget(stationModulesWidget), m_infoWidget(infoWidget),
     m_save(save), m_savedUndoCount(0), m_editActions(editActions),
-    m_backgroundTasks(new BackgroundTask(BackgroundTask::RunType::Newest, this))
+    m_backgroundTasks(
+        new BackgroundTask(BackgroundTask::RunType::Newest, this)),
+    m_treeEditor(nullptr)
 {
     this->connect(this, &EditorWidget::windowTitleChanged, parent,
                   &QMdiSubWindow::setWindowTitle);
@@ -46,11 +48,15 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
         QHeaderView::ResizeMode::ResizeToContents);
     m_treeEditor->header()->setStretchLastSection(true);
     m_treeEditor->setColumnCount(3);
+    m_treeEditor->setSelectionMode(
+        QAbstractItemView::SelectionMode::ExtendedSelection);
     m_layout->addWidget(m_treeEditor);
     this->connect(m_treeEditor, &QTreeWidget::itemChanged, this,
                   &EditorWidget::onItemChanged);
     this->connect(m_treeEditor, &QTreeWidget::itemDoubleClicked, this,
                   &EditorWidget::onItemDoubleClicked);
+    this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
+                  &EditorWidget::updateCutCopyRemoveStatus);
 
     // Items.
     m_itemGroups = new QTreeWidgetItem();
@@ -113,19 +119,30 @@ void EditorWidget::updateUndoRedoStatus()
 }
 
 /**
- * @brief       Update cut/copy action statis.
+ * @brief       Update cut/copy/remove action statis.
  */
-void EditorWidget::updateCutCopyStatus() {}
+void EditorWidget::updateCutCopyRemoveStatus()
+{
+    bool found = false;
+    if (m_treeEditor != nullptr) {
+        for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+            if (dynamic_cast<GroupItem *>(rawItem) != nullptr
+                || dynamic_cast<ModuleItem *>(rawItem) != nullptr) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    m_editActions->actionEditCut->setEnabled(found);
+    m_editActions->actionEditCopy->setEnabled(found);
+    m_editActions->actionEditRemove->setEnabled(found);
+}
 
 /**
  * @brief       Update paste action statis.
  */
 void EditorWidget::updatePasteStatus() {}
-
-/**
- * @brief       Update remove action statis.
- */
-void EditorWidget::updateRemoveStatus() {}
 
 /**
  * @brief	Close save file.
@@ -165,6 +182,8 @@ void EditorWidget::loadGroups()
         ::std::shared_ptr<GroupInfo> groupInfo(
             new GroupInfo({groupItem, groupWidget, {}, {}}));
         m_groupItems[groupItem] = groupInfo;
+        this->connect(groupWidget, &GroupItemWidget::removeBtnClicked, this,
+                      &EditorWidget::removeGroupItem);
 
         // Load modules.
         for (::std::shared_ptr<SaveModule> module : group->modules()) {
@@ -179,12 +198,10 @@ void EditorWidget::loadGroups()
             groupInfo->moduleInfos[moduleItem]          = moduleInfo;
             groupInfo->moduleMacroMap[module->module()] = moduleInfo;
 
-            this->connect(moduleWidget, &ModuleItemWidget::changeAmount,
-                          [this, groupItem, moduleItem](int oldAmount,
-                                                        int newAmount) -> void {
-                              this->onChangeAmount(groupItem, moduleItem,
-                                                   oldAmount, newAmount);
-                          });
+            this->connect(moduleWidget, &ModuleItemWidget::changeAmount, this,
+                          &EditorWidget::onChangeAmount);
+            this->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+                          this, &EditorWidget::removeModuleItem);
         }
     }
 }
@@ -271,7 +288,52 @@ void EditorWidget::paste() {}
 /**
  * @brief		Remove.
  */
-void EditorWidget::remove() {}
+void EditorWidget::remove()
+{
+    QVector<GroupItem *>  groupItems;
+    QVector<ModuleItem *> moduleItems;
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+        {
+            GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
+
+            if (item != nullptr) {
+                groupItems.push_back(item);
+                continue;
+            }
+        }
+
+        {
+            ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
+            if (item != nullptr) {
+                moduleItems.push_back(item);
+            }
+        }
+    }
+
+    ::std::shared_ptr<Operation> operation
+        = RemoveOperation::create(groupItems, moduleItems, this);
+    this->doOperation(operation);
+}
+
+/**
+ * @brief		Remove group item.
+ */
+void EditorWidget::removeGroupItem(GroupItem *item)
+{
+    ::std::shared_ptr<Operation> operation
+        = RemoveOperation::create({item}, {}, this);
+    this->doOperation(operation);
+}
+
+/**
+ * @brief		Remove module item.
+ */
+void EditorWidget::removeModuleItem(ModuleItem *item)
+{
+    ::std::shared_ptr<Operation> operation
+        = RemoveOperation::create({}, {item}, this);
+    this->doOperation(operation);
+}
 
 /**
  * @brief		Save.
@@ -357,17 +419,20 @@ void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 /**
  * @brief	    on amount changed.
  */
-void EditorWidget::onChangeAmount(GroupItem * groupItem,
-                                  ModuleItem *moduleItem,
-                                  quint64     oldAmount,
-                                  quint64     newAmount)
+void EditorWidget::onChangeAmount(quint64     oldAmount,
+                                  quint64     newAmount,
+                                  ModuleItem *moduleItem)
 {
-    ::std::shared_ptr<Operation> operation
-        = ChangeModuleAmountOperation::create(
-            m_itemGroups->indexOfChild(groupItem),
-            groupItem->indexOfChild(moduleItem), oldAmount, newAmount, this);
+    GroupItem *groupItem = dynamic_cast<GroupItem *>(moduleItem->parent());
+    if (groupItem != nullptr) {
+        ::std::shared_ptr<Operation> operation
+            = ChangeModuleAmountOperation::create(
+                m_itemGroups->indexOfChild(groupItem),
+                groupItem->indexOfChild(moduleItem), oldAmount, newAmount,
+                this);
 
-    this->doOperation(operation);
+        this->doOperation(operation);
+    }
 }
 
 /**
@@ -418,9 +483,8 @@ void EditorWidget::active()
 
     // Update actions status.
     this->updateUndoRedoStatus();
-    this->updateCutCopyStatus();
+    this->updateCutCopyRemoveStatus();
     this->updatePasteStatus();
-    this->updateRemoveStatus();
 
     qDebug() << "Editor actived : " << this;
 }

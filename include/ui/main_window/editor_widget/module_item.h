@@ -128,25 +128,32 @@ class ModuleItemWidget : public QWidget {
 
   signals:
     /**
-     * @brief	"Up" button clicked.
+     * @brief	    "Up" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void upBtnClicked();
+    void upBtnClicked(ModuleItem *item);
 
     /**
-     * @brief	"Down" button clicked.
+     * @brief	    "Down" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void downBtnClicked();
+    void downBtnClicked(ModuleItem *item);
 
     /**
-     * @brief	"Remove" button clicked.
+     * @brief	    "Remove" button clicked.
+     *
+     * @param[in]   item    Item.
      */
-    void removeBtnClicked();
+    void removeBtnClicked(ModuleItem *item);
 
     /**
      * @brief	    Amount changed.
      *
      * @param[in]   oldAmount       Old amount.
      * @param[in]   newAmount       New amount.
+     * @param[in]   item            Item.
      */
-    void changeAmount(quint64 oldAmount, quint64 newAmount);
+    void changeAmount(quint64 oldAmount, quint64 newAmount, ModuleItem *item);
 };

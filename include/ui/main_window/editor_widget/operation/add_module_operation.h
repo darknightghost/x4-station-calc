@@ -11,12 +11,18 @@ class EditorWidget::AddModuleOperation :
     virtual public EditorWidget::OperationBase<EditorWidget::AddModuleOperation,
                                                int,
                                                int,
+                                               const QStringList &,
                                                EditorWidget *> {
-    CREATE_FUNC(EditorWidget::AddModuleOperation, int, int, EditorWidget *);
+    CREATE_FUNC(EditorWidget::AddModuleOperation,
+                int,
+                int,
+                const QStringList &,
+                EditorWidget *);
 
   private:
-    int m_groupIndex; ///< Index of group item.
-    int m_index;      ///< Index of module item.
+    int         m_groupIndex; ///< Index of group item.
+    int         m_index;      ///< Index of module item.
+    QStringList m_macros;     ///< Macro of the module.
 
   private:
     /**
@@ -24,9 +30,13 @@ class EditorWidget::AddModuleOperation :
      *
      * @param[in]	groupIndex      Index of group.
      * @param[in]	index           Index of module.
+     * @param[in]	macros           Macros of the modules.
      * @param[in]	editorWidget    Editor widget.
      */
-    AddModuleOperation(int groupIndex, int index, EditorWidget *editorWidget);
+    AddModuleOperation(int                groupIndex,
+                       int                index,
+                       const QStringList &macros,
+                       EditorWidget *     editorWidget);
 
   public:
     /**

@@ -367,6 +367,9 @@ void MainWindow::open(QString path)
         EditorWidget *editorWidget
             = new EditorWidget(save, &m_editActions, m_infoWidget,
                                m_stationModulesWidget, container);
+        this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
+                      m_stationModulesWidget,
+                      &StationModulesWidget::setAddToStationStatus);
         m_centralWidget->setActiveSubWindow(container);
         editorWidget->show();
     }
@@ -382,6 +385,9 @@ void MainWindow::newAction()
     m_centralWidget->addSubWindow(container);
     EditorWidget *editorWidget = new EditorWidget(
         save, &m_editActions, m_infoWidget, m_stationModulesWidget, container);
+    this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::setAddToStationStatus);
     m_centralWidget->setActiveSubWindow(container);
     editorWidget->show();
 }
@@ -422,7 +428,6 @@ void MainWindow::editorActived(QMdiSubWindow *window)
 
     } else {
         static_cast<EditorWidget *>(window->widget())->active();
-        m_stationModulesWidget->setAddToStationStatus(true);
         m_editActions.actionEditNewGroup->setEnabled(true);
     }
 }

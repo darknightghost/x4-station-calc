@@ -69,13 +69,6 @@ class StationModulesWidget : public ActionControlDockWidget {
                          Qt::WindowFlags flags  = Qt::WindowFlags());
 
     /**
-     * @brief		Set enable status of add to station button.
-     *
-     * @param[in]	enabled		Enable status.
-     */
-    void setAddToStationStatus(bool enabled);
-
-    /**
      * @brief		Destructor.
      */
     virtual ~StationModulesWidget();
@@ -95,6 +88,14 @@ class StationModulesWidget : public ActionControlDockWidget {
      * @param[in]	macros	Macros of the selected modules.
      */
     void addToStation(QStringList macros);
+
+  public slots:
+    /**
+     * @brief		Set enable status of add to station button.
+     *
+     * @param[in]	enabled		Enable status.
+     */
+    void setAddToStationStatus(bool enabled);
 
   private:
     /**

@@ -23,12 +23,6 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
 {
     this->connect(this, &EditorWidget::windowTitleChanged, parent,
                   &QMdiSubWindow::setWindowTitle);
-    parent->setWidget(this);
-    parent->show();
-    this->show();
-
-    this->setAttribute(Qt::WA_DeleteOnClose);
-    parent->setAttribute(Qt::WA_DeleteOnClose);
     if (save->path() == "") {
         this->setWindowTitle(STR("STR_NEW_STATION"));
     } else {
@@ -57,6 +51,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   &EditorWidget::onItemDoubleClicked);
     this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
                   &EditorWidget::updateCutCopyRemoveStatus);
+    this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
+                  &EditorWidget::updateAddToStationStatus);
 
     // Items.
     m_itemGroups = new QTreeWidgetItem();
@@ -75,6 +71,14 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     this->onLanguageChanged();
 
     m_treeEditor->expandAll();
+
+    // Add to container.
+    parent->setWidget(this);
+    parent->show();
+    this->show();
+
+    this->setAttribute(Qt::WA_DeleteOnClose);
+    parent->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 /**
@@ -95,6 +99,18 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 
     } else {
         qDebug() << "Operation failed.";
+    }
+}
+
+/**
+ * @brief       Update button "Add to Station" status.
+ */
+void EditorWidget::updateAddToStationStatus()
+{
+    if (m_itemGroups->childCount() == 0) {
+        emit this->addToStationStatusChaged(false);
+    } else {
+        emit this->addToStationStatusChaged(true);
     }
 }
 
@@ -221,7 +237,38 @@ void EditorWidget::closeEvent(QCloseEvent *event)
 /**
  * @brief	    Add module.
  */
-void EditorWidget::addModules(const QStringList &macro) {}
+void EditorWidget::addModules(const QStringList &macros)
+{
+    // Get item.
+    GroupItem *groupItem = dynamic_cast<GroupItem *>(
+        m_itemGroups->child(m_itemGroups->childCount() - 1));
+    Q_ASSERT(groupItem != nullptr);
+    ModuleItem *moduleItem = nullptr;
+
+    QTreeWidgetItem *item = m_treeEditor->currentItem();
+    if (item != nullptr) {
+        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+            groupItem = static_cast<GroupItem *>(item);
+
+        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+            moduleItem = static_cast<ModuleItem *>(item);
+            groupItem  = static_cast<GroupItem *>(item->parent());
+        }
+    }
+
+    int groupIndex  = m_itemGroups->indexOfChild(groupItem);
+    int moduleIndex = 0;
+    if (moduleItem == nullptr) {
+        moduleIndex = groupItem->childCount();
+    } else {
+        moduleIndex = groupItem->indexOfChild(moduleItem) + 1;
+    }
+
+    // Do operation.
+    ::std::shared_ptr<Operation> operation
+        = AddModuleOperation::create(groupIndex, moduleIndex, macros, this);
+    this->doOperation(operation);
+}
 
 /**
  * @brief		Create new group.
@@ -231,8 +278,8 @@ void EditorWidget::newGroup()
     // Get index.
     int index = m_itemGroups->childCount();
 
-    if (m_treeEditor->selectedItems().size() > 0) {
-        QTreeWidgetItem *item = m_treeEditor->selectedItems()[0];
+    QTreeWidgetItem *item = m_treeEditor->currentItem();
+    if (item != nullptr) {
         if (dynamic_cast<GroupItem *>(item) != nullptr) {
             index = m_itemGroups->indexOfChild(item) + 1;
 
@@ -245,6 +292,8 @@ void EditorWidget::newGroup()
     ::std::shared_ptr<Operation> operation
         = AddGroupOperation::create(index, this);
     this->doOperation(operation);
+
+    this->updateAddToStationStatus();
 }
 
 /**
@@ -332,6 +381,8 @@ void EditorWidget::remove()
     ::std::shared_ptr<Operation> operation
         = RemoveOperation::create(groupItems, moduleItems, this);
     this->doOperation(operation);
+
+    this->updateAddToStationStatus();
 }
 
 /**
@@ -342,6 +393,8 @@ void EditorWidget::removeGroupItem(GroupItem *item)
     ::std::shared_ptr<Operation> operation
         = RemoveOperation::create({item}, {}, this);
     this->doOperation(operation);
+
+    this->updateAddToStationStatus();
 }
 
 /**
@@ -501,6 +554,7 @@ void EditorWidget::active()
                   &EditorWidget::remove);
 
     // Update actions status.
+    this->updateAddToStationStatus();
     this->updateUndoRedoStatus();
     this->updateCutCopyRemoveStatus();
     this->updatePasteStatus();

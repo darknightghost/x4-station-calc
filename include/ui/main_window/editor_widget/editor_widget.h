@@ -122,6 +122,15 @@ class EditorWidget : public QWidget {
      */
     void loadGroups();
 
+  signals:
+    /**
+     * @brief       Emit when enable status of button "Add to Station" should
+     *              be changed,
+     *
+     * @param[in]   status      Enable status.
+     */
+    void addToStationStatusChaged(bool status);
+
   private slots:
     /**
      * @brief		Do operation.
@@ -129,6 +138,11 @@ class EditorWidget : public QWidget {
      * @param[in]	operation		Operation.
      */
     void doOperation(::std::shared_ptr<Operation> operation);
+
+    /**
+     * @brief       Update button "Add to Station" status.
+     */
+    void updateAddToStationStatus();
 
     /**
      * @brief       Update undo/redo action status.
@@ -159,7 +173,7 @@ class EditorWidget : public QWidget {
      *
      * @param[in]   macros       Macros of the modules.
      */
-    void addModules(const QStringList &macro);
+    void addModules(const QStringList &macros);
 
     /**
      * @brief		Create new group.

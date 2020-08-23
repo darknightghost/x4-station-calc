@@ -18,6 +18,7 @@ EditorWidget::AddGroupOperation::AddGroupOperation(int           index,
 bool EditorWidget::AddGroupOperation::doOperation()
 {
     EditorWidget *editorWidget = this->editorWidget();
+    Q_ASSERT(editorWidget != nullptr);
 
     // Make group.
     ::std::shared_ptr<SaveGroup> saveGroup = SaveGroup::create();
@@ -51,6 +52,7 @@ bool EditorWidget::AddGroupOperation::doOperation()
 void EditorWidget::AddGroupOperation::undoOperation()
 {
     EditorWidget *editorWidget = this->editorWidget();
+    Q_ASSERT(editorWidget != nullptr);
 
     GroupItem *groupItem
         = dynamic_cast<GroupItem *>(editorWidget->m_itemGroups->child(m_index));

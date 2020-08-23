@@ -43,6 +43,7 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
 
     m_btnAddToStation = new QPushButton(m_widgetButtonBar);
     m_layoutButtonBar->addWidget(m_btnAddToStation);
+    m_btnAddToStation->setEnabled(false);
 
     // Filters.
     m_widgetFilters = new QWidget(m_widget);

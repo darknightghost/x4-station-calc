@@ -31,6 +31,8 @@ class EditorWidget : public QWidget {
     class Operation;
     template<typename T, typename... Args>
     class OperationBase;
+    class AddGroupOperation;
+    class AddModuleOperation;
     class ChangeModuleAmountOperation;
     class RemoveOperation;
     class RenameGroupOperation;

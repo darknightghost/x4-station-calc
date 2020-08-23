@@ -37,7 +37,8 @@ EditorWidget::RemoveOperation::RemoveOperation(
         // Scan modules.
         for (int i = 0; i < groupItem->childCount(); ++i) {
             ModuleItem *moduleItem
-                = static_cast<ModuleItem *>(groupItem->child(i));
+                = dynamic_cast<ModuleItem *>(groupItem->child(i));
+            Q_ASSERT(moduleItem != nullptr);
 
             ::std::shared_ptr<ModuleInGroup> moduleInfo(
                 new ModuleInGroup({moduleItem->module()->module(),
@@ -54,8 +55,9 @@ EditorWidget::RemoveOperation::RemoveOperation(
                 });
 
     for (auto moduleItem : modules) {
-        GroupItem *groupItem = static_cast<GroupItem *>(moduleItem->parent());
-        int        groupIndex
+        GroupItem *groupItem = dynamic_cast<GroupItem *>(moduleItem->parent());
+        Q_ASSERT(groupItem != nullptr);
+        int groupIndex
             = this->editorWidget()->m_itemGroups->indexOfChild(groupItem);
 
         // Skip groups to remove.
@@ -90,10 +92,12 @@ bool EditorWidget::RemoveOperation::doOperation()
     // Remove modules in reserved order.
     for (auto iter = m_modules.rbegin(); iter != m_modules.rend(); ++iter) {
         ::std::shared_ptr<ModuleToRemove> moduleInfo = *iter;
-        GroupItem *                       groupItem  = static_cast<GroupItem *>(
+        GroupItem *                       groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(moduleInfo->groupIndex));
-        ModuleItem *moduleItem = static_cast<ModuleItem *>(
+        Q_ASSERT(groupItem != nullptr);
+        ModuleItem *moduleItem = dynamic_cast<ModuleItem *>(
             groupItem->child(moduleInfo->moduleIndex));
+        Q_ASSERT(moduleItem != nullptr);
 
         // Remove from index.
         editorWidget->m_groupItems[groupItem]->moduleMacroMap.remove(
@@ -114,8 +118,9 @@ bool EditorWidget::RemoveOperation::doOperation()
     // Remove groups in reserved order.
     for (auto iter = m_groups.rbegin(); iter != m_groups.rend(); ++iter) {
         ::std::shared_ptr<GroupToRemove> groupInfo = *iter;
-        GroupItem *                      groupItem = static_cast<GroupItem *>(
+        GroupItem *                      groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(groupInfo->groupIndex));
+        Q_ASSERT(groupItem != nullptr);
 
         // Close widgets.
         for (auto moduleIndex :
@@ -206,8 +211,9 @@ void EditorWidget::RemoveOperation::undoOperation()
 
     // Add modules.
     for (auto &moduleInfo : m_modules) {
-        GroupItem *groupItem = static_cast<GroupItem *>(
+        GroupItem *groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(moduleInfo->groupIndex));
+        Q_ASSERT(groupItem != nullptr);
         ::std::shared_ptr<GroupInfo> groupIndex
             = editorWidget->m_groupItems[groupItem];
 

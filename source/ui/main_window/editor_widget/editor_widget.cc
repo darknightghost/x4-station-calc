@@ -226,7 +226,26 @@ void EditorWidget::addModules(const QStringList &macro) {}
 /**
  * @brief		Create new group.
  */
-void EditorWidget::newGroup() {}
+void EditorWidget::newGroup()
+{
+    // Get index.
+    int index = m_itemGroups->childCount();
+
+    if (m_treeEditor->selectedItems().size() > 0) {
+        QTreeWidgetItem *item = m_treeEditor->selectedItems()[0];
+        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+            index = m_itemGroups->indexOfChild(item) + 1;
+
+        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+            index = m_itemGroups->indexOfChild(item->parent()) + 1;
+        }
+    }
+
+    // Do operation.
+    ::std::shared_ptr<Operation> operation
+        = AddGroupOperation::create(index, this);
+    this->doOperation(operation);
+}
 
 /**
  * @brief		Undo.

@@ -67,6 +67,12 @@ find_package (PythonInterp REQUIRED 3)
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Network REQUIRED)
+
+if ("${Qt5Core_VERSION}" VERSION_LESS "5.7.1")
+    message (FATAL_ERROR "The version of Qt5 must be greater than 5.7.1.")
+
+endif ()
+
 find_package (Doxygen)
 
 if (NOT DOXYGEN_EXECUTABLE)

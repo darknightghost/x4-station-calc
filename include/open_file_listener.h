@@ -7,12 +7,12 @@
 #include <QtNetwork/QTcpSocket>
 
 #include <common.h>
-#include <design_models/singleton.h>
 #include <global.h>
+#include <interfaces/i_singleton.h>
 /**
  * @brief   Global informations.
  */
-class OpenFileListener : public QObject, public Singleton<OpenFileListener> {
+class OpenFileListener : public QObject, public ISingleton<OpenFileListener> {
     Q_OBJECT
     SIGNLETON_OBJECT(OpenFileListener)
 

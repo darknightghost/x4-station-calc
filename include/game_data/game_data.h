@@ -7,7 +7,6 @@
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
-#include <design_models/singleton.h>
 #include <game_data/game_components.h>
 #include <game_data/game_macros.h>
 #include <game_data/game_races.h>
@@ -16,6 +15,7 @@
 #include <game_data/game_vfs.h>
 #include <game_data/game_wares.h>
 #include <interfaces/i_load_factory_func.h>
+#include <interfaces/i_singleton.h>
 #include <ui/splash/splash_widget.h>
 
 /// Minimum number of cat files.
@@ -24,7 +24,7 @@
 /**
  * @brief   Game datas.
  */
-class GameData : public QObject, public Singleton<GameData, SplashWidget *> {
+class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
     Q_OBJECT
   private:
     SIGNLETON_OBJECT(GameData, SplashWidget *)

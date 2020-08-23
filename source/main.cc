@@ -47,11 +47,11 @@ int main(int argc, char *argv[])
     // Force UTF-8.
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
-    int          exitCode;
-    int          fakeArgc   = 1;
-    char *       fakeArgv[] = {argv[0], NULL};
-    QApplication app(fakeArgc, fakeArgv);
-    app.setApplicationName("X4 Station Calculator");
+    int                             exitCode;
+    int                             fakeArgc   = 1;
+    char *                          fakeArgv[] = {argv[0], NULL};
+    ::std::unique_ptr<QApplication> app(new QApplication(fakeArgc, fakeArgv));
+    app->setApplicationName("X4 Station Calculator");
 
     // Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {
@@ -98,8 +98,10 @@ int main(int argc, char *argv[])
     }
 
     // Show main window.
-    MainWindow mainWindow;
-    mainWindow.show();
+    ::std::unique_ptr<MainWindow> mainWindow(new MainWindow());
+    mainWindow->show();
 
-    return app.exec();
+    ret = app->exec();
+
+    return ret;
 }

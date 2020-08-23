@@ -7,12 +7,12 @@
 
 #include <QtCore/QObject>
 
-#include <design_models/singleton.h>
+#include <interfaces/i_singleton.h>
 
 /**
  * @brief   Global informations.
  */
-class Global : public Singleton<Global, int &, char **&, int &> {
+class Global : public ISingleton<Global, int &, char **&, int &> {
     SIGNLETON_OBJECT(Global, int &, char **&, int &)
   private:
     /**

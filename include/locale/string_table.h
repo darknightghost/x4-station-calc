@@ -4,12 +4,12 @@
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
 
-#include <design_models/singleton.h>
+#include <interfaces/i_singleton.h>
 
 /**
  * @brief   String table.
  */
-class StringTable : public QObject, public Singleton<StringTable> {
+class StringTable : public QObject, public ISingleton<StringTable> {
     Q_OBJECT
     SIGNLETON_OBJECT(StringTable)
   private:

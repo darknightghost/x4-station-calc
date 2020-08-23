@@ -9,13 +9,13 @@
 #include <QtCore/QString>
 #include <QtCore/QVector>
 
-#include <design_models/singleton.h>
 #include <global.h>
+#include <interfaces/i_singleton.h>
 
 /**
  * @brief   Config reader/writer.
  */
-class Config : public Singleton<Config> {
+class Config : public ISingleton<Config> {
     SIGNLETON_OBJECT(Config)
   public:
     /**

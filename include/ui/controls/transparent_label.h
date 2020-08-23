@@ -21,7 +21,6 @@ class TransparentLabel : public QLabel {
      * @brief       Constructor.
      *
      * @param[in]   parent      Parent widget.
-     * @param[in]   f           Window flags.
      */
     TransparentLabel(QWidget *parent = nullptr);
 

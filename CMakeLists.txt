@@ -20,6 +20,24 @@ message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
 message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")
 message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
 
+# Environment.
+include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
+add_definitions ("-DQIODEVICE_BUFFERSIZE=Q_INT64_C(64 * 1024 * 1024)")
+
+if (WIN32)
+	include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")
+
+endif ()
+
+# Output path.
+set (OUTPUT_SUB_DIR "${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
+
+# Platform options.
+# Debug/Release.
 # Enable address sanitizer in debug mode if possible.
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"
@@ -34,29 +52,40 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 endif ()
 
-# Environment
-include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
-add_definitions ("-DQIODEVICE_BUFFERSIZE=Q_INT64_C(64 * 1024 * 1024)")
-
-if (WIN32)
-	include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")
-
-endif ()
-
-set (OUTPUT_SUB_DIR "${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}")
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
-
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     add_compile_options ("-DQT_NO_DEBUG")
 
 endif ()
 
-if (WIN32)
+# Compiler.
+if (MSVC)
+    # Set compile options.
+    if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+        set (CMAKE_C_FLAGS_DEBUG "/DAMD64 /DDEBUG /RTC1 /Od ${C_CXX_FLAGS}")
+        set (CMAKE_C_FLAGS_RELEASE "/DAMD64 /DNDEBUG /O2 ${C_CXX_FLAGS}")
+
+    elseif (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "x86")
+        set (CMAKE_C_FLAGS_DEBUG "/DDEBUG /RTC1 /Od ${C_CXX_FLAGS} /arch:IA32")
+        set (CMAKE_C_FLAGS_RELEASE "/DNDEBUG /O2 ${C_CXX_FLAGS} /arch:IA32")
+
+    else ()
+        message (FATAL_ERROR "Unsupported Platform: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+
+    endif ()
+
+    # Output directory.
+    set (MSVC_CONFIG_TYPE ${CMAKE_BUILD_TYPE})
+    string (TOUPPER ${CMAKE_BUILD_TYPE} OUTPUTCONFIG)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/bin/${MSVC_CONFIG_TYPE}")
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${MSVC_CONFIG_TYPE}")
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${MSVC_CONFIG_TYPE}")
+
+    # Ignore warnings of functions like strcpy(), strcmp()...
     add_compile_options ("-D_CRT_SECURE_NO_WARNINGS")
-	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		add_link_options ("/subsystem:console" "/entry:mainCRTStartup")
+
+    elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		add_link_options ("/subsystem:windows" "/entry:mainCRTStartup")
 
 	endif ()

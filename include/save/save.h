@@ -100,6 +100,16 @@ class Save :
     bool write() const;
 
     /**
+     * @brief		Write save file.
+     *
+     * @param[in]   path    Path to write.
+     *
+     * @return		On success, the method returns \c true and the path of the
+     *              save is setted to \c path, otherwise returns \c false.
+     */
+    bool write(const QString &path);
+
+    /**
      * @brief		Destructor.
      */
     virtual ~Save();

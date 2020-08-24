@@ -1,8 +1,12 @@
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QFocusEvent>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QMessageBox>
 
+#include <config.h>
 #include <locale/string_table.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 
@@ -10,25 +14,21 @@
  * @brief		Constructor.
  */
 EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
+                           MainWindow::FileActions *fileActions,
                            MainWindow::EditActions *editActions,
                            InfoWidget *             infoWidget,
                            StationModulesWidget *   stationModulesWidget,
                            QMdiSubWindow *          parent) :
     QWidget(parent),
     m_stationModulesWidget(stationModulesWidget), m_infoWidget(infoWidget),
-    m_save(save), m_savedUndoCount(0), m_editActions(editActions),
-    m_backgroundTasks(
-        new BackgroundTask(BackgroundTask::RunType::Newest, this)),
+    m_save(save), m_savedUndoCount(0), m_fileActions(fileActions),
+    m_editActions(editActions), m_backgroundTasks(new BackgroundTask(
+                                    BackgroundTask::RunType::Newest, this)),
     m_treeEditor(nullptr)
 {
     this->connect(this, &EditorWidget::windowTitleChanged, parent,
                   &QMdiSubWindow::setWindowTitle);
-    if (save->path() == "") {
-        this->setWindowTitle(STR("STR_NEW_STATION"));
-    } else {
-        this->setWindowTitle(
-            save->path().split("/", Qt::SkipEmptyParts).back());
-    }
+    this->updateTitle();
 
     // UI
     // Layout
@@ -95,10 +95,36 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
         m_redoStack.clear();
         m_undoStack.push_back(operation);
         qDebug() << "Operation done.";
+        this->updateSaveStatus();
         this->updateUndoRedoStatus();
 
     } else {
         qDebug() << "Operation failed.";
+    }
+}
+
+/**
+ * @brief       Update window title.
+ */
+void EditorWidget::updateTitle()
+{
+    if (m_save->path() == "") {
+        this->setWindowTitle(STR("STR_NEW_STATION"));
+    } else {
+        this->setWindowTitle(
+            m_save->path().split("/", Qt::SkipEmptyParts).back());
+    }
+}
+
+/**
+ * @brief       Update button "Save" status.
+ */
+void EditorWidget::updateSaveStatus()
+{
+    if (m_savedUndoCount == m_undoStack.size()) {
+        m_fileActions->actionFileSave->setEnabled(false);
+    } else {
+        m_fileActions->actionFileSave->setEnabled(true);
     }
 }
 
@@ -168,20 +194,33 @@ bool EditorWidget::closeSave()
     if (m_save == nullptr) {
         return true;
     }
-    if (m_savedUndoCount != m_undoStack.size()) {
-        this->save();
-        if (m_savedUndoCount != m_undoStack.size()) {
-            return false;
+
+    if (m_savedUndoCount == m_undoStack.size()) {
+        return true;
+
+    } else {
+        switch (QMessageBox::question(
+            this, STR("STR_TITLE_SAVE_STATION"),
+            STR("STR_SAVE_STATION").arg(this->windowTitle()),
+            QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No
+                | QMessageBox::StandardButton::Cancel,
+            QMessageBox::StandardButton::Yes)) {
+            case QMessageBox::StandardButton::Yes:
+                this->save();
+                return m_savedUndoCount == m_undoStack.size();
+                break;
+
+            case QMessageBox::StandardButton::No:
+                m_savedUndoCount = m_undoStack.size();
+                return true;
+                break;
+
+            case QMessageBox::StandardButton::Cancel:
+            default:
+                return false;
         }
     }
-
-    return true;
 }
-
-/**
- * @brief	Check save file.
- */
-void EditorWidget::checkSave() {}
 
 /**
  * @brief	Load groups.
@@ -314,6 +353,7 @@ void EditorWidget::undo()
     // Add to redo stack.
     m_redoStack.push_back(op);
 
+    this->updateSaveStatus();
     this->updateUndoRedoStatus();
 }
 
@@ -412,13 +452,53 @@ void EditorWidget::removeModuleItem(ModuleItem *item)
  */
 void EditorWidget::save()
 {
-    m_savedUndoCount = m_undoStack.size();
+    if (m_save->path() == "") {
+        this->saveAs();
+
+    } else {
+        if (m_save->write()) {
+            m_savedUndoCount = m_undoStack.size();
+            qDebug() << "File" << this->windowTitle() << "Saved.";
+            this->updateSaveStatus();
+        } else {
+            QMessageBox::critical(this, STR("STR_ERROR"),
+                                  STR("STR_ERR_SAVE").arg(m_save->path()));
+        }
+    }
 }
 
 /**
  * @brief		Save as.
  */
-void EditorWidget::saveAs() {}
+void EditorWidget::saveAs()
+{
+    // Get path to save.
+    QString fileName = QFileDialog::getSaveFileName(
+        this, STR("STR_TITLE_SAVE_STATION"),
+        Config::instance()->getString(
+            "/savePath",
+            Config::instance()->getString("/openPath", QDir::homePath())),
+        STR("STR_SAVE_FILE_FILTER"));
+
+    if (fileName == "") {
+        return;
+    }
+
+    QString dir = QDir(fileName).absolutePath();
+    dir         = dir.left(dir.lastIndexOf("/"));
+    Config::instance()->setString("/savePath", dir);
+
+    // Save file.
+    if (m_save->write(fileName)) {
+        m_savedUndoCount = m_undoStack.size();
+        qDebug() << "File" << this->windowTitle() << "Saved.";
+        this->updateTitle();
+        this->updateSaveStatus();
+    } else {
+        QMessageBox::critical(this, STR("STR_ERROR"),
+                              STR("STR_ERR_SAVE").arg(fileName));
+    }
+}
 
 /**
  * @brief		Change language.
@@ -518,6 +598,21 @@ void EditorWidget::active()
     this->connect(m_stationModulesWidget, &StationModulesWidget::addToStation,
                   this, &EditorWidget::addModules);
 
+    this->disconnect(m_fileActions->actionFileSave, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_fileActions->actionFileSave, &QAction::triggered, this,
+                  &EditorWidget::save);
+
+    this->disconnect(m_fileActions->actionFileSaveAs, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_fileActions->actionFileSaveAs, &QAction::triggered, this,
+                  &EditorWidget::saveAs);
+
+    this->disconnect(m_fileActions->actionFileClose, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_fileActions->actionFileClose, &QAction::triggered, this,
+                  &EditorWidget::close);
+
     this->disconnect(m_editActions->actionEditNewGroup, &QAction::triggered,
                      nullptr, nullptr);
     this->connect(m_editActions->actionEditNewGroup, &QAction::triggered, this,
@@ -554,6 +649,10 @@ void EditorWidget::active()
                   &EditorWidget::remove);
 
     // Update actions status.
+    m_fileActions->actionFileSaveAs->setEnabled(true);
+    m_fileActions->actionFileClose->setEnabled(true);
+    m_editActions->actionEditNewGroup->setEnabled(true);
+    this->updateSaveStatus();
     this->updateAddToStationStatus();
     this->updateUndoRedoStatus();
     this->updateCutCopyRemoveStatus();

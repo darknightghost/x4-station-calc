@@ -136,59 +136,59 @@ void MainWindow::initMenuToolBar()
     m_toolbarFile->setObjectName("toolbarFile");
 
     // Menu "File->New".
-    m_actionFileNew = new QAction(this);
-    m_actionFileNew->setIcon(QIcon(":/Icons/FileNew.png"));
-    m_actionFileNew->setShortcut(QKeySequence::New);
-    m_menuFile->addAction(m_actionFileNew);
-    m_toolbarFile->addAction(m_actionFileNew);
-    this->connect(m_actionFileNew, &QAction::triggered, this,
+    m_fileActions.actionFileNew = new QAction(this);
+    m_fileActions.actionFileNew->setIcon(QIcon(":/Icons/FileNew.png"));
+    m_fileActions.actionFileNew->setShortcut(QKeySequence::New);
+    m_menuFile->addAction(m_fileActions.actionFileNew);
+    m_toolbarFile->addAction(m_fileActions.actionFileNew);
+    this->connect(m_fileActions.actionFileNew, &QAction::triggered, this,
                   &MainWindow::newAction);
 
     // Menu "File->Open".
-    m_actionFileOpen = new QAction(this);
-    m_actionFileOpen->setIcon(QIcon(":/Icons/FileOpen.png"));
-    m_actionFileOpen->setShortcut(QKeySequence::Open);
-    m_menuFile->addAction(m_actionFileOpen);
-    m_toolbarFile->addAction(m_actionFileOpen);
-    this->connect(m_actionFileOpen, &QAction::triggered, this,
+    m_fileActions.actionFileOpen = new QAction(this);
+    m_fileActions.actionFileOpen->setIcon(QIcon(":/Icons/FileOpen.png"));
+    m_fileActions.actionFileOpen->setShortcut(QKeySequence::Open);
+    m_menuFile->addAction(m_fileActions.actionFileOpen);
+    m_toolbarFile->addAction(m_fileActions.actionFileOpen);
+    this->connect(m_fileActions.actionFileOpen, &QAction::triggered, this,
                   &MainWindow::openAction);
 
     m_menuFile->addSeparator();
     m_toolbarFile->addSeparator();
 
     // Menu "File->Save".
-    m_actionFileSave = new QAction(this);
-    m_actionFileSave->setIcon(QIcon(":/Icons/FileSave.png"));
-    m_actionFileSave->setShortcut(QKeySequence::Save);
-    m_actionFileSave->setEnabled(false);
-    m_menuFile->addAction(m_actionFileSave);
-    m_toolbarFile->addAction(m_actionFileSave);
+    m_fileActions.actionFileSave = new QAction(this);
+    m_fileActions.actionFileSave->setIcon(QIcon(":/Icons/FileSave.png"));
+    m_fileActions.actionFileSave->setShortcut(QKeySequence::Save);
+    m_fileActions.actionFileSave->setEnabled(false);
+    m_menuFile->addAction(m_fileActions.actionFileSave);
+    m_toolbarFile->addAction(m_fileActions.actionFileSave);
 
     // Menu "File->Save As".
-    m_actionFileSaveAs = new QAction(this);
-    m_actionFileSaveAs->setIcon(QIcon(":/Icons/FileSaveAs.png"));
-    m_actionFileSaveAs->setShortcut(QKeySequence::SaveAs);
-    m_actionFileSaveAs->setEnabled(false);
-    m_menuFile->addAction(m_actionFileSaveAs);
-    m_toolbarFile->addAction(m_actionFileSaveAs);
+    m_fileActions.actionFileSaveAs = new QAction(this);
+    m_fileActions.actionFileSaveAs->setIcon(QIcon(":/Icons/FileSaveAs.png"));
+    m_fileActions.actionFileSaveAs->setShortcut(QKeySequence::SaveAs);
+    m_fileActions.actionFileSaveAs->setEnabled(false);
+    m_menuFile->addAction(m_fileActions.actionFileSaveAs);
+    m_toolbarFile->addAction(m_fileActions.actionFileSaveAs);
 
     m_menuFile->addSeparator();
 
     // Menu "File->Close".
-    m_actionFileClose = new QAction(this);
-    m_actionFileClose->setIcon(QIcon(":/Icons/FileClose.png"));
-    m_actionFileClose->setShortcut(QKeySequence::Close);
-    m_actionFileClose->setEnabled(false);
-    m_menuFile->addAction(m_actionFileClose);
+    m_fileActions.actionFileClose = new QAction(this);
+    m_fileActions.actionFileClose->setIcon(QIcon(":/Icons/FileClose.png"));
+    m_fileActions.actionFileClose->setShortcut(QKeySequence::Close);
+    m_fileActions.actionFileClose->setEnabled(false);
+    m_menuFile->addAction(m_fileActions.actionFileClose);
 
     m_menuFile->addSeparator();
 
     // Menu "File->Exit".
-    m_actionFileExit = new QAction(this);
-    m_actionFileExit->setIcon(QIcon(":/Icons/FileExit.png"));
-    m_actionFileExit->setShortcut(QKeySequence::Quit);
-    m_menuFile->addAction(m_actionFileExit);
-    this->connect(m_actionFileExit, &QAction::triggered, this,
+    m_fileActions.actionFileExit = new QAction(this);
+    m_fileActions.actionFileExit->setIcon(QIcon(":/Icons/FileExit.png"));
+    m_fileActions.actionFileExit->setShortcut(QKeySequence::Quit);
+    m_menuFile->addAction(m_fileActions.actionFileExit);
+    this->connect(m_fileActions.actionFileExit, &QAction::triggered, this,
                   &MainWindow::close);
 
     // Edit menu
@@ -318,7 +318,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     // Close all opend files.
     for (auto &subWindow : m_centralWidget->subWindowList()) {
         EditorWidget *editorWidget
-            = static_cast<EditorWidget *>(subWindow->widget());
+            = dynamic_cast<EditorWidget *>(subWindow->widget());
+        Q_ASSERT(editorWidget != nullptr);
 
         if (editorWidget->closeSave()) {
             editorWidget->close();
@@ -365,8 +366,8 @@ void MainWindow::open(QString path)
         QMdiSubWindow *container = new QMdiSubWindow();
         m_centralWidget->addSubWindow(container);
         EditorWidget *editorWidget
-            = new EditorWidget(save, &m_editActions, m_infoWidget,
-                               m_stationModulesWidget, container);
+            = new EditorWidget(save, &m_fileActions, &m_editActions,
+                               m_infoWidget, m_stationModulesWidget, container);
         this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
                       m_stationModulesWidget,
                       &StationModulesWidget::setAddToStationStatus);
@@ -383,8 +384,9 @@ void MainWindow::newAction()
     ::std::shared_ptr<Save> save      = Save::create();
     QMdiSubWindow *         container = new QMdiSubWindow();
     m_centralWidget->addSubWindow(container);
-    EditorWidget *editorWidget = new EditorWidget(
-        save, &m_editActions, m_infoWidget, m_stationModulesWidget, container);
+    EditorWidget *editorWidget
+        = new EditorWidget(save, &m_fileActions, &m_editActions, m_infoWidget,
+                           m_stationModulesWidget, container);
     this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
                   m_stationModulesWidget,
                   &StationModulesWidget::setAddToStationStatus);
@@ -424,11 +426,13 @@ void MainWindow::editorActived(QMdiSubWindow *window)
 {
     if (window == nullptr) {
         m_stationModulesWidget->setAddToStationStatus(false);
+        m_fileActions.actionFileSave->setEnabled(false);
+        m_fileActions.actionFileSaveAs->setEnabled(false);
+        m_fileActions.actionFileClose->setEnabled(false);
         m_editActions.actionEditNewGroup->setEnabled(false);
 
     } else {
         static_cast<EditorWidget *>(window->widget())->active();
-        m_editActions.actionEditNewGroup->setEnabled(true);
     }
 }
 
@@ -449,22 +453,22 @@ void MainWindow::onLanguageChanged()
     m_toolbarFile->setWindowTitle(STR("STR_TOOLBAR_FILE"));
 
     // Menu "File->New".
-    m_actionFileNew->setText(STR("STR_MENU_FILE_NEW"));
+    m_fileActions.actionFileNew->setText(STR("STR_MENU_FILE_NEW"));
 
     // Menu "File->Open".
-    m_actionFileOpen->setText(STR("STR_MENU_FILE_OPEN"));
+    m_fileActions.actionFileOpen->setText(STR("STR_MENU_FILE_OPEN"));
 
     // Menu "File->Save".
-    m_actionFileSave->setText(STR("STR_MENU_FILE_SAVE"));
+    m_fileActions.actionFileSave->setText(STR("STR_MENU_FILE_SAVE"));
 
     // Menu "File->Save As".
-    m_actionFileSaveAs->setText(STR("STR_MENU_FILE_SAVE_AS"));
+    m_fileActions.actionFileSaveAs->setText(STR("STR_MENU_FILE_SAVE_AS"));
 
     // Menu "File->Close".
-    m_actionFileClose->setText(STR("STR_MENU_FILE_CLOSE"));
+    m_fileActions.actionFileClose->setText(STR("STR_MENU_FILE_CLOSE"));
 
     // Menu "File->Exit".
-    m_actionFileExit->setText(STR("STR_MENU_FILE_EXIT"));
+    m_fileActions.actionFileExit->setText(STR("STR_MENU_FILE_EXIT"));
 
     // Edit menu
     // Menu "Edit".

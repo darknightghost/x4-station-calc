@@ -64,6 +64,7 @@ class EditorWidget : public QWidget {
 
     ::std::shared_ptr<Save>  m_save;            ///< Save file.
     int                      m_savedUndoCount;  ///< Undo stack size when saved.
+    MainWindow::FileActions *m_fileActions;     ///< File actions.
     MainWindow::EditActions *m_editActions;     ///< Edit actions.
     BackgroundTask *         m_backgroundTasks; ///< Background tasks.
 
@@ -88,12 +89,14 @@ class EditorWidget : public QWidget {
      * @brief		Constructor.
      *
      * @param[in]	save			        Save file.
+     * @param[in]	fileActions		        File actions.
      * @param[in]	editActions		        Edit actions.
      * @param[in]	infoWidget              Info widget.
      * @param[in]	stationModulesWidget    Station modules widget.
      * @param[in]	parent			        Parent.
      */
     EditorWidget(::std::shared_ptr<Save>  save,
+                 MainWindow::FileActions *fileActions,
                  MainWindow::EditActions *editActions,
                  InfoWidget *             infoWidget,
                  StationModulesWidget *   stationModulesWidget,
@@ -111,11 +114,6 @@ class EditorWidget : public QWidget {
      * @return	\c true if the file closed, otherwise returns false.
      */
     bool closeSave();
-
-    /**
-     * @brief	Check save file.
-     */
-    void checkSave();
 
     /**
      * @brief	Load groups.
@@ -138,6 +136,16 @@ class EditorWidget : public QWidget {
      * @param[in]	operation		Operation.
      */
     void doOperation(::std::shared_ptr<Operation> operation);
+
+    /**
+     * @brief       Update window title.
+     */
+    void updateTitle();
+
+    /**
+     * @brief       Update button "Save" status.
+     */
+    void updateSaveStatus();
 
     /**
      * @brief       Update button "Add to Station" status.

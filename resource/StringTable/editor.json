@@ -4,10 +4,25 @@
 		"zh_TW" : "新空間站",
 		"en_US" : "New Station"
 	},
-	"STR_SAVE_STATION" : {
+	"STR_TITLE_SAVE_STATION" : {
 		"zh_CN" : "保存空间站",
 		"zh_TW" : "存儲空間站",
 		"en_US" : "Save Station"
+	},
+	"STR_SAVE_STATION" : {
+		"zh_CN" : "空间站\"%1\"已修改, 是否保存?",
+		"zh_TW" : "空間站\"%1\"已修改, 是否存盤?",
+		"en_US" : "The station \"%1\" has been changed, save it now?"
+	},
+	"STR_ERR_SAVE" : {
+		"zh_CN" : "保存文件\"%1\"失败!",
+		"zh_TW" : "存儲文件\"%1\"失敗!",
+		"en_US" : "Failed to save file \"%1\"!"
+	},
+	"STR_SAVE_STATION_AS" : {
+		"zh_CN" : "另存为空间站",
+		"zh_TW" : "存儲爲空間站",
+		"en_US" : "Save Station As"
 	},
 	"STR_STATION_MODULES" : {
 		"zh_CN" : "空间站模块",

@@ -17,6 +17,18 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
   public:
     /**
+     * @brief		Actions in file menu.
+     */
+    struct FileActions {
+        QAction *actionFileNew;    ///< Menu "File->New".
+        QAction *actionFileOpen;   ///< Menu "File->Open".
+        QAction *actionFileSave;   ///< Menu "File->Save".
+        QAction *actionFileSaveAs; ///< Menu "File->Save As".
+        QAction *actionFileClose;  ///< Menu "File->Close".
+        QAction *actionFileExit;   ///< Menu "File->Exit".
+    };
+
+    /**
      * @brief		Actions in edit menu.
      */
     struct EditActions {
@@ -34,14 +46,9 @@ class MainWindow : public QMainWindow {
     QMenuBar *m_mainMenu; ///< Main menu.
 
     // File menu
-    QMenu *   m_menuFile;         ///< Menu "File".
-    QToolBar *m_toolbarFile;      ///< Toolbar "File".
-    QAction * m_actionFileNew;    ///< Menu "File->New".
-    QAction * m_actionFileOpen;   ///< Menu "File->Open".
-    QAction * m_actionFileSave;   ///< Menu "File->Save".
-    QAction * m_actionFileSaveAs; ///< Menu "File->Save As".
-    QAction * m_actionFileClose;  ///< Menu "File->Close".
-    QAction * m_actionFileExit;   ///< Menu "File->Exit".
+    QMenu *     m_menuFile;    ///< Menu "File".
+    QToolBar *  m_toolbarFile; ///< Toolbar "File".
+    FileActions m_fileActions; ///< File actions.
 
     // Edit menu
     QMenu *     m_menuEdit;    ///< Menu "Edit".

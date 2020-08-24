@@ -212,6 +212,38 @@ bool Save::write() const
 }
 
 /**
+ * @brief		Write save file.
+ */
+bool Save::write(const QString &path)
+{
+    // Open file.
+    QFile file(path);
+    if (! file.open(QIODevice::OpenModeFlag::WriteOnly)) {
+        return false;
+    }
+
+    // Make json document.
+    QJsonDocument doc;
+    QJsonObject   root;
+    root.insert("version", (QString)_currentVersion);
+
+    QJsonArray groups;
+    for (auto &group : m_groups) {
+        groups.append(group->toJson());
+    }
+    root.insert("groups", groups);
+
+    doc.setObject(root);
+    file.write(doc.toJson(QJsonDocument::JsonFormat::Indented));
+
+    file.close();
+
+    m_path = path;
+
+    return true;
+}
+
+/**
  * @brief		Destructor.
  */
 Save::~Save() {}

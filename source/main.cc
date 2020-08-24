@@ -46,16 +46,16 @@ int main(int argc, char *argv[])
 {
     // Force UTF-8.
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-    
+
     // High DPI support.
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    int                             exitCode;
-    int                             fakeArgc   = 1;
-    char *                          fakeArgv[] = {argv[0], NULL};
+    int          exitCode;
+    int          fakeArgc   = 1;
+    char *       fakeArgv[] = {argv[0], NULL};
     QApplication app(fakeArgc, fakeArgv);
     app.setApplicationName("X4 Station Calculator");
-    
+
     // Initialize.
     if (Global::initialize(argc, argv, exitCode) == nullptr) {
         return exitCode;

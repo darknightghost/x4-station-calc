@@ -44,7 +44,7 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
                          << *(quint16 *)(m_sharedMemory->data()) << ".";
             }
             m_sharedMemory->unlock();
-            this->setGood();
+            this->setInitialized();
             return;
         } else {
             firstTime = true;
@@ -117,7 +117,7 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
     }
 
     m_sharedMemory->unlock();
-    this->setGood();
+    this->setInitialized();
     return;
 }
 

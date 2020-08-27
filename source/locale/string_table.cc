@@ -103,7 +103,7 @@ StringTable::StringTable() :
         }
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

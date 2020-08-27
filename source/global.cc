@@ -51,7 +51,7 @@ Global::Global(int &argc, char **&argv, int &exitCode)
     m_configPath = configDir.absoluteFilePath(".config");
     qDebug() << "Path of config file : " << m_configPath;
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

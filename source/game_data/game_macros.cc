@@ -60,7 +60,7 @@ GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
         }
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

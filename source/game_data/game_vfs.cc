@@ -201,7 +201,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
         }
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**
@@ -215,7 +215,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
 {
     ::std::shared_ptr<GameVFS> ret(
         new GameVFS(gamePath, info, setTextFunc, errFunc));
-    if (ret->good()) {
+    if (ret->initialized()) {
         ret->m_this = ret;
         return ret;
     } else {

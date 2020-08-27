@@ -20,8 +20,9 @@ class GameVFS;
  * @brief	Texts in game.
  */
 class GameTexts :
-    public ILoadFactoryFunc<GameTexts(::std::shared_ptr<GameVFS>,
-                                      ::std::function<void(const QString &)>)> {
+    public ILoadFactoryFunc<GameTexts,
+                            ::std::shared_ptr<GameVFS>,
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameTexts,
               ::std::shared_ptr<GameVFS>,
               ::std::function<void(const QString &)>)

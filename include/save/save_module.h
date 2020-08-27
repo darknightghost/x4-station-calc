@@ -12,9 +12,10 @@
  * @brief		Module information in a save file.
  */
 class SaveModule :
-    virtual public ICreateFactoryFunc<SaveModule(const QString &)>,
-    virtual public ILoadFactoryFunc<SaveModule(QJsonObject &,
-                                               const SaveVersion &)> {
+    virtual public ICreateFactoryFunc<SaveModule, const QString &>,
+    virtual public ILoadFactoryFunc<SaveModule,
+                                    QJsonObject &,
+                                    const SaveVersion &> {
     CREATE_FUNC(SaveModule, const QString &);
     LOAD_FUNC(SaveModule, QJsonObject &, const SaveVersion &);
 

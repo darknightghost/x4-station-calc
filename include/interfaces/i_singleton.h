@@ -3,7 +3,7 @@
 #include <memory>
 #include <mutex>
 
-#include <interfaces/i_is_good.h>
+#include <interfaces/i_initialized.h>
 
 /**
  * @brief   Base class of signleton object.
@@ -12,7 +12,7 @@
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ISingleton : virtual protected IIsGood {
+class ISingleton : virtual protected IInitialized {
   protected:
     static ::std::shared_ptr<T> _instance;     ///< Instance.
     static ::std::mutex         _instanceLock; ///< Instance lock.
@@ -83,7 +83,7 @@ template<class T, typename... Args>
         /// Create new instance
         _instance = ::std::shared_ptr<T>(new T(args...));
 
-        if (! _instance->good()) {
+        if (! _instance->initialized()) {
             _instance = nullptr;
         }
     }

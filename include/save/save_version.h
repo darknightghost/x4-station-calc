@@ -2,12 +2,12 @@
 
 #include <QtCore/QString>
 
-#include <interfaces/i_is_good.h>
+#include <interfaces/i_initialized.h>
 
 /**
  * @brief		Version of save file.
  */
-class SaveVersion : virtual public IIsGood {
+class SaveVersion : virtual public IInitialized {
   protected:
     quint8 m_major;       ///< Major version.
     quint8 m_minor;       ///< Minor version.

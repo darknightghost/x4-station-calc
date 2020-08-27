@@ -9,7 +9,7 @@
 SaveVersion::SaveVersion(quint8 major, quint8 minor, quint8 maintenance) :
     m_major(major), m_minor(minor), m_maintenance(maintenance)
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**
@@ -26,7 +26,7 @@ SaveVersion::SaveVersion(const QString &versionString)
     m_minor       = (quint8)splitted[1].toUShort();
     m_maintenance = (quint8)splitted[2].toUShort();
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

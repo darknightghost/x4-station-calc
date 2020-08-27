@@ -2,10 +2,7 @@
 
 #include <memory>
 
-#include <interfaces/i_is_good.h>
-
-template<class>
-class ILoadFactoryFunc;
+#include <interfaces/i_initialized.h>
 
 /**
  * @brief	Interface for factory function \c load.
@@ -14,12 +11,12 @@ class ILoadFactoryFunc;
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
+class ILoadFactoryFunc : virtual protected IInitialized {
   public:
     /**
      * @brief	Constructor.
      */
-    ILoadFactoryFunc() : IIsGood() {}
+    ILoadFactoryFunc() : IInitialized() {}
 
     /**
      * @brief		Load object.
@@ -41,11 +38,11 @@ class ILoadFactoryFunc<T(Args...)> : virtual protected IIsGood {
  * @brief		Load object.
  */
 template<class T, typename... Args>
-::std::shared_ptr<T> ILoadFactoryFunc<T(Args...)>::load(Args... args)
+::std::shared_ptr<T> ILoadFactoryFunc<T, Args...>::load(Args... args)
 {
     ::std::shared_ptr<T> ret(new T(args...));
 
-    if (ret == nullptr || ! ret->good()) {
+    if (ret == nullptr || ! ret->initialized()) {
         return nullptr;
 
     } else {
@@ -53,4 +50,4 @@ template<class T, typename... Args>
     }
 }
 
-#define LOAD_FUNC(T, ...) friend class ILoadFactoryFunc<T(__VA_ARGS__)>;
+#define LOAD_FUNC(T, ...) friend class ILoadFactoryFunc<T, ##__VA_ARGS__>;

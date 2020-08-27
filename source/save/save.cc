@@ -15,7 +15,7 @@ const SaveVersion Save::_currentVersion(1, 0, 0);
  */
 Save::Save()
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**
@@ -78,7 +78,7 @@ Save::Save(const QString &path) : m_path(path)
         }
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

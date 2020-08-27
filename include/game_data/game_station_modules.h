@@ -35,13 +35,13 @@ class GameWares;
  * @brief	Station modules in game.
  */
 class GameStationModules :
-    public ILoadFactoryFunc<GameStationModules(
-        ::std::shared_ptr<GameVFS>,
-        ::std::shared_ptr<GameMacros>,
-        ::std::shared_ptr<GameTexts>,
-        ::std::shared_ptr<GameWares>,
-        ::std::shared_ptr<GameComponents>,
-        ::std::function<void(const QString &)>)> {
+    public ILoadFactoryFunc<GameStationModules,
+                            ::std::shared_ptr<GameVFS>,
+                            ::std::shared_ptr<GameMacros>,
+                            ::std::shared_ptr<GameTexts>,
+                            ::std::shared_ptr<GameWares>,
+                            ::std::shared_ptr<GameComponents>,
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameStationModules,
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameMacros>,

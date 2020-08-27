@@ -57,7 +57,7 @@ class EditorWidget::Operation {
 template<typename T, typename... Args>
 class EditorWidget::OperationBase :
     public EditorWidget::Operation,
-    virtual public ICreateFactoryFunc<T(Args...)> {
+    virtual public ICreateFactoryFunc<T, Args...> {
   protected:
     /**
      * @brief       Constructor.

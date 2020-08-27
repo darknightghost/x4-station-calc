@@ -25,9 +25,10 @@ class GameTexts;
  */
 class GameWares :
     virtual public QObject,
-    public ILoadFactoryFunc<GameWares(::std::shared_ptr<GameVFS>,
-                                      ::std::shared_ptr<GameTexts>,
-                                      ::std::function<void(const QString &)>)> {
+    public ILoadFactoryFunc<GameWares,
+                            ::std::shared_ptr<GameVFS>,
+                            ::std::shared_ptr<GameTexts>,
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameWares,
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameTexts>,

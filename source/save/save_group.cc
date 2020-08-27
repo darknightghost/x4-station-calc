@@ -10,7 +10,7 @@
  */
 SaveGroup::SaveGroup() : m_name(STR("STR_NEW_GROUP_NAME"))
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**
@@ -63,7 +63,7 @@ SaveGroup::SaveGroup(QJsonObject &entry, const SaveVersion &version)
             }
         }
     }
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

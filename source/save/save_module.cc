@@ -16,7 +16,7 @@ QMap<QString, QString> SaveModule::_idMacroMap; ///< ID to macro map.
 SaveModule::SaveModule(const QString &module) : m_module(module), m_amount(1)
 {
     if (GameData::instance()->stationModules()->module(module) != nullptr) {
-        this->setGood();
+        this->setInitialized();
     }
 }
 
@@ -48,7 +48,7 @@ SaveModule::SaveModule(QJsonObject &entry, const SaveVersion &version)
         m_module = *iter;
         m_amount = (quint64)(amountValue.toInt());
 
-        this->setGood();
+        this->setInitialized();
     } else {
         if (! entry.contains("macro")) {
             return;
@@ -68,7 +68,7 @@ SaveModule::SaveModule(QJsonObject &entry, const SaveVersion &version)
         }
         m_amount = (quint64)(amountValue.toInt());
 
-        this->setGood();
+        this->setInitialized();
     }
 }
 

@@ -11,9 +11,10 @@
  * @brief	Information of module group in a save file.
  */
 class SaveGroup :
-    virtual public ICreateFactoryFunc<SaveGroup()>,
-    virtual public ILoadFactoryFunc<SaveGroup(QJsonObject &,
-                                              const SaveVersion &)> {
+    virtual public ICreateFactoryFunc<SaveGroup>,
+    virtual public ILoadFactoryFunc<SaveGroup,
+                                    QJsonObject &,
+                                    const SaveVersion &> {
     CREATE_FUNC(SaveGroup);
     LOAD_FUNC(SaveGroup, QJsonObject &, const SaveVersion &);
 

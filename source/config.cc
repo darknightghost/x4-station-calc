@@ -33,7 +33,7 @@ Config::Config() : m_globalInfo(Global::instance())
         m_doc.fromJson("{}", &jsonError);
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

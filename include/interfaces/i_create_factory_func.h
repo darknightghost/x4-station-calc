@@ -2,10 +2,7 @@
 
 #include <memory>
 
-#include <interfaces/i_is_good.h>
-
-template<class>
-class ICreateFactoryFunc;
+#include <interfaces/i_initialized.h>
 
 /**
  * @brief	Interface for factory function \c create.
@@ -14,12 +11,12 @@ class ICreateFactoryFunc;
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ICreateFactoryFunc<T(Args...)> : virtual protected IIsGood {
+class ICreateFactoryFunc : virtual protected IInitialized {
   public:
     /**
      * @brief	Constructor.
      */
-    ICreateFactoryFunc() : IIsGood() {}
+    ICreateFactoryFunc() : IInitialized() {}
 
     /**
      * @brief		Create object.
@@ -41,11 +38,11 @@ class ICreateFactoryFunc<T(Args...)> : virtual protected IIsGood {
  * @brief		Create object.
  */
 template<class T, typename... Args>
-::std::shared_ptr<T> ICreateFactoryFunc<T(Args...)>::create(Args... args)
+::std::shared_ptr<T> ICreateFactoryFunc<T, Args...>::create(Args... args)
 {
     ::std::shared_ptr<T> ret(new T(args...));
 
-    if (ret == nullptr || ! ret->good()) {
+    if (ret == nullptr || ! ret->initialized()) {
         return nullptr;
 
     } else {
@@ -53,4 +50,4 @@ template<class T, typename... Args>
     }
 }
 
-#define CREATE_FUNC(T, ...) friend class ICreateFactoryFunc<T(__VA_ARGS__)>;
+#define CREATE_FUNC(T, ...) friend class ICreateFactoryFunc<T, ##__VA_ARGS__>;

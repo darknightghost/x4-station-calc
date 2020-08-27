@@ -9,7 +9,7 @@ EditorWidget::AddGroupOperation::AddGroupOperation(int           index,
         editorWidget),
     m_index(index)
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

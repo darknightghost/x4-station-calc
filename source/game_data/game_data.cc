@@ -152,7 +152,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         break;
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

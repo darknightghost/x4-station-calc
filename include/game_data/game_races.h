@@ -21,9 +21,10 @@ class GameVFS;
  * @brief	Races in game.
  */
 class GameRaces :
-    public ILoadFactoryFunc<GameRaces(::std::shared_ptr<GameVFS>,
-                                      ::std::shared_ptr<GameTexts>,
-                                      ::std::function<void(const QString &)>)> {
+    public ILoadFactoryFunc<GameRaces,
+                            ::std::shared_ptr<GameVFS>,
+                            ::std::shared_ptr<GameTexts>,
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameRaces,
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameTexts>,

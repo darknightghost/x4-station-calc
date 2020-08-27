@@ -4,31 +4,31 @@
  * @brief   Provide good() medthod.
  *
  */
-class IIsGood {
-  protected:
-    bool m_good; ///< Initialize result.
+class IInitialized {
+  private:
+    bool m_initialized; ///< Initialize result.
 
   public:
     /**
      * @brief   Constructor, initialize and set m_good to false.
      */
-    IIsGood();
+    IInitialized();
 
     /**
      * @brief   Get initialize result.
      *
      * @return  Initialize result.
      */
-    bool good();
+    bool initialized();
 
     /**
      * @brief   Destructor.
      */
-    virtual ~IIsGood();
+    virtual ~IInitialized();
 
   protected:
     /**
      * @brief   Set initialize status to true.
      */
-    void setGood();
+    void setInitialized();
 };

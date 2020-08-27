@@ -16,7 +16,7 @@ EditorWidget::AddModuleOperation::AddModuleOperation(
                   EditorWidget *>(editorWidget),
     m_groupIndex(groupIndex), m_index(index), m_macros(macros)
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

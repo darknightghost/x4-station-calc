@@ -78,9 +78,9 @@ if (MSVC)
     # Output directory.
     set (MSVC_CONFIG_TYPE ${CMAKE_BUILD_TYPE})
     string (TOUPPER ${CMAKE_BUILD_TYPE} OUTPUTCONFIG)
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/bin/${MSVC_CONFIG_TYPE}")
-    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${MSVC_CONFIG_TYPE}")
-    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${MSVC_CONFIG_TYPE}")
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
 
     # Ignore warnings of functions like strcpy(), strcmp()...
     add_compile_options ("-D_CRT_SECURE_NO_WARNINGS")
@@ -99,8 +99,8 @@ find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Network REQUIRED)
 
-if ("${Qt5Core_VERSION}" VERSION_LESS "5.7.1")
-    message (FATAL_ERROR "The version of Qt5 must be greater than 5.7.1.")
+if ("${Qt5Core_VERSION}" VERSION_LESS "5.14.1")
+    message (FATAL_ERROR "The version of Qt5 must be greater than 5.14.1.")
 
 endif ()
 

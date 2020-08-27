@@ -18,7 +18,7 @@ EditorWidget::ChangeModuleAmountOperation::ChangeModuleAmountOperation(
     m_groupIndex(groupIndex), m_moduleIndex(moduleIndex),
     m_oldAmount(oldAmount), m_newAmount(newAmount)
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

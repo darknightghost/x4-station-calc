@@ -106,7 +106,7 @@ GameStationModules::GameStationModules(
     }
 
     m_componentTmpIndex.clear();
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

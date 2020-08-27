@@ -96,7 +96,7 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
     setTextFunc(STR("STR_LOADING_TEXT_FILE").arg(finishedCount).arg(total));
     loadTask.run();
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

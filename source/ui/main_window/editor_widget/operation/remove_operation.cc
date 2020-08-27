@@ -79,7 +79,7 @@ EditorWidget::RemoveOperation::RemoveOperation(
                     return info1->moduleIndex < info2->moduleIndex;
                 });
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

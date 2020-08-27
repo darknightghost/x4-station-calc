@@ -58,7 +58,7 @@ GameComponents::GameComponents(
         }
     }
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

@@ -44,7 +44,7 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
     loader["texts"] = texts;
     loader.parse(reader, ::std::move(context));
 
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

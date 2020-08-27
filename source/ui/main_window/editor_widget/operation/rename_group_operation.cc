@@ -15,7 +15,7 @@ EditorWidget::RenameGroupOperation::RenameGroupOperation(
                                 EditorWidget *>(editorWidget),
     m_index(index), m_oldName(oldName), m_newName(newName)
 {
-    this->setGood();
+    this->setInitialized();
 }
 
 /**

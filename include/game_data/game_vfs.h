@@ -10,12 +10,12 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
-#include <interfaces/i_is_good.h>
+#include <interfaces/i_initialized.h>
 
 /**
  * @brief	Virtual filesystem of the game.
  */
-class GameVFS : private IIsGood {
+class GameVFS : private IInitialized {
   public:
     /**
      * @brief	Information of cat file.

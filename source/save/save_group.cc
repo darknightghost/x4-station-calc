@@ -176,7 +176,7 @@ void SaveGroup::removeModule(int index)
 /**
  * @brief		Parse to json object.
  */
-QJsonObject SaveGroup::toJson()
+QJsonObject SaveGroup::toJson() const
 {
     QJsonObject ret;
     ret.insert("name", m_name);

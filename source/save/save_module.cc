@@ -103,7 +103,7 @@ void SaveModule::setAmount(quint64 amount)
 /**
  * @brief		Parse to json object.
  */
-QJsonObject SaveModule::toJson()
+QJsonObject SaveModule::toJson() const
 {
     QJsonObject ret;
     ret.insert("macro", m_module);

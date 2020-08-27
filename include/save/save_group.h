@@ -100,7 +100,7 @@ class SaveGroup :
      *
      * @return		Json object.
      */
-    QJsonObject toJson();
+    QJsonObject toJson() const;
 
     /**
      * @brief		Destructor.

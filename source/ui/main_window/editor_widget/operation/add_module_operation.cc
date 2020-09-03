@@ -65,10 +65,18 @@ bool EditorWidget::AddModuleOperation::doOperation()
 
             editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                                   editorWidget, &EditorWidget::onChangeAmount);
+            editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+                                  editorWidget, &EditorWidget::onModuleMoveUp);
+            editorWidget->connect(
+                moduleWidget, &ModuleItemWidget::downBtnClicked, editorWidget,
+                &EditorWidget::onModuleMoveDown);
             editorWidget->connect(
                 moduleWidget, &ModuleItemWidget::removeBtnClicked, editorWidget,
                 &EditorWidget::removeModuleItem);
             ++newIndex;
+
+            // Update.
+            editorWidget->updateModuleMoveButtonStatus(moduleItem);
 
         } else {
             // Increase amount.
@@ -123,6 +131,22 @@ void EditorWidget::AddModuleOperation::undoOperation()
 
             // Remove child.
             groupItem->removeChild(moduleItem);
+
+            // Update.
+            if (groupItem->childCount() > 0) {
+                if (m_index == 0) {
+                    ModuleItem *nextItem
+                        = dynamic_cast<ModuleItem *>(groupItem->child(0));
+                    Q_ASSERT(nextItem != nullptr);
+                    editorWidget->updateModuleMoveButtonStatus(nextItem);
+
+                } else if (m_index >= groupItem->childCount()) {
+                    ModuleItem *prevItem = dynamic_cast<ModuleItem *>(
+                        groupItem->child(m_index - 1));
+                    Q_ASSERT(prevItem != nullptr);
+                    editorWidget->updateModuleMoveButtonStatus(prevItem);
+                }
+            }
         }
     }
 }

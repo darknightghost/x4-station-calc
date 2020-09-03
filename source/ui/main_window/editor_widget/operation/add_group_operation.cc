@@ -40,8 +40,15 @@ bool EditorWidget::AddGroupOperation::doOperation()
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
     groupItem->setExpanded(true);
 
+    editorWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+                          editorWidget, &EditorWidget::onGroupMoveUp);
+    editorWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+                          editorWidget, &EditorWidget::onGroupMoveDown);
     editorWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
                           editorWidget, &EditorWidget::removeGroupItem);
+
+    // Update.
+    editorWidget->updateGroupMoveButtonStatus(groupItem);
 
     return true;
 }
@@ -74,6 +81,22 @@ void EditorWidget::AddGroupOperation::undoOperation()
 
     // Remove group item.
     editorWidget->m_itemGroups->removeChild(groupItem);
+
+    // Update.
+    if (editorWidget->m_itemGroups->childCount() > 0) {
+        if (m_index == 0) {
+            GroupItem *nextItem = dynamic_cast<GroupItem *>(
+                editorWidget->m_itemGroups->child(0));
+            Q_ASSERT(nextItem != nullptr);
+            editorWidget->updateGroupMoveButtonStatus(nextItem);
+
+        } else if (m_index >= editorWidget->m_itemGroups->childCount()) {
+            GroupItem *prevItem = dynamic_cast<GroupItem *>(
+                editorWidget->m_itemGroups->child(m_index - 1));
+            Q_ASSERT(prevItem != nullptr);
+            editorWidget->updateGroupMoveButtonStatus(prevItem);
+        }
+    }
 }
 
 /**

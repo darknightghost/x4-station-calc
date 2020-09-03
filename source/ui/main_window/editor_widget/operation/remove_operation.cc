@@ -113,6 +113,22 @@ bool EditorWidget::RemoveOperation::doOperation()
 
         // Remove child.
         groupItem->removeChild(moduleItem);
+
+        // Update.
+        if (groupItem->childCount() > 0) {
+            if (moduleInfo->moduleIndex == 0) {
+                ModuleItem *nextItem
+                    = dynamic_cast<ModuleItem *>(groupItem->child(0));
+                Q_ASSERT(nextItem != nullptr);
+                editorWidget->updateModuleMoveButtonStatus(nextItem);
+
+            } else if (moduleInfo->moduleIndex >= groupItem->childCount()) {
+                ModuleItem *prevItem = dynamic_cast<ModuleItem *>(
+                    groupItem->child(moduleInfo->moduleIndex - 1));
+                Q_ASSERT(prevItem != nullptr);
+                editorWidget->updateModuleMoveButtonStatus(prevItem);
+            }
+        }
     }
 
     // Remove groups in reserved order.
@@ -138,6 +154,24 @@ bool EditorWidget::RemoveOperation::doOperation()
 
         // Remove group item.
         editorWidget->m_itemGroups->removeChild(groupItem);
+
+        // Update.
+        if (editorWidget->m_itemGroups->childCount() > 0) {
+            if (groupInfo->groupIndex == 0) {
+                GroupItem *nextItem = dynamic_cast<GroupItem *>(
+                    editorWidget->m_itemGroups->child(0));
+                Q_ASSERT(nextItem != nullptr);
+                editorWidget->updateGroupMoveButtonStatus(nextItem);
+
+            } else if (groupInfo->groupIndex
+                       >= editorWidget->m_itemGroups->childCount()) {
+                GroupItem *prevItem = dynamic_cast<GroupItem *>(
+                    editorWidget->m_itemGroups->child(groupInfo->groupIndex
+                                                      - 1));
+                Q_ASSERT(prevItem != nullptr);
+                editorWidget->updateGroupMoveButtonStatus(prevItem);
+            }
+        }
     }
 
     return true;
@@ -174,8 +208,15 @@ void EditorWidget::RemoveOperation::undoOperation()
         editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
         groupItem->setExpanded(groupInfo->expanded);
 
+        editorWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+                              editorWidget, &EditorWidget::onGroupMoveUp);
+        editorWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+                              editorWidget, &EditorWidget::onGroupMoveDown);
         editorWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
                               editorWidget, &EditorWidget::removeGroupItem);
+
+        // Update.
+        editorWidget->updateGroupMoveButtonStatus(groupItem);
 
         // Add modules.
         for (auto &moduleInfo : groupInfo->modules) {
@@ -203,9 +244,17 @@ void EditorWidget::RemoveOperation::undoOperation()
 
             editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                                   editorWidget, &EditorWidget::onChangeAmount);
+            editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+                                  editorWidget, &EditorWidget::onModuleMoveUp);
+            editorWidget->connect(
+                moduleWidget, &ModuleItemWidget::downBtnClicked, editorWidget,
+                &EditorWidget::onModuleMoveDown);
             editorWidget->connect(
                 moduleWidget, &ModuleItemWidget::removeBtnClicked, editorWidget,
                 &EditorWidget::removeModuleItem);
+
+            // Update.
+            editorWidget->updateModuleMoveButtonStatus(moduleItem);
         }
     }
 
@@ -242,8 +291,15 @@ void EditorWidget::RemoveOperation::undoOperation()
 
         editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                               editorWidget, &EditorWidget::onChangeAmount);
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveUp);
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveDown);
         editorWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
                               editorWidget, &EditorWidget::removeModuleItem);
+
+        // Update.
+        editorWidget->updateModuleMoveButtonStatus(moduleItem);
     }
 }
 

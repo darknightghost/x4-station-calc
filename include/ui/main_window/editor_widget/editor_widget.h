@@ -34,6 +34,8 @@ class EditorWidget : public QWidget {
     class AddGroupOperation;
     class AddModuleOperation;
     class ChangeModuleAmountOperation;
+    class MoveGroupOperation;
+    class MoveModuleOperation;
     class RemoveOperation;
     class RenameGroupOperation;
 
@@ -167,6 +169,20 @@ class EditorWidget : public QWidget {
      */
     void updatePasteStatus();
 
+    /**
+     * @brief       Update move button status.
+     *
+     * @param[in]   item        Group item;
+     */
+    void updateGroupMoveButtonStatus(GroupItem *item);
+
+    /**
+     * @brief       Update move button status.
+     *
+     * @param[in]   item        Module item;
+     */
+    void updateModuleMoveButtonStatus(ModuleItem *item);
+
   private:
     /**
      * @brief		Close event.
@@ -286,6 +302,34 @@ class EditorWidget : public QWidget {
     void onChangeAmount(quint64     oldAmount,
                         quint64     newAmount,
                         ModuleItem *moduleItem);
+
+    /**
+     * @brief		Called when move up button of a group item clicked.
+     *
+     * @param[in]	item	Item.
+     */
+    void onGroupMoveUp(GroupItem *item);
+
+    /**
+     * @brief		Called when move down button of a group item clicked.
+     *
+     * @param[in]	item	Item.
+     */
+    void onGroupMoveDown(GroupItem *item);
+
+    /**
+     * @brief		Called when move up button of a module item clicked.
+     *
+     * @param[in]	item	Item.
+     */
+    void onModuleMoveUp(ModuleItem *item);
+
+    /**
+     * @brief		Called when move up button of a module item clicked.
+     *
+     * @param[in]	item	Item.
+     */
+    void onModuleMoveDown(ModuleItem *item);
 
   public:
     /**

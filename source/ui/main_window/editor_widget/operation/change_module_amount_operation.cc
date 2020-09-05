@@ -33,10 +33,10 @@ bool EditorWidget::ChangeModuleAmountOperation::doOperation()
 
     moduleItem->setModuleAmount((quint64)m_newAmount);
 
-    this->editorWidget()
-        ->m_groupItems[groupItem]
-        ->moduleInfos[moduleItem]
-        ->moduleWidget->updateAmount();
+    ModuleItemWidget *moduleWidget = dynamic_cast<ModuleItemWidget *>(
+        this->editorWidget()->m_treeEditor->itemWidget(moduleItem, 1));
+
+    moduleWidget->updateAmount();
 
     return true;
 }
@@ -53,10 +53,10 @@ void EditorWidget::ChangeModuleAmountOperation::undoOperation()
 
     moduleItem->setModuleAmount((quint64)m_oldAmount);
 
-    this->editorWidget()
-        ->m_groupItems[groupItem]
-        ->moduleInfos[moduleItem]
-        ->moduleWidget->updateAmount();
+    ModuleItemWidget *moduleWidget = dynamic_cast<ModuleItemWidget *>(
+        this->editorWidget()->m_treeEditor->itemWidget(moduleItem, 1));
+
+    moduleWidget->updateAmount();
 }
 
 /**

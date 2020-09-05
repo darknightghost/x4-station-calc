@@ -99,14 +99,6 @@ bool EditorWidget::RemoveOperation::doOperation()
             groupItem->child(moduleInfo->moduleIndex));
         Q_ASSERT(moduleItem != nullptr);
 
-        // Remove from index.
-        editorWidget->m_groupItems[groupItem]->moduleMacroMap.remove(
-            moduleItem->module()->module());
-        editorWidget->m_groupItems[groupItem]
-            ->moduleInfos[moduleItem]
-            ->moduleWidget->close();
-        editorWidget->m_groupItems[groupItem]->moduleInfos.remove(moduleItem);
-
         // Remove from save file.
         editorWidget->m_save->group(moduleInfo->groupIndex)
             ->removeModule(moduleInfo->moduleIndex);
@@ -137,17 +129,6 @@ bool EditorWidget::RemoveOperation::doOperation()
         GroupItem *                      groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(groupInfo->groupIndex));
         Q_ASSERT(groupItem != nullptr);
-
-        // Close widgets.
-        for (auto moduleIndex :
-             editorWidget->m_groupItems[groupItem]->moduleInfos) {
-            moduleIndex->moduleWidget->close();
-            groupItem->removeChild(moduleIndex->moduleItem);
-        }
-
-        // Remove from index.
-        editorWidget->m_groupItems[groupItem]->groupWidget->close();
-        editorWidget->m_groupItems.remove(groupItem);
 
         // Remove from save.
         editorWidget->m_save->removeGroup(groupInfo->groupIndex);
@@ -197,11 +178,6 @@ void EditorWidget::RemoveOperation::undoOperation()
         GroupItem *      groupItem   = new GroupItem(saveGroup);
         GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
 
-        // Add to index.
-        ::std::shared_ptr<GroupInfo> groupIndex(
-            new GroupInfo({groupItem, groupWidget, {}, {}}));
-        editorWidget->m_groupItems[groupItem] = groupIndex;
-
         // Add to editor.
         editorWidget->m_itemGroups->insertChild(groupInfo->groupIndex,
                                                 groupItem);
@@ -231,12 +207,6 @@ void EditorWidget::RemoveOperation::undoOperation()
             ModuleItem *      moduleItem   = new ModuleItem(saveModule);
             ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
 
-            // Add to index.
-            ::std::shared_ptr<ModuleInfo> moduleIndex(
-                new ModuleInfo({moduleItem, moduleWidget}));
-            groupIndex->moduleInfos[moduleItem]              = moduleIndex;
-            groupIndex->moduleMacroMap[saveModule->module()] = moduleIndex;
-
             // Add to editor.
             groupItem->addChild(moduleItem);
             editorWidget->m_treeEditor->setItemWidget(moduleItem, 1,
@@ -263,8 +233,6 @@ void EditorWidget::RemoveOperation::undoOperation()
         GroupItem *groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(moduleInfo->groupIndex));
         Q_ASSERT(groupItem != nullptr);
-        ::std::shared_ptr<GroupInfo> groupIndex
-            = editorWidget->m_groupItems[groupItem];
 
         // Add to save.
         int index = groupItem->group()->insertModule(
@@ -278,12 +246,6 @@ void EditorWidget::RemoveOperation::undoOperation()
         // Make item.
         ModuleItem *      moduleItem   = new ModuleItem(saveModule);
         ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
-
-        // Add to index.
-        ::std::shared_ptr<ModuleInfo> moduleIndex(
-            new ModuleInfo({moduleItem, moduleWidget}));
-        groupIndex->moduleInfos[moduleItem]              = moduleIndex;
-        groupIndex->moduleMacroMap[saveModule->module()] = moduleIndex;
 
         // Add to editor.
         groupItem->insertChild(index, moduleItem);

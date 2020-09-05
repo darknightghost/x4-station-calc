@@ -48,18 +48,6 @@ class EditorWidget : public QWidget {
         ModuleItemWidget *moduleWidget; ///< Widget.
     };
 
-    /**
-     * @brief   Group information.
-     */
-    struct GroupInfo {
-        GroupItem *      groupItem;   ///< Group item.
-        GroupItemWidget *groupWidget; ///< Group widget.
-        QMap<ModuleItem *, ::std::shared_ptr<ModuleInfo>>
-            moduleInfos; ///< Module informations.
-        QMap<QString, ::std::shared_ptr<ModuleInfo>>
-            moduleMacroMap; ///< Macro map.
-    };
-
   private:
     StationModulesWidget *m_stationModulesWidget; ///< Station modules widget.
     InfoWidget *          m_infoWidget;           ///< Info widget.
@@ -80,10 +68,7 @@ class EditorWidget : public QWidget {
     QVector<::std::shared_ptr<Operation>> m_redoStack; ///< Redo stack.
 
     // Items
-    QTreeWidgetItem *m_itemGroups; ///< Station module groups.
-    QMap<GroupItem *, ::std::shared_ptr<GroupInfo>>
-        m_groupItems; ///< Group items.
-
+    QTreeWidgetItem *m_itemGroups;  ///< Station module groups.
     QTreeWidgetItem *m_itemSummary; ///< Summary.
 
   public:

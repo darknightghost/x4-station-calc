@@ -30,11 +30,6 @@ bool EditorWidget::AddGroupOperation::doOperation()
     GroupItem *      groupItem   = new GroupItem(saveGroup);
     GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
 
-    // Add to index.
-    ::std::shared_ptr<GroupInfo> groupIndex(
-        new GroupInfo({groupItem, groupWidget, {}, {}}));
-    editorWidget->m_groupItems[groupItem] = groupIndex;
-
     // Add to editor.
     editorWidget->m_itemGroups->insertChild(m_index, groupItem);
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
@@ -64,17 +59,6 @@ void EditorWidget::AddGroupOperation::undoOperation()
     GroupItem *groupItem
         = dynamic_cast<GroupItem *>(editorWidget->m_itemGroups->child(m_index));
     Q_ASSERT(groupItem != nullptr);
-
-    // Close widgets.
-    for (auto moduleIndex :
-         editorWidget->m_groupItems[groupItem]->moduleInfos) {
-        moduleIndex->moduleWidget->close();
-        groupItem->removeChild(moduleIndex->moduleItem);
-    }
-
-    // Remove from index.
-    editorWidget->m_groupItems[groupItem]->groupWidget->close();
-    editorWidget->m_groupItems.remove(groupItem);
 
     // Remove from save.
     editorWidget->m_save->removeGroup(m_index);

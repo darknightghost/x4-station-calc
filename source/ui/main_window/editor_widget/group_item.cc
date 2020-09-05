@@ -33,6 +33,93 @@ void GroupItem::updateGroupName()
 GroupItem::~GroupItem() {}
 
 /**
+ * @brief       Appends the child item to the list of children.
+ */
+bool GroupItem::addChild(ModuleItem *child)
+{
+    if (m_macroMap.find(child->module()->module()) == m_macroMap.end()) {
+        this->QTreeWidgetItem::addChild(child);
+        m_macroMap[child->module()->module()] = child;
+        return true;
+
+    } else {
+        return false;
+    }
+}
+
+/**
+ * @brief       Returns the item at the given index in the list of the
+ *              item's children.
+ */
+ModuleItem *GroupItem::child(int index) const
+{
+    return dynamic_cast<ModuleItem *>(this->QTreeWidgetItem::child(index));
+}
+
+/**
+ * @brief       Returns the item which macro of the module is \c macro in
+ *              the list of the item's children.
+ */
+ModuleItem *GroupItem::child(const QString &macro) const
+{
+    auto iter = m_macroMap.find(macro);
+
+    if (iter == m_macroMap.end()) {
+        return nullptr;
+
+    } else {
+        return *iter;
+    }
+}
+
+/**
+ * @brief       Get the index of the child.
+ */
+int GroupItem::indexOfChild(ModuleItem *child) const
+{
+    return this->QTreeWidgetItem::indexOfChild(child);
+}
+
+/**
+ * @brief       Insert child.
+ */
+bool GroupItem::insertChild(int index, ModuleItem *child)
+{
+    if (m_macroMap.find(child->module()->module()) == m_macroMap.end()) {
+        this->QTreeWidgetItem::insertChild(index, child);
+        m_macroMap[child->module()->module()] = child;
+        return true;
+
+    } else {
+        return false;
+    }
+}
+
+/**
+ * @brief       Remove child.
+ */
+void GroupItem::removeChild(ModuleItem *child)
+{
+    m_macroMap.remove(child->module()->module());
+    this->QTreeWidgetItem::removeChild(child);
+}
+
+/**
+ * @brief       Take child.
+ */
+ModuleItem *GroupItem::takeChild(int index)
+{
+    ModuleItem *ret
+        = dynamic_cast<ModuleItem *>(this->QTreeWidgetItem::takeChild(index));
+
+    if (ret != nullptr) {
+        m_macroMap.remove(ret->module()->module());
+    }
+
+    return ret;
+}
+
+/**
  * @brief		Constructor.
  */
 GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)

@@ -26,20 +26,43 @@ bool EditorWidget::MoveGroupOperation::doOperation()
         editorWidget->m_itemGroups->takeChild(m_oldIndex));
     Q_ASSERT(groupItem != nullptr);
 
-    // Group info.
-    ::std::shared_ptr<GroupInfo> groupInfo
-        = editorWidget->m_groupItems[groupItem];
-
     // Insert group item.
     editorWidget->m_itemGroups->insertChild(m_newIndex, groupItem);
-    editorWidget->m_treeEditor->setItemWidget(groupItem, 1,
-                                              groupInfo->groupWidget);
+    GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
+    groupWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+                         editorWidget, &EditorWidget::onGroupMoveUp);
+    groupWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+                         editorWidget, &EditorWidget::onGroupMoveDown);
+    groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+                         editorWidget, &EditorWidget::removeGroupItem);
+    editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
 
     // Set index.
     editorWidget->m_save->setIndex(m_oldIndex, m_newIndex);
 
+    // Set module widgets.
+    for (int i = 0; i < groupItem->childCount(); ++i) {
+        ModuleItem *moduleItem = groupItem->child(i);
+
+        ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveUp);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveDown);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+                              editorWidget, &EditorWidget::removeModuleItem);
+
+        editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
+    }
+
     // Update.
     editorWidget->updateGroupMoveButtonStatus(groupItem);
+
+    if (groupItem->childCount() > 0) {
+        editorWidget->updateModuleMoveButtonStatus(groupItem->child(0));
+        editorWidget->updateModuleMoveButtonStatus(
+            groupItem->child(groupItem->childCount() - 1));
+    }
 
     if (editorWidget->m_itemGroups->childCount() > 0) {
         if (m_oldIndex == 0) {
@@ -73,20 +96,43 @@ void EditorWidget::MoveGroupOperation::undoOperation()
         editorWidget->m_itemGroups->takeChild(m_newIndex));
     Q_ASSERT(groupItem != nullptr);
 
-    // Group info.
-    ::std::shared_ptr<GroupInfo> groupInfo
-        = editorWidget->m_groupItems[groupItem];
-
     // Insert group item.
     editorWidget->m_itemGroups->insertChild(m_oldIndex, groupItem);
-    editorWidget->m_treeEditor->setItemWidget(groupItem, 1,
-                                              groupInfo->groupWidget);
+    GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
+    groupWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+                         editorWidget, &EditorWidget::onGroupMoveUp);
+    groupWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+                         editorWidget, &EditorWidget::onGroupMoveDown);
+    groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+                         editorWidget, &EditorWidget::removeGroupItem);
+    editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
 
     // Set index.
     editorWidget->m_save->setIndex(m_newIndex, m_oldIndex);
 
+    // Set module widgets.
+    for (int i = 0; i < groupItem->childCount(); ++i) {
+        ModuleItem *moduleItem = groupItem->child(i);
+
+        ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveUp);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+                              editorWidget, &EditorWidget::onModuleMoveDown);
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+                              editorWidget, &EditorWidget::removeModuleItem);
+
+        editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
+    }
+
     // Update.
     editorWidget->updateGroupMoveButtonStatus(groupItem);
+
+    if (groupItem->childCount() > 0) {
+        editorWidget->updateModuleMoveButtonStatus(groupItem->child(0));
+        editorWidget->updateModuleMoveButtonStatus(
+            groupItem->child(groupItem->childCount() - 1));
+    }
 
     if (editorWidget->m_itemGroups->childCount() > 0) {
         if (m_newIndex == 0) {

@@ -84,17 +84,7 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
 /**
  * @brief	Destructors.
  */
-EditorWidget::~EditorWidget()
-{
-    // Close all widgets.
-    for (auto group : m_groupItems) {
-        for (auto module : group->moduleInfos) {
-            module->moduleWidget->close();
-        }
-
-        group->groupWidget->close();
-    }
-}
+EditorWidget::~EditorWidget() {}
 
 /**
  * @brief		Do operation.
@@ -205,33 +195,45 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *item)
 {
     int index = m_itemGroups->indexOfChild(item);
 
+    GroupItemWidget *itemWidget
+        = dynamic_cast<GroupItemWidget *>(m_treeEditor->itemWidget(item, 1));
+    Q_ASSERT(itemWidget != nullptr);
+
     if (index == 0) {
         if (index == m_itemGroups->childCount() - 1) {
-            m_groupItems[item]->groupWidget->setUpBtnEnabled(false);
-            m_groupItems[item]->groupWidget->setDownBtnEnabled(false);
+            itemWidget->setUpBtnEnabled(false);
+            itemWidget->setDownBtnEnabled(false);
 
         } else {
-            m_groupItems[item]->groupWidget->setUpBtnEnabled(false);
-            m_groupItems[item]->groupWidget->setDownBtnEnabled(true);
+            itemWidget->setUpBtnEnabled(false);
+            itemWidget->setDownBtnEnabled(true);
 
             GroupItem *nextItem
                 = dynamic_cast<GroupItem *>(m_itemGroups->child(index + 1));
 
-            m_groupItems[nextItem]->groupWidget->setUpBtnEnabled(true);
+            GroupItemWidget *nextItemWidget = dynamic_cast<GroupItemWidget *>(
+                m_treeEditor->itemWidget(nextItem, 1));
+            Q_ASSERT(nextItemWidget != nullptr);
+
+            nextItemWidget->setUpBtnEnabled(true);
         }
 
     } else if (index == m_itemGroups->childCount() - 1) {
-        m_groupItems[item]->groupWidget->setUpBtnEnabled(true);
-        m_groupItems[item]->groupWidget->setDownBtnEnabled(false);
+        itemWidget->setUpBtnEnabled(true);
+        itemWidget->setDownBtnEnabled(false);
 
         GroupItem *prevItem
             = dynamic_cast<GroupItem *>(m_itemGroups->child(index - 1));
 
-        m_groupItems[prevItem]->groupWidget->setDownBtnEnabled(true);
+        GroupItemWidget *prevItemWidget = dynamic_cast<GroupItemWidget *>(
+            m_treeEditor->itemWidget(prevItem, 1));
+        Q_ASSERT(prevItemWidget != nullptr);
+
+        prevItemWidget->setDownBtnEnabled(true);
 
     } else {
-        m_groupItems[item]->groupWidget->setUpBtnEnabled(true);
-        m_groupItems[item]->groupWidget->setDownBtnEnabled(true);
+        itemWidget->setUpBtnEnabled(true);
+        itemWidget->setDownBtnEnabled(true);
     }
 }
 
@@ -246,53 +248,45 @@ void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *item)
     Q_ASSERT(groupItem != nullptr);
     int index = groupItem->indexOfChild(item);
 
+    ModuleItemWidget *itemWidget
+        = dynamic_cast<ModuleItemWidget *>(m_treeEditor->itemWidget(item, 1));
+    Q_ASSERT(itemWidget != nullptr);
+
     if (index == 0) {
         if (index == groupItem->childCount() - 1) {
-            m_groupItems[groupItem]
-                ->moduleInfos[item]
-                ->moduleWidget->setUpBtnEnabled(false);
-            m_groupItems[groupItem]
-                ->moduleInfos[item]
-                ->moduleWidget->setDownBtnEnabled(false);
+            itemWidget->setUpBtnEnabled(false);
+            itemWidget->setDownBtnEnabled(false);
 
         } else {
-            m_groupItems[groupItem]
-                ->moduleInfos[item]
-                ->moduleWidget->setUpBtnEnabled(false);
-            m_groupItems[groupItem]
-                ->moduleInfos[item]
-                ->moduleWidget->setDownBtnEnabled(true);
+            itemWidget->setUpBtnEnabled(false);
+            itemWidget->setDownBtnEnabled(true);
 
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(index + 1));
 
-            m_groupItems[groupItem]
-                ->moduleInfos[nextItem]
-                ->moduleWidget->setUpBtnEnabled(true);
+            ModuleItemWidget *nextItemWidget = dynamic_cast<ModuleItemWidget *>(
+                m_treeEditor->itemWidget(nextItem, 1));
+            Q_ASSERT(nextItemWidget != nullptr);
+
+            nextItemWidget->setUpBtnEnabled(true);
         }
 
     } else if (index == groupItem->childCount() - 1) {
-        m_groupItems[groupItem]
-            ->moduleInfos[item]
-            ->moduleWidget->setUpBtnEnabled(true);
-        m_groupItems[groupItem]
-            ->moduleInfos[item]
-            ->moduleWidget->setDownBtnEnabled(false);
+        itemWidget->setUpBtnEnabled(true);
+        itemWidget->setDownBtnEnabled(false);
 
         ModuleItem *prevItem
             = dynamic_cast<ModuleItem *>(groupItem->child(index - 1));
 
-        m_groupItems[groupItem]
-            ->moduleInfos[prevItem]
-            ->moduleWidget->setDownBtnEnabled(true);
+        ModuleItemWidget *prevItemWidget = dynamic_cast<ModuleItemWidget *>(
+            m_treeEditor->itemWidget(prevItem, 1));
+        Q_ASSERT(prevItemWidget != nullptr);
+
+        prevItemWidget->setDownBtnEnabled(true);
 
     } else {
-        m_groupItems[groupItem]
-            ->moduleInfos[item]
-            ->moduleWidget->setUpBtnEnabled(true);
-        m_groupItems[groupItem]
-            ->moduleInfos[item]
-            ->moduleWidget->setDownBtnEnabled(true);
+        itemWidget->setUpBtnEnabled(true);
+        itemWidget->setDownBtnEnabled(true);
     }
 }
 
@@ -344,9 +338,6 @@ void EditorWidget::loadGroups()
         GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
         groupItem->treeWidget()->setItemWidget(groupItem, 1, groupWidget);
         groupWidget->show();
-        ::std::shared_ptr<GroupInfo> groupInfo(
-            new GroupInfo({groupItem, groupWidget, {}, {}}));
-        m_groupItems[groupItem] = groupInfo;
         this->connect(groupWidget, &GroupItemWidget::upBtnClicked, this,
                       &EditorWidget::onGroupMoveUp);
         this->connect(groupWidget, &GroupItemWidget::downBtnClicked, this,
@@ -364,8 +355,6 @@ void EditorWidget::loadGroups()
             moduleWidget->show();
             ::std::shared_ptr<ModuleInfo> moduleInfo(
                 new ModuleInfo({moduleItem, moduleWidget}));
-            groupInfo->moduleInfos[moduleItem]          = moduleInfo;
-            groupInfo->moduleMacroMap[module->module()] = moduleInfo;
 
             this->connect(moduleWidget, &ModuleItemWidget::changeAmount, this,
                           &EditorWidget::onChangeAmount);
@@ -733,6 +722,15 @@ void EditorWidget::onChangeAmount(quint64     oldAmount,
 void EditorWidget::onGroupMoveUp(GroupItem *item)
 {
     qDebug() << "onGroupMoveUp() : " << item;
+
+    int oldIndex = m_itemGroups->indexOfChild(item);
+    Q_ASSERT(oldIndex > 0);
+    int index = oldIndex - 1;
+
+    ::std::shared_ptr<Operation> operation
+        = MoveGroupOperation::create(oldIndex, index, this);
+
+    this->doOperation(operation);
 }
 
 /**
@@ -741,6 +739,15 @@ void EditorWidget::onGroupMoveUp(GroupItem *item)
 void EditorWidget::onGroupMoveDown(GroupItem *item)
 {
     qDebug() << "onGroupMoveDown() : " << item;
+
+    int oldIndex = m_itemGroups->indexOfChild(item);
+    Q_ASSERT(oldIndex < m_itemGroups->childCount() - 1);
+    int index = oldIndex + 1;
+
+    ::std::shared_ptr<Operation> operation
+        = MoveGroupOperation::create(oldIndex, index, this);
+
+    this->doOperation(operation);
 }
 
 /**
@@ -749,6 +756,20 @@ void EditorWidget::onGroupMoveDown(GroupItem *item)
 void EditorWidget::onModuleMoveUp(ModuleItem *item)
 {
     qDebug() << "onModuleMoveUp() : " << item;
+
+    GroupItem *groupItem = dynamic_cast<GroupItem *>(item->parent());
+    Q_ASSERT(groupItem != nullptr);
+
+    int groupIndex = m_itemGroups->indexOfChild(groupItem);
+
+    int oldIndex = groupItem->indexOfChild(item);
+    Q_ASSERT(oldIndex > 0);
+    int index = oldIndex - 1;
+
+    ::std::shared_ptr<Operation> operation
+        = MoveModuleOperation::create(groupIndex, oldIndex, index, this);
+
+    this->doOperation(operation);
 }
 
 /**
@@ -757,6 +778,20 @@ void EditorWidget::onModuleMoveUp(ModuleItem *item)
 void EditorWidget::onModuleMoveDown(ModuleItem *item)
 {
     qDebug() << "onModuleMoveDown() : " << item;
+
+    GroupItem *groupItem = dynamic_cast<GroupItem *>(item->parent());
+    Q_ASSERT(groupItem != nullptr);
+
+    int groupIndex = m_itemGroups->indexOfChild(groupItem);
+
+    int oldIndex = groupItem->indexOfChild(item);
+    Q_ASSERT(oldIndex < groupItem->childCount() - 1);
+    int index = oldIndex + 1;
+
+    ::std::shared_ptr<Operation> operation
+        = MoveModuleOperation::create(groupIndex, oldIndex, index, this);
+
+    this->doOperation(operation);
 }
 
 /**

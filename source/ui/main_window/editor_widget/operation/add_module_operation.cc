@@ -33,13 +33,10 @@ bool EditorWidget::AddModuleOperation::doOperation()
     Q_ASSERT(groupItem != nullptr);
     ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
 
-    ::std::shared_ptr<GroupInfo> groupIndex
-        = editorWidget->m_groupItems[groupItem];
-
     int newIndex = m_index;
     for (auto &macro : m_macros) {
-        auto iter = groupIndex->moduleMacroMap.find(macro);
-        if (iter == groupIndex->moduleMacroMap.end()) {
+        ModuleItem *moduleItem = groupItem->child(macro);
+        if (moduleItem == nullptr) {
             // Add module.
             // Add to save.
             int index = saveGroup->insertModule(newIndex, macro, 1);
@@ -51,12 +48,6 @@ bool EditorWidget::AddModuleOperation::doOperation()
             // Make item.
             ModuleItem *      moduleItem   = new ModuleItem(saveModule);
             ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
-
-            // Add to index.
-            ::std::shared_ptr<ModuleInfo> moduleIndex(
-                new ModuleInfo({moduleItem, moduleWidget}));
-            groupIndex->moduleInfos[moduleItem]              = moduleIndex;
-            groupIndex->moduleMacroMap[saveModule->module()] = moduleIndex;
 
             // Add to editor.
             groupItem->insertChild(index, moduleItem);
@@ -80,10 +71,11 @@ bool EditorWidget::AddModuleOperation::doOperation()
 
         } else {
             // Increase amount.
-            ::std::shared_ptr<ModuleInfo> moduleIndex = *iter;
-            moduleIndex->moduleItem->setModuleAmount(
-                moduleIndex->moduleItem->moduleAmount() + 1);
-            moduleIndex->moduleWidget->updateAmount();
+            moduleItem->setModuleAmount(moduleItem->moduleAmount() + 1);
+
+            ModuleItemWidget *itemWidget = dynamic_cast<ModuleItemWidget *>(
+                editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
+            itemWidget->updateAmount();
         }
     }
 
@@ -104,27 +96,21 @@ void EditorWidget::AddModuleOperation::undoOperation()
     Q_ASSERT(groupItem != nullptr);
     ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
 
-    ::std::shared_ptr<GroupInfo> groupIndex
-        = editorWidget->m_groupItems[groupItem];
-
     for (auto &macro : m_macros) {
         // Get module.
-        ::std::shared_ptr<ModuleInfo> moduleIndex
-            = groupIndex->moduleMacroMap[macro];
-        if (moduleIndex->moduleItem->moduleAmount() > 1) {
+        ModuleItem *moduleItem = groupItem->child(macro);
+        Q_ASSERT(moduleItem != nullptr);
+        ModuleItemWidget *moduleWidget = dynamic_cast<ModuleItemWidget *>(
+            editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
+        Q_ASSERT(moduleWidget != nullptr);
+
+        if (moduleItem->moduleAmount() > 1) {
             // Decrease amount/
-            moduleIndex->moduleItem->setModuleAmount(
-                moduleIndex->moduleItem->moduleAmount() - 1);
-            moduleIndex->moduleWidget->updateAmount();
+            moduleItem->setModuleAmount(moduleItem->moduleAmount() - 1);
+            moduleWidget->updateAmount();
 
         } else {
             // Remove.
-            // Remove from index.
-            ModuleItem *moduleItem = moduleIndex->moduleItem;
-            groupIndex->moduleMacroMap.remove(moduleItem->module()->module());
-            groupIndex->moduleInfos[moduleItem]->moduleWidget->close();
-            groupIndex->moduleInfos.remove(moduleItem);
-
             // Remove from save file.
             editorWidget->m_save->group(m_groupIndex)
                 ->removeModule(groupItem->indexOfChild(moduleItem));

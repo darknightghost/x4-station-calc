@@ -1,4 +1,5 @@
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
@@ -21,7 +22,7 @@ Save::Save()
 /**
  * @brief		Load a save file.
  */
-Save::Save(const QString &path) : m_path(path)
+Save::Save(const QString &path) : m_path(QDir(".").absoluteFilePath(path))
 {
     // Read file.
     QFile file(path);
@@ -95,7 +96,7 @@ const QString &Save::path() const
 void Save::setPath(const QString &path)
 {
     if (m_path != "") {
-        m_path = path;
+        m_path = QDir(".").absoluteFilePath(path);
     }
 }
 
@@ -217,7 +218,7 @@ bool Save::write() const
 bool Save::write(const QString &path)
 {
     // Open file.
-    QFile file(path);
+    QFile file(QDir(".").absoluteFilePath(path));
     if (! file.open(QIODevice::OpenModeFlag::WriteOnly)) {
         return false;
     }
@@ -238,7 +239,7 @@ bool Save::write(const QString &path)
 
     file.close();
 
-    m_path = path;
+    m_path = QDir(".").absoluteFilePath(path);
 
     return true;
 }

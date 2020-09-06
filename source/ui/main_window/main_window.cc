@@ -357,20 +357,29 @@ void MainWindow::closeEvent(QCloseEvent *event)
  */
 void MainWindow::open(QString path)
 {
-    ::std::shared_ptr<Save> save = Save::load(path);
-    if (save == nullptr) {
-        QMessageBox::critical(this, STR("STR_ERROR"),
-                              STR("STR_FAILED_OPEN_FILE").arg(path));
+    EditorWidget *editorWidget = EditorWidget::getEditorWidgetByPath(path);
+    if (editorWidget == nullptr) {
+        ::std::shared_ptr<Save> save = Save::load(path);
+        if (save == nullptr) {
+            QMessageBox::critical(this, STR("STR_ERROR"),
+                                  STR("STR_FAILED_OPEN_FILE").arg(path));
 
+        } else {
+            QMdiSubWindow *container = new QMdiSubWindow();
+            m_centralWidget->addSubWindow(container);
+            editorWidget = new EditorWidget(save, &m_fileActions,
+                                            &m_editActions, m_infoWidget,
+                                            m_stationModulesWidget, container);
+            this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
+                          m_stationModulesWidget,
+                          &StationModulesWidget::setAddToStationStatus);
+            m_centralWidget->setActiveSubWindow(container);
+            editorWidget->show();
+        }
     } else {
-        QMdiSubWindow *container = new QMdiSubWindow();
-        m_centralWidget->addSubWindow(container);
-        EditorWidget *editorWidget
-            = new EditorWidget(save, &m_fileActions, &m_editActions,
-                               m_infoWidget, m_stationModulesWidget, container);
-        this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
-                      m_stationModulesWidget,
-                      &StationModulesWidget::setAddToStationStatus);
+        QMdiSubWindow *container
+            = dynamic_cast<QMdiSubWindow *>(editorWidget->parent());
+        Q_ASSERT(container != nullptr);
         m_centralWidget->setActiveSubWindow(container);
         editorWidget->show();
     }

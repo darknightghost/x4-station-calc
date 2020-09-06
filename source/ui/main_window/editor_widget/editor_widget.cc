@@ -10,6 +10,22 @@
 #include <locale/string_table.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 
+QMap<QString, EditorWidget *> EditorWidget::_opendFiles; ///< Opened files.
+
+/**
+ * @brief       Get editor widget by path.
+ */
+EditorWidget *EditorWidget::getEditorWidgetByPath(const QString &path)
+{
+    auto iter = _opendFiles.find(QDir(".").absoluteFilePath(path));
+    if (iter == _opendFiles.end()) {
+        return nullptr;
+
+    } else {
+        return *iter;
+    }
+}
+
 /**
  * @brief		Constructor.
  */
@@ -79,6 +95,10 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
 
     this->setAttribute(Qt::WA_DeleteOnClose);
     parent->setAttribute(Qt::WA_DeleteOnClose);
+
+    if (m_save->path() != "") {
+        _opendFiles[m_save->path()] = this;
+    }
 }
 
 /**
@@ -188,16 +208,17 @@ void EditorWidget::updatePasteStatus() {}
 
 /**
  * @brief       Update move button status.
- *
- * @param[in]   item        Group item;
  */
-void EditorWidget::updateGroupMoveButtonStatus(GroupItem *item)
+void EditorWidget::updateGroupMoveButtonStatus(GroupItem *      item,
+                                               GroupItemWidget *itemWidget)
 {
     int index = m_itemGroups->indexOfChild(item);
 
-    GroupItemWidget *itemWidget
-        = dynamic_cast<GroupItemWidget *>(m_treeEditor->itemWidget(item, 1));
-    Q_ASSERT(itemWidget != nullptr);
+    if (itemWidget == nullptr) {
+        itemWidget = dynamic_cast<GroupItemWidget *>(
+            m_treeEditor->itemWidget(item, 1));
+        Q_ASSERT(itemWidget != nullptr);
+    }
 
     if (index == 0) {
         if (index == m_itemGroups->childCount() - 1) {
@@ -207,29 +228,11 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *item)
         } else {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(true);
-
-            GroupItem *nextItem
-                = dynamic_cast<GroupItem *>(m_itemGroups->child(index + 1));
-
-            GroupItemWidget *nextItemWidget = dynamic_cast<GroupItemWidget *>(
-                m_treeEditor->itemWidget(nextItem, 1));
-            Q_ASSERT(nextItemWidget != nullptr);
-
-            nextItemWidget->setUpBtnEnabled(true);
         }
 
     } else if (index == m_itemGroups->childCount() - 1) {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(false);
-
-        GroupItem *prevItem
-            = dynamic_cast<GroupItem *>(m_itemGroups->child(index - 1));
-
-        GroupItemWidget *prevItemWidget = dynamic_cast<GroupItemWidget *>(
-            m_treeEditor->itemWidget(prevItem, 1));
-        Q_ASSERT(prevItemWidget != nullptr);
-
-        prevItemWidget->setDownBtnEnabled(true);
 
     } else {
         itemWidget->setUpBtnEnabled(true);
@@ -239,18 +242,19 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *item)
 
 /**
  * @brief       Update move button status.
- *
- * @param[in]   item        Module item;
  */
-void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *item)
+void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *      item,
+                                                ModuleItemWidget *itemWidget)
 {
     GroupItem *groupItem = dynamic_cast<GroupItem *>(item->parent());
     Q_ASSERT(groupItem != nullptr);
     int index = groupItem->indexOfChild(item);
 
-    ModuleItemWidget *itemWidget
-        = dynamic_cast<ModuleItemWidget *>(m_treeEditor->itemWidget(item, 1));
-    Q_ASSERT(itemWidget != nullptr);
+    if (itemWidget == nullptr) {
+        itemWidget = dynamic_cast<ModuleItemWidget *>(
+            m_treeEditor->itemWidget(item, 1));
+        Q_ASSERT(itemWidget != nullptr);
+    }
 
     if (index == 0) {
         if (index == groupItem->childCount() - 1) {
@@ -260,29 +264,11 @@ void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *item)
         } else {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(true);
-
-            ModuleItem *nextItem
-                = dynamic_cast<ModuleItem *>(groupItem->child(index + 1));
-
-            ModuleItemWidget *nextItemWidget = dynamic_cast<ModuleItemWidget *>(
-                m_treeEditor->itemWidget(nextItem, 1));
-            Q_ASSERT(nextItemWidget != nullptr);
-
-            nextItemWidget->setUpBtnEnabled(true);
         }
 
     } else if (index == groupItem->childCount() - 1) {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(false);
-
-        ModuleItem *prevItem
-            = dynamic_cast<ModuleItem *>(groupItem->child(index - 1));
-
-        ModuleItemWidget *prevItemWidget = dynamic_cast<ModuleItemWidget *>(
-            m_treeEditor->itemWidget(prevItem, 1));
-        Q_ASSERT(prevItemWidget != nullptr);
-
-        prevItemWidget->setDownBtnEnabled(true);
 
     } else {
         itemWidget->setUpBtnEnabled(true);
@@ -396,6 +382,7 @@ void EditorWidget::loadGroups()
 void EditorWidget::closeEvent(QCloseEvent *event)
 {
     if (this->closeSave()) {
+        _opendFiles.remove(m_save->path());
         event->accept();
     } else {
         event->ignore();
@@ -617,12 +604,16 @@ void EditorWidget::saveAs()
     dir         = dir.left(dir.lastIndexOf("/"));
     Config::instance()->setString("/savePath", dir);
 
+    QString oldPath = m_save->path();
+
     // Save file.
     if (m_save->write(fileName)) {
         m_savedUndoCount = m_undoStack.size();
         qDebug() << "File" << this->windowTitle() << "Saved.";
         this->updateTitle();
         this->updateSaveStatus();
+        _opendFiles.remove(oldPath);
+        _opendFiles[m_save->path()] = this;
     } else {
         QMessageBox::critical(this, STR("STR_ERROR"),
                               STR("STR_ERR_SAVE").arg(fileName));

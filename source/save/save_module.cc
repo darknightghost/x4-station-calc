@@ -107,7 +107,7 @@ QJsonObject SaveModule::toJson() const
 {
     QJsonObject ret;
     ret.insert("macro", m_module);
-    ret.insert("macro", (qint64)m_amount);
+    ret.insert("amount", (qint64)m_amount);
 
     return ret;
 }

@@ -71,6 +71,20 @@ class EditorWidget : public QWidget {
     QTreeWidgetItem *m_itemGroups;  ///< Station module groups.
     QTreeWidgetItem *m_itemSummary; ///< Summary.
 
+  private:
+    static QMap<QString, EditorWidget *> _opendFiles; ///< Opened files.
+
+  public:
+    /**
+     * @brief       Get editor widget by path.
+     *
+     * @param[in]   path        Path.
+     *
+     * @return      If the file is opened, the editor widget of the file is
+     *              returned, otherwise returns \c nullptr.
+     */
+    static EditorWidget *getEditorWidgetByPath(const QString &path);
+
   public:
     /**
      * @brief		Constructor.
@@ -157,16 +171,20 @@ class EditorWidget : public QWidget {
     /**
      * @brief       Update move button status.
      *
-     * @param[in]   item        Group item;
+     * @param[in]   item        Group item.
+     * @param[in]   itemWidget  Item widge.
      */
-    void updateGroupMoveButtonStatus(GroupItem *item);
+    void updateGroupMoveButtonStatus(GroupItem *      item,
+                                     GroupItemWidget *itemWidget = nullptr);
 
     /**
      * @brief       Update move button status.
      *
-     * @param[in]   item        Module item;
+     * @param[in]   item        Module item.
+     * @param[in]   itemWidget  Item widget.
      */
-    void updateModuleMoveButtonStatus(ModuleItem *item);
+    void updateModuleMoveButtonStatus(ModuleItem *      item,
+                                      ModuleItemWidget *itemWidget = nullptr);
 
   private:
     /**

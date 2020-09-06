@@ -36,6 +36,8 @@ class EditorWidget : public QWidget {
     class ChangeModuleAmountOperation;
     class MoveGroupOperation;
     class MoveModuleOperation;
+    class PasteGroupOperation;
+    class PasteModuleOperation;
     class RemoveOperation;
     class RenameGroupOperation;
 

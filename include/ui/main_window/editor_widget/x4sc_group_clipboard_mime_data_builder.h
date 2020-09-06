@@ -9,7 +9,7 @@
 /**
  * @brief       Clipboard data builder.
  */
-class X4SCClipboardMimeDataBuilder {
+class X4SCGroupClipboardMimeDataBuilder {
   public:
     static const QString _mimeTypeStr; ///< Mime type.
 
@@ -20,7 +20,7 @@ class X4SCClipboardMimeDataBuilder {
     /**
      * @brief       Constructor.
      */
-    X4SCClipboardMimeDataBuilder();
+    X4SCGroupClipboardMimeDataBuilder();
 
     /**
      * @brief       Load data from mime data.
@@ -40,10 +40,8 @@ class X4SCClipboardMimeDataBuilder {
      * @brief       Set data.
      *
      * @param[in]   groups      Module groups.
-     * @param[in]   modules     Modules.
      */
-    void setData(const QVector<::std::shared_ptr<const SaveGroup>> & groups,
-                 const QVector<::std::shared_ptr<const SaveModule>> &modules);
+    void setData(const QVector<::std::shared_ptr<const SaveGroup>> &groups);
 
     /**
      * @brief       Get groups.
@@ -53,14 +51,7 @@ class X4SCClipboardMimeDataBuilder {
     QVector<::std::shared_ptr<SaveGroup>> groups() const;
 
     /**
-     * @brief       Get modules.
-     *
-     * @return      Modules.
-     */
-    QVector<::std::shared_ptr<SaveModule>> modules() const;
-
-    /**
      * @brief       Destructor.
      */
-    virtual ~X4SCClipboardMimeDataBuilder();
+    virtual ~X4SCGroupClipboardMimeDataBuilder();
 };

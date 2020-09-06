@@ -1,7 +1,10 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
+#include <QtCore/QMimeData>
+#include <QtGui/QClipboard>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QFocusEvent>
+#include <QtWidgets/QApplication>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMessageBox>
@@ -9,6 +12,8 @@
 #include <config.h>
 #include <locale/string_table.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
+#include <ui/main_window/editor_widget/x4sc_group_clipboard_mime_data_builder.h>
+#include <ui/main_window/editor_widget/x4sc_module_clipboard_mime_data_builder.h>
 
 QMap<QString, EditorWidget *> EditorWidget::_opendFiles; ///< Opened files.
 
@@ -67,6 +72,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   &EditorWidget::onItemDoubleClicked);
     this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
                   &EditorWidget::updateCutCopyRemoveStatus);
+    this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
+                  &EditorWidget::updatePasteStatus);
     this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
                   &EditorWidget::updateAddToStationStatus);
 
@@ -185,26 +192,75 @@ void EditorWidget::updateUndoRedoStatus()
  */
 void EditorWidget::updateCutCopyRemoveStatus()
 {
-    bool found = false;
+    bool found       = false;
+    bool foundGroup  = false;
+    bool foundModule = false;
     if (m_treeEditor != nullptr) {
         for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
-            if (dynamic_cast<GroupItem *>(rawItem) != nullptr
-                || dynamic_cast<ModuleItem *>(rawItem) != nullptr) {
-                found = true;
-                break;
+            if (dynamic_cast<GroupItem *>(rawItem) != nullptr) {
+                if (foundModule) {
+                    found = false;
+                    break;
+
+                } else {
+                    foundGroup = true;
+                    found      = true;
+                }
+
+            } else if (dynamic_cast<ModuleItem *>(rawItem) != nullptr) {
+                if (foundGroup) {
+                    found = false;
+                    break;
+
+                } else {
+                    foundModule = true;
+                    found       = true;
+                }
             }
         }
     }
 
     m_editActions->actionEditCut->setEnabled(found);
     m_editActions->actionEditCopy->setEnabled(found);
-    m_editActions->actionEditRemove->setEnabled(found);
+    m_editActions->actionEditRemove->setEnabled(foundModule || foundGroup);
 }
 
 /**
  * @brief       Update paste action statis.
  */
-void EditorWidget::updatePasteStatus() {}
+void EditorWidget::updatePasteStatus()
+{
+    // Check clipboard.
+    QClipboard *clipboard = QApplication::clipboard();
+
+    const QMimeData *data = clipboard->mimeData();
+    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr)) {
+        // Check selection.
+        QTreeWidgetItem *item = m_treeEditor->currentItem();
+        if (item == m_itemGroups
+            || dynamic_cast<GroupItem *>(item) != nullptr) {
+            m_editActions->actionEditPaste->setEnabled(true);
+
+        } else {
+            m_editActions->actionEditPaste->setEnabled(false);
+        }
+
+    } else if (data->hasFormat(
+                   X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr)) {
+        // Check selection.
+        QTreeWidgetItem *item = m_treeEditor->currentItem();
+        if (dynamic_cast<GroupItem *>(item) != nullptr
+            || dynamic_cast<ModuleItem *>(item) != nullptr) {
+            m_editActions->actionEditPaste->setEnabled(true);
+
+        } else {
+            m_editActions->actionEditPaste->setEnabled(false);
+        }
+
+    } else {
+        m_editActions->actionEditPaste->setEnabled(false);
+    }
+}
 
 /**
  * @brief       Update move button status.
@@ -497,17 +553,190 @@ void EditorWidget::redo()
 /**
  * @brief		Cut.
  */
-void EditorWidget::cut() {}
+void EditorWidget::cut()
+{
+    QVector<GroupItem *>                         groupItems;
+    QVector<::std::shared_ptr<const SaveGroup>>  groups;
+    QVector<ModuleItem *>                        moduleItems;
+    QVector<::std::shared_ptr<const SaveModule>> modules;
+
+    // Scan items.
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+        {
+            GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
+
+            if (item != nullptr) {
+                groupItems.push_back(item);
+                groups.append(item->group());
+            }
+        }
+
+        {
+            ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
+
+            if (item != nullptr) {
+                moduleItems.push_back(item);
+                modules.append(item->module());
+            }
+        }
+    }
+
+    if (moduleItems.empty()) {
+        // Groups
+        // Get mimedata.
+        QMimeData *                       mimeData = new QMimeData();
+        X4SCGroupClipboardMimeDataBuilder builder;
+        builder.setData(groups);
+        builder.saveMimeData(mimeData);
+
+        // Set clipboard.
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setMimeData(mimeData);
+
+        // Remove selected.
+        ::std::shared_ptr<Operation> operation
+            = RemoveOperation::create(groupItems, {}, this);
+        this->doOperation(operation);
+
+    } else if (! moduleItems.empty()) {
+        // Modules
+        // Get mimedata.
+        QMimeData *                        mimeData = new QMimeData();
+        X4SCModuleClipboardMimeDataBuilder builder;
+        builder.setData(modules);
+        builder.saveMimeData(mimeData);
+
+        // Set clipboard.
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setMimeData(mimeData);
+
+        // Remove selected.
+        ::std::shared_ptr<Operation> operation
+            = RemoveOperation::create({}, moduleItems, this);
+        this->doOperation(operation);
+    }
+
+    this->updateAddToStationStatus();
+    this->updatePasteStatus();
+}
 
 /**
  * @brief		Copy.
  */
-void EditorWidget::copy() {}
+void EditorWidget::copy()
+{
+    QVector<::std::shared_ptr<const SaveGroup>>  groups;
+    QVector<::std::shared_ptr<const SaveModule>> modules;
+
+    // Scan items.
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+        {
+            GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
+
+            if (item != nullptr) {
+                groups.append(item->group());
+            }
+        }
+
+        {
+            ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
+
+            if (item != nullptr) {
+                modules.append(item->module());
+            }
+        }
+    }
+
+    if (modules.empty()) {
+        // Groups
+        // Get mimedata.
+        QMimeData *                       mimeData = new QMimeData();
+        X4SCGroupClipboardMimeDataBuilder builder;
+        builder.setData(groups);
+        builder.saveMimeData(mimeData);
+
+        // Set clipboard.
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setMimeData(mimeData);
+
+    } else if (! modules.empty()) {
+        // Modules
+        // Get mimedata.
+        QMimeData *                        mimeData = new QMimeData();
+        X4SCModuleClipboardMimeDataBuilder builder;
+        builder.setData(modules);
+        builder.saveMimeData(mimeData);
+
+        // Set clipboard.
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setMimeData(mimeData);
+    }
+
+    this->updateAddToStationStatus();
+    this->updatePasteStatus();
+}
 
 /**
  * @brief		Paste.
  */
-void EditorWidget::paste() {}
+void EditorWidget::paste()
+{
+    // Get clipboard.
+    QClipboard *clipboard = QApplication::clipboard();
+
+    const QMimeData *data = clipboard->mimeData();
+    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr)) {
+        // Groups.
+        // Get data.
+        X4SCGroupClipboardMimeDataBuilder builder;
+        builder.loadMimeData(data);
+        QTreeWidgetItem *item = m_treeEditor->currentItem();
+
+        // Get position.
+        GroupItem *groupItem = nullptr;
+        if (m_itemGroups->childCount() > 0) {
+            if (item == m_itemGroups) {
+                groupItem = dynamic_cast<GroupItem *>(
+                    item->child(item->childCount() - 1));
+            } else {
+                groupItem = dynamic_cast<GroupItem *>(item);
+            }
+        }
+
+        // Do operation.
+        ::std::shared_ptr<Operation> operation
+            = PasteGroupOperation::create(groupItem, builder, this);
+        this->doOperation(operation);
+
+    } else if (data->hasFormat(
+                   X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr)) {
+        // Moudles.
+        // Get data.
+        X4SCModuleClipboardMimeDataBuilder builder;
+        builder.loadMimeData(data);
+        QTreeWidgetItem *item = m_treeEditor->currentItem();
+
+        GroupItem * groupItem  = nullptr;
+        ModuleItem *moduleItem = nullptr;
+        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+            groupItem = dynamic_cast<GroupItem *>(item);
+            if (groupItem->childCount() != 0) {
+                moduleItem = dynamic_cast<ModuleItem *>(
+                    groupItem->child(groupItem->childCount() - 1));
+            }
+
+        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+            groupItem = dynamic_cast<GroupItem *>(item->parent());
+            Q_ASSERT(groupItem != nullptr);
+            moduleItem = dynamic_cast<ModuleItem *>(item);
+        }
+
+        // Do operation.
+        ::std::shared_ptr<Operation> operation = PasteModuleOperation::create(
+            groupItem, moduleItem, builder, this);
+        this->doOperation(operation);
+    }
+}
 
 /**
  * @brief		Remove.
@@ -845,6 +1074,11 @@ void EditorWidget::active()
                      nullptr, nullptr);
     this->connect(m_editActions->actionEditRemove, &QAction::triggered, this,
                   &EditorWidget::remove);
+
+    QClipboard *clipboard = QApplication::clipboard();
+    this->disconnect(clipboard, &QClipboard::dataChanged, nullptr, nullptr);
+    this->connect(clipboard, &QClipboard::dataChanged, this,
+                  &EditorWidget::updatePasteStatus);
 
     // Update actions status.
     m_fileActions->actionFileSaveAs->setEnabled(true);

@@ -54,7 +54,7 @@ bool EditorWidget::PasteModuleOperation::doOperation()
     // Paste modules.
     GroupItem *groupItem = dynamic_cast<GroupItem *>(
         editorWidget->m_itemGroups->child(m_groupIndex));
-    Q_ASSERT(groupItem == nullptr);
+    Q_ASSERT(groupItem != nullptr);
     int newIndex = m_firstModuleIndex;
     int oldCount = groupItem->childCount();
 

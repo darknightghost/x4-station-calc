@@ -31,8 +31,13 @@ bool EditorWidget::AddModuleOperation::doOperation()
     GroupItem *groupItem = dynamic_cast<GroupItem *>(
         editorWidget->m_itemGroups->child(m_groupIndex));
     Q_ASSERT(groupItem != nullptr);
-    ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
-    int                          oldCount  = groupItem->childCount();
+    ::std::shared_ptr<SaveGroup> saveGroup   = groupItem->group();
+    int                          oldCount    = groupItem->childCount();
+    bool                         expandGroup = false;
+
+    if (groupItem->childCount() == 0) {
+        expandGroup = true;
+    }
 
     int newIndex = m_index;
     for (auto &macro : m_macros) {
@@ -78,6 +83,10 @@ bool EditorWidget::AddModuleOperation::doOperation()
                 editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
             itemWidget->updateAmount();
         }
+    }
+
+    if (expandGroup) {
+        groupItem->setExpanded(true);
     }
 
     // Update

@@ -66,6 +66,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_treeEditor->setSelectionMode(
         QAbstractItemView::SelectionMode::ExtendedSelection);
     m_layout->addWidget(m_treeEditor);
+    m_treeEditor->setContextMenuPolicy(
+        Qt::ContextMenuPolicy::CustomContextMenu);
     this->connect(m_treeEditor, &QTreeWidget::itemChanged, this,
                   &EditorWidget::onItemChanged);
     this->connect(m_treeEditor, &QTreeWidget::itemDoubleClicked, this,
@@ -76,6 +78,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   &EditorWidget::updatePasteStatus);
     this->connect(m_treeEditor, &QTreeWidget::itemSelectionChanged, this,
                   &EditorWidget::updateAddToStationStatus);
+    this->connect(m_treeEditor, &QWidget::customContextMenuRequested, this,
+                  &EditorWidget::onCustomContextMenuRequested);
 
     // Items.
     m_itemGroups = new QTreeWidgetItem();
@@ -1012,6 +1016,40 @@ void EditorWidget::onModuleMoveDown(ModuleItem *item)
         = MoveModuleOperation::create(groupIndex, oldIndex, index, this);
 
     this->doOperation(operation);
+}
+
+/**
+ * @brief		Called when request a context menu.
+ */
+void EditorWidget::onCustomContextMenuRequested(const QPoint &pos)
+{
+    // Check item.
+    QTreeWidgetItem *item = m_treeEditor->currentItem();
+    if (item == nullptr) {
+        return;
+    }
+
+    if (dynamic_cast<GroupItem *>(item) == nullptr
+        && dynamic_cast<ModuleItem *>(item) == nullptr
+        && item != m_itemGroups) {
+        return;
+    }
+
+    // Pop menu.
+    QMenu menu;
+
+    menu.addAction(m_editActions->actionEditNewGroup);
+    menu.addSeparator();
+    menu.addAction(m_editActions->actionEditUndo);
+    menu.addAction(m_editActions->actionEditRedo);
+    menu.addSeparator();
+    menu.addAction(m_editActions->actionEditCut);
+    menu.addAction(m_editActions->actionEditCopy);
+    menu.addAction(m_editActions->actionEditPaste);
+    menu.addSeparator();
+    menu.addAction(m_editActions->actionEditRemove);
+
+    menu.exec(QCursor::pos());
 }
 
 /**

@@ -336,6 +336,13 @@ class EditorWidget : public QWidget {
      */
     void onModuleMoveDown(ModuleItem *item);
 
+    /**
+     * @brief		Called when request a context menu.
+     *
+     * @param[in]	pos     Position.
+     */
+    void onCustomContextMenuRequested(const QPoint &pos);
+
   public:
     /**
      * @brief       Active editor widget.

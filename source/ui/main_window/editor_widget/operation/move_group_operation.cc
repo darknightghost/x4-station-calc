@@ -22,6 +22,8 @@ bool EditorWidget::MoveGroupOperation::doOperation()
     Q_ASSERT(editorWidget != nullptr);
 
     // Take group item.
+    bool expandStatus
+        = editorWidget->m_itemGroups->child(m_oldIndex)->isExpanded();
     GroupItem *groupItem = dynamic_cast<GroupItem *>(
         editorWidget->m_itemGroups->takeChild(m_oldIndex));
     Q_ASSERT(groupItem != nullptr);
@@ -36,6 +38,7 @@ bool EditorWidget::MoveGroupOperation::doOperation()
     groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
                          editorWidget, &EditorWidget::removeGroupItem);
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
+    groupItem->setExpanded(expandStatus);
 
     // Set index.
     editorWidget->m_save->setIndex(m_oldIndex, m_newIndex);
@@ -105,6 +108,8 @@ void EditorWidget::MoveGroupOperation::undoOperation()
     Q_ASSERT(editorWidget != nullptr);
 
     // Take group item.
+    bool expandStatus
+        = editorWidget->m_itemGroups->child(m_newIndex)->isExpanded();
     GroupItem *groupItem = dynamic_cast<GroupItem *>(
         editorWidget->m_itemGroups->takeChild(m_newIndex));
     Q_ASSERT(groupItem != nullptr);
@@ -119,6 +124,7 @@ void EditorWidget::MoveGroupOperation::undoOperation()
     groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
                          editorWidget, &EditorWidget::removeGroupItem);
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
+    groupItem->setExpanded(expandStatus);
 
     // Set index.
     editorWidget->m_save->setIndex(m_newIndex, m_oldIndex);

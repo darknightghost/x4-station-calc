@@ -82,20 +82,34 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
                   &EditorWidget::onCustomContextMenuRequested);
 
     // Items.
+    // Groups.
     m_itemGroups = new QTreeWidgetItem();
     m_itemGroups->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_treeEditor->addTopLevelItem(m_itemGroups);
     this->loadGroups();
 
+    // Summary.
     m_itemSummary = new QTreeWidgetItem();
     m_itemSummary->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_treeEditor->addTopLevelItem(m_itemSummary);
+    m_itemHull = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemHull);
+    m_itemExplosionDamage = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemExplosionDamage);
+    m_itemWeapons = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemWeapons);
+    m_itemShields = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemShields);
+    m_itemStorage = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemStorage);
+    m_itemDockingbay = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemDockingbay);
+    m_itemWorkforce = new QTreeWidgetItem();
+    m_itemSummary->addChild(m_itemWorkforce);
 
     // Change language.
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &EditorWidget::onLanguageChanged);
-
-    this->onLanguageChanged();
 
     m_treeEditor->expandAll();
 
@@ -110,6 +124,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     if (m_save->path() != "") {
         _opendFiles[m_save->path()] = this;
     }
+
+    this->onLanguageChanged();
 }
 
 /**
@@ -860,6 +876,13 @@ void EditorWidget::onLanguageChanged()
 {
     m_itemGroups->setText(0, STR("STR_STATION_MODULES"));
     m_itemSummary->setText(0, STR("STR_SUMMARY"));
+    m_itemHull->setText(0, STR("STR_INFO_HULL"));
+    m_itemExplosionDamage->setText(0, STR("STR_INFO_EXPLOSION_DAMAGE"));
+    m_itemWeapons->setText(0, STR("STR_WEAPONS"));
+    m_itemShields->setText(0, STR("STR_SHIELDS"));
+    m_itemStorage->setText(0, STR("STR_STORAGE"));
+    m_itemDockingbay->setText(0, STR("STR_DOCKINGBAY"));
+    m_itemWorkforce->setText(0, STR("STR_WORKFORCE"));
 }
 
 /**

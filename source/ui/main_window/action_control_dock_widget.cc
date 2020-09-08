@@ -69,18 +69,6 @@ void ActionControlDockWidget::showEvent(QShowEvent *event)
 }
 
 /**
- * @brief		Hide event.
- */
-void ActionControlDockWidget::hideEvent(QHideEvent *event)
-{
-    if (m_statusAction->isChecked()) {
-        m_statusAction->setChecked(false);
-    }
-
-    event->accept();
-}
-
-/**
  * @brief		Close event.
  */
 void ActionControlDockWidget::closeEvent(QCloseEvent *event)
@@ -90,6 +78,10 @@ void ActionControlDockWidget::closeEvent(QCloseEvent *event)
 
     } else {
         event->ignore();
+        if (m_statusAction->isChecked()) {
+            m_statusAction->setChecked(false);
+        }
+
         this->setVisible(false);
     }
 }

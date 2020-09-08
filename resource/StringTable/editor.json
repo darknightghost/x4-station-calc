@@ -48,5 +48,15 @@
 		"zh_CN" : "仓储",
 		"zh_TW" : "倉儲",
 		"en_US" : "Storage"
+	},
+	"STR_DOCKINGBAY" : {
+		"zh_CN" : "停靠区",
+		"zh_TW" : "停靠區",
+		"en_US" : "Docking Bay"
+	},
+	"STR_WORKFORCE" : {
+		"zh_CN" : "劳动力",
+		"zh_TW" : "勞動力",
+		"en_US" : "Workforce"
 	}
 }

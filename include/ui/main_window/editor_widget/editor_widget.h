@@ -70,8 +70,19 @@ class EditorWidget : public QWidget {
     QVector<::std::shared_ptr<Operation>> m_redoStack; ///< Redo stack.
 
     // Items
-    QTreeWidgetItem *m_itemGroups;  ///< Station module groups.
-    QTreeWidgetItem *m_itemSummary; ///< Summary.
+    QTreeWidgetItem *m_itemGroups; ///< Station module groups.
+
+    QTreeWidgetItem *m_itemSummary;         ///< Summary.
+    QTreeWidgetItem *m_itemHull;            ///< Hull.
+    QTreeWidgetItem *m_itemExplosionDamage; ///< Explosion damage.
+    QTreeWidgetItem *m_itemWeapons;         ///< Weapons.
+    QTreeWidgetItem *m_itemShields;         ///< Shields.
+    QTreeWidgetItem *m_itemStorage;         ///< Storage.
+    QTreeWidgetItem *m_itemDockingbay;      ///< Docking bay.
+    QTreeWidgetItem *m_itemWorkforce;       ///< Workforce.
+    QTreeWidgetItem *m_itemResources;       ///< Resources.
+    QTreeWidgetItem *m_itemIntermediates;   ///< Intermediates.
+    QTreeWidgetItem *m_itemProducts;        ///< Products.
 
   private:
     static QMap<QString, EditorWidget *> _opendFiles; ///< Opened files.

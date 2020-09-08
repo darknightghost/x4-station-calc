@@ -64,13 +64,6 @@ class ActionControlDockWidget : public QDockWidget {
     virtual void showEvent(QShowEvent *event) override;
 
     /**
-     * @brief		Hide event.
-     *
-     * @param[in]	event		Event.
-     */
-    virtual void hideEvent(QHideEvent *event) override;
-
-    /**
      * @brief		Close event.
      *
      * @param[in]	event		Event.

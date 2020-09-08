@@ -327,6 +327,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
         } else {
             event->ignore();
+            return;
         }
     }
 

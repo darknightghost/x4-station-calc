@@ -4,24 +4,25 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QTreeWidgetItem>
 
+#include <common.h>
+
 /**
  * @brief	Item of ware.
  */
 class WareItem : public QTreeWidgetItem {
   private:
-    QString m_ware; ///< Ware.
-    qint64  m_min;  ///< Minimum amount each hour.
-    qint64  m_max;  ///< Maxium amount each hour.
+    QString       m_ware;  ///< Ware.
+    Range<qint64> m_range; ///< Range of the amount each hour.
 
   public:
     /**
      * @brief       Constructor.
      *
      * @param[in]   ware        Macro of the ware.
-     * @param[in]   min         Minimum amount each hour.
-     * @param[in]   max         Maxium amount each hour.
+     * @param[in]   range       Range of the amount each hour.
      */
-    WareItem(const QString &ware, qint64 min = 0, qint64 max = 0);
+    WareItem(const QString &      ware,
+             const Range<qint64> &range = Range<qint64>({0, 0}));
 
     /**
      * @brief       Get the macro of the ware.
@@ -33,10 +34,9 @@ class WareItem : public QTreeWidgetItem {
     /**
      * @brief       Set range.
      *
-     * @param[in]   min         Minimum amount each hour.
-     * @param[in]   max         Maxium amount each hour.
+     * @param[in]   range       Range of the amount each hour.
      */
-    void setRange(qint64 min, qint64 max);
+    void setRange(const Range<qint64> &range);
 
     /**
      * @brief		Change language.

@@ -4,10 +4,11 @@
 /**
  * @brief       Constructor.
  */
-WareItem::WareItem(const QString &ware, qint64 min, qint64 max) :
-    QTreeWidgetItem(), m_ware(ware), m_min(min), m_max(max)
+WareItem::WareItem(const QString &ware, const Range<qint64> &range) :
+    QTreeWidgetItem(), m_ware(ware), m_range(range)
 {
-    this->setText(1, QString("%1/h - %2/h").arg(m_min).arg(m_max));
+    this->setText(1,
+                  QString("%1/h - %2/h").arg(m_range.min()).arg(m_range.max()));
     this->onLanguageChanged();
 }
 
@@ -22,11 +23,11 @@ const QString &WareItem::ware() const
 /**
  * @brief       Set range.
  */
-void WareItem::setRange(qint64 min, qint64 max)
+void WareItem::setRange(const Range<qint64> &range)
 {
-    m_min = min;
-    m_max = max;
-    this->setText(1, QString("%1/h - %2/h").arg(m_min).arg(m_max));
+    m_range = range;
+    this->setText(1,
+                  QString("%1/h - %2/h").arg(m_range.min()).arg(m_range.max()));
 }
 
 /**

@@ -50,6 +50,51 @@ class EditorWidget : public QWidget {
         ModuleItemWidget *moduleWidget; ///< Widget.
     };
 
+    /**
+     * @brief   Summary information.
+     */
+    struct SummaryInfo {
+        quint64 hull            = 0; ///< Hull.
+        quint64 explosionDamage = 0; ///< Explosion damage.
+        struct {
+            quint64 sLaunchTube = 0; ///< S launch tube..
+            quint64 mLaunchTube = 0; ///< M launch tube.
+            quint64 mTurret     = 0; ///< M turret.
+            quint64 lTurret     = 0; ///< L turret.
+        } weapons;                   ///< Weapons.
+        struct {
+            quint64 mShield = 0; ///< M shield.
+            quint64 lShield = 0; ///< L shield.
+        } shields;               ///< Shields
+        struct {
+            quint64 container = 0; ///< Container.
+            quint64 solid     = 0; ///< Solid.
+            quint64 liquid    = 0; ///< Liquid.
+        } Storage;                 ///< Storage.
+        struct {
+            quint64 m_sDock   = 0; ///< S dock.
+            quint64 m_mDock   = 0; ///< M dock.
+            quint64 m_lDock   = 0; ///< L dock.
+            quint64 m_xlDock  = 0; ///< XL dock.
+            quint64 m_lXLDock = 0; ///< L/XL dock.
+        } dockingBay;              ///< Docking bay.
+        struct {
+            quint64 m_sShipCargo = 0;               ///< S ship cargo.
+            quint64 m_mShipCargo = 0;               ///< M ship cargo.
+        } ShipStorage;                              ///< Ship storage.
+        qint64                       workforce;     ///< Workforce.
+        QMap<QString, Range<qint64>> resources;     ///< Resources.
+        QMap<QString, Range<qint64>> intermediates; ///< Intermediates.
+        QMap<QString, Range<qint64>> products;      ///< Products.
+
+        struct {
+            bool requireContainerStorage
+                = false;                       ///< Require container storage.
+            bool requireSolidStorage  = false; ///< Require solid storage.
+            bool requireLiquidStorage = false; ///< Require liquid storage.
+        } requirements;                        ///< Requirements.
+    };
+
   private:
     StationModulesWidget *m_stationModulesWidget; ///< Station modules widget.
     InfoWidget *          m_infoWidget;           ///< Info widget.
@@ -198,6 +243,11 @@ class EditorWidget : public QWidget {
      */
     void updateModuleMoveButtonStatus(ModuleItem *      item,
                                       ModuleItemWidget *itemWidget = nullptr);
+
+    /**
+     * @brief       Update summary.
+     */
+    void updateSummary();
 
   private:
     /**

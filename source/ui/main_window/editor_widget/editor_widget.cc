@@ -126,6 +126,7 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     }
 
     this->onLanguageChanged();
+    this->updateSummary();
 }
 
 /**
@@ -144,6 +145,7 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
         qDebug() << "Operation done.";
         this->updateSaveStatus();
         this->updateUndoRedoStatus();
+        this->updateSummary();
 
     } else {
         qDebug() << "Operation failed.";
@@ -314,6 +316,14 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *      item,
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(true);
     }
+}
+
+/**
+ * @brief       Update summary.
+ */
+void EditorWidget::updateSummary()
+{
+    SummaryInfo summaryInfo;
 }
 
 /**
@@ -547,6 +557,7 @@ void EditorWidget::undo()
 
     this->updateSaveStatus();
     this->updateUndoRedoStatus();
+    this->updateSummary();
 }
 
 /**
@@ -1044,7 +1055,7 @@ void EditorWidget::onModuleMoveDown(ModuleItem *item)
 /**
  * @brief		Called when request a context menu.
  */
-void EditorWidget::onCustomContextMenuRequested(const QPoint &pos)
+void EditorWidget::onCustomContextMenuRequested(const QPoint &)
 {
     // Check item.
     QTreeWidgetItem *item = m_treeEditor->currentItem();
@@ -1052,27 +1063,26 @@ void EditorWidget::onCustomContextMenuRequested(const QPoint &pos)
         return;
     }
 
-    if (dynamic_cast<GroupItem *>(item) == nullptr
-        && dynamic_cast<ModuleItem *>(item) == nullptr
-        && item != m_itemGroups) {
+    if (dynamic_cast<GroupItem *>(item) != nullptr
+        || dynamic_cast<ModuleItem *>(item) != nullptr
+        || item == m_itemGroups) {
+        // Pop menu.
+        QMenu menu;
+
+        menu.addAction(m_editActions->actionEditNewGroup);
+        menu.addSeparator();
+        menu.addAction(m_editActions->actionEditUndo);
+        menu.addAction(m_editActions->actionEditRedo);
+        menu.addSeparator();
+        menu.addAction(m_editActions->actionEditCut);
+        menu.addAction(m_editActions->actionEditCopy);
+        menu.addAction(m_editActions->actionEditPaste);
+        menu.addSeparator();
+        menu.addAction(m_editActions->actionEditRemove);
+
+        menu.exec(QCursor::pos());
         return;
     }
-
-    // Pop menu.
-    QMenu menu;
-
-    menu.addAction(m_editActions->actionEditNewGroup);
-    menu.addSeparator();
-    menu.addAction(m_editActions->actionEditUndo);
-    menu.addAction(m_editActions->actionEditRedo);
-    menu.addSeparator();
-    menu.addAction(m_editActions->actionEditCut);
-    menu.addAction(m_editActions->actionEditCopy);
-    menu.addAction(m_editActions->actionEditPaste);
-    menu.addSeparator();
-    menu.addAction(m_editActions->actionEditRemove);
-
-    menu.exec(QCursor::pos());
 }
 
 /**

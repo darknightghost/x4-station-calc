@@ -3,6 +3,7 @@
 #include <QtCore/QMap>
 #include <QtWidgets/QTreeWidgetItem>
 
+#include <common.h>
 #include <ui/main_window/editor_widget/ware_item.h>
 
 /**
@@ -30,10 +31,9 @@ class WaresItem : public QTreeWidgetItem {
      *              be added to the item.
      *
      * @param[in]   macro       Macro of the ware.
-     * @param[in]   min         Minimum amount each hour.
-     * @param[in]   max         Maxium amount each hour.
+     * @param[in]   range       Range of the amount each hour.
      */
-    void setWareAmountRange(const QString &macro, qint64 min, qint64 max);
+    void setWareAmountRange(const QString &macro, const Range<qint64> &range);
 
     /**
      * @brief       Remove the ware.
@@ -41,6 +41,13 @@ class WaresItem : public QTreeWidgetItem {
      * @param[in]   macro       Macro of the ware.
      */
     void removeWare(const QString &macro);
+
+    /**
+     * @brief       Update wares.
+     *
+     * @param[in]   wares       Macros and ranges of the wares.
+     */
+    void update(const QMap<QString, Range<qint64>> &wares);
 
     /**
      * @brief		Change language.

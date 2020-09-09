@@ -92,20 +92,128 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     m_itemSummary = new QTreeWidgetItem();
     m_itemSummary->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_treeEditor->addTopLevelItem(m_itemSummary);
+
     m_itemHull = new QTreeWidgetItem();
+    m_itemHull->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemHull);
+
     m_itemExplosionDamage = new QTreeWidgetItem();
+    m_itemExplosionDamage->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemExplosionDamage);
+
     m_itemWeapons = new QTreeWidgetItem();
+    m_itemWeapons->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemWeapons);
+    m_itemWeapons->setExpanded(true);
+    {
+        m_itemWeaponSLaunchTube = new QTreeWidgetItem();
+        m_itemWeaponSLaunchTube->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemWeapons->addChild(m_itemWeaponSLaunchTube);
+
+        m_itemWeaponMLaunchTube = new QTreeWidgetItem();
+        m_itemWeaponMLaunchTube->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemWeapons->addChild(m_itemWeaponMLaunchTube);
+
+        m_itemWeaponMTurret = new QTreeWidgetItem();
+        m_itemWeaponMTurret->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemWeapons->addChild(m_itemWeaponMTurret);
+
+        m_itemWeaponLTurret = new QTreeWidgetItem();
+        m_itemWeaponLTurret->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemWeapons->addChild(m_itemWeaponLTurret);
+    }
+
     m_itemShields = new QTreeWidgetItem();
+    m_itemShields->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemShields);
+    m_itemShields->setExpanded(true);
+    {
+        m_itemShieldMShield = new QTreeWidgetItem();
+        m_itemShieldMShield->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemShields->addChild(m_itemShieldMShield);
+
+        m_itemShieldLShield = new QTreeWidgetItem();
+        m_itemShieldLShield->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemShields->addChild(m_itemShieldLShield);
+    }
+
     m_itemStorage = new QTreeWidgetItem();
+    m_itemStorage->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemStorage);
+    m_itemStorage->setExpanded(true);
+    {
+        m_itemStorageContainer = new QTreeWidgetItem();
+        m_itemStorageContainer->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemStorage->addChild(m_itemStorageContainer);
+
+        m_itemStorageSolid = new QTreeWidgetItem();
+        m_itemStorageSolid->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemStorage->addChild(m_itemStorageSolid);
+
+        m_itemStorageLiquid = new QTreeWidgetItem();
+        m_itemStorageLiquid->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemStorage->addChild(m_itemStorageLiquid);
+    }
+
     m_itemDockingbay = new QTreeWidgetItem();
+    m_itemDockingbay->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemDockingbay);
+    m_itemDockingbay->setExpanded(true);
+    {
+        m_itemDockingbaySDock = new QTreeWidgetItem();
+        m_itemDockingbaySDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemDockingbay->addChild(m_itemDockingbaySDock);
+
+        m_itemDockingbayMDock = new QTreeWidgetItem();
+        m_itemDockingbayMDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemDockingbay->addChild(m_itemDockingbayMDock);
+
+        m_itemDockingbayLDock = new QTreeWidgetItem();
+        m_itemDockingbayLDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemDockingbay->addChild(m_itemDockingbayLDock);
+
+        m_itemDockingbayXLDock = new QTreeWidgetItem();
+        m_itemDockingbayXLDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemDockingbay->addChild(m_itemDockingbayXLDock);
+
+        m_itemDockingbayLXLDock = new QTreeWidgetItem();
+        m_itemDockingbayLXLDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemDockingbay->addChild(m_itemDockingbayLXLDock);
+    }
+
+    m_itemShipStorage = new QTreeWidgetItem();
+    m_itemShipStorage->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_itemSummary->addChild(m_itemShipStorage);
+    m_itemShipStorage->setExpanded(true);
+    {
+        m_itemShipStorageSShipCargo = new QTreeWidgetItem();
+        m_itemShipStorageSShipCargo->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemShipStorage->addChild(m_itemShipStorageSShipCargo);
+
+        m_itemShipStorageMShipCargo = new QTreeWidgetItem();
+        m_itemShipStorageMShipCargo->setFlags(Qt::ItemFlag::ItemIsEnabled);
+        m_itemShipStorage->addChild(m_itemShipStorageMShipCargo);
+    }
+
     m_itemWorkforce = new QTreeWidgetItem();
+    m_itemWorkforce->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemSummary->addChild(m_itemWorkforce);
+
+    m_itemSurplusWorkforce = new QTreeWidgetItem();
+    m_itemSurplusWorkforce->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_itemSummary->addChild(m_itemSurplusWorkforce);
+
+    m_itemResources = new WaresItem();
+    m_itemResources->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_itemSummary->addChild(m_itemResources);
+
+    m_itemIntermediates = new WaresItem();
+    m_itemIntermediates->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_itemSummary->addChild(m_itemIntermediates);
+
+    m_itemProducts = new WaresItem();
+    m_itemProducts->setFlags(Qt::ItemFlag::ItemIsEnabled);
+    m_itemSummary->addChild(m_itemProducts);
 
     // Change language.
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
@@ -319,14 +427,6 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *      item,
 }
 
 /**
- * @brief       Update summary.
- */
-void EditorWidget::updateSummary()
-{
-    SummaryInfo summaryInfo;
-}
-
-/**
  * @brief       Update move button status.
  */
 void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *      item,
@@ -361,6 +461,521 @@ void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *      item,
         itemWidget->setDownBtnEnabled(true);
     }
 }
+
+/**
+ * @brief       Update summary.
+ */
+void EditorWidget::updateSummary()
+{
+    SummaryInfo summary;
+    this->makeSummary(summary);
+    this->showSummary(summary);
+    this->checkSummary(summary);
+}
+
+/**
+ * @brief       Make summary.
+ *
+ * @param[out]  summary     Summary.
+ */
+void EditorWidget::makeSummary(SummaryInfo &summary)
+{
+    auto gameStationModules = GameData::instance()->stationModules();
+    auto gameWares          = GameData::instance()->wares();
+
+    // Count summary.
+    for (auto saveGroup : m_save->groups()) {
+        for (auto saveModule : saveGroup->modules()) {
+            auto module = gameStationModules->module(saveModule->module());
+
+            // Hull & explosion damage.
+            summary.hull += module->hull * saveModule->amount();
+            summary.explosionDamage
+                += module->explosiondamage * saveModule->amount();
+
+            // Properties.
+            for (auto property : module->properties) {
+                switch (property->type) {
+                    case GameStationModules::Property::Type::MTurret:
+                        // Has M turret.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasMTurret>
+                                hasMTurret = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasMTurret>(property);
+                            summary.weapons.mTurret
+                                += hasMTurret->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::MShield:
+                        // Has M shield.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasMShield>
+                                hasMShield = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasMShield>(property);
+                            summary.shields.mShield
+                                += hasMShield->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::LTurret:
+                        // Has L turret.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasLTurret>
+                                hasLTurret = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasLTurret>(property);
+                            summary.weapons.lTurret
+                                += hasLTurret->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::LShield:
+                        // Has L shield.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasLShield>
+                                hasLShield = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasLShield>(property);
+                            summary.shields.lShield
+                                += hasLShield->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::SDock:
+                        // Has S docking bay.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasSDock>
+                                hasSDock = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasSDock>(property);
+                            summary.dockingBay.sDock
+                                += hasSDock->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::SShipCargo:
+                        // Has S ship cargo.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasSShipCargo>
+                                hasSShipCargo = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasSShipCargo>(
+                                    property);
+                            summary.shipStorage.sShipCargo
+                                += hasSShipCargo->capacity
+                                   * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::MDock:
+                        // Has M docking bay.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasMDock>
+                                hasMDock = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasMDock>(property);
+                            summary.dockingBay.mDock
+                                += hasMDock->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::MShipCargo:
+                        // Has M ship cargo.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasMShipCargo>
+                                hasMShipCargo = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasMShipCargo>(
+                                    property);
+                            summary.shipStorage.mShipCargo
+                                += hasMShipCargo->capacity
+                                   * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::LDock:
+                        // Has L docking bay.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasLDock>
+                                hasLDock = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasLDock>(property);
+                            summary.dockingBay.lDock
+                                += hasLDock->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::XLDock:
+                        // Has XL docking bay.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasXLDock>
+                                hasXLDock = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasXLDock>(property);
+                            summary.dockingBay.xlDock
+                                += hasXLDock->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::LXLDock:
+                        // Has L/XL docking bay.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasLXLDock>
+                                hasLXLDock = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasLXLDock>(property);
+                            summary.dockingBay.lXLDock
+                                += hasLXLDock->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::SLaunchTube:
+                        // Has S launch tube.
+                        {
+                            ::std::shared_ptr<
+                                GameStationModules::HasSLaunchTube>
+                                hasSLaunchTube = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasSLaunchTube>(
+                                    property);
+                            summary.weapons.sLaunchTube
+                                += hasSLaunchTube->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::MLaunchTube:
+                        // Has M launch tube.
+                        {
+                            ::std::shared_ptr<
+                                GameStationModules::HasMLaunchTube>
+                                hasMLaunchTube = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasMLaunchTube>(
+                                    property);
+                            summary.weapons.mLaunchTube
+                                += hasMLaunchTube->count * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::SupplyWorkforce:
+                        // Supply workforce.
+                        {
+                            ::std::shared_ptr<
+                                GameStationModules::SupplyWorkforce>
+                                supplyWorkforce = ::std::dynamic_pointer_cast<
+                                    GameStationModules::SupplyWorkforce>(
+                                    property);
+
+                            // Workforce.
+                            summary.workforce += supplyWorkforce->workforce
+                                                 * saveModule->amount();
+                            summary.surplusWorkforce
+                                += (qint64)(supplyWorkforce->workforce)
+                                   * saveModule->amount();
+
+                            // Supply.
+                            for (auto resource :
+                                 supplyWorkforce->supplyInfo->resources) {
+                                // Find/create ware.
+                                const QString &macro = resource->id;
+                                auto iter = summary.resources.find(macro);
+                                if (iter == summary.resources.end()) {
+                                    summary.resources[macro] = Range<
+                                        long double>(
+                                        0.0,
+                                        (((long double)resource->amount)
+                                         * supplyWorkforce->workforce * 3600
+                                         * saveModule->amount()
+                                         / supplyWorkforce->supplyInfo->amount
+                                         / supplyWorkforce->supplyInfo->time));
+                                } else {
+                                    // Increase amount.
+                                    iter->setMax(
+                                        iter->max()
+                                        + (((long double)resource->amount)
+                                           * supplyWorkforce->workforce * 3600
+                                           * saveModule->amount()
+                                           / supplyWorkforce->supplyInfo->amount
+                                           / supplyWorkforce->supplyInfo
+                                                 ->time));
+                                }
+
+                                // Transport type.
+                                switch (gameWares->ware(macro)->transportType) {
+                                    case GameWares::TransportType::Container:
+                                        // Container.
+                                        summary.requirements
+                                            .requireContainerStorage
+                                            = true;
+                                        break;
+
+                                    case GameWares::TransportType::Solid:
+                                        // Solid.
+                                        summary.requirements.requireSolidStorage
+                                            = true;
+                                        break;
+
+                                    case GameWares::TransportType::Liquid:
+                                        // Liquid.
+                                        summary.requirements
+                                            .requireLiquidStorage
+                                            = true;
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::RequireWorkforce:
+                        // Require workforce.
+                        {
+                            ::std::shared_ptr<
+                                GameStationModules::RequireWorkforce>
+                                requireWorkforce = ::std::dynamic_pointer_cast<
+                                    GameStationModules::RequireWorkforce>(
+                                    property);
+                            summary.surplusWorkforce
+                                -= (qint64)(requireWorkforce->workforce)
+                                   * saveModule->amount();
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::SupplyProduct:
+                        // Supply product.
+                        {
+                            ::std::shared_ptr<GameStationModules::SupplyProduct>
+                                supplyProfduct = ::std::dynamic_pointer_cast<
+                                    GameStationModules::SupplyProduct>(
+                                    property);
+                            ::std::shared_ptr<GameWares::ProductionInfo>
+                                           productionInfo = supplyProfduct->productionInfo;
+                            const QString &macro = productionInfo->id;
+
+                            // Product.
+                            // Find/create ware.
+                            auto iter = summary.products.find(macro);
+                            if (iter == summary.products.end()) {
+                                summary.products[macro] = Range<long double>(
+                                    (long double)(productionInfo->amount) * 3600
+                                        * saveModule->amount()
+                                        / productionInfo->time,
+                                    (long double)(productionInfo->amount) * 3600
+                                        * saveModule->amount()
+                                        * (1.0 + productionInfo->workEffect)
+                                        / productionInfo->time);
+                            } else {
+                                // Increase amount.
+                                iter->setRange(
+                                    (long double)(productionInfo->amount) * 3600
+                                            * saveModule->amount()
+                                            / productionInfo->time
+                                        + iter->min(),
+                                    (long double)(productionInfo->amount) * 3600
+                                            * saveModule->amount()
+                                            * (1.0 + productionInfo->workEffect)
+                                            / productionInfo->time
+                                        + iter->max());
+                            }
+
+                            // Transport type.
+                            switch (gameWares->ware(macro)->transportType) {
+                                case GameWares::TransportType::Container:
+                                    // Container.
+                                    summary.requirements.requireContainerStorage
+                                        = true;
+                                    break;
+
+                                case GameWares::TransportType::Solid:
+                                    // Solid.
+                                    summary.requirements.requireSolidStorage
+                                        = true;
+                                    break;
+
+                                case GameWares::TransportType::Liquid:
+                                    // Liquid.
+                                    summary.requirements.requireLiquidStorage
+                                        = true;
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            // Resources.
+                            for (auto resouce : productionInfo->resources) {
+                                const QString &macro = resouce->id;
+
+                                // Find/create ware.
+                                auto iter = summary.resources.find(macro);
+                                if (iter == summary.resources.end()) {
+                                    summary.resources[macro]
+                                        = Range<long double>(
+                                            (long double)(resouce->amount)
+                                                * 3600 * saveModule->amount()
+                                                / productionInfo->time,
+                                            (long double)(resouce->amount)
+                                                * 3600 * saveModule->amount()
+                                                * (1.0
+                                                   + productionInfo->workEffect)
+                                                / productionInfo->time);
+                                } else {
+                                    // Increase amount.
+                                    iter->setRange(
+                                        (long double)(resouce->amount) * 3600
+                                                * saveModule->amount()
+                                                / productionInfo->time
+                                            + iter->min(),
+                                        (long double)(resouce->amount) * 3600
+                                                * saveModule->amount()
+                                                * (1.0
+                                                   + productionInfo->workEffect)
+                                                / productionInfo->time
+                                            + iter->max());
+                                }
+
+                                // Transport type.
+                                switch (gameWares->ware(macro)->transportType) {
+                                    case GameWares::TransportType::Container:
+                                        // Container.
+                                        summary.requirements
+                                            .requireContainerStorage
+                                            = true;
+                                        break;
+
+                                    case GameWares::TransportType::Solid:
+                                        // Solid.
+                                        summary.requirements.requireSolidStorage
+                                            = true;
+                                        break;
+
+                                    case GameWares::TransportType::Liquid:
+                                        // Liquid.
+                                        summary.requirements
+                                            .requireLiquidStorage
+                                            = true;
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case GameStationModules::Property::Type::Cargo:
+                        // Has cargo.
+                        {
+                            ::std::shared_ptr<GameStationModules::HasCargo>
+                                hasCargo = ::std::dynamic_pointer_cast<
+                                    GameStationModules::HasCargo>(property);
+
+                            switch (hasCargo->cargoType) {
+                                case GameWares::TransportType::Container:
+                                    // Container.
+                                    summary.storage.container
+                                        += hasCargo->cargoSize
+                                           * saveModule->amount();
+                                    break;
+
+                                case GameWares::TransportType::Solid:
+                                    // Solid.
+                                    summary.storage.solid
+                                        += hasCargo->cargoSize
+                                           * saveModule->amount();
+                                    break;
+
+                                case GameWares::TransportType::Liquid:
+                                    // Liquid.
+                                    summary.storage.liquid
+                                        += hasCargo->cargoSize
+                                           * saveModule->amount();
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    // Intermediates
+    for (auto macro : summary.products.keys()) {
+        if (summary.resources.find(macro) != summary.resources.end()) {
+            auto productRange  = summary.products[macro];
+            auto resourceRange = summary.resources[macro];
+            summary.intermediates[macro]
+                = Range<long double>(productRange.min() - resourceRange.min(),
+                                     productRange.max() - resourceRange.max());
+            summary.products.remove(macro);
+            summary.resources.remove(macro);
+        }
+    }
+}
+
+/**
+ * @brief       Show summary.
+ *
+ * @param[in]   summary     Summary.
+ */
+void EditorWidget::showSummary(const SummaryInfo &summary)
+{
+#define SET_HIDE_ZERO(item, value)                      \
+    {                                                   \
+        (item)->setText(1, QString("%1").arg((value))); \
+        (item)->setHidden((value) == 0);                \
+    }
+    m_itemHull->setText(1, QString("%1").arg(summary.hull));
+    m_itemExplosionDamage->setText(1,
+                                   QString("%1").arg(summary.explosionDamage));
+
+    m_itemWeapons->setHidden(
+        summary.weapons.sLaunchTube == 0 && summary.weapons.mLaunchTube == 0
+        && summary.weapons.mTurret == 0 && summary.weapons.lTurret == 0);
+    SET_HIDE_ZERO(m_itemWeaponSLaunchTube, summary.weapons.sLaunchTube);
+    SET_HIDE_ZERO(m_itemWeaponMLaunchTube, summary.weapons.mLaunchTube);
+    SET_HIDE_ZERO(m_itemWeaponMTurret, summary.weapons.mTurret);
+    SET_HIDE_ZERO(m_itemWeaponLTurret, summary.weapons.lTurret);
+
+    m_itemShields->setHidden(summary.shields.mShield == 0
+                             && summary.shields.lShield == 0);
+    SET_HIDE_ZERO(m_itemShieldMShield, summary.shields.mShield);
+    SET_HIDE_ZERO(m_itemShieldLShield, summary.shields.lShield);
+
+    m_itemStorage->setHidden(summary.storage.container == 0
+                             && summary.storage.solid == 0
+                             && summary.storage.liquid == 0);
+    SET_HIDE_ZERO(m_itemStorageContainer, summary.storage.container);
+    SET_HIDE_ZERO(m_itemStorageSolid, summary.storage.solid);
+    SET_HIDE_ZERO(m_itemStorageLiquid, summary.storage.liquid);
+
+    m_itemDockingbay->setHidden(
+        summary.dockingBay.sDock == 0 && summary.dockingBay.mDock == 0
+        && summary.dockingBay.lDock == 0 && summary.dockingBay.xlDock == 0
+        && summary.dockingBay.lXLDock == 0);
+    SET_HIDE_ZERO(m_itemDockingbaySDock, summary.dockingBay.sDock);
+    SET_HIDE_ZERO(m_itemDockingbayMDock, summary.dockingBay.mDock);
+    SET_HIDE_ZERO(m_itemDockingbayLDock, summary.dockingBay.lDock);
+    SET_HIDE_ZERO(m_itemDockingbayXLDock, summary.dockingBay.xlDock);
+    SET_HIDE_ZERO(m_itemDockingbayLXLDock, summary.dockingBay.lXLDock);
+
+    m_itemShipStorage->setHidden(summary.shipStorage.sShipCargo == 0
+                                 && summary.shipStorage.mShipCargo == 0);
+    SET_HIDE_ZERO(m_itemShipStorageSShipCargo, summary.shipStorage.sShipCargo);
+    SET_HIDE_ZERO(m_itemShipStorageMShipCargo, summary.shipStorage.sShipCargo);
+
+    m_itemWorkforce->setText(1, QString("%1").arg(summary.workforce));
+    m_itemSurplusWorkforce->setText(
+        1, QString("%1").arg(summary.surplusWorkforce));
+
+    m_itemResources->update(summary.resources);
+    m_itemIntermediates->update(summary.intermediates);
+    m_itemProducts->update(summary.products);
+
+#undef SET_HIDE_ZERO
+}
+
+/**
+ * @brief       Check summary.
+ *
+ * @param[in]   summary     Summary.
+ */
+void EditorWidget::checkSummary(const SummaryInfo &summary) {}
 
 /**
  * @brief	Close save file.
@@ -886,14 +1501,46 @@ void EditorWidget::saveAs()
 void EditorWidget::onLanguageChanged()
 {
     m_itemGroups->setText(0, STR("STR_STATION_MODULES"));
+
     m_itemSummary->setText(0, STR("STR_SUMMARY"));
-    m_itemHull->setText(0, STR("STR_INFO_HULL"));
-    m_itemExplosionDamage->setText(0, STR("STR_INFO_EXPLOSION_DAMAGE"));
-    m_itemWeapons->setText(0, STR("STR_WEAPONS"));
-    m_itemShields->setText(0, STR("STR_SHIELDS"));
-    m_itemStorage->setText(0, STR("STR_STORAGE"));
-    m_itemDockingbay->setText(0, STR("STR_DOCKINGBAY"));
-    m_itemWorkforce->setText(0, STR("STR_WORKFORCE"));
+    m_itemHull->setText(0, STR("STR_SUMMARY_HULL"));
+    m_itemExplosionDamage->setText(0, STR("STR_SUMMARY_EXPLOSION_DAMAGE"));
+
+    m_itemWeapons->setText(0, STR("STR_SUMMARY_WEAPONS"));
+    m_itemWeaponSLaunchTube->setText(0, STR("STR_SUMMARY_S_LAUNCH_TUBE"));
+    m_itemWeaponMLaunchTube->setText(0, STR("STR_SUMMARY_M_LAUNCH_TUBE"));
+    m_itemWeaponMTurret->setText(0, STR("STR_SUMMARY_M_TURRET"));
+    m_itemWeaponLTurret->setText(0, STR("STR_SUMMARY_L_TURRET"));
+
+    m_itemShields->setText(0, STR("STR_SUMMARY_SHIELDS"));
+    m_itemShieldMShield->setText(0, STR("STR_SUMMARY_M_SHIELD"));
+    m_itemShieldLShield->setText(0, STR("STR_SUMMARY_L_SHIELD"));
+
+    m_itemStorage->setText(0, STR("STR_SUMMARY_STORAGE"));
+    m_itemStorageContainer->setText(0, STR("STR_SUMMARY_CARGO_TYPE_CONTAINER"));
+    m_itemStorageSolid->setText(0, STR("STR_SUMMARY_CARGO_TYPE_SOLID"));
+    m_itemStorageLiquid->setText(0, STR("STR_SUMMARY_CARGO_TYPE_LIQUID"));
+
+    m_itemDockingbay->setText(0, STR("STR_SUMMARY_DOCKINGBAY"));
+    m_itemDockingbaySDock->setText(0, STR("STR_SUMMARY_S_DOCK"));
+    m_itemDockingbayMDock->setText(0, STR("STR_SUMMARY_M_DOCK"));
+    m_itemDockingbayLDock->setText(0, STR("STR_SUMMARY_L_DOCK"));
+    m_itemDockingbayXLDock->setText(0, STR("STR_SUMMARY_XL_DOCK"));
+    m_itemDockingbayLXLDock->setText(0, STR("STR_SUMMARY_L_XL_DOCK"));
+
+    m_itemShipStorage->setText(0, STR("STR_SUMMARY_SHIP_STORAGE"));
+    m_itemShipStorageSShipCargo->setText(0, STR("STR_SUMMARY_S_SHIP_CAPACITY"));
+    m_itemShipStorageMShipCargo->setText(0, STR("STR_SUMMARY_M_SHIP_CAPACITY"));
+
+    m_itemWorkforce->setText(0, STR("STR_SUMMARY_WORKFORCE"));
+    m_itemSurplusWorkforce->setText(0, STR("STR_SUMMARY_SURPLUS_WORKFORCE"));
+
+    m_itemResources->setText(0, STR("STR_SUMMARY_RESOURCES"));
+    m_itemResources->onLanguageChanged();
+    m_itemIntermediates->setText(0, STR("STR_SUMMARY_INTERMEDIATES"));
+    m_itemIntermediates->onLanguageChanged();
+    m_itemProducts->setText(0, STR("STR_SUMMARY_PRODUCTS"));
+    m_itemProducts->onLanguageChanged();
 }
 
 /**
@@ -951,6 +1598,13 @@ void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
     ModuleItem *moduleItem = dynamic_cast<ModuleItem *>(item);
     if (moduleItem != nullptr) {
         m_infoWidget->showStationModuleInfo(moduleItem->module()->module());
+        return;
+    }
+
+    // Ware item.
+    WareItem *wareItem = dynamic_cast<WareItem *>(item);
+    if (wareItem != nullptr) {
+        m_infoWidget->showWareInfo(wareItem->ware());
         return;
     }
 }

@@ -18,6 +18,11 @@ class Range {
   public:
     /**
      * @brief       Constructor.
+     */
+    Range() = default;
+
+    /**
+     * @brief       Constructor.
      *
      * @param[in]   min     Minimum value.
      * @param[in]   max     Maxium value.

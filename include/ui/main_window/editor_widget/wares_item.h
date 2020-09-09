@@ -47,7 +47,7 @@ class WaresItem : public QTreeWidgetItem {
      *
      * @param[in]   wares       Macros and ranges of the wares.
      */
-    void update(const QMap<QString, Range<qint64>> &wares);
+    void update(const QMap<QString, Range<long double>> &wares);
 
     /**
      * @brief		Change language.

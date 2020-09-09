@@ -56,7 +56,7 @@ void WaresItem::removeWare(const QString &macro)
 /**
  * @brief       Update wares.
  */
-void WaresItem::update(const QMap<QString, Range<qint64>> &wares)
+void WaresItem::update(const QMap<QString, Range<long double>> &wares)
 {
     // Remove old wares.
     for (auto &key : m_macroMap.keys()) {
@@ -68,7 +68,9 @@ void WaresItem::update(const QMap<QString, Range<qint64>> &wares)
 
     // Set wares range.
     for (auto iter = wares.begin(); iter != wares.end(); ++iter) {
-        this->setWareAmountRange(iter.key(), *iter);
+        this->setWareAmountRange(iter.key(),
+                                 Range<qint64>(qRound((double)(iter->min())),
+                                               qRound((double)(iter->max()))));
     }
 }
 

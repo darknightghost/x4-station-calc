@@ -16,6 +16,7 @@
 #include <save/save.h>
 #include <ui/main_window/editor_widget/group_item.h>
 #include <ui/main_window/editor_widget/module_item.h>
+#include <ui/main_window/editor_widget/wares_item.h>
 #include <ui/main_window/editor_widget/warning_widget.h>
 #include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/main_window.h>
@@ -70,22 +71,23 @@ class EditorWidget : public QWidget {
             quint64 container = 0; ///< Container.
             quint64 solid     = 0; ///< Solid.
             quint64 liquid    = 0; ///< Liquid.
-        } Storage;                 ///< Storage.
+        } storage;                 ///< Storage.
         struct {
-            quint64 m_sDock   = 0; ///< S dock.
-            quint64 m_mDock   = 0; ///< M dock.
-            quint64 m_lDock   = 0; ///< L dock.
-            quint64 m_xlDock  = 0; ///< XL dock.
-            quint64 m_lXLDock = 0; ///< L/XL dock.
-        } dockingBay;              ///< Docking bay.
+            quint64 sDock   = 0; ///< S dock.
+            quint64 mDock   = 0; ///< M dock.
+            quint64 lDock   = 0; ///< L dock.
+            quint64 xlDock  = 0; ///< XL dock.
+            quint64 lXLDock = 0; ///< L/XL dock.
+        } dockingBay;            ///< Docking bay.
         struct {
-            quint64 m_sShipCargo = 0;               ///< S ship cargo.
-            quint64 m_mShipCargo = 0;               ///< M ship cargo.
-        } ShipStorage;                              ///< Ship storage.
-        qint64                       workforce;     ///< Workforce.
-        QMap<QString, Range<qint64>> resources;     ///< Resources.
-        QMap<QString, Range<qint64>> intermediates; ///< Intermediates.
-        QMap<QString, Range<qint64>> products;      ///< Products.
+            quint64 sShipCargo = 0;                      ///< S ship cargo.
+            quint64 mShipCargo = 0;                      ///< M ship cargo.
+        } shipStorage;                                   ///< Ship storage.
+        quint64 workforce        = 0;                    ///< Workforce.
+        qint64  surplusWorkforce = 0;                    ///< Surplus workforce.
+        QMap<QString, Range<long double>> resources;     ///< Resources.
+        QMap<QString, Range<long double>> intermediates; ///< Intermediates.
+        QMap<QString, Range<long double>> products;      ///< Products.
 
         struct {
             bool requireContainerStorage
@@ -120,14 +122,39 @@ class EditorWidget : public QWidget {
     QTreeWidgetItem *m_itemSummary;         ///< Summary.
     QTreeWidgetItem *m_itemHull;            ///< Hull.
     QTreeWidgetItem *m_itemExplosionDamage; ///< Explosion damage.
-    QTreeWidgetItem *m_itemWeapons;         ///< Weapons.
-    QTreeWidgetItem *m_itemShields;         ///< Shields.
-    QTreeWidgetItem *m_itemStorage;         ///< Storage.
-    QTreeWidgetItem *m_itemDockingbay;      ///< Docking bay.
-    QTreeWidgetItem *m_itemWorkforce;       ///< Workforce.
-    QTreeWidgetItem *m_itemResources;       ///< Resources.
-    QTreeWidgetItem *m_itemIntermediates;   ///< Intermediates.
-    QTreeWidgetItem *m_itemProducts;        ///< Products.
+
+    QTreeWidgetItem *m_itemWeapons;           ///< Weapons.
+    QTreeWidgetItem *m_itemWeaponSLaunchTube; ///< Weapon s launch tube.
+    QTreeWidgetItem *m_itemWeaponMLaunchTube; ///< Weapon m launch tube.
+    QTreeWidgetItem *m_itemWeaponMTurret;     ///< Weapon m turret.
+    QTreeWidgetItem *m_itemWeaponLTurret;     ///< Weapon l turret.
+
+    QTreeWidgetItem *m_itemShields;       ///< Shields.
+    QTreeWidgetItem *m_itemShieldMShield; ///< Shield l shield.
+    QTreeWidgetItem *m_itemShieldLShield; ///< Shield m shield.
+
+    QTreeWidgetItem *m_itemStorage;          ///< Storage.
+    QTreeWidgetItem *m_itemStorageContainer; ///< Storage container.
+    QTreeWidgetItem *m_itemStorageSolid;     ///< Storage solid.
+    QTreeWidgetItem *m_itemStorageLiquid;    ///< Storage liquid.
+
+    QTreeWidgetItem *m_itemDockingbay;        ///< Docking bay.
+    QTreeWidgetItem *m_itemDockingbaySDock;   ///< Docking bay s dock.
+    QTreeWidgetItem *m_itemDockingbayMDock;   ///< Docking bay m dock.
+    QTreeWidgetItem *m_itemDockingbayLDock;   ///< Docking bay l dock.
+    QTreeWidgetItem *m_itemDockingbayXLDock;  ///< Docking bay xl dock.
+    QTreeWidgetItem *m_itemDockingbayLXLDock; ///< Docking bay l/xl dock.
+
+    QTreeWidgetItem *m_itemShipStorage;           ///< Ship storage.
+    QTreeWidgetItem *m_itemShipStorageSShipCargo; ///< Ship storage s ship.
+    QTreeWidgetItem *m_itemShipStorageMShipCargo; ///< Ship storage m ship.
+
+    QTreeWidgetItem *m_itemWorkforce;        ///< Workforce.
+    QTreeWidgetItem *m_itemSurplusWorkforce; ///< Surplus workforce.
+
+    WaresItem *m_itemResources;     ///< Resources.
+    WaresItem *m_itemIntermediates; ///< Intermediates.
+    WaresItem *m_itemProducts;      ///< Products.
 
   private:
     static QMap<QString, EditorWidget *> _opendFiles; ///< Opened files.
@@ -248,6 +275,27 @@ class EditorWidget : public QWidget {
      * @brief       Update summary.
      */
     void updateSummary();
+
+    /**
+     * @brief       Make summary.
+     *
+     * @param[out]  summary     Summary.
+     */
+    void makeSummary(SummaryInfo &summary);
+
+    /**
+     * @brief       Show summary.
+     *
+     * @param[in]   summary     Summary.
+     */
+    void showSummary(const SummaryInfo &summary);
+
+    /**
+     * @brief       Check summary.
+     *
+     * @param[in]   summary     Summary.
+     */
+    void checkSummary(const SummaryInfo &summary);
 
   private:
     /**

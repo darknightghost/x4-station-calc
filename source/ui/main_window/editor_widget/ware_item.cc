@@ -7,6 +7,7 @@
 WareItem::WareItem(const QString &ware, const Range<qint64> &range) :
     QTreeWidgetItem(), m_ware(ware), m_range(range)
 {
+    this->setFlags(Qt::ItemFlag::ItemIsEnabled);
     this->setText(1,
                   QString("%1/h - %2/h").arg(m_range.min()).arg(m_range.max()));
     this->onLanguageChanged();

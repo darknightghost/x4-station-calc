@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCore/QLocale>
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
@@ -23,6 +24,8 @@ class StringTable : public QObject, public ISingleton<StringTable> {
   private:
     static QMap<int, QString>
         _languageTable; ///< Convert qt language to language string.
+    static QMap<QString, QLocale>
+        _qtLanguageTable; ///< Convert language string to qt language.
     static QMap<QString, uint32_t>
         _languageIDTable; ///< Convert language string to ID.
 
@@ -100,6 +103,11 @@ class StringTable : public QObject, public ISingleton<StringTable> {
      * @return	System locale.
      */
     QString systemLanguage();
+
+    /**
+     * @brief	Update default locale.
+     */
+    void updateLocale();
 };
 
 #define STR(id) (::StringTable::instance()->getString((id)))

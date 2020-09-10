@@ -1,7 +1,9 @@
+#include <QtCore/QCollator>
 #include <QtCore/QDebug>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMessageBox>
 
 #include <common/compare.h>
 #include <game_data/game_data.h>
@@ -151,10 +153,17 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
                   this, &StationModulesWidget::onLanguageChanged);
 
     this->onLanguageChanged();
+    m_comboByResource->setCurrentIndex(0);
     m_comboByProduction->setCurrentIndex(0);
     m_comboByRaces->setCurrentIndex(0);
 
     this->connect(m_comboByRaces,
+                  QOverload<int>::of(&QComboBox::currentIndexChanged),
+                  [=](int) {
+                      this->filterModules();
+                  });
+
+    this->connect(m_comboByResource,
                   QOverload<int>::of(&QComboBox::currentIndexChanged),
                   [=](int) {
                       this->filterModules();
@@ -187,12 +196,48 @@ void StationModulesWidget::setAddToStationStatus(bool enabled)
 /**
  * @brief		Filter modules by product.
  */
-void StationModulesWidget::filterByProduct(QString ware) {}
+void StationModulesWidget::onFilterByProduct(QString ware)
+{
+    for (auto i = 0; i < m_comboByProduction->count(); ++i) {
+        QString macro = m_comboByProduction->itemData(i).toString();
+        if (macro == ware) {
+            m_comboByProduction->setCurrentIndex(i);
+            if (! m_widgetFilters->isVisible()) {
+                this->onBtnShowHideFilterWidgetClicked();
+            }
+
+            m_chkByProduction->setChecked(true);
+
+            return;
+        }
+    }
+
+    QMessageBox::warning(this, STR("STR_WARNING"),
+                         STR("STR_PRODUCT_NOT_FOUND"));
+}
 
 /**
  * @brief		Filter modules by resource.
  */
-void StationModulesWidget::filterByResource(QString ware) {}
+void StationModulesWidget::onFilterByResource(QString ware)
+{
+    for (auto i = 0; i < m_comboByResource->count(); ++i) {
+        QString macro = m_comboByResource->itemData(i).toString();
+        if (macro == ware) {
+            m_comboByResource->setCurrentIndex(i);
+
+            if (! m_widgetFilters->isVisible()) {
+                this->onBtnShowHideFilterWidgetClicked();
+            }
+
+            m_chkByResource->setChecked(true);
+            return;
+        }
+    }
+
+    QMessageBox::warning(this, STR("STR_WARNING"),
+                         STR("STR_RESOURCE_NOT_FOUND"));
+}
 
 /**
  * @brief		Destructor.
@@ -368,10 +413,11 @@ void StationModulesWidget::onLanguageChanged()
  */
 void StationModulesWidget::sortComboBox(QComboBox *combo)
 {
-    int index = combo->currentIndex();
+    QCollator collator;
+    int       index = combo->currentIndex();
     for (int i = 0; i < combo->count(); ++i) {
         for (int j = i + 1; j < combo->count(); ++j) {
-            if (combo->itemText(i) > combo->itemText(j)) {
+            if (collator.compare(combo->itemText(i), combo->itemText(j)) > 0) {
                 // Swap
                 QVariant v = combo->itemData(i);
                 QString  s = combo->itemText(i);
@@ -405,6 +451,27 @@ void StationModulesWidget::filterModules()
                        == moduleItem->module()->races.end()) {
                 moduleItem->setHidden(true);
                 continue;
+            }
+        }
+
+        if (m_chkByResource->isChecked()) {
+            if (moduleItem->module()->moduleClass
+                == GameStationModules::StationModule::StationModuleClass::
+                    Production) {
+                ::std::shared_ptr<GameStationModules::StationModule> module
+                    = moduleItem->module();
+                ::std::shared_ptr<GameStationModules::SupplyProduct> property
+                    = ::std::static_pointer_cast<
+                        GameStationModules::SupplyProduct>(
+                        module->properties[GameStationModules::Property::Type::
+                                               SupplyProduct]);
+
+                if (property->productionInfo->resources.find(
+                        m_comboByResource->currentData().toString())
+                    == property->productionInfo->resources.end()) {
+                    moduleItem->setHidden(true);
+                    continue;
+                }
             }
         }
 

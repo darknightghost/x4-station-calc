@@ -173,5 +173,15 @@
 		"zh_CN" : "产品",
 		"zh_TW" : "產品",
 		"en_US" : "Products"
-	}
+	},
+    "STR_FILTER_MODULE_BY_PRODUCT": {
+        "zh_CN": "按产品过滤空间站模块",
+        "zh_TW": "按產品過濾空間站模塊",
+        "en_US": "Filter Station Modules by &Protuct"
+    },
+    "STR_FILTER_MODULE_BY_RESOURCE": {
+        "zh_CN": "按资源过滤空间站模块",
+        "zh_TW": "按資源過濾空間站模塊",
+        "en_US": "Filter Station Modules by &Resource"
+    }
 }

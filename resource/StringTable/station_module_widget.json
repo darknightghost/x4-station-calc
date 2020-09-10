@@ -73,5 +73,15 @@
         "zh_CN": "连接模块",
         "zh_TW": "鏈接模塊",
         "en_US": "Connection Modules"
+    },
+    "STR_PRODUCT_NOT_FOUND": {
+        "zh_CN": "产品未找到!",
+        "zh_TW": "產品未找到!",
+        "en_US": "Product Not Found!"
+    },
+    "STR_RESOURCE_NOT_FOUND": {
+        "zh_CN": "资源未找到!",
+        "zh_TW": "資源未找到!",
+        "en_US": "Resource Not found!"
     }
 }

@@ -19,6 +19,11 @@
 		"zh_TW" : "錯誤",
 		"en_US" : "Error"
 	},
+	"STR_WARNING" : {
+		"zh_CN" : "警告",
+		"zh_TW" : "警告",
+		"en_US" : "Warning"
+	},
 	"STR_BTN_BROWSE" : {
 		"zh_CN" : "浏览(&B)",
 		"zh_TW" : "瀏覽(&B)",

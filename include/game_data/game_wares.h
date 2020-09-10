@@ -58,12 +58,12 @@ class GameWares :
      * @brief	Production information.
      */
     struct ProductionInfo {
-        QString                              id;         ///< Ware ID.
-        quint32                              time;       ///< Time per round(s).
-        quint32                              amount;     ///< Amount per round.
-        QString                              method;     ///< Method.
-        double                               workEffect; ///< Effect of works.
-        QVector<::std::shared_ptr<Resource>> resources;  ///< Resource.
+        QString id;         ///< Ware ID.
+        quint32 time;       ///< Time per round(s).
+        quint32 amount;     ///< Amount per round.
+        QString method;     ///< Method.
+        double  workEffect; ///< Effect of works.
+        QMap<QString, ::std::shared_ptr<Resource>> resources; ///< Resource.
     };
 
     /**

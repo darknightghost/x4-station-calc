@@ -209,11 +209,25 @@ class EditorWidget : public QWidget {
   signals:
     /**
      * @brief       Emit when enable status of button "Add to Station" should
-     *              be changed,
+     *              be changed.
      *
      * @param[in]   status      Enable status.
      */
     void addToStationStatusChaged(bool status);
+
+    /**
+     * @brief       Emit when filter production modules by product.
+     *
+     * @param[in]   ware        Ware.
+     */
+    void filterByProduct(QString ware);
+
+    /**
+     * @brief       Emit when filter production modules by resource.
+     *
+     * @param[in]   ware        Ware.
+     */
+    void filterByResource(QString ware);
 
   private slots:
     /**

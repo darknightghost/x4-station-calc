@@ -1741,6 +1741,28 @@ void EditorWidget::onCustomContextMenuRequested(const QPoint &)
         menu.exec(QCursor::pos());
         return;
     }
+
+    if (dynamic_cast<WareItem *>(item) != nullptr) {
+        WareItem *wareItem = static_cast<WareItem *>(item);
+
+        QMenu menu;
+
+        QAction actFilterModuleByProduct(STR("STR_FILTER_MODULE_BY_PRODUCT"));
+        menu.addAction(&actFilterModuleByProduct);
+        this->connect(&actFilterModuleByProduct, &QAction::triggered,
+                      [this, wareItem]() -> void {
+                          emit this->filterByProduct(wareItem->ware());
+                      });
+
+        QAction actFilterModuleByResource(STR("STR_FILTER_MODULE_BY_RESOURCE"));
+        menu.addAction(&actFilterModuleByResource);
+        this->connect(&actFilterModuleByResource, &QAction::triggered,
+                      [this, wareItem]() -> void {
+                          emit this->filterByResource(wareItem->ware());
+                      });
+
+        menu.exec(QCursor::pos());
+    }
 }
 
 /**

@@ -23,6 +23,23 @@ QMap<int, QString>
                                  {QLocale::Language::Korean, "ko_KR"},
                                  {QLocale::Language::Japanese, "ja_JP"}});
 
+QMap<QString, QLocale> StringTable::_qtLanguageTable(
+    {{"zh_CN", QLocale(QLocale::Language::Chinese,
+                       QLocale::Script::SimplifiedChineseScript,
+                       QLocale::Country::AnyCountry)},
+     {"zh_TW", QLocale(QLocale::Language::Chinese,
+                       QLocale::Script::TraditionalChineseScript,
+                       QLocale::Country::AnyCountry)},
+     {"en_US", QLocale(QLocale::Language::English)},
+     {"de_DE", QLocale(QLocale::Language::German)},
+     {"fr_FR", QLocale(QLocale::Language::French)},
+     {"it_IT", QLocale(QLocale::Language::Italian)},
+     {"pt_PT", QLocale(QLocale::Language::Portuguese)},
+     {"es_ES", QLocale(QLocale::Language::Spanish)},
+     {"ru_RU", QLocale(QLocale::Language::Russian)},
+     {"ko_KR", QLocale(QLocale::Language::Korean)},
+     {"ja_JP", QLocale(QLocale::Language::Japanese)}});
+
 QMap<QString, uint32_t> StringTable::_languageIDTable({{"zh_CN", 86},
                                                        {"zh_TW", 88},
                                                        {"en_US", 44},
@@ -47,6 +64,7 @@ StringTable::StringTable() :
     Config::instance()->setString("/language", m_language);
     m_languageID = _languageIDTable[m_language];
     qDebug() << "Language : " << m_language << ".";
+    this->updateLocale();
 
     // Read string tables.
     QDir stringDir(":/StringTable");
@@ -183,6 +201,7 @@ void StringTable::setLanguage(const QString &language)
         m_languageID = *iter;
         Config::instance()->setString("/language", m_language);
     }
+    this->updateLocale();
     emit this->languageChanged();
     emit this->afterLanguageChanged();
 }
@@ -203,11 +222,19 @@ QString StringTable::systemLanguage()
     if (iter == _languageTable.end()) {
         return "en_US";
     } else {
-        if (*iter == "zh_CN" && locale.country() != QLocale::China) {
-            // Where is QLocale::Scotland, QLocale::Catalonian or
-            // QLocale::California.
+        if (*iter == "zh_CN" && locale.country() != QLocale::Country::China) {
+            // Where is QLocale::Country::Scotland, QLocale::Country::Catalonian
+            // or QLocale::Country::California.
             return "zh_TW";
         }
         return *iter;
     }
+}
+
+/**
+ * @brief	Update default locale.
+ */
+void StringTable::updateLocale()
+{
+    QLocale::setDefault(_qtLanguageTable[m_language]);
 }

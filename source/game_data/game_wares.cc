@@ -425,8 +425,8 @@ bool GameWares::onStartElementInPrimary(XMLLoader &                   loader,
 {
     UNREFERENCED_PARAMETER(context);
     if (name == "ware") {
-        info->resources.append(::std::shared_ptr<Resource>(
-            new Resource({attr["ware"], attr["amount"].toUInt()})));
+        info->resources[attr["ware"]] = ::std::shared_ptr<Resource>(
+            new Resource({attr["ware"], attr["amount"].toUInt()}));
     }
     loader.pushContext(XMLLoader::Context::create());
     return true;

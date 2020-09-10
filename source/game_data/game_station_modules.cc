@@ -907,7 +907,7 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
                         resource->amount = (quint32)::round(
                             ((long double)res->amount) * supplyInfo->amount
                             / info->amount);
-                        supplyInfo->resources.append(resource);
+                        supplyInfo->resources[resource->id] = resource;
                     }
 
                     property->supplyInfo = supplyInfo;

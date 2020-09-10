@@ -374,6 +374,12 @@ void MainWindow::open(QString path)
             this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
                           m_stationModulesWidget,
                           &StationModulesWidget::setAddToStationStatus);
+            this->connect(editorWidget, &EditorWidget::filterByProduct,
+                          m_stationModulesWidget,
+                          &StationModulesWidget::onFilterByProduct);
+            this->connect(editorWidget, &EditorWidget::filterByResource,
+                          m_stationModulesWidget,
+                          &StationModulesWidget::onFilterByResource);
             m_centralWidget->setActiveSubWindow(container);
             editorWidget->show();
         }
@@ -400,6 +406,12 @@ void MainWindow::newAction()
     this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
                   m_stationModulesWidget,
                   &StationModulesWidget::setAddToStationStatus);
+    this->connect(editorWidget, &EditorWidget::filterByProduct,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::onFilterByProduct);
+    this->connect(editorWidget, &EditorWidget::filterByResource,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::onFilterByResource);
     m_centralWidget->setActiveSubWindow(container);
     editorWidget->show();
 }

@@ -106,14 +106,14 @@ class StationModulesWidget : public ActionControlDockWidget {
      *
      * @param[in]	ware        Macro of the ware.
      */
-    void filterByProduct(QString ware);
+    void onFilterByProduct(QString ware);
 
     /**
      * @brief		Filter modules by resource.
      *
      * @param[in]	ware        Macro of the ware.
      */
-    void filterByResource(QString ware);
+    void onFilterByResource(QString ware);
 
   private:
     /**

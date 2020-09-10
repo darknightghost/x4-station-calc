@@ -5,6 +5,7 @@
 #### Build requirements
 
 * Qt5(Environment variables `QT` and `Path` must be setted on windows)
+* OpenSSL
 * cmake
 * gcc/mingw/visual studio
 * doxygen(Optional)

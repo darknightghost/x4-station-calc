@@ -95,6 +95,14 @@ endif ()
 
 # Dependencies
 find_package (PythonInterp REQUIRED 3)
+
+find_package (OpenSSL REQUIRED COMPONENTS SSL Crypto)
+include_directories ("${OPENSSL_INCLUDE_DIR}")
+if ("${OPENSSL_VERSION}" VERSION_LESS "1.1.1")
+    message (FATAL_ERROR "The version of OpenSSL must be greater than 1.1.1.")
+
+endif ()
+
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Network REQUIRED)
@@ -166,6 +174,9 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Core
 	Qt5::Widgets
 	Qt5::Network
+    ${OPENSSL_LIBRARIES}
+    ${OPENSSL_SSL_LIBRARY}
+    ${OPENSSL_CRYPTO_LIBRARY}
 	)
 
 #Doc

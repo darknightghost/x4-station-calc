@@ -1,0 +1,13 @@
+{
+	"STR_TITLE_ABOUT" : {
+		"zh_CN" : "关于",
+		"zh_TW" : "關於",
+		"en_US" : "About"
+	},
+	"STR_ABOUT_VERSION" : {
+		"zh_CN" : "版本 : v%1",
+		"zh_TW" : "版本 : v%1",
+		"en_US" : "Version : v%1"
+	}
+
+}

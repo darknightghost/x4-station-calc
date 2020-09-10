@@ -34,6 +34,9 @@ def main():
             f.write(("        <file >%s</file>\n" %
                      (relpath)).encode(encoding="utf-8"))
 
+        f.write(("        <file alias=\"%s\">%s</file>\n" %
+                 ("Text/changelog", "../CHANGELOG")).encode(encoding="utf-8"))
+
         f.write("    </qresource>\n".encode(encoding="utf-8"))
         f.write("</RCC>".encode(encoding="utf-8"))
 

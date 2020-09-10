@@ -156,7 +156,6 @@ bool in(T value, T1 value1, Values... values)
  * @brief		End of the recursion.
  *
  * @tparam		T		Type of the value.
- * @param[in]	value	Value to check.
  *
  * @return		\c false.
  */
@@ -193,7 +192,6 @@ bool notIn(T value, T1 value1, Values... values)
  * @brief		End of the recursion.
  *
  * @tparam		T		Type of the value.
- * @param[in]	value	Value to check.
  *
  * @return		\c true.
  */

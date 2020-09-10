@@ -3,7 +3,7 @@
 #include <QtWidgets/QSpinBox>
 
 /**
- * @breif   Spin box for module amount.
+ * @brief   Spin box for module amount.
  */
 class AmountSpinBox : public QSpinBox {
     Q_OBJECT;

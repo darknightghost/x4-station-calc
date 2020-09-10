@@ -14,6 +14,11 @@
 		"zh_TW" : "取消(&C)",
 		"en_US" : "&Cancel"
 	},
+	"STR_INFO":{
+		"zh_CN" : "信息",
+		"zh_TW" : "信息",
+		"en_US" : "Info"
+	},
 	"STR_ERROR" : {
 		"zh_CN" : "错误",
 		"zh_TW" : "錯誤",

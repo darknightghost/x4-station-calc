@@ -134,6 +134,16 @@ class MainWindow : public QMainWindow {
      */
     void editorActived(QMdiSubWindow *window);
 
+    /**
+     * @brief		Ask game path.
+     */
+    void askGamePath();
+
+    /**
+     * @brief		Open about dialog.
+     */
+    void onAboutDialog();
+
   protected slots:
     /**
      * @brief		Change language.

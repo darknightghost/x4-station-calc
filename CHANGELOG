@@ -1,0 +1,28 @@
+v1.0.0
+    Rewrite in C++.
+    Load all data form installed game.
+
+v0.0.6
+    Fixed a mistake in the data of drone component production module.
+
+v0.0.5
+    Fixed a bug that exceptions in QT classes cannot be caught by logger.
+    Fixed a mistake in the data of Smart Chip Production module.
+    Add check update module.
+    Add "Filter Modules" button.
+
+v0.0.4
+    Fixed a bug that the amount of resource are not influenced by workforce now.
+
+v0.0.3
+    Fixed a bug that the amount of module cannot bigger than 100.
+    Fixed a mistake in the data of Wheat Production module.
+    Added toolbar(Icons are copied from gnome).
+    Added workforce information to build modules.
+
+v0.0.2
+    Added build modules which are added to X4:Foundnations 2.0.
+    Added information about the requirements of workforce of production modules to summary.
+
+v0.0.1
+    First version.

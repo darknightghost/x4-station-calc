@@ -96,7 +96,7 @@ class GroupItem : public QTreeWidgetItem {
     /**
      * @brief       Take child.
      *
-     * @param[in]   child       Child to take.
+     * @param[in]   index       Index of child to take.
      */
     ModuleItem *takeChild(int index);
 

@@ -144,14 +144,19 @@
 		"zh_TW" : "打開空間站",
 		"en_US" : "Open Station"
 	},
-	"STR_ERROR" : {
-		"zh_CN" : "错误",
-		"zh_TW" : "錯誤",
-		"en_US" : "Error"
-	},
 	"STR_FAILED_OPEN_FILE" : {
 		"zh_CN" : "打开文件\"%1\"失败!",
 		"zh_TW" : "打開文件\"%1\"失敗!",
 		"en_US" : "Failed to open file \"%1\"!"
-	}
+	},
+    "STR_INFO_ILLEGAL_GAME_PATH": {
+        "zh_CN" : "游戏路径无效.",
+		"zh_TW" : "遊戲路徑無效.",
+        "en_US" : "The path of game is unavailable."
+    },
+    "STR_INFO_EFFECT_NEXT_LAUNCH": {
+        "zh_CN" : "修改将在下次启动后生效.",
+		"zh_TW" : "修改將在下次啓動後生效.",
+        "en_US" : "The modification will take effect after the next launch."
+    }
 }

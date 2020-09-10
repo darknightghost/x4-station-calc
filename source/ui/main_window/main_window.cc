@@ -15,6 +15,7 @@
 #include <config.h>
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <ui/about_dialog.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
@@ -285,6 +286,8 @@ void MainWindow::initMenuToolBar()
     // Menu "Settings->Game Path".
     m_actionSetttingGamePath = new QAction(this);
     m_menuSettings->addAction(m_actionSetttingGamePath);
+    this->connect(m_actionSetttingGamePath, &QAction::triggered, this,
+                  &MainWindow::askGamePath);
 
     // View menu
     // Menu "View".
@@ -307,6 +310,8 @@ void MainWindow::initMenuToolBar()
     // Menu "Help->About".
     m_helpAbout = new QAction(this);
     m_menuHelp->addAction(m_helpAbout);
+    this->connect(m_helpAbout, &QAction::triggered, this,
+                  &MainWindow::onAboutDialog);
     m_menuHelp->addSeparator();
 
     // Menu "Help->Check Update".
@@ -462,6 +467,48 @@ void MainWindow::editorActived(QMdiSubWindow *window)
     } else {
         static_cast<EditorWidget *>(window->widget())->active();
     }
+}
+
+/**
+ * @brief		Ask game path.
+ */
+void MainWindow::askGamePath()
+{
+    while (true) {
+        QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
+                               Config::instance()->getString("/gamePath", ""),
+                               "*");
+        fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+        fileDialog.setFileMode(QFileDialog::FileMode::Directory);
+        fileDialog.setFilter(QDir::Filter::Dirs | QDir::Filter::Hidden
+                             | QDir::Filter::System);
+        if (fileDialog.exec() != QDialog::DialogCode::Accepted
+            || fileDialog.selectedFiles().empty()) {
+            return;
+        }
+        QString str = QDir(fileDialog.selectedFiles()[0]).absolutePath();
+        qDebug() << "Selected:" << str;
+
+        if (GameData::instance()->checkGamePath(str)) {
+            Config::instance()->setString("/gamePath", str);
+            QMessageBox::information(this, STR("STR_INFO"),
+                                     STR("STR_INFO_EFFECT_NEXT_LAUNCH"));
+            return;
+        } else {
+            QMessageBox::critical(this, STR("STR_ERROR"),
+                                  STR("STR_INFO_ILLEGAL_GAME_PATH"));
+        }
+    }
+}
+
+/**
+ * @brief		Open about dialog.
+ */
+void MainWindow::onAboutDialog()
+{
+    AboutDialog aboutDialog;
+
+    aboutDialog.exec();
 }
 
 /**

@@ -43,6 +43,7 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
                 qDebug() << "Path sent to port "
                          << *(quint16 *)(m_sharedMemory->data()) << ".";
             }
+
             m_sharedMemory->unlock();
             this->setInitialized();
             return;
@@ -90,11 +91,10 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
                 m_pathsLock.lock();
                 if (! m_block) {
                     while (! m_paths.empty()) {
-                        if (m_paths.front() == "") {
-                            emit this->active();
-                        } else {
+                        if (m_paths.front() != "") {
                             emit this->openFile(m_paths.front());
                         }
+                        emit this->active();
                         m_paths.pop_front();
                     }
                 }
@@ -152,7 +152,10 @@ void OpenFileListener::unblock()
         m_block = false;
         m_pathsLock.lock();
         while (! m_paths.empty()) {
-            emit this->openFile(m_paths.front());
+            if (m_paths.front() != "") {
+                emit this->openFile(m_paths.front());
+            }
+            emit this->active();
             m_paths.pop_front();
         }
         m_pathsLock.unlock();

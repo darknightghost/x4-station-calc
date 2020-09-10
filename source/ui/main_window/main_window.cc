@@ -110,6 +110,12 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     this->onLanguageChanged();
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &MainWindow::onLanguageChanged);
+
+    // Open file listener.
+    this->connect(OpenFileListener::instance().get(),
+                  &OpenFileListener::openFile, this, &MainWindow::open);
+    this->connect(OpenFileListener::instance().get(), &OpenFileListener::active,
+                  this, &MainWindow::active);
 }
 
 /**

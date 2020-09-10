@@ -25,6 +25,7 @@ TransparentLabel::TransparentLabel(const QString &text, QWidget *parent) :
                        | Qt::AlignmentFlag::AlignTop);
 
     this->setWordWrap(true);
+    this->adjustSize();
 }
 
 /**
@@ -44,6 +45,7 @@ TransparentLabel::TransparentLabel(QWidget *parent) : QLabel(parent)
                        | Qt::AlignmentFlag::AlignTop);
 
     this->setWordWrap(true);
+    this->adjustSize();
 }
 
 /**

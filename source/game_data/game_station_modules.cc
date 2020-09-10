@@ -1049,24 +1049,25 @@ bool GameStationModules::onStartElementInProductionOfModuleMacro(
         }
         ::std::shared_ptr<GameWares::Ware> ware = wares->ware(attr["ware"]);
 
-        for (::std::shared_ptr<GameWares::ProductionInfo> productionInfo :
-             ware->productionInfos) {
-            if (productionInfo->method == method) {
-                ::std::shared_ptr<SupplyProduct> property;
-                auto                             iter
-                    = module->properties.find(Property::Type::SupplyProduct);
-                if (iter == module->properties.end()) {
-                    property
-                        = ::std::shared_ptr<SupplyProduct>(new SupplyProduct);
-                    module->properties[property->type] = property;
-                } else {
-                    property = ::std::static_pointer_cast<SupplyProduct>(*iter);
-                }
+        auto productionInfoIter = ware->productionInfos.find(method);
+        if (productionInfoIter == ware->productionInfos.end()) {
+            productionInfoIter = ware->productionInfos.find("default");
+        }
 
-                property->product        = attr["ware"];
-                property->productionInfo = productionInfo;
-                break;
+        if (productionInfoIter != ware->productionInfos.end()) {
+            ::std::shared_ptr<SupplyProduct>             property;
+            ::std::shared_ptr<GameWares::ProductionInfo> productionInfo
+                = *productionInfoIter;
+            auto iter = module->properties.find(Property::Type::SupplyProduct);
+            if (iter == module->properties.end()) {
+                property = ::std::shared_ptr<SupplyProduct>(new SupplyProduct);
+                module->properties[property->type] = property;
+            } else {
+                property = ::std::static_pointer_cast<SupplyProduct>(*iter);
             }
+
+            property->product        = attr["ware"];
+            property->productionInfo = productionInfo;
         }
     }
 

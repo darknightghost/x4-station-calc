@@ -36,7 +36,10 @@ class StationModulesWidget : public ActionControlDockWidget {
     QComboBox *m_comboByRaces; ///< Combobox to select race.
 
     QCheckBox *m_chkByProduction;   ///< By production checkbox.
-    QComboBox *m_comboByProduction; ///< Combobox to selecrt production.
+    QComboBox *m_comboByProduction; ///< Combobox to select production.
+
+    QCheckBox *m_chkByResource;   ///< By resource checkbox.
+    QComboBox *m_comboByResource; ///< Combobox to select resource.
 
     QCheckBox *m_chkByKeyword; ///< By production checkbox.
     QLineEdit *m_txtKeyword;   ///< Text box to input keyword.
@@ -54,6 +57,7 @@ class StationModulesWidget : public ActionControlDockWidget {
     QVector<StationModulesTreeWidgetItem *> m_moduleItems; ///< Module items.
     QSet<QString>                           m_races;       ///< Races.
     QSet<QString>                           m_products;    ///< Products.
+    QSet<QString>                           m_resources;   ///< Resources.
 
   public:
     /**
@@ -97,6 +101,20 @@ class StationModulesWidget : public ActionControlDockWidget {
      */
     void setAddToStationStatus(bool enabled);
 
+    /**
+     * @brief		Filter modules by product.
+     *
+     * @param[in]	ware        Macro of the ware.
+     */
+    void filterByProduct(QString ware);
+
+    /**
+     * @brief		Filter modules by resource.
+     *
+     * @param[in]	ware        Macro of the ware.
+     */
+    void filterByResource(QString ware);
+
   private:
     /**
      * @brief	Load all station modules.
@@ -138,6 +156,13 @@ class StationModulesWidget : public ActionControlDockWidget {
      * @param[in]	status		New status.
      */
     void onByProductionChkChanged(int status);
+
+    /**
+     * @brief		\c m_chkByResource status changed.
+     *
+     * @param[in]	status		New status.
+     */
+    void onByResourceChkChanged(int status);
 
     /**
      * @brief		\c m_chkByKeyword status changed.

@@ -964,8 +964,13 @@ void EditorWidget::showSummary(const SummaryInfo &summary)
         1, QString("%1").arg(summary.surplusWorkforce));
 
     m_itemResources->update(summary.resources);
+    m_itemResources->setHidden(m_itemResources->wareCount() == 0);
+
     m_itemIntermediates->update(summary.intermediates);
+    m_itemIntermediates->setHidden(m_itemIntermediates->wareCount() == 0);
+
     m_itemProducts->update(summary.products);
+    m_itemProducts->setHidden(m_itemProducts->wareCount() == 0);
 
 #undef SET_HIDE_ZERO
 }
@@ -1590,13 +1595,12 @@ void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
  */
 void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    if (column != 0) {
-        return;
-    }
-
     // Module item.
     ModuleItem *moduleItem = dynamic_cast<ModuleItem *>(item);
     if (moduleItem != nullptr) {
+        if (column != 0) {
+            return;
+        }
         m_infoWidget->showStationModuleInfo(moduleItem->module()->module());
         return;
     }

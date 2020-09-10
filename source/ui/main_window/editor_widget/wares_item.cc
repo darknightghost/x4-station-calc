@@ -19,6 +19,14 @@ bool WaresItem::hasWare(const QString &macro)
 }
 
 /**
+ * @brief       Get count of wares.
+ */
+quint64 WaresItem::wareCount() const
+{
+    return m_macroMap.size();
+}
+
+/**
  * @brief       Set ware range, if hte ware does not exists, the ware will
  *              be added to the item.
  */

@@ -27,6 +27,13 @@ class WaresItem : public QTreeWidgetItem {
     bool hasWare(const QString &macro);
 
     /**
+     * @brief       Get count of wares.
+     *
+     * @return      Count of wares.
+     */
+    quint64 wareCount() const;
+
+    /**
      * @brief       Set ware range, if hte ware does not exists, the ware will
      *              be added to the item.
      *

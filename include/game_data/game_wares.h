@@ -91,7 +91,7 @@ class GameWares :
         quint32           minPrice;      ///< Minimun price(CR).
         quint32           averagePrice;  ///< Average price(CR).
         quint32           maxPrice;      ///< Maxium price(CR).
-        QVector<::std::shared_ptr<ProductionInfo>>
+        QMap<QString, ::std::shared_ptr<ProductionInfo>>
             productionInfos; ///< Production informations.
     };
 

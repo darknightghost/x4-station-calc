@@ -72,15 +72,25 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
     m_comboByProduction->setEnabled(false);
     m_layoutFilters->addWidget(m_comboByProduction, 1, 1);
 
+    m_chkByResource = new QCheckBox(m_widgetFilters);
+    m_chkByResource->setChecked(false);
+    m_chkByResource->setTristate(false);
+    m_layoutFilters->addWidget(m_chkByResource, 2, 0);
+    this->connect(m_chkByResource, &QCheckBox::stateChanged, this,
+                  &StationModulesWidget::onByResourceChkChanged);
+    m_comboByResource = new QComboBox(m_widgetFilters);
+    m_comboByResource->setEnabled(false);
+    m_layoutFilters->addWidget(m_comboByResource, 2, 1);
+
     m_chkByKeyword = new QCheckBox(m_widgetFilters);
     m_chkByKeyword->setChecked(false);
     m_chkByKeyword->setTristate(false);
-    m_layoutFilters->addWidget(m_chkByKeyword, 2, 0);
+    m_layoutFilters->addWidget(m_chkByKeyword, 3, 0);
     this->connect(m_chkByKeyword, &QCheckBox::stateChanged, this,
                   &StationModulesWidget::onByKeywordChkChanged);
     m_txtKeyword = new QLineEdit(m_widgetFilters);
     m_txtKeyword->setEnabled(false);
-    m_layoutFilters->addWidget(m_txtKeyword, 2, 1);
+    m_layoutFilters->addWidget(m_txtKeyword, 3, 1);
 
     // Station modules.
     m_treeStationModules = new QTreeWidget(m_widget);
@@ -125,6 +135,10 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
 
     // Load modules
     this->loadStationModules();
+    for (auto &resource : m_resources) {
+        m_comboByResource->insertItem(-1, "", resource);
+    }
+
     for (auto &product : m_products) {
         m_comboByProduction->insertItem(-1, "", product);
     }
@@ -164,13 +178,21 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
 
 /**
  * @brief		Set enable status of add to station button.
- *
- * @param[in]	enabled		Enable status.
  */
 void StationModulesWidget::setAddToStationStatus(bool enabled)
 {
     m_btnAddToStation->setEnabled(enabled);
 }
+
+/**
+ * @brief		Filter modules by product.
+ */
+void StationModulesWidget::filterByProduct(QString ware) {}
+
+/**
+ * @brief		Filter modules by resource.
+ */
+void StationModulesWidget::filterByResource(QString ware) {}
 
 /**
  * @brief		Destructor.
@@ -252,6 +274,9 @@ void StationModulesWidget::loadStationModules()
                     = ::std::static_pointer_cast<
                         GameStationModules::SupplyProduct>(*iter);
                 m_products.insert(property->product);
+                for (auto resource : property->productionInfo->resources) {
+                    m_resources.insert(resource->id);
+                }
 
             } break;
 
@@ -303,8 +328,17 @@ void StationModulesWidget::onLanguageChanged()
         m_comboByProduction->setItemText(
             i, gameTexts->text(GameData::instance()->wares()->ware(id)->name));
     }
-    m_chkByKeyword->setText(STR("STR_BY_KEYWORD"));
     this->sortComboBox(m_comboByProduction);
+
+    m_chkByResource->setText(STR("STR_BY_RESOURCE"));
+    for (int i = 0; i < m_comboByResource->count(); ++i) {
+        QString id = m_comboByResource->itemData(i).toString();
+        m_comboByResource->setItemText(
+            i, gameTexts->text(GameData::instance()->wares()->ware(id)->name));
+    }
+    this->sortComboBox(m_comboByResource);
+
+    m_chkByKeyword->setText(STR("STR_BY_KEYWORD"));
 
     // Station modules.
     m_itemBuild->setText(0, STR("STATION_TYPE_BUILD"));
@@ -422,8 +456,6 @@ void StationModulesWidget::onBtnShowHideFilterWidgetClicked()
 
 /**
  * @brief		\c m_chkByRace status changed.
- *
- * @param[in]	status		New status.
  */
 void StationModulesWidget::onByRaceChkChanged(int status)
 {
@@ -438,8 +470,6 @@ void StationModulesWidget::onByRaceChkChanged(int status)
 
 /**
  * @brief		\c m_chkByProduction status changed.
- *
- * @param[in]	status		New status.
  */
 void StationModulesWidget::onByProductionChkChanged(int status)
 {
@@ -453,9 +483,21 @@ void StationModulesWidget::onByProductionChkChanged(int status)
 }
 
 /**
+ * @brief		\c m_chkByResource status changed.
+ */
+void StationModulesWidget::onByResourceChkChanged(int status)
+{
+    if (status == Qt::CheckState::Unchecked) {
+        m_comboByResource->setEnabled(false);
+
+    } else {
+        m_comboByResource->setEnabled(true);
+    }
+    this->filterModules();
+}
+
+/**
  * @brief		\c m_chkByKeyword status changed.
- *
- * @param[in]	status		New status.
  */
 void StationModulesWidget::onByKeywordChkChanged(int status)
 {

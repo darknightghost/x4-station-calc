@@ -29,6 +29,11 @@
 		"zh_TW" : "按產品(&P)",
 		"en_US" : "By &Product"
 	},
+	"STR_BY_RESOURCE" : {
+		"zh_CN" : "按资源(&E)",
+		"zh_TW" : "按資源(&E)",
+		"en_US" : "By R&esource"
+	},
 	"STR_BY_KEYWORD" : {
 		"zh_CN" : "按关键字(&K)",
 		"zh_TW" : "按關鍵字(&K)",

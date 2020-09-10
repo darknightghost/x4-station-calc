@@ -74,9 +74,10 @@ void InfoItem::onLanguageChanged()
 {
     this->setText(0, m_first->toString());
     if (m_second != nullptr) {
-        this->treeWidget()->setItemWidget(
-            this, 1,
-            new TransparentLabel(m_second->toString(), this->treeWidget()));
+        TransparentLabel *label
+            = new TransparentLabel(m_second->toString(), this->treeWidget());
+        this->treeWidget()->setItemWidget(this, 1, label);
+        label->adjustSize();
         // this->setText(1, m_second->toString());
     }
 }

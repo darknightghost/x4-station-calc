@@ -350,7 +350,7 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
                                 1,
                                 {}}));
 
-        ware->productionInfos.append(info);
+        ware->productionInfos[attr["method"]] = info;
 
         context.setOnStopElement(::std::bind(
             [](XMLLoader &, XMLLoader::Context &context,

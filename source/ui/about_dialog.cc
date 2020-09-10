@@ -37,7 +37,8 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 
     // Read changelog.
     QFile file(":/Text/changelog");
-    Q_ASSERT(file.open(QIODevice::ReadOnly));
+    bool  openResult = file.open(QIODevice::ReadOnly);
+    Q_ASSERT(openResult);
     m_txtChangelog->setText(QString::fromUtf8(file.readAll()));
 
     // Size.

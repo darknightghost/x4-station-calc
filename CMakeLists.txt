@@ -59,7 +59,7 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif ()
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-    add_compile_options ("-DQT_NO_DEBUG")
+    add_definitions ("-DQT_NO_DEBUG=1")
 
 endif ()
 

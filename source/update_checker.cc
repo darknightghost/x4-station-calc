@@ -20,7 +20,7 @@ const QString UpdateChecker::_downloadURL
       "x4-station-calc/v%1.7z";
 #else
 const QString UpdateChecker::_downloadURL
-    = "https://github.com/darknightghost/x4-station-calc/tree/v%1";
+    = "https://github.com/darknightghost/x4-station-calc/releases/tag/v%1";
 
 #endif
 

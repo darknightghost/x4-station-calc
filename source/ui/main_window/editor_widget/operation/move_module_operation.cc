@@ -37,6 +37,8 @@ bool EditorWidget::MoveModuleOperation::doOperation()
     // Insert module item.
     groupItem->insertChild(m_newIndex, moduleItem);
     ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
+    editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
+                          editorWidget, &EditorWidget::onChangeAmount);
     moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
                           editorWidget, &EditorWidget::onModuleMoveUp);
     moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
@@ -104,6 +106,8 @@ void EditorWidget::MoveModuleOperation::undoOperation()
     // Insert module item.
     groupItem->insertChild(m_oldIndex, moduleItem);
     ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
+    editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
+                          editorWidget, &EditorWidget::onChangeAmount);
     moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
                           editorWidget, &EditorWidget::onModuleMoveUp);
     moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,

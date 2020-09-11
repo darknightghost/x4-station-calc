@@ -1,3 +1,6 @@
+v1.0.1
+    Fixed a bug that the amount of station module cannot be changed after changing the order of the station module.
+
 v1.0.0
     Rewrite in C++.
     Load all data form installed game.

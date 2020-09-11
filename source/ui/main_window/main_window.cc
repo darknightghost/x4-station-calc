@@ -120,6 +120,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
                   &OpenFileListener::openFile, this, &MainWindow::open);
     this->connect(OpenFileListener::instance().get(), &OpenFileListener::active,
                   this, &MainWindow::active);
+
+    // Check update.
+    m_updateChecker->checkUpdate(true);
 }
 
 /**

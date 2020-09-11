@@ -25,6 +25,7 @@ class UpdateChecker : public QObject {
     QNetworkAccessManager *m_netwokAccessManager; ///< Network access manager.
     QNetworkRequest        m_request;             ///< Request.
     ::std::atomic<bool>    m_checkingFlag;        ///< Checking flag.
+    bool                   m_quiet;               ///< Quiet mode.
 
   public:
     /**
@@ -42,8 +43,10 @@ class UpdateChecker : public QObject {
   public slots:
     /**
      * @brief       Check update.
+     *
+     * @param[in]   quiet       Quiet mode.
      */
-    void checkUpdate();
+    void checkUpdate(bool quiet = false);
 
   private slots:
     /**

@@ -47,7 +47,7 @@ UpdateChecker::UpdateChecker(QWidget *parent) :
 /**
  * @brief       Check update.
  */
-void UpdateChecker::checkUpdate()
+void UpdateChecker::checkUpdate(bool quiet)
 {
     // Check if previous request has been finished.
     bool checkingFlag = true;
@@ -57,6 +57,7 @@ void UpdateChecker::checkUpdate()
     }
 
     // Make request.
+    m_quiet = quiet;
     m_netwokAccessManager->get(m_request);
 }
 
@@ -81,8 +82,10 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
     QNetworkReply::NetworkError err = reply->error();
     if (err != QNetworkReply::NetworkError::NoError) {
         qDebug() << err;
-        QMessageBox::critical(m_parent, STR("STR_ERROR"),
-                              STR("STR_CHECKUPDATE_FAILED"));
+        if (! m_quiet) {
+            QMessageBox::critical(m_parent, STR("STR_ERROR"),
+                                  STR("STR_CHECKUPDATE_FAILED"));
+        }
         return;
     }
 
@@ -105,8 +108,10 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
 
         return;
     } else {
-        QMessageBox::information(m_parent, STR("STR_INFO"),
-                                 STR("STR_NEW_VERSION_NOT_FOUND"));
+        if (! m_quiet) {
+            QMessageBox::information(m_parent, STR("STR_INFO"),
+                                     STR("STR_NEW_VERSION_NOT_FOUND"));
+        }
         return;
     }
 }

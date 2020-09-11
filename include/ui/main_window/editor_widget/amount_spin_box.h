@@ -1,12 +1,30 @@
 #pragma once
 
-#include <QtWidgets/QSpinBox>
+#include <QtGui/QIntValidator>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
+
+#include <ui/controls/square_button.h>
 
 /**
  * @brief   Spin box for module amount.
  */
-class AmountSpinBox : public QSpinBox {
+class AmountSpinBox : public QWidget {
     Q_OBJECT;
+
+  private:
+    QHBoxLayout *m_layout; ///< Layout.
+
+    QLineEdit *    m_txtAmount;   ///< Text amount.
+    QIntValidator *m_validAmount; ///< Amount valudator.
+
+    QVBoxLayout * m_layoutButton; ///< Button layout.
+    SquareButton *m_btnInc;       ///< Move up button.
+    SquareButton *m_btnDec;       ///< Decrease button.
+
+    int m_oldValue; ///< Old value.
 
   public:
     /**
@@ -15,6 +33,13 @@ class AmountSpinBox : public QSpinBox {
      * @param[in]   parent      Parent object.
      */
     AmountSpinBox(QWidget *parent = nullptr);
+
+    /**
+     * @brief       Set value.
+     *
+     * @param[in]   value       Value.
+     */
+    void setValue(int value);
 
     /**
      * @brief       Destructor.
@@ -29,14 +54,28 @@ class AmountSpinBox : public QSpinBox {
 
   private slots:
     /**
-     * @brief       Connect to QSpinBox::valueChanged.
-     *
-     * @param[in]   i       New value.
+     * @brief       On m_btnInc clicked.
      */
-    void onValueChanged(int i);
+    void onBtnIncClicked();
+
+    /**
+     * @brief       On m_btnDec clicked.
+     */
+    void onBtnDecClicked();
 
     /**
      * @brief       Connect to QSpinBox::editingFinished.
      */
     void onEditingFinished();
+
+  private:
+    /**
+     * @brief       Emit edited signal.
+     */
+    void emitEdited();
+
+    /**
+     * @brief       Update button status.
+     */
+    void updateBtnStatus();
 };

@@ -7,6 +7,9 @@
  */
 class SquareButton : public QPushButton {
     Q_OBJECT
+  private:
+    QIcon m_icon; ///< Icon;
+
   public:
     /**
      * @brief		Constructor.
@@ -24,6 +27,13 @@ class SquareButton : public QPushButton {
     SquareButton(QWidget *parent = nullptr);
 
     /**
+     * @brief       Set icon.
+     *
+     * @param[in]   icon    Icon.
+     */
+    void setIcon(const QIcon &icon);
+
+    /**
      * @brief		Destructor.
      */
     virtual ~SquareButton();
@@ -35,4 +45,11 @@ class SquareButton : public QPushButton {
      * @param[in]	event	Event.
      */
     virtual void resizeEvent(QResizeEvent *event) override;
+
+    /**
+     * @brief		Resize icon.
+     *
+     * @param[in]	sz      Size.
+     */
+    void resizeIcon(const QSize &sz);
 };

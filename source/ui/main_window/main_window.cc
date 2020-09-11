@@ -60,6 +60,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
             ->getString("/MainWindow/status", this->saveState().toHex())
             .toLocal8Bit()));
 
+    // Check update
+    m_updateChecker = new UpdateChecker(this);
+
     // Initialize menus.
     this->initMenuToolBar();
 
@@ -317,6 +320,8 @@ void MainWindow::initMenuToolBar()
     // Menu "Help->Check Update".
     m_helpCheckUpdate = new QAction(this);
     m_menuHelp->addAction(m_helpCheckUpdate);
+    this->connect(m_helpCheckUpdate, &QAction::triggered, m_updateChecker,
+                  &UpdateChecker::checkUpdate);
 }
 
 /**

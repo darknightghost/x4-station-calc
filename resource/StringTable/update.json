@@ -1,0 +1,22 @@
+{
+	"STR_TITLE_CHECKUPDATE" : {
+		"zh_CN" : "检查更新",
+		"zh_TW" : "檢查更新",
+		"en_US" : "Check Update"
+	},
+	"STR_CHECKUPDATE_FAILED" : {
+		"zh_CN" : "检查更新失败.",
+		"zh_TW" : "檢查更新失敗.",
+		"en_US" : "Failed to check update."
+	},
+	"STR_NEW_VERSION_FOUND" : {
+		"zh_CN" : "有新的版本可用, 是否打开下载链接?",
+		"zh_TW" : "有新的版本可用, 是否打開下載鏈接?",
+		"en_US" : "A new version is available, open the download link now?"
+	},
+	"STR_NEW_VERSION_NOT_FOUND" : {
+		"zh_CN" : "当前版本已经是最新的了.",
+		"zh_TW" : "當前版本已經是最新的了.",
+		"en_US" : "Current version is already the newest version."
+	}
+}

@@ -28,6 +28,10 @@ add_definitions ("-DQIODEVICE_BUFFERSIZE=Q_INT64_C(64 * 1024 * 1024)")
 
 if (WIN32)
 	include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")
+    add_definitions ("-DOS_WINDOWS=1")
+
+elseif (UNIX)
+    add_definitions ("-DOS_LINUX=1")
 
 endif ()
 

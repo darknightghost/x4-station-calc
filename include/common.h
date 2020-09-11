@@ -5,7 +5,10 @@
     #define UNREFERENCED_PARAMETER(p) (p)
 #endif // ! UNREFERENCED_PARAMETER
 
+#include <common/auto_release.h>
 #include <common/compare.h>
+#include <common/generic_reference.h>
+//#include <common/generic_string.h>
 #include <common/multi_threading.h>
 #include <common/types.h>
 #include <common/xml_loader.h>

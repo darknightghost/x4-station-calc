@@ -980,7 +980,32 @@ void EditorWidget::showSummary(const SummaryInfo &summary)
  *
  * @param[in]   summary     Summary.
  */
-void EditorWidget::checkSummary(const SummaryInfo &summary) {}
+void EditorWidget::checkSummary(const SummaryInfo &summary)
+{
+    this->clearWarnings();
+    if (summary.surplusWorkforce < 0) {
+        this->addWarning("STR_EDITOR_WARING_NOT_ENOUGH_WORKFORCE");
+    }
+
+    if (summary.requirements.requireContainerStorage
+        && summary.storage.container == 0) {
+        this->addWarning("STR_EDITOR_WARING_MISSING_CONTAINER_STORAGE");
+    }
+
+    if (summary.requirements.requireSolidStorage
+        && summary.storage.solid == 0) {
+        this->addWarning("STR_EDITOR_WARING_MISSING_SOLID_STORAGE");
+    }
+
+    if (summary.requirements.requireLiquidStorage
+        && summary.storage.liquid == 0) {
+        this->addWarning("STR_EDITOR_WARING_MISSING_LIQUID_STORAGE");
+    }
+
+    if (summary.dockingBay.sDock == 0 && summary.dockingBay.mDock == 0) {
+        this->addWarning("STR_EDITOR_WARING_MISSING_DOCKINGBAY");
+    }
+}
 
 /**
  * @brief	Close save file.
@@ -1551,7 +1576,7 @@ void EditorWidget::onLanguageChanged()
 /**
  * @brief	Clear all warning informations.
  */
-void EditorWidget::clearInfo()
+void EditorWidget::clearWarnings()
 {
     while (! m_widgetsWarningInfos.empty()) {
         m_widgetsWarningInfos.back()->close();

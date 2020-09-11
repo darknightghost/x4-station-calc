@@ -395,7 +395,7 @@ class EditorWidget : public QWidget {
     /**
      * @brief	Clear all warning informations.
      */
-    void clearInfo();
+    void clearWarnings();
 
     /**
      * @brief		Show error information.

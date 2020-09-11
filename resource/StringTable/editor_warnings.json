@@ -18,5 +18,10 @@
 		"zh_CN" : "缺少液体仓储.",
 		"zh_TW" : "缺少液體倉儲.",
 		"en_US" : "Missing liquid storage."
+	},
+	"STR_EDITOR_WARING_MISSING_DOCKINGBAY" : {
+		"zh_CN" : "缺少停靠区.",
+		"zh_TW" : "缺少停靠區.",
+		"en_US" : "Missing docking bay."
 	}
 }

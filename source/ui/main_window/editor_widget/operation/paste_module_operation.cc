@@ -66,7 +66,8 @@ bool EditorWidget::PasteModuleOperation::doOperation()
         if (moduleItem == nullptr) {
             // Add module.
             // Add to save.
-            int index = groupItem->group()->insertModule(newIndex, macro, 1);
+            int index = groupItem->group()->insertModule(newIndex, macro,
+                                                         module->amount);
             Q_ASSERT(index == newIndex);
 
             // Get save module.
@@ -98,7 +99,8 @@ bool EditorWidget::PasteModuleOperation::doOperation()
 
         } else {
             // Increase amount.
-            moduleItem->setModuleAmount(moduleItem->moduleAmount() + 1);
+            moduleItem->setModuleAmount(moduleItem->moduleAmount()
+                                        + module->amount);
 
             ModuleItemWidget *itemWidget = dynamic_cast<ModuleItemWidget *>(
                 editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
@@ -143,9 +145,10 @@ void EditorWidget::PasteModuleOperation::undoOperation()
             editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
         Q_ASSERT(moduleWidget != nullptr);
 
-        if (moduleItem->moduleAmount() > 1) {
+        if (moduleItem->moduleAmount() > module->amount) {
             // Decrease amount/
-            moduleItem->setModuleAmount(moduleItem->moduleAmount() - 1);
+            moduleItem->setModuleAmount(moduleItem->moduleAmount()
+                                        - module->amount);
             moduleWidget->updateAmount();
 
         } else {

@@ -34,6 +34,11 @@
 		"zh_TW" : "存儲爲(&A)",
 		"en_US" : "Save &As"
 	},
+	"STR_MENU_FILE_EXPORT_AS_HTML":{
+		"zh_CN" : "导出为HTML(&H)",
+		"zh_TW" : "導出爲HTML(&H)",
+		"en_US" : "Export As &HTML"
+	},
 	"STR_MENU_FILE_CLOSE":{
 		"zh_CN" : "关闭(&C)",
 		"zh_TW" : "關閉(&C)",
@@ -138,6 +143,11 @@
 		"zh_CN" : "空间站 (*.x4station)",
 		"zh_TW" : "空間站 (*.x4station)",
 		"en_US" : "Station (*.x4station)"
+	},
+	"STR_SAVE_HTML_FILTER" : {
+		"zh_CN" : "HTML (*.html)",
+		"zh_TW" : "HTML (*.html)",
+		"en_US" : "HTML (*.html)"
 	},
 	"STR_OPEN_STATION" : {
 		"zh_CN" : "打开空间站",

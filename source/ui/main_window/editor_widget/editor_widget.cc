@@ -1526,6 +1526,41 @@ void EditorWidget::saveAs()
 }
 
 /**
+ * @brief		Export as HTML.
+ */
+void EditorWidget::exportAsHTML()
+{
+    // Get path to save.
+    QString fileName = QFileDialog::getSaveFileName(
+        this, STR("STR_TITLE_EXPORT_HTML"),
+        Config::instance()->getString(
+            "/exportPath",
+            Config::instance()->getString(
+                "/savePath",
+                Config::instance()->getString("/openPath", QDir::homePath()))),
+        STR("STR_SAVE_HTML_FILTER"));
+
+    if (fileName == "") {
+        return;
+    }
+
+    QString dir = QDir(fileName).absolutePath();
+    dir         = dir.left(dir.lastIndexOf("/"));
+    Config::instance()->setString("/exportPath", dir);
+
+    // Save file.
+    if (m_save->writeHTML(fileName, this->windowTitle())) {
+        m_savedUndoCount = m_undoStack.size();
+        qDebug() << "File" << this->windowTitle() << "exported.";
+        this->updateTitle();
+        this->updateSaveStatus();
+    } else {
+        QMessageBox::critical(this, STR("STR_ERROR"),
+                              STR("STR_ERR_EXPORT").arg(fileName));
+    }
+}
+
+/**
  * @brief		Change language.
  */
 void EditorWidget::onLanguageChanged()
@@ -1811,6 +1846,11 @@ void EditorWidget::active()
     this->connect(m_fileActions->actionFileSaveAs, &QAction::triggered, this,
                   &EditorWidget::saveAs);
 
+    this->disconnect(m_fileActions->actionFileExportAsHTML, &QAction::triggered,
+                     nullptr, nullptr);
+    this->connect(m_fileActions->actionFileExportAsHTML, &QAction::triggered,
+                  this, &EditorWidget::exportAsHTML);
+
     this->disconnect(m_fileActions->actionFileClose, &QAction::triggered,
                      nullptr, nullptr);
     this->connect(m_fileActions->actionFileClose, &QAction::triggered, this,
@@ -1858,6 +1898,7 @@ void EditorWidget::active()
 
     // Update actions status.
     m_fileActions->actionFileSaveAs->setEnabled(true);
+    m_fileActions->actionFileExportAsHTML->setEnabled(true);
     m_fileActions->actionFileClose->setEnabled(true);
     m_editActions->actionEditNewGroup->setEnabled(true);
     this->updateSaveStatus();

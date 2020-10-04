@@ -21,12 +21,13 @@ class MainWindow : public QMainWindow {
      * @brief		Actions in file menu.
      */
     struct FileActions {
-        QAction *actionFileNew;    ///< Menu "File->New".
-        QAction *actionFileOpen;   ///< Menu "File->Open".
-        QAction *actionFileSave;   ///< Menu "File->Save".
-        QAction *actionFileSaveAs; ///< Menu "File->Save As".
-        QAction *actionFileClose;  ///< Menu "File->Close".
-        QAction *actionFileExit;   ///< Menu "File->Exit".
+        QAction *actionFileNew;          ///< Menu "File->New".
+        QAction *actionFileOpen;         ///< Menu "File->Open".
+        QAction *actionFileSave;         ///< Menu "File->Save".
+        QAction *actionFileSaveAs;       ///< Menu "File->Save As".
+        QAction *actionFileExportAsHTML; ///< Menu "File->Export As HTML".
+        QAction *actionFileClose;        ///< Menu "File->Close".
+        QAction *actionFileExit;         ///< Menu "File->Exit".
     };
 
     /**

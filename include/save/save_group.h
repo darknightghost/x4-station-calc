@@ -66,7 +66,7 @@ class SaveGroup :
      *
      * @return		List of modules.
      */
-    std::shared_ptr<SaveModule> module(int index);
+    ::std::shared_ptr<SaveModule> module(int index);
 
     /**
      * @brief		Set module index.

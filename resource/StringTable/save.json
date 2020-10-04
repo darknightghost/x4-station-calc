@@ -8,6 +8,20 @@
 		"zh_CN" : "新空间站",
 		"zh_TW" : "新空間站",
 		"en_US" : "New Station"
+	},
+	"STR_HTML_GROUP" : {
+		"zh_CN" : "分组",
+		"zh_TW" : "分組",
+		"en_US" : "Group"
+	},
+	"STR_HTML_STATIOM_MODULE" : {
+		"zh_CN" : "空间站模块",
+		"zh_TW" : "空間站模塊",
+		"en_US" : "Station Module"
+	},
+	"STR_HTML_AMOUNT" : {
+		"zh_CN" : "数量",
+		"zh_TW" : "數量",
+		"en_US" : "Amount"
 	}
-
 }

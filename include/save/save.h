@@ -110,6 +110,17 @@ class Save :
     bool write(const QString &path);
 
     /**
+     * @brief		Write html file.
+     *
+     * @param[in]   path    Path to write.
+     * @param[in]   title   Title of the HTML file.
+     *
+     * @return		On success, the method returns \c true , otherwise returns
+     *              \c false.
+     */
+    bool writeHTML(const QString &path, const QString &title);
+
+    /**
      * @brief		Destructor.
      */
     virtual ~Save();

@@ -387,6 +387,11 @@ class EditorWidget : public QWidget {
     void saveAs();
 
     /**
+     * @brief		Export as HTML.
+     */
+    void exportAsHTML();
+
+    /**
      * @brief		Change language.
      */
     void onLanguageChanged();

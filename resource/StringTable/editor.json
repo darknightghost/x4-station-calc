@@ -9,6 +9,11 @@
 		"zh_TW" : "存儲空間站",
 		"en_US" : "Save Station"
 	},
+	"STR_TITLE_EXPORT_HTML" : {
+		"zh_CN" : "导出为HTML",
+		"zh_TW" : "導出爲HTML",
+		"en_US" : "Export As HTML"
+	},
 	"STR_SAVE_STATION" : {
 		"zh_CN" : "空间站\"%1\"已修改, 是否保存?",
 		"zh_TW" : "空間站\"%1\"已修改, 是否存盤?",
@@ -18,6 +23,11 @@
 		"zh_CN" : "保存文件\"%1\"失败!",
 		"zh_TW" : "存儲文件\"%1\"失敗!",
 		"en_US" : "Failed to save file \"%1\"!"
+	},
+	"STR_ERR_EXPORT" : {
+		"zh_CN" : "导出文件\"%1\"失败!",
+		"zh_TW" : "導出文件\"%1\"失敗!",
+		"en_US" : "Failed to export file \"%1\"!"
 	},
 	"STR_SAVE_STATION_AS" : {
 		"zh_CN" : "另存为空间站",

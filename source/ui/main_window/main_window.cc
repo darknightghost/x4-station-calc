@@ -186,6 +186,18 @@ void MainWindow::initMenuToolBar()
     m_toolbarFile->addAction(m_fileActions.actionFileSaveAs);
 
     m_menuFile->addSeparator();
+    m_toolbarFile->addSeparator();
+
+    // Menu "File->Export As HTML".
+    m_fileActions.actionFileExportAsHTML = new QAction(this);
+    m_fileActions.actionFileExportAsHTML->setIcon(
+        QIcon(":/Icons/FileExportAsHtml.png"));
+    m_fileActions.actionFileExportAsHTML->setEnabled(false);
+    m_menuFile->addAction(m_fileActions.actionFileExportAsHTML);
+    m_toolbarFile->addAction(m_fileActions.actionFileExportAsHTML);
+
+    m_menuFile->addSeparator();
+    m_toolbarFile->addSeparator();
 
     // Menu "File->Close".
     m_fileActions.actionFileClose = new QAction(this);
@@ -469,6 +481,7 @@ void MainWindow::editorActived(QMdiSubWindow *window)
         m_stationModulesWidget->setAddToStationStatus(false);
         m_fileActions.actionFileSave->setEnabled(false);
         m_fileActions.actionFileSaveAs->setEnabled(false);
+        m_fileActions.actionFileExportAsHTML->setEnabled(false);
         m_fileActions.actionFileClose->setEnabled(false);
         m_editActions.actionEditNewGroup->setEnabled(false);
 
@@ -546,6 +559,10 @@ void MainWindow::onLanguageChanged()
 
     // Menu "File->Save As".
     m_fileActions.actionFileSaveAs->setText(STR("STR_MENU_FILE_SAVE_AS"));
+
+    // Menu "File->Save As".
+    m_fileActions.actionFileExportAsHTML->setText(
+        STR("STR_MENU_FILE_EXPORT_AS_HTML"));
 
     // Menu "File->Close".
     m_fileActions.actionFileClose->setText(STR("STR_MENU_FILE_CLOSE"));

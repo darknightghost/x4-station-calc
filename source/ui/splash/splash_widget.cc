@@ -26,12 +26,12 @@ SplashWidget::SplashWidget(QWidget *parent) :
 
     this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
 
-    /// Set flags
+    // Set flags
     this->setWindowFlags(Qt::WindowType::FramelessWindowHint
                          | Qt::WindowType::NoDropShadowWindowHint
                          | Qt::WindowType::CustomizeWindowHint);
 
-    /// Set size.
+    // Set size.
     QImage          background(":/Images/splash.jpg");
     QDesktopWidget *desktop = QApplication::desktop();
     int             width   = desktop->width() / 2;
@@ -58,7 +58,7 @@ SplashWidget::SplashWidget(QWidget *parent) :
  */
 int SplashWidget::exec(::std::function<int()> workFunc)
 {
-    /// Create thread.
+    // Create thread.
     m_closeable = false;
     m_thread    = new SplashThread(workFunc, this);
     this->connect(m_thread, &SplashThread::finished, this,
@@ -104,50 +104,50 @@ void SplashWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
-    /// Draw baclkground
+    // Draw baclkground
     painter.drawImage(0, 0, m_background);
 
-    /// Draw text
+    // Draw text
     QPen        shadowPen(QColor(0, 0, 0));
     QPen        forgroundPen(QColor(255, 255, 255));
     QReadLocker locker(&m_textLock);
     if (! m_text.empty()) {
-        /// Compute position
+        // Compute position
         int lineHeight  = this->fontMetrics().height();
         int totalHeight = lineHeight * m_text.size();
         int y           = this->height() - MARGIN - totalHeight
                 + this->fontMetrics().height() / 2;
         int x = MARGIN;
 
-        /// Draw text
+        // Draw text
         for (auto &s : m_text) {
-            /// Shadow
+            // Shadow
             painter.setPen(shadowPen);
-            /// Top
+            // Top
             painter.drawText(x, y - SHADOW, s);
 
-            /// Top-right
+            // Top-right
             painter.drawText(x + SHADOW, y - SHADOW, s);
 
-            /// Right
+            // Right
             painter.drawText(x + SHADOW, y, s);
 
-            /// Bottom-right
+            // Bottom-right
             painter.drawText(x + SHADOW, y + SHADOW, s);
 
-            /// Bottom
+            // Bottom
             painter.drawText(x, y + SHADOW, s);
 
-            /// Bottom-left
+            // Bottom-left
             painter.drawText(x - SHADOW, y + SHADOW, s);
 
-            /// Left
+            // Left
             painter.drawText(x - SHADOW, y, s);
 
-            /// Top-left
+            // Top-left
             painter.drawText(x - SHADOW, y - SHADOW, s);
 
-            /// Text
+            // Text
             painter.setPen(forgroundPen);
             painter.drawText(x, y, s);
 
@@ -178,7 +178,7 @@ void SplashWidget::closeEvent(QCloseEvent *event)
  */
 void SplashWidget::setText(QString text)
 {
-    /// Split lines.
+    // Split lines.
     int         lineWidth = this->width() - MARGIN - MARGIN;
     QStringList lines;
     if (! (text.isNull() || text.isEmpty())) {
@@ -201,7 +201,7 @@ void SplashWidget::setText(QString text)
         }
     }
 
-    /// Set text
+    // Set text
     QWriteLocker locker(&m_textLock);
     m_text = ::std::move(lines);
 
@@ -209,7 +209,7 @@ void SplashWidget::setText(QString text)
 }
 
 /**
- * @brief		Tell the widget the work has benn finished
+ * @brief		Tell the widget the work has been finished
  *
  */
 void SplashWidget::onFinished()

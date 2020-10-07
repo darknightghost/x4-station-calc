@@ -22,11 +22,7 @@ WarningWidget::WarningWidget(::std::shared_ptr<GenericString> s,
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &WarningWidget::onLanguageChanged);
 
-    // Set style sheet
-    QFile styleFile(":/StyleSheet/editor_warning.qss");
-    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
-                   | QIODevice::OpenModeFlag::Text);
-    this->setStyleSheet(styleFile.readAll());
+    this->setProperty("class", "WarningWidget");
 
     this->setAutoFillBackground(true);
     this->onLanguageChanged();

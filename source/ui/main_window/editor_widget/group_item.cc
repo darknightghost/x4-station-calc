@@ -1,3 +1,4 @@
+#include <skin_manager.h>
 #include <ui/main_window/editor_widget/group_item.h>
 
 /**
@@ -129,17 +130,23 @@ GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)
     m_layout = new QHBoxLayout();
     this->setLayout(m_layout);
 
-    m_btnUp = new SquareButton(QIcon(":/Icons/Up.png"));
+    m_btnUp = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Up.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnUp, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnUp, &QPushButton::clicked, this,
                   &GroupItemWidget::onUpBtnClicked);
 
-    m_btnDown = new SquareButton(QIcon(":/Icons/Down.png"));
+    m_btnDown = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Down.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnDown, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnDown, &QPushButton::clicked, this,
                   &GroupItemWidget::onDownBtnClicked);
 
-    m_btnRemove = new SquareButton(QIcon(":/Icons/EditRemove.png"));
+    m_btnRemove = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnRemove, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnRemove, &QPushButton::clicked, this,
                   &GroupItemWidget::onRemoveBtnClicked);

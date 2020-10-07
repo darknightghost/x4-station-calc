@@ -16,11 +16,7 @@ TransparentLabel::TransparentLabel(const QString &text, QWidget *parent) :
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     // Set style sheet
-    QFile styleFile(":/StyleSheet/transparent_label.qss");
-    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
-                   | QIODevice::OpenModeFlag::Text);
-    this->setStyleSheet(styleFile.readAll());
-
+    this->setProperty("class", "TransparentLabel");
     this->setAlignment(Qt::AlignmentFlag::AlignLeft
                        | Qt::AlignmentFlag::AlignTop);
 

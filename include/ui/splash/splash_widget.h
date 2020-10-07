@@ -154,8 +154,7 @@ class SplashWidget : public QWidget {
 
   private slots:
     /**
-     * @brief		Tell the widget the work has benn finished
-     *
+     * @brief		Tell the widget the work has been finished.
      */
     void onFinished();
 };

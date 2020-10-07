@@ -9,6 +9,7 @@
 #include <global.h>
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <skin_manager.h>
 #include <ui/language_setting_dialog.h>
 #include <ui/license_dialog.h>
 #include <ui/main_window/main_window.h>
@@ -66,6 +67,10 @@ int main(int argc, char *argv[])
     }
 
     if (StringTable::initialize() == nullptr) {
+        return 1;
+    }
+
+    if (SkinManager::initialize() == nullptr) {
         return 1;
     }
 

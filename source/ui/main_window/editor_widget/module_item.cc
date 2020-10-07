@@ -1,5 +1,6 @@
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
+#include <skin_manager.h>
 #include <ui/main_window/editor_widget/module_item.h>
 
 /**
@@ -73,19 +74,25 @@ ModuleItemWidget::ModuleItemWidget(ModuleItem *item) : m_item(item)
                   &ModuleItemWidget::onSpinboxValueChanged);
 
     // Button Up.
-    m_btnUp = new SquareButton(QIcon(":/Icons/Up.png"));
+    m_btnUp = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Up.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnUp, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnUp, &QPushButton::clicked, this,
                   &ModuleItemWidget::onUpBtnClicked);
 
     // Button Down.
-    m_btnDown = new SquareButton(QIcon(":/Icons/Down.png"));
+    m_btnDown = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Down.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnDown, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnDown, &QPushButton::clicked, this,
                   &ModuleItemWidget::onDownBtnClicked);
 
     // Button Remove.
-    m_btnRemove = new SquareButton(QIcon(":/Icons/EditRemove.png"));
+    m_btnRemove = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layout->addWidget(m_btnRemove, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnRemove, &QPushButton::clicked, this,
                   &ModuleItemWidget::onRemoveBtnClicked);

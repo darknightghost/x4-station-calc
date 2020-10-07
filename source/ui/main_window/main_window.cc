@@ -15,6 +15,7 @@
 #include <config.h>
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <skin_manager.h>
 #include <ui/about_dialog.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
@@ -150,7 +151,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->New".
     m_fileActions.actionFileNew = new QAction(this);
-    m_fileActions.actionFileNew->setIcon(QIcon(":/Icons/FileNew.png"));
+    m_fileActions.actionFileNew->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileNew.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileNew->setShortcut(QKeySequence::New);
     m_menuFile->addAction(m_fileActions.actionFileNew);
     m_toolbarFile->addAction(m_fileActions.actionFileNew);
@@ -159,7 +162,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->Open".
     m_fileActions.actionFileOpen = new QAction(this);
-    m_fileActions.actionFileOpen->setIcon(QIcon(":/Icons/FileOpen.png"));
+    m_fileActions.actionFileOpen->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileOpen.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileOpen->setShortcut(QKeySequence::Open);
     m_menuFile->addAction(m_fileActions.actionFileOpen);
     m_toolbarFile->addAction(m_fileActions.actionFileOpen);
@@ -171,7 +176,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->Save".
     m_fileActions.actionFileSave = new QAction(this);
-    m_fileActions.actionFileSave->setIcon(QIcon(":/Icons/FileSave.png"));
+    m_fileActions.actionFileSave->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileSave.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileSave->setShortcut(QKeySequence::Save);
     m_fileActions.actionFileSave->setEnabled(false);
     m_menuFile->addAction(m_fileActions.actionFileSave);
@@ -179,7 +186,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->Save As".
     m_fileActions.actionFileSaveAs = new QAction(this);
-    m_fileActions.actionFileSaveAs->setIcon(QIcon(":/Icons/FileSaveAs.png"));
+    m_fileActions.actionFileSaveAs->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileSaveAs.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileSaveAs->setShortcut(QKeySequence::SaveAs);
     m_fileActions.actionFileSaveAs->setEnabled(false);
     m_menuFile->addAction(m_fileActions.actionFileSaveAs);
@@ -191,7 +200,8 @@ void MainWindow::initMenuToolBar()
     // Menu "File->Export As HTML".
     m_fileActions.actionFileExportAsHTML = new QAction(this);
     m_fileActions.actionFileExportAsHTML->setIcon(
-        QIcon(":/Icons/FileExportAsHtml.png"));
+        QIcon(QString(":/Skins/%1/Icons/FileExportAsHtml.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileExportAsHTML->setEnabled(false);
     m_menuFile->addAction(m_fileActions.actionFileExportAsHTML);
     m_toolbarFile->addAction(m_fileActions.actionFileExportAsHTML);
@@ -201,7 +211,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->Close".
     m_fileActions.actionFileClose = new QAction(this);
-    m_fileActions.actionFileClose->setIcon(QIcon(":/Icons/FileClose.png"));
+    m_fileActions.actionFileClose->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileClose.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileClose->setShortcut(QKeySequence::Close);
     m_fileActions.actionFileClose->setEnabled(false);
     m_menuFile->addAction(m_fileActions.actionFileClose);
@@ -210,7 +222,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "File->Exit".
     m_fileActions.actionFileExit = new QAction(this);
-    m_fileActions.actionFileExit->setIcon(QIcon(":/Icons/FileExit.png"));
+    m_fileActions.actionFileExit->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/FileExit.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_fileActions.actionFileExit->setShortcut(QKeySequence::Quit);
     m_menuFile->addAction(m_fileActions.actionFileExit);
     this->connect(m_fileActions.actionFileExit, &QAction::triggered, this,
@@ -228,7 +242,8 @@ void MainWindow::initMenuToolBar()
     // Menu "Edit->New Group".
     m_editActions.actionEditNewGroup = new QAction(this);
     m_editActions.actionEditNewGroup->setIcon(
-        QIcon(":/Icons/EditNewGroup.png"));
+        QIcon(QString(":/Skins/%1/Icons/EditNewGroup.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditNewGroup->setShortcut(QKeySequence("Ctrl+G"));
     m_editActions.actionEditNewGroup->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditNewGroup);
@@ -239,7 +254,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Undo".
     m_editActions.actionEditUndo = new QAction(this);
-    m_editActions.actionEditUndo->setIcon(QIcon(":/Icons/EditUndo.png"));
+    m_editActions.actionEditUndo->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditUndo.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditUndo->setShortcut(QKeySequence::Undo);
     m_editActions.actionEditUndo->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditUndo);
@@ -247,7 +264,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Redo".
     m_editActions.actionEditRedo = new QAction(this);
-    m_editActions.actionEditRedo->setIcon(QIcon(":/Icons/EditRedo.png"));
+    m_editActions.actionEditRedo->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditRedo.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditRedo->setShortcut(QKeySequence::Redo);
     m_editActions.actionEditRedo->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditRedo);
@@ -258,7 +277,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Cut".
     m_editActions.actionEditCut = new QAction(this);
-    m_editActions.actionEditCut->setIcon(QIcon(":/Icons/EditCut.png"));
+    m_editActions.actionEditCut->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditCut.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditCut->setShortcut(QKeySequence::Cut);
     m_editActions.actionEditCut->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditCut);
@@ -266,7 +287,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Copy".
     m_editActions.actionEditCopy = new QAction(this);
-    m_editActions.actionEditCopy->setIcon(QIcon(":/Icons/EditCopy.png"));
+    m_editActions.actionEditCopy->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditCopy.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditCopy->setShortcut(QKeySequence::Copy);
     m_editActions.actionEditCopy->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditCopy);
@@ -274,7 +297,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Paste".
     m_editActions.actionEditPaste = new QAction(this);
-    m_editActions.actionEditPaste->setIcon(QIcon(":/Icons/EditPaste.png"));
+    m_editActions.actionEditPaste->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditPaste.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditPaste->setShortcut(QKeySequence::Paste);
     m_editActions.actionEditPaste->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditPaste);
@@ -285,7 +310,9 @@ void MainWindow::initMenuToolBar()
 
     // Menu "Edit->Remove".
     m_editActions.actionEditRemove = new QAction(this);
-    m_editActions.actionEditRemove->setIcon(QIcon(":/Icons/EditRemove.png"));
+    m_editActions.actionEditRemove->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_editActions.actionEditRemove->setShortcut(QKeySequence("Ctrl+R"));
     m_editActions.actionEditRemove->setEnabled(false);
     m_menuEdit->addAction(m_editActions.actionEditRemove);

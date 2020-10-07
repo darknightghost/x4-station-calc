@@ -11,15 +11,9 @@
 SquareButton::SquareButton(const QIcon &icon, QWidget *parent) :
     QPushButton("", parent), m_icon(icon)
 {
-    // Set style sheet
-    QFile styleFile(":/StyleSheet/square_button.qss");
-    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
-                   | QIODevice::OpenModeFlag::Text);
-    this->setStyleSheet(styleFile.readAll());
-
+    this->setProperty("class", "SquareButton");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
-
     this->resizeIcon(this->size());
 }
 

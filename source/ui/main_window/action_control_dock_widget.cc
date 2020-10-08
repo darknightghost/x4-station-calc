@@ -13,6 +13,7 @@ ActionControlDockWidget::ActionControlDockWidget(QAction *       statusAction,
     QDockWidget(parent, flags),
     m_statusAction(statusAction), m_enableClose(false)
 {
+    this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
     statusAction->setCheckable(true);
     statusAction->setChecked(this->isVisible());
     this->connect(statusAction, &QAction::toggled, this,

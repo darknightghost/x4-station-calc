@@ -22,12 +22,7 @@ SquareButton::SquareButton(const QIcon &icon, QWidget *parent) :
  */
 SquareButton::SquareButton(QWidget *parent) : QPushButton(parent)
 {
-    // Set style sheet
-    QFile styleFile(":/StyleSheet/square_button.qss");
-    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
-                   | QIODevice::OpenModeFlag::Text);
-    this->setStyleSheet(styleFile.readAll());
-
+    this->setProperty("class", "SquareButton");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
 }

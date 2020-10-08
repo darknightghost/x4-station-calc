@@ -2,6 +2,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtWidgets/QLineEdit>
 
+#include <skin_manager.h>
 #include <ui/main_window/editor_widget/amount_spin_box.h>
 
 /**
@@ -28,12 +29,16 @@ AmountSpinBox::AmountSpinBox(QWidget *parent) : QWidget(parent)
     m_layoutButton->setMargin(0);
     m_layoutButton->setSpacing(0);
 
-    m_btnInc = new SquareButton(QIcon(":/Icons/Up.png"));
+    m_btnInc = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Up.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layoutButton->addWidget(m_btnInc);
     this->connect(m_btnInc, &QPushButton::clicked, this,
                   &AmountSpinBox::onBtnIncClicked);
 
-    m_btnDec = new SquareButton(QIcon(":/Icons/Down.png"));
+    m_btnDec = new SquareButton(
+        QIcon(QString(":/Skins/%1/Icons/Down.png")
+                  .arg(SkinManager::instance()->currentSkin())));
     m_layoutButton->addWidget(m_btnDec);
     this->connect(m_btnDec, &QPushButton::clicked, this,
                   &AmountSpinBox::onBtnDecClicked);

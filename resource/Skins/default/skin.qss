@@ -1,11 +1,78 @@
-QLabel.WarningWidget {
-	background: #FFFF00;
-	color: #000000;
+* {
+    color: #FFFFFF;
+    background-image: url(:/Skins/default/Background/normal.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+*::item {
+    color: #FFFFFF;
+    background-image: url(:/Skins/default/Background/normal-item.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QPushButton {
+    color: #FFFFFF;
+    background-image: url(:/Skins/default/Background/button.png);
+}
+
+QPushButton:hover {
+    color: #FFFFFF;
+    background-image: url(:/Skins/default/Background/button-hovered.png);
+}
+
+QWidget.TitleBar {
+    border-style: none;
+    border-width: 0px;
+    margin: 0px;
+    padding: 0px;
+    background-color: #FFFFFF;
+}
+
+QLabel.TitleBarIcon {
+    border-style: none;
+    border-width: 0px;
+    margin: 0px;
+    padding: 0px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QLabel.TitleBarTitle {
+    border-style: none;
+    border-width: 0px;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+}
+
+SquareButton.TitleBarBtnMinimize SquareButton.TitleBarBtnNormalizeMaximize SquareButton.TitleBarBtnClose {
+    border-style: none;
+    border-width: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+QWidget.MainWindow {
+    margin: 0;
+    padding: 0;
+}
+
+QMdiAreaa {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QMainWindow {
+    border: 0;
+    margin: 0;
+    padding: 0;
 }
 
 QLabel.TransparentLabel {
     margin: 0px;
     border: 0px none;
     padding: 0px;
-	background: rgba(0, 0, 0, 0);
+}
+
+QLabel.WarningWidget {
+	background: #FFFF00;
+	color: #000000;
 }

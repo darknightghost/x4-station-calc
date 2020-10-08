@@ -6,15 +6,17 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 
 #include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/station_modules_widget/station_modules_widget.h>
+#include <ui/main_window/title_bar.h>
 #include <update_checker.h>
 
 /**
  * @brief	Main window.
  */
-class MainWindow : public QMainWindow {
+class MainWindow : public QWidget {
     Q_OBJECT
   public:
     /**
@@ -44,6 +46,18 @@ class MainWindow : public QMainWindow {
     };
 
   private:
+    // Background
+    QPixmap m_backgroundImage; ///< Background image.
+
+    // Layout
+    QVBoxLayout *m_frameLayout; ///< Frame layout.
+
+    // Title bar
+    TitleBar *m_titleBar; ///< Title bar.
+
+    // Main window
+    QMainWindow *m_mainWindow; ///< Main window.
+
     // Menu
     QMenuBar *m_mainMenu; ///< Main menu.
 
@@ -101,6 +115,18 @@ class MainWindow : public QMainWindow {
      * @brief	Initialize Menu.
      */
     void initMenuToolBar();
+
+    /**
+     * @brief   Load background image.
+     */
+    void loadBackground();
+
+    /**
+     * @brief		Resize event.
+     *
+     * @param[in]	event		Event.
+     */
+    virtual void resizeEvent(QResizeEvent *event) override;
 
     /**
      * @brief		Close event.

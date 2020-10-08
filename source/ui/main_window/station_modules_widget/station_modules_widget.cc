@@ -22,6 +22,7 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
     // this->setWindowFlags(Qt::WindowType::Tool);
     this->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetClosable
                       | QDockWidget::DockWidgetFeature::DockWidgetMovable);
+    this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
 
     // Load widgets
     m_widget = new QWidget(this);

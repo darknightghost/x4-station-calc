@@ -73,6 +73,12 @@ int main(int argc, char *argv[])
     if (SkinManager::initialize() == nullptr) {
         return 1;
     }
+    app.setStyleSheet(SkinManager::instance()->currentSkinStyleSheet());
+    app.connect(SkinManager::instance().get(), &SkinManager::skinChanged,
+                [&](const QString &) -> void {
+                    app.setStyleSheet(
+                        SkinManager::instance()->currentSkinStyleSheet());
+                });
 
     if (OpenFileListener::initialize() == nullptr) {
         return 1;

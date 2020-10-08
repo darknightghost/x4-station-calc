@@ -20,12 +20,42 @@
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
+#include <ui/main_window/title_bar.h>
 
 /**
  * @brief		Constructor of main window.
  */
-MainWindow::MainWindow() : QMainWindow(nullptr)
+MainWindow::MainWindow() : QWidget(nullptr)
 {
+    this->loadBackground();
+
+    // Set window flags
+    this->setWindowFlags(Qt::WindowType::CustomizeWindowHint
+                         | Qt::WindowType::FramelessWindowHint
+                         | Qt::WindowType::WindowSystemMenuHint);
+
+    // Set icon
+    this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
+
+    // Set style sheet
+    this->setProperty("class", "MainWindow");
+    this->setAutoFillBackground(true);
+
+    // Create frame layout.
+    m_frameLayout = new QVBoxLayout();
+    this->setLayout(m_frameLayout);
+
+    // Create title bar.
+    m_titleBar = new TitleBar(this);
+    m_frameLayout->addWidget(m_titleBar);
+
+    // Create main window.
+    m_mainWindow = new QMainWindow(this);
+    m_frameLayout->addWidget(m_mainWindow);
+    m_mainWindow->setWindowFlags(Qt::WindowType::Widget);
+    m_mainWindow->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground,
+                               true);
+
     // Listen file open events.
     this->connect(OpenFileListener::instance().get(),
                   &OpenFileListener::openFile, this, &MainWindow::open,
@@ -34,15 +64,6 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
                   this, &MainWindow::active,
                   Qt::ConnectionType::QueuedConnection);
     OpenFileListener::instance()->unblock();
-
-    // Set icon
-    this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
-
-    // Set style sheet
-    QFile styleFile(":/StyleSheet/main_window.qss");
-    styleFile.open(QIODevice::OpenModeFlag::ReadOnly
-                   | QIODevice::OpenModeFlag::Text);
-    this->setStyleSheet(styleFile.readAll());
 
     // Initialize windows size and position.
     QRect windowRect = QApplication::desktop()->geometry();
@@ -56,9 +77,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
             .toLocal8Bit()));
 
     // Window status.
-    this->restoreState(QByteArray::fromHex(
+    m_mainWindow->restoreState(QByteArray::fromHex(
         Config::instance()
-            ->getString("/MainWindow/status", this->saveState().toHex())
+            ->getString("/MainWindow/status", m_mainWindow->saveState().toHex())
             .toLocal8Bit()));
 
     // Check update
@@ -70,8 +91,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     // Station modules widget
     m_stationModulesWidget
         = new StationModulesWidget(m_actionViewStationModules, this);
-    this->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea,
-                        m_stationModulesWidget, Qt::Orientation::Vertical);
+    m_mainWindow->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea,
+                                m_stationModulesWidget,
+                                Qt::Orientation::Vertical);
     m_stationModulesWidget->setObjectName("stationModulesWidget");
     m_stationModulesWidget->setAddToStationStatus(false);
 
@@ -81,12 +103,12 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
             ->getString("/MainWindow/StationModulesWidget/geometry",
                         m_stationModulesWidget->saveGeometry().toHex())
             .toLocal8Bit()));
-    this->restoreDockWidget(m_stationModulesWidget);
+    m_mainWindow->restoreDockWidget(m_stationModulesWidget);
 
     // Information widget
     m_infoWidget = new InfoWidget(m_actionViewInfo, this);
-    this->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea, m_infoWidget,
-                        Qt::Orientation::Vertical);
+    m_mainWindow->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea,
+                                m_infoWidget, Qt::Orientation::Vertical);
     m_infoWidget->setObjectName("infoWidget");
     this->connect(m_stationModulesWidget,
                   &StationModulesWidget::stationModuleClicked, m_infoWidget,
@@ -98,7 +120,7 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
             ->getString("/MainWindow/InfoWidget/geometry",
                         m_infoWidget->saveGeometry().toHex())
             .toLocal8Bit()));
-    this->restoreDockWidget(m_infoWidget);
+    m_mainWindow->restoreDockWidget(m_infoWidget);
 
     // Central widget
     m_centralWidget = new QMdiArea(this);
@@ -107,7 +129,9 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
     m_centralWidget->setTabsClosable(true);
     m_centralWidget->setTabsMovable(true);
     m_centralWidget->setDocumentMode(true);
-    this->setCentralWidget(m_centralWidget);
+    m_centralWidget->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground,
+                                  true);
+    m_mainWindow->setCentralWidget(m_centralWidget);
     this->connect(m_centralWidget, &QMdiArea::subWindowActivated, this,
                   &MainWindow::editorActived);
 
@@ -132,20 +156,96 @@ MainWindow::MainWindow() : QMainWindow(nullptr)
 MainWindow::~MainWindow() {}
 
 /**
+ * @brief   Load background image.
+ */
+void MainWindow::loadBackground()
+{
+    QString path = QString(":/Skins/%1/background.png")
+                       .arg(SkinManager::instance()->currentSkin());
+    if (QFile(path).exists()) {
+        m_backgroundImage = QPixmap(path);
+
+        // Cut image.
+        QPixmap background;
+        if (((double)(m_backgroundImage.width())) / m_backgroundImage.height()
+            > ((double)this->width()) / this->height()) {
+            int width  = (int)(m_backgroundImage.height()
+                              * (double)(this->width()) / this->height());
+            int x      = (m_backgroundImage.width() - width) / 2;
+            background = m_backgroundImage.copy(x, 0, width,
+                                                m_backgroundImage.height());
+
+        } else {
+            int height = (int)(m_backgroundImage.width()
+                               * (double)(this->height()) / this->width());
+            int y      = (m_backgroundImage.height() - height) / 2;
+            background = m_backgroundImage.copy(0, y, m_backgroundImage.width(),
+                                                height);
+        }
+
+        // Resize image.
+        background = background.scaled(this->width(), this->height());
+        this->setAutoFillBackground(true);
+
+        // Set brush.
+        QPalette pal = this->palette();
+        pal.setBrush(QPalette::ColorRole::Window,
+                     QBrush(::std::move(background)));
+        this->setPalette(pal);
+    }
+}
+
+/**
+ * @brief		Resize event.
+ */
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if (! m_backgroundImage.isNull()) {
+        // Cut image.
+        QPixmap background;
+        if (((double)(m_backgroundImage.width())) / m_backgroundImage.height()
+            > ((double)this->width()) / this->height()) {
+            int width  = (int)(m_backgroundImage.height()
+                              * (double)(this->width()) / this->height());
+            int x      = (m_backgroundImage.width() - width) / 2;
+            background = m_backgroundImage.copy(x, 0, width,
+                                                m_backgroundImage.height());
+
+        } else {
+            int height = (int)(m_backgroundImage.width()
+                               * (double)(this->height()) / this->width());
+            int y      = (m_backgroundImage.height() - height) / 2;
+            background = m_backgroundImage.copy(0, y, m_backgroundImage.width(),
+                                                height);
+        }
+
+        // Resize image.
+        background = background.scaled(this->width(), this->height());
+
+        // Set brush.
+        QPalette pal = this->palette();
+        pal.setBrush(QPalette::ColorRole::Window,
+                     QBrush(::std::move(background)));
+        this->setPalette(pal);
+    }
+    this->QWidget::resizeEvent(event);
+}
+
+/**
  * @brief	Initialize Menu.
  */
 void MainWindow::initMenuToolBar()
 {
     // Main menu.
     m_mainMenu = new QMenuBar(this);
-    this->setMenuBar(m_mainMenu);
+    m_mainWindow->setMenuBar(m_mainMenu);
 
     // File menu
     // Menu "File".
     m_menuFile = new QMenu(this);
     m_mainMenu->addMenu(m_menuFile);
     m_toolbarFile = new QToolBar(this);
-    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarFile);
+    m_mainWindow->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarFile);
     m_toolbarFile->setFloatable(false);
     m_toolbarFile->setObjectName("toolbarFile");
 
@@ -235,7 +335,7 @@ void MainWindow::initMenuToolBar()
     m_menuEdit = new QMenu(this);
     m_mainMenu->addMenu(m_menuEdit);
     m_toolbarEdit = new QToolBar(this);
-    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarEdit);
+    m_mainWindow->addToolBar(Qt::ToolBarArea::TopToolBarArea, m_toolbarEdit);
     m_toolbarEdit->setFloatable(false);
     m_toolbarEdit->setObjectName("toolbarEdit");
 
@@ -393,7 +493,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     Config::instance()->setString("/MainWindow/geometry",
                                   this->saveGeometry().toHex());
     Config::instance()->setString("/MainWindow/status",
-                                  this->saveState().toHex());
+                                  m_mainWindow->saveState().toHex());
     Config::instance()->setString(
         "/MainWindow/StationModulesWidget/geometry",
         m_stationModulesWidget->saveGeometry().toHex());

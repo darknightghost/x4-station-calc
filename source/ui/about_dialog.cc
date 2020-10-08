@@ -11,6 +11,7 @@
  */
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
+    this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
     this->setWindowTitle(STR("STR_TITLE_ABOUT"));
 
     m_layout = new QVBoxLayout();

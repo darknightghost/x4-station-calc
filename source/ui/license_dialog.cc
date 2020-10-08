@@ -12,6 +12,8 @@
  */
 LicenseDialog::LicenseDialog() : QDialog(nullptr)
 {
+    this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
+
     /// Layout
     m_layout = new QVBoxLayout();
 

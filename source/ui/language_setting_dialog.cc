@@ -14,6 +14,8 @@
  */
 LanguageSettingDialog::LanguageSettingDialog() : QDialog(nullptr)
 {
+    this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
+
     /// Create widgets
     m_layout = new QVBoxLayout();
 

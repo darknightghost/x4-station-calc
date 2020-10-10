@@ -222,7 +222,8 @@ void CustomizedWindow::leaveEvent(QEvent *event)
  */
 void CustomizedWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    if (m_borderType == BorderType::Fixed) {
+    if (m_borderType == BorderType::Fixed
+        || this->windowState() != Qt::WindowState::WindowNoState) {
         this->QWidget::mouseMoveEvent(event);
         return;
     }
@@ -384,7 +385,8 @@ void CustomizedWindow::mouseMoveEventMoving(QMouseEvent *event)
  */
 void CustomizedWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (m_dragStatus == DragStatus::Normal) {
+    if (m_dragStatus == DragStatus::Normal
+        && this->windowState() == Qt::WindowState::WindowNoState) {
         MouseRegion region = this->mouseRegoin(event->pos());
         if (region != MouseRegion::RegionCenter) {
             m_dragStatus     = DragStatus::Resizing;

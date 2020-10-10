@@ -40,6 +40,8 @@ class TitleBar : public QWidget {
     SquareButton *m_btnMinimize;          ///< Button Minimize.
     SquareButton *m_btnNormalizeMaximize; ///< Button normalize/maximize.
     SquareButton *m_btnClose;             ///< Button close.
+    bool          m_dragFlag;             ///< Drag flag.
+    QPoint        m_prevMousePos;         ///< Previous mouse position.
 
   public:
     /**
@@ -105,4 +107,33 @@ class TitleBar : public QWidget {
      * @param[in]   event   Event.
      */
     bool eventFilter(QObject *obj, QEvent *event) override;
+
+  protected:
+    /**
+     * @brief       Mouse move event.
+     *
+     * @param[in]   event       Event.
+     */
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
+
+    /**
+     * @brief       Mouse pressed event.
+     *
+     * @param[in]   event       Event.
+     */
+    virtual void mousePressEvent(QMouseEvent *event) override;
+
+    /**
+     * @brief       Mouse released event.
+     *
+     * @param[in]   event       Event.
+     */
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+    /**
+     * @brief       Double click event.
+     *
+     * @param[in]   event       Event.
+     */
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 };

@@ -2,6 +2,7 @@
 #include <QtCore/QEvent>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
+#include <QtGui/QMouseEvent>
 
 #include <common.h>
 #include <skin_manager.h>
@@ -11,7 +12,7 @@
  * @brief       Constructor.
  */
 TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
-    QWidget(parent), m_parent(parent)
+    QWidget(parent), m_parent(parent), m_dragFlag(false)
 {
     // Set window flags.
     this->setWindowFlags(Qt::WindowType::Widget
@@ -61,6 +62,8 @@ TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
     this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
                   this, &TitleBar::onSkinChanged);
     m_parent->installEventFilter(this);
+    m_lblIcon->installEventFilter(this);
+    m_lblTitle->installEventFilter(this);
 
     this->updateIcon(m_parent->windowIcon());
     this->updateTitle(m_parent->windowTitle());
@@ -143,6 +146,9 @@ bool TitleBar::eventFilter(QObject *obj, QEvent *event)
                 return this->QObject::eventFilter(obj, event);
         }
 
+    } else if (obj == static_cast<QObject *>(m_lblIcon)
+               || obj == static_cast<QObject *>(m_lblTitle)) {
+        return this->QObject::eventFilter(obj, event);
     } else {
         return this->QObject::eventFilter(obj, event);
     }
@@ -176,4 +182,51 @@ void TitleBar::onBtnNormalizeMaximizeClicked()
 void TitleBar::onBtnCloseClicked()
 {
     m_parent->close();
+}
+
+/**
+ * @brief       Mouse move event.
+ */
+void TitleBar::mouseMoveEvent(QMouseEvent *event)
+{
+    if (m_dragFlag) {
+        QPoint currentPos = event->globalPos();
+        int    dx         = currentPos.x() - m_prevMousePos.x();
+        int    dy         = currentPos.y() - m_prevMousePos.y();
+        m_prevMousePos    = currentPos;
+        m_parent->move(m_parent->x() + dx, m_parent->y() + dy);
+    }
+    this->QWidget::mouseMoveEvent(event);
+}
+
+/**
+ * @brief       Mouse pressed event.
+ */
+void TitleBar::mousePressEvent(QMouseEvent *event)
+{
+    m_dragFlag = true;
+    this->setCursor(Qt::CursorShape::SizeAllCursor);
+    m_prevMousePos = event->globalPos();
+    this->QWidget::mousePressEvent(event);
+}
+
+/**
+ * @brief       Mouse released event.
+ */
+void TitleBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    m_dragFlag = false;
+    this->setCursor(Qt::CursorShape::ArrowCursor);
+    this->QWidget::mouseReleaseEvent(event);
+}
+
+/**
+ * @brief       Double click event.
+ */
+void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MouseButton::LeftButton) {
+        this->onBtnNormalizeMaximizeClicked();
+    }
+    this->QWidget::mouseDoubleClickEvent(event);
 }

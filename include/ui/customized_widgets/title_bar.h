@@ -1,8 +1,10 @@
 #pragma once
 
+#include <QtCore/QFlags>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
+
 #include <ui/controls/square_button.h>
 #include <ui/controls/square_label.h>
 
@@ -12,11 +14,29 @@
 class TitleBar : public QWidget {
     Q_OBJECT;
 
+  public:
+    /**
+     * @brief       Titlebar buttons.
+     */
+    enum TitleBarButton : uint32_t {
+        NoButton       = 0x00000000, ///< No button.
+        MinimizeButton = 0x00000001, ///< Minimize button.
+        MaximizeButton = 0x00000002, ///< Maximize/normalize button.
+        CloseButton    = 0x00000004, ///< Close button.
+        MinCloseButtons
+        = MinimizeButton | CloseButton, ///< Minimize and close buttons.
+        AllButtons
+        = MinimizeButton | MaximizeButton | CloseButton ///< All buttons.
+    };
+
+    Q_DECLARE_FLAGS(TitleBarButtons, TitleBarButton);
+
   private:
     QWidget *     m_parent;               ///< Parent.
     QHBoxLayout * m_layout;               ///< Layout.
     SquareLabel * m_lblIcon;              ///< Label Icon.
     QLabel *      m_lblTitle;             ///< Label title.
+    QHBoxLayout * m_layoutButton;         ///< Button layout.
     SquareButton *m_btnMinimize;          ///< Button Minimize.
     SquareButton *m_btnNormalizeMaximize; ///< Button normalize/maximize.
     SquareButton *m_btnClose;             ///< Button close.
@@ -25,9 +45,10 @@ class TitleBar : public QWidget {
     /**
      * @brief       Constructor.
      *
+     * @param[in]   buttons     Buttons.
      * @param[in]   parent      Parent widget.
      */
-    TitleBar(QWidget *parent);
+    TitleBar(TitleBarButtons buttons, QWidget *parent);
 
     /**
      * @brief       Destructor.

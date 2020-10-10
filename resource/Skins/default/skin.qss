@@ -56,8 +56,16 @@ QWidget.MainWindow {
     padding: 0;
 }
 
-QMdiAreaa {
+QDockWidget {
+    titlebar-close-icon: url(close.png);
+    titlebar-normal-icon: url(undock.png);
+    background-image: none;
     background-color: rgba(0, 0, 0, 0);
+}
+
+QDockWidget::title {
+    text-align: left;
+    background-image: url(:/Skins/default/Background/normal.png);;
 }
 
 QMainWindow {

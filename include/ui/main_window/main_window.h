@@ -8,15 +8,15 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 
+#include <ui/customized_widgets/customized_window.h>
 #include <ui/main_window/info_widget/info_widget.h>
 #include <ui/main_window/station_modules_widget/station_modules_widget.h>
-#include <ui/main_window/title_bar.h>
 #include <update_checker.h>
 
 /**
  * @brief	Main window.
  */
-class MainWindow : public QWidget {
+class MainWindow : public CustomizedWindow {
     Q_OBJECT
   public:
     /**
@@ -48,12 +48,6 @@ class MainWindow : public QWidget {
   private:
     // Background
     QPixmap m_backgroundImage; ///< Background image.
-
-    // Layout
-    QVBoxLayout *m_frameLayout; ///< Frame layout.
-
-    // Title bar
-    TitleBar *m_titleBar; ///< Title bar.
 
     // Main window
     QMainWindow *m_mainWindow; ///< Main window.

@@ -5,12 +5,13 @@
 
 #include <common.h>
 #include <skin_manager.h>
-#include <ui/main_window/title_bar.h>
+#include <ui/customized_widgets/title_bar.h>
 
 /**
  * @brief       Constructor.
  */
-TitleBar::TitleBar(QWidget *parent) : QWidget(parent), m_parent(parent)
+TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
+    QWidget(parent), m_parent(parent)
 {
     // Set window flags.
     this->setWindowFlags(Qt::WindowType::Widget
@@ -31,21 +32,24 @@ TitleBar::TitleBar(QWidget *parent) : QWidget(parent), m_parent(parent)
     m_layout->addWidget(m_lblTitle);
     m_lblTitle->setProperty("class", "TitleBarTitle");
 
+    m_layoutButton = new QHBoxLayout(this);
+    m_layout->addLayout(m_layoutButton);
+
     m_btnMinimize = new SquareButton(this);
-    m_layout->addWidget(m_btnMinimize);
+    m_layoutButton->addWidget(m_btnMinimize);
     m_btnMinimize->setProperty("class", "TitleBarBtnMinimize");
     this->connect(m_btnMinimize, &QPushButton::clicked, this,
                   &TitleBar::onBtnMinimizeClicked);
 
     m_btnNormalizeMaximize = new SquareButton(this);
-    m_layout->addWidget(m_btnNormalizeMaximize);
+    m_layoutButton->addWidget(m_btnNormalizeMaximize);
     m_btnNormalizeMaximize->setProperty("class",
                                         "TitleBarBtnNormalizeMaximize");
     this->connect(m_btnNormalizeMaximize, &QPushButton::clicked, this,
                   &TitleBar::onBtnNormalizeMaximizeClicked);
 
     m_btnClose = new SquareButton(this);
-    m_layout->addWidget(m_btnClose);
+    m_layoutButton->addWidget(m_btnClose);
     m_btnClose->setProperty("class", "TitleBarBtnClose");
     this->connect(m_btnClose, &QPushButton::clicked, this,
                   &TitleBar::onBtnCloseClicked);
@@ -61,6 +65,16 @@ TitleBar::TitleBar(QWidget *parent) : QWidget(parent), m_parent(parent)
     this->updateIcon(m_parent->windowIcon());
     this->updateTitle(m_parent->windowTitle());
     this->onSkinChanged(SkinManager::instance()->currentSkin());
+
+    if (! (buttons | TitleBarButton::MinimizeButton)) {
+        m_btnMinimize->setVisible(false);
+
+    } else if (! (buttons | TitleBarButton::MaximizeButton)) {
+        m_btnNormalizeMaximize->setVisible(false);
+
+    } else if (! (buttons | TitleBarButton::CloseButton)) {
+        m_btnClose->setVisible(false);
+    }
 }
 
 /**

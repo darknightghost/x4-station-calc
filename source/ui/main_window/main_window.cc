@@ -20,12 +20,11 @@
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
-#include <ui/main_window/title_bar.h>
 
 /**
  * @brief		Constructor of main window.
  */
-MainWindow::MainWindow() : QWidget(nullptr)
+MainWindow::MainWindow() : CustomizedWindow()
 {
     this->loadBackground();
 
@@ -41,17 +40,9 @@ MainWindow::MainWindow() : QWidget(nullptr)
     this->setProperty("class", "MainWindow");
     this->setAutoFillBackground(true);
 
-    // Create frame layout.
-    m_frameLayout = new QVBoxLayout();
-    this->setLayout(m_frameLayout);
-
-    // Create title bar.
-    m_titleBar = new TitleBar(this);
-    m_frameLayout->addWidget(m_titleBar);
-
     // Create main window.
     m_mainWindow = new QMainWindow(this);
-    m_frameLayout->addWidget(m_mainWindow);
+    this->setWidget(m_mainWindow);
     m_mainWindow->setWindowFlags(Qt::WindowType::Widget);
     m_mainWindow->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground,
                                true);
@@ -124,6 +115,8 @@ MainWindow::MainWindow() : QWidget(nullptr)
 
     // Central widget
     m_centralWidget = new QMdiArea(this);
+    m_centralWidget->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground,
+                                  true);
     m_centralWidget->setViewMode(QMdiArea::TabbedView);
     m_centralWidget->setTabPosition(QTabWidget::TabPosition::North);
     m_centralWidget->setTabsClosable(true);
@@ -131,7 +124,9 @@ MainWindow::MainWindow() : QWidget(nullptr)
     m_centralWidget->setDocumentMode(true);
     m_centralWidget->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground,
                                   true);
+    m_centralWidget->setBackground(QBrush(Qt::GlobalColor::transparent));
     m_mainWindow->setCentralWidget(m_centralWidget);
+
     this->connect(m_centralWidget, &QMdiArea::subWindowActivated, this,
                   &MainWindow::editorActived);
 
@@ -228,7 +223,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
                      QBrush(::std::move(background)));
         this->setPalette(pal);
     }
-    this->QWidget::resizeEvent(event);
+    this->CustomizedWindow::resizeEvent(event);
 }
 
 /**
@@ -468,8 +463,6 @@ void MainWindow::initMenuToolBar()
 
 /**
  * @brief		Close event.
- *
- * @param[in]	event		Event.
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {

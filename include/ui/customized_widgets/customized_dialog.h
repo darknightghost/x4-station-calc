@@ -1,47 +1,28 @@
 #pragma once
 
-#include <QtCore/QFlags>
-#include <QtCore/QTimer>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QDialog>
 
-#include <ui/customized_widgets/title_bar.h>
+#include <ui/customized_widgets/customized_window.h>
 
 /**
- * @brief       Cusatomized widget.
+ * @brief       Customized dialog.
  */
-class CustomizedWindow : public QWidget {
+class CustomizedDialog : public QDialog {
     Q_OBJECT;
 
   public:
-    /**
-     * @brief   border type.
-     */
-    enum BorderType {
-        Resizable, ///< the window can be resized.
-        Fixed      ///< the size of window si fixed.
-    };
+    typedef CustomizedWindow::BorderType BorderType;
 
+  protected:
     /**
      * @brief   mouse position.
      */
-    enum MouseRegion : uint32_t {
-        RegionNone        = 0x00000000,
-        RegionCenter      = 0x00000000,
-        RegionLeft        = 0x00000001,
-        RegionTop         = 0x00000002,
-        RegionRight       = 0x00000004,
-        RegionBottom      = 0x00000008,
-        RegionTopLeft     = RegionTop | RegionLeft,
-        RegionTopRight    = RegionTop | RegionRight,
-        RegionBottomLeft  = RegionBottom | RegionLeft,
-        RegionBottomRight = RegionBottom | RegionRight
-    };
+    typedef CustomizedWindow::MouseRegion MouseRegion;
 
     /**
      * @brief   drag status.
      */
-    enum DragStatus { Normal, Resizing, Moving };
+    typedef CustomizedWindow::DragStatus DragStatus;
 
   private:
     BorderType   m_borderType;     ///< Type of the border.
@@ -61,7 +42,7 @@ class CustomizedWindow : public QWidget {
      * @param[in]   widget              Widget.
      * @param[in]   parent              Parent widget.
      */
-    CustomizedWindow(BorderType borderType = BorderType::Resizable,
+    CustomizedDialog(BorderType borderType = BorderType::Resizable,
                      TitleBar::TitleBarButtons titleBarButtons
                      = TitleBar::TitleBarButton::AllButtons,
                      QWidget *widget = nullptr,
@@ -70,7 +51,7 @@ class CustomizedWindow : public QWidget {
     /**
      * @brief       Destructor.
      */
-    virtual ~CustomizedWindow();
+    virtual ~CustomizedDialog();
 
   public:
     /**

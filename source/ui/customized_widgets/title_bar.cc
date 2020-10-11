@@ -12,7 +12,8 @@
  * @brief       Constructor.
  */
 TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
-    QWidget(parent), m_parent(parent), m_dragFlag(false)
+    QWidget(parent), m_parent(parent), m_btnMinimize(nullptr),
+    m_btnNormalizeMaximize(nullptr), m_btnClose(nullptr), m_dragFlag(false)
 {
     // Set window flags.
     this->setWindowFlags(Qt::WindowType::Widget
@@ -36,25 +37,6 @@ TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
     m_layoutButton = new QHBoxLayout(this);
     m_layout->addLayout(m_layoutButton);
 
-    m_btnMinimize = new SquareButton(this);
-    m_layoutButton->addWidget(m_btnMinimize);
-    m_btnMinimize->setProperty("class", "TitleBarBtnMinimize");
-    this->connect(m_btnMinimize, &QPushButton::clicked, this,
-                  &TitleBar::onBtnMinimizeClicked);
-
-    m_btnNormalizeMaximize = new SquareButton(this);
-    m_layoutButton->addWidget(m_btnNormalizeMaximize);
-    m_btnNormalizeMaximize->setProperty("class",
-                                        "TitleBarBtnNormalizeMaximize");
-    this->connect(m_btnNormalizeMaximize, &QPushButton::clicked, this,
-                  &TitleBar::onBtnNormalizeMaximizeClicked);
-
-    m_btnClose = new SquareButton(this);
-    m_layoutButton->addWidget(m_btnClose);
-    m_btnClose->setProperty("class", "TitleBarBtnClose");
-    this->connect(m_btnClose, &QPushButton::clicked, this,
-                  &TitleBar::onBtnCloseClicked);
-
     this->connect(m_parent, &QWidget::windowIconChanged, this,
                   &TitleBar::updateIcon);
     this->connect(m_parent, &QWidget::windowTitleChanged, this,
@@ -65,19 +47,34 @@ TitleBar::TitleBar(TitleBarButtons buttons, QWidget *parent) :
     m_lblIcon->installEventFilter(this);
     m_lblTitle->installEventFilter(this);
 
+    if (buttons & TitleBarButton::MinimizeButton) {
+        m_btnMinimize = new SquareButton(this);
+        m_layoutButton->addWidget(m_btnMinimize);
+        m_btnMinimize->setProperty("class", "TitleBarBtnMinimize");
+        this->connect(m_btnMinimize, &QPushButton::clicked, this,
+                      &TitleBar::onBtnMinimizeClicked);
+    }
+
+    if (buttons & TitleBarButton::MaximizeButton) {
+        m_btnNormalizeMaximize = new SquareButton(this);
+        m_layoutButton->addWidget(m_btnNormalizeMaximize);
+        m_btnNormalizeMaximize->setProperty("class",
+                                            "TitleBarBtnNormalizeMaximize");
+        this->connect(m_btnNormalizeMaximize, &QPushButton::clicked, this,
+                      &TitleBar::onBtnNormalizeMaximizeClicked);
+    }
+
+    if (buttons & TitleBarButton::CloseButton) {
+        m_btnClose = new SquareButton(this);
+        m_layoutButton->addWidget(m_btnClose);
+        m_btnClose->setProperty("class", "TitleBarBtnClose");
+        this->connect(m_btnClose, &QPushButton::clicked, this,
+                      &TitleBar::onBtnCloseClicked);
+    }
+
     this->updateIcon(m_parent->windowIcon());
     this->updateTitle(m_parent->windowTitle());
     this->onSkinChanged(SkinManager::instance()->currentSkin());
-
-    if (! (buttons | TitleBarButton::MinimizeButton)) {
-        m_btnMinimize->setVisible(false);
-
-    } else if (! (buttons | TitleBarButton::MaximizeButton)) {
-        m_btnNormalizeMaximize->setVisible(false);
-
-    } else if (! (buttons | TitleBarButton::CloseButton)) {
-        m_btnClose->setVisible(false);
-    }
 }
 
 /**
@@ -106,16 +103,18 @@ void TitleBar::updateTitle(const QString &title)
  */
 void TitleBar::updateStatus()
 {
-    if (m_parent->windowState()
-        & (Qt::WindowState::WindowMaximized
-           | Qt::WindowState::WindowFullScreen)) {
-        m_btnNormalizeMaximize->setIcon(
-            QIcon(QString(":/Skins/%1/Icons/WindowNormalize.png")
-                      .arg(SkinManager::instance()->currentSkin())));
-    } else {
-        m_btnNormalizeMaximize->setIcon(
-            QIcon(QString(":/Skins/%1/Icons/WindowMaximize.png")
-                      .arg(SkinManager::instance()->currentSkin())));
+    if (m_btnNormalizeMaximize != nullptr) {
+        if (m_parent->windowState()
+            & (Qt::WindowState::WindowMaximized
+               | Qt::WindowState::WindowFullScreen)) {
+            m_btnNormalizeMaximize->setIcon(
+                QIcon(QString(":/Skins/%1/Icons/WindowNormalize.png")
+                          .arg(SkinManager::instance()->currentSkin())));
+        } else {
+            m_btnNormalizeMaximize->setIcon(
+                QIcon(QString(":/Skins/%1/Icons/WindowMaximize.png")
+                          .arg(SkinManager::instance()->currentSkin())));
+        }
     }
 }
 
@@ -124,11 +123,17 @@ void TitleBar::updateStatus()
  */
 void TitleBar::onSkinChanged(const QString &currentSkin)
 {
-    m_btnMinimize->setIcon(
-        QIcon(QString(":/Skins/%1/Icons/WindowMinimize.png").arg(currentSkin)));
+    if (m_btnMinimize != nullptr) {
+        m_btnMinimize->setIcon(QIcon(
+            QString(":/Skins/%1/Icons/WindowMinimize.png").arg(currentSkin)));
+    }
+
     this->updateStatus();
-    m_btnClose->setIcon(
-        QIcon(QString(":/Skins/%1/Icons/WindowClose.png").arg(currentSkin)));
+
+    if (m_btnClose != nullptr) {
+        m_btnClose->setIcon(QIcon(
+            QString(":/Skins/%1/Icons/WindowClose.png").arg(currentSkin)));
+    }
 }
 
 /**

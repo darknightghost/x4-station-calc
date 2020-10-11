@@ -10,12 +10,20 @@
 /**
  * @brief	Constructor.
  */
-LicenseDialog::LicenseDialog() : QDialog(nullptr)
+LicenseDialog::LicenseDialog() :
+    CustomizedDialog(CustomizedDialog::BorderType::Fixed,
+                     TitleBar::TitleBarButton::CloseButton,
+                     nullptr)
+
 {
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
 
+    m_centralWidget = new QWidget(this);
+    this->setWidget(m_centralWidget);
+
     /// Layout
-    m_layout = new QVBoxLayout();
+    m_layout = new QVBoxLayout(m_centralWidget);
+    m_centralWidget->setLayout(m_layout);
 
     /// Text
     m_txtLicense = new QTextEdit();
@@ -54,7 +62,6 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
 
     m_layout->addLayout(m_layoutButton);
 
-    this->setLayout(m_layout);
     this->setWindowTitle(STR("STR_TITLE_LICENSE"));
 
     /// Window size and position.

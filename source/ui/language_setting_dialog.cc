@@ -12,12 +12,21 @@
 /**
  * @brief	Constructor.
  */
-LanguageSettingDialog::LanguageSettingDialog() : QDialog(nullptr)
+LanguageSettingDialog::LanguageSettingDialog() :
+    CustomizedDialog(CustomizedDialog::BorderType::Fixed,
+                     TitleBar::TitleBarButton::CloseButton,
+                     nullptr)
+
 {
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
 
+    m_centerWidget = new QWidget(this);
+    this->setWidget(m_centerWidget);
+
     /// Create widgets
-    m_layout = new QVBoxLayout();
+    m_layout = new QVBoxLayout(m_centerWidget);
+    // Set layout
+    m_centerWidget->setLayout(m_layout);
 
     /// Selections
     /// Layout
@@ -48,7 +57,7 @@ LanguageSettingDialog::LanguageSettingDialog() : QDialog(nullptr)
 
     /// Buttons
     /// Layout
-    m_btnLayout = new QHBoxLayout();
+    m_btnLayout = new QHBoxLayout(m_centerWidget);
 
     /// Button OK
     m_btnLayout->addStretch();
@@ -59,8 +68,6 @@ LanguageSettingDialog::LanguageSettingDialog() : QDialog(nullptr)
     m_btnLayout->addStretch();
     m_layout->addLayout(m_btnLayout);
 
-    // Set layout
-    this->setLayout(m_layout);
     this->setWindowTitle(STR("STR_TITLE_LANGUAGE"));
 
     /// Window size and position.

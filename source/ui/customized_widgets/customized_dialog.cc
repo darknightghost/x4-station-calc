@@ -3,25 +3,26 @@
 #include <QtGui/QResizeEvent>
 
 #include <common.h>
-#include <ui/customized_widgets/customized_window.h>
+#include <ui/customized_widgets/customized_dialog.h>
 
 #define BORDER_SIZE 3
 
 /**
  * @brief       Constructor
  */
-CustomizedWindow::CustomizedWindow(BorderType                borderType,
+CustomizedDialog::CustomizedDialog(BorderType                borderType,
                                    TitleBar::TitleBarButtons titleBarButtons,
                                    QWidget *                 widget,
                                    QWidget *                 parent) :
-    QWidget(parent),
+    QDialog(parent),
     m_borderType(borderType), m_layout(nullptr), m_titleBar(nullptr),
     m_widget(nullptr), m_dragStatus(DragStatus::Normal)
 {
     // Set window flags
     this->setWindowFlags(Qt::WindowType::CustomizeWindowHint
                          | Qt::WindowType::FramelessWindowHint
-                         | Qt::WindowType::WindowSystemMenuHint);
+                         | Qt::WindowType::WindowSystemMenuHint
+                         | Qt::WindowType::Dialog);
 
     // Layout.
     m_layout = new QVBoxLayout(this);
@@ -40,7 +41,7 @@ CustomizedWindow::CustomizedWindow(BorderType                borderType,
     m_mouseTimer = new QTimer(this);
     m_mouseTimer->setSingleShot(true);
     this->connect(m_mouseTimer, &QTimer::timeout, this,
-                  &CustomizedWindow::updateCursor);
+                  &CustomizedDialog::updateCursor);
 
     this->setMouseTracking(true);
 }
@@ -48,12 +49,12 @@ CustomizedWindow::CustomizedWindow(BorderType                borderType,
 /**
  * @brief       Destructor.
  */
-CustomizedWindow::~CustomizedWindow() {}
+CustomizedDialog::~CustomizedDialog() {}
 
 /**
  * @brief       Set widget.
  */
-QWidget *CustomizedWindow::setWidget(QWidget *newWidget)
+QWidget *CustomizedDialog::setWidget(QWidget *newWidget)
 {
     if (m_widget != nullptr) {
         m_layout->removeWidget(m_widget);
@@ -74,7 +75,7 @@ QWidget *CustomizedWindow::setWidget(QWidget *newWidget)
 /**
  * @brief       Get widget.
  */
-QWidget *CustomizedWindow::widget()
+QWidget *CustomizedDialog::widget()
 {
     return m_widget;
 }
@@ -82,7 +83,7 @@ QWidget *CustomizedWindow::widget()
 /**
  * @brief       Get mouse region.
  */
-CustomizedWindow::MouseRegion CustomizedWindow::mouseRegoin(const QPoint &pos)
+CustomizedDialog::MouseRegion CustomizedDialog::mouseRegoin(const QPoint &pos)
 {
     // Border.
     Range<int> borderTop(0, max(m_titleBar->y(), BORDER_SIZE) - 1);
@@ -122,7 +123,7 @@ CustomizedWindow::MouseRegion CustomizedWindow::mouseRegoin(const QPoint &pos)
 /**
  * @brief       Update cursor.
  */
-void CustomizedWindow::updateCursor()
+void CustomizedDialog::updateCursor()
 {
     if (m_dragStatus != DragStatus::Normal) {
         m_mouseTimer->start(100);
@@ -194,26 +195,26 @@ void CustomizedWindow::updateCursor()
 /**
  * @brief       Mouse leave event.
  */
-void CustomizedWindow::leaveEvent(QEvent *event)
+void CustomizedDialog::leaveEvent(QEvent *event)
 {
     if (m_borderType == BorderType::Fixed
         || m_dragStatus != DragStatus::Normal) {
-        this->QWidget::leaveEvent(event);
+        this->QDialog::leaveEvent(event);
         return;
     }
 
     switch (m_dragStatus) {
         case DragStatus::Normal:
             this->setCursor(Qt::CursorShape::ArrowCursor);
-            this->QWidget::leaveEvent(event);
+            this->QDialog::leaveEvent(event);
             break;
 
         case DragStatus::Resizing:
-            this->QWidget::leaveEvent(event);
+            this->QDialog::leaveEvent(event);
             break;
 
         case DragStatus::Moving:
-            this->QWidget::leaveEvent(event);
+            this->QDialog::leaveEvent(event);
             break;
     }
 
@@ -225,11 +226,11 @@ void CustomizedWindow::leaveEvent(QEvent *event)
 /**
  * @brief       Mouse move event.
  */
-void CustomizedWindow::mouseMoveEvent(QMouseEvent *event)
+void CustomizedDialog::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_borderType == BorderType::Fixed
         || this->windowState() != Qt::WindowState::WindowNoState) {
-        this->QWidget::mouseMoveEvent(event);
+        this->QDialog::mouseMoveEvent(event);
         return;
     }
 
@@ -253,7 +254,7 @@ void CustomizedWindow::mouseMoveEvent(QMouseEvent *event)
 /**
  * @brief       Mouse move event.
  */
-void CustomizedWindow::mouseMoveEventNormal(QMouseEvent *event)
+void CustomizedDialog::mouseMoveEventNormal(QMouseEvent *event)
 {
     MouseRegion region = this->mouseRegoin(event->pos());
 
@@ -301,14 +302,14 @@ void CustomizedWindow::mouseMoveEventNormal(QMouseEvent *event)
         m_mouseTimer->start(100);
     }
 
-    this->QWidget::mouseMoveEvent(event);
+    this->QDialog::mouseMoveEvent(event);
     return;
 }
 
 /**
  * @brief       Mouse move event.
  */
-void CustomizedWindow::mouseMoveEventResizing(QMouseEvent *event)
+void CustomizedDialog::mouseMoveEventResizing(QMouseEvent *event)
 {
     QRect geo = this->geometry();
 
@@ -372,23 +373,23 @@ void CustomizedWindow::mouseMoveEventResizing(QMouseEvent *event)
     }
 
     this->setGeometry(geo);
-    this->QWidget::mouseMoveEvent(event);
+    this->QDialog::mouseMoveEvent(event);
     return;
 }
 
 /**
  * @brief       Mouse move event.
  */
-void CustomizedWindow::mouseMoveEventMoving(QMouseEvent *event)
+void CustomizedDialog::mouseMoveEventMoving(QMouseEvent *event)
 {
-    this->QWidget::mouseMoveEvent(event);
+    this->QDialog::mouseMoveEvent(event);
     return;
 }
 
 /**
  * @brief       Mouse pressed event.
  */
-void CustomizedWindow::mousePressEvent(QMouseEvent *event)
+void CustomizedDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_dragStatus == DragStatus::Normal
         && this->windowState() == Qt::WindowState::WindowNoState) {
@@ -399,17 +400,17 @@ void CustomizedWindow::mousePressEvent(QMouseEvent *event)
         }
     }
 
-    this->QWidget::mousePressEvent(event);
+    this->QDialog::mousePressEvent(event);
     return;
 }
 
 /**
  * @brief       Mouse released event.
  */
-void CustomizedWindow::mouseReleaseEvent(QMouseEvent *event)
+void CustomizedDialog::mouseReleaseEvent(QMouseEvent *event)
 {
     m_dragStatus = DragStatus::Normal;
 
-    this->QWidget::mouseReleaseEvent(event);
+    this->QDialog::mouseReleaseEvent(event);
     return;
 }

@@ -7,12 +7,16 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 
+#include <ui/customized_widgets/customized_dialog.h>
+
 /**
  * @brief	License widget.
  */
-class LicenseDialog : public QDialog {
+class LicenseDialog : public CustomizedDialog {
     Q_OBJECT
   private:
+    QWidget *m_centralWidget; ///< Central widget.
+
     QVBoxLayout *m_layout; //< Layout
 
     /// Text

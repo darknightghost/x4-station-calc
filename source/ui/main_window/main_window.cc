@@ -28,11 +28,6 @@ MainWindow::MainWindow() : CustomizedWindow()
 {
     this->loadBackground();
 
-    // Set window flags
-    this->setWindowFlags(Qt::WindowType::CustomizeWindowHint
-                         | Qt::WindowType::FramelessWindowHint
-                         | Qt::WindowType::WindowSystemMenuHint);
-
     // Set icon
     this->setWindowIcon(QIcon(":/Icons/MainIcon.png"));
 

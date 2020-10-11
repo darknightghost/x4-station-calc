@@ -9,13 +9,19 @@
 /**
  * @brief       Constructor.
  */
-AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
+AboutDialog::AboutDialog(QWidget *parent) :
+    CustomizedDialog(CustomizedDialog::BorderType::Fixed,
+                     TitleBar::TitleBarButton::CloseButton,
+                     parent)
 {
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
     this->setWindowTitle(STR("STR_TITLE_ABOUT"));
 
+    m_centralWidget = new QWidget(this);
+    this->setWidget(m_centralWidget);
+
     m_layout = new QVBoxLayout();
-    this->setLayout(m_layout);
+    m_centralWidget->setLayout(m_layout);
 
     m_lblTitle = new QLabel("X4 Station Calculator");
     m_layout->addWidget(m_lblTitle);

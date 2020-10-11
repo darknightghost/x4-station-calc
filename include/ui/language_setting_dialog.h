@@ -7,19 +7,23 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
 
+#include <ui/customized_widgets/customized_dialog.h>
+
 /**
  * @brief	Language select dialog.
  */
-class LanguageSettingDialog : public QDialog {
+class LanguageSettingDialog : public CustomizedDialog {
     Q_OBJECT
   private:
-    QVBoxLayout *m_layout;          //< Layout.
-    QHBoxLayout *m_selectionLayout; //< Layout of selections.
-    QLabel *     m_lblLang;         //< Lable language.
-    QComboBox *  m_comboLang;       //< Select language.
+    QWidget *m_centerWidget; ///< Center widget.
 
-    QHBoxLayout *m_btnLayout; //< Layout of Buttons..
-    QPushButton *m_btnOK;     //< Button OK.
+    QVBoxLayout *m_layout;          ///< Layout.
+    QHBoxLayout *m_selectionLayout; ///< Layout of selections.
+    QLabel *     m_lblLang;         ///< Lable language.
+    QComboBox *  m_comboLang;       ///< Select language.
+
+    QHBoxLayout *m_btnLayout; ///< Layout of Buttons..
+    QPushButton *m_btnOK;     ///< Button OK.
 
   private slots:
     /**

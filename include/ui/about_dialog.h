@@ -6,12 +6,15 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 
+#include <ui/customized_widgets/customized_dialog.h>
+
 /**
  * @brief       About dialog.
  */
-class AboutDialog : public QDialog {
+class AboutDialog : public CustomizedDialog {
     Q_OBJECT
   private:
+    QWidget *    m_centralWidget;    ///< Central widget.
     QVBoxLayout *m_layout;           ///< Layout.
     QLabel *     m_lblTitle;         ///< Title.
     QLabel *     m_lblVersion;       ///< Version.

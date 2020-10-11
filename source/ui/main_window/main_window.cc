@@ -17,6 +17,7 @@
 #include <open_file_listener.h>
 #include <skin_manager.h>
 #include <ui/about_dialog.h>
+#include <ui/customized_widgets/customized_file_dialog.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
@@ -611,9 +612,9 @@ void MainWindow::editorActived(QMdiSubWindow *window)
 void MainWindow::askGamePath()
 {
     while (true) {
-        QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
-                               Config::instance()->getString("/gamePath", ""),
-                               "*");
+        CustomizedFileDialog fileDialog(
+            nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
+            Config::instance()->getString("/gamePath", ""), "*");
         fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
         fileDialog.setFileMode(QFileDialog::FileMode::Directory);
         fileDialog.setFilter(QDir::Filter::Dirs | QDir::Filter::Hidden

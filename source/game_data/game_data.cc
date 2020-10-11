@@ -3,13 +3,13 @@
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
 #include <QtCore/QThread>
-#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <game_data/game_data.h>
 #include <game_data/game_texts.h>
 #include <locale/string_table.h>
+#include <ui/customized_widgets/customized_file_dialog.h>
 
 /**
  * @brief		Constructor.
@@ -303,8 +303,8 @@ bool GameData::checkGamePath(const QString &                      path,
  */
 bool GameData::askGamePath()
 {
-    QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
-                           m_gamePath, "*");
+    CustomizedFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
+                                    m_gamePath, "*");
     fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
     fileDialog.setFileMode(QFileDialog::FileMode::Directory);
     fileDialog.setFilter(QDir::Filter::Dirs | QDir::Filter::Hidden

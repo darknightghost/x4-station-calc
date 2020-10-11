@@ -10,9 +10,6 @@
 class CustomizedFileDialog : public CustomizedDialog {
     Q_OBJECT;
 
-  protected:
-    QFileDialog *m_fileDialog; ///< File dialog.
-
   public:
     /**
      * @brief       Constructor.
@@ -41,55 +38,8 @@ class CustomizedFileDialog : public CustomizedDialog {
     virtual ~CustomizedFileDialog();
 
   public:
-    /**
-     * @brief       Get accept mode.
-     *
-     * @return      Accept mode.
-     */
-    QFileDialog::AcceptMode acceptMode() const;
-
-    /**
-     * @brief       Set accept mode.
-     *
-     * @param[in]   mode        Accept mode.
-     */
-    void setAcceptMode(QFileDialog::AcceptMode mode);
-
-    /**
-     * @brief       Get file mode.
-     *
-     * @return      File mode.
-     */
-    QFileDialog::FileMode fileMode() const;
-
-    /**
-     * @brief       Set file mode.
-     *
-     * @param[in]   mode        File mode.
-     */
-    void setFileMode(QFileDialog::FileMode mode);
-
-    /**
-     * @brief       Get filter.
-     *
-     * @return      Filter.
-     */
-    QDir::Filters filter() const;
-
-    /**
-     * @brief       Set filter.
-     *
-     * @param[in]   filters     Filters.
-     */
-    void setFilter(QDir::Filters filters);
-
-  public:
-    /**
-     * @brief       Get selected files.
-     *
-     * @return      List of selected files.
-     */
-    QStringList selectedFiles() const;
+QFileDialog::AcceptMode 	acceptMode() const;
+void 	setAcceptMode(QFileDialog::AcceptMode mode);
 
   public:
     /**

@@ -37,6 +37,14 @@ void SquareLabel::setIcon(const QIcon &icon)
 }
 
 /**
+ * @brief		Resize icon.
+ */
+void SquareLabel::resizeIcon()
+{
+    this->resizeIcon(this->size());
+}
+
+/**
  * @brief		Destructor.
  */
 SquareLabel::~SquareLabel() {}
@@ -48,8 +56,8 @@ void SquareLabel::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
     if (sz.width() == sz.height()) {
-        QLabel::resizeEvent(event);
         this->resizeIcon(event->size());
+        QLabel::resizeEvent(event);
     } else {
         sz.setWidth(sz.height());
         event->ignore();
@@ -71,4 +79,6 @@ void SquareLabel::resizeIcon(const QSize &sz)
     this->QLabel::setPixmap(
         pixmap.scaled(sz, Qt::AspectRatioMode::IgnoreAspectRatio,
                       Qt::TransformationMode::SmoothTransformation));
+
+    this->repaint();
 }

@@ -5,12 +5,12 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QFocusEvent>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <locale/string_table.h>
+#include <ui/customized_widgets/customized_file_dialog.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/editor_widget/x4sc_group_clipboard_mime_data_builder.h>
 #include <ui/main_window/editor_widget/x4sc_module_clipboard_mime_data_builder.h>
@@ -1494,7 +1494,7 @@ void EditorWidget::save()
 void EditorWidget::saveAs()
 {
     // Get path to save.
-    QString fileName = QFileDialog::getSaveFileName(
+    QString fileName = CustomizedFileDialog::getSaveFileName(
         this, STR("STR_TITLE_SAVE_STATION"),
         Config::instance()->getString(
             "/savePath",
@@ -1531,7 +1531,7 @@ void EditorWidget::saveAs()
 void EditorWidget::exportAsHTML()
 {
     // Get path to save.
-    QString fileName = QFileDialog::getSaveFileName(
+    QString fileName = CustomizedFileDialog::getSaveFileName(
         this, STR("STR_TITLE_EXPORT_HTML"),
         Config::instance()->getString(
             "/exportPath",

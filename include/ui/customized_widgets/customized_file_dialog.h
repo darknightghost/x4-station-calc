@@ -83,6 +83,20 @@ class CustomizedFileDialog : public CustomizedDialog {
      */
     void setFilter(QDir::Filters filters);
 
+    /**
+     * @brief       Get the options that affect the look and feel of the dialog.
+     *
+     * @return      Options.
+     */
+    QFileDialog::Options options() const;
+
+    /**
+     * @brief       Set the options that affect the look and feel of the dialog.
+     *
+     * @param[in]   options     Options.
+     */
+    void setOptions(QFileDialog::Options options);
+
   public:
     /**
      * @brief       Get selected files.

@@ -34,6 +34,11 @@ class SquareButton : public QPushButton {
     void setIcon(const QIcon &icon);
 
     /**
+     * @brief		Resize icon.
+     */
+    void resizeIcon();
+
+    /**
      * @brief		Destructor.
      */
     virtual ~SquareButton();

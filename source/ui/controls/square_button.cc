@@ -37,6 +37,14 @@ void SquareButton::setIcon(const QIcon &icon)
 }
 
 /**
+ * @brief		Resize icon.
+ */
+void SquareButton::resizeIcon()
+{
+    this->resizeIcon(this->size());
+}
+
+/**
  * @brief		Destructor.
  */
 SquareButton::~SquareButton() {}
@@ -48,8 +56,8 @@ void SquareButton::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
     if (sz.width() == sz.height()) {
-        QPushButton::resizeEvent(event);
         this->resizeIcon(event->size());
+        QPushButton::resizeEvent(event);
     } else {
         sz.setWidth(sz.height());
         event->ignore();
@@ -78,4 +86,5 @@ void SquareButton::resizeIcon(const QSize &sz)
     }
 
     this->QPushButton::setIcon(scaledIcon);
+    this->repaint();
 }

@@ -1,3 +1,7 @@
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
+
+#include <config.h>
 #include <ui/customized_widgets/customized_file_dialog.h>
 
 /**
@@ -9,9 +13,11 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *      parent,
                                            const QString &filter) :
     CustomizedDialog(CustomizedDialog::BorderType::Resizable,
                      TitleBar::TitleBarButton::AllButtons,
+                     nullptr,
                      parent),
-    m_fileDialog(new QFileDialog(this, "", directory, filter))
+    m_fileDialog(nullptr)
 {
+    m_fileDialog = new QFileDialog(this, "", directory, filter);
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
     m_fileDialog->setWindowFlags(Qt::WindowType::Widget);
     m_fileDialog->setOption(QFileDialog::Option::DontUseNativeDialog);
@@ -23,6 +29,17 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *      parent,
                   &CustomizedFileDialog::done);
     this->connect(m_fileDialog, &QFileDialog::rejected, this,
                   &CustomizedFileDialog::reject);
+
+    // Initialize windows size and position.
+    QRect windowRect = QApplication::desktop()->geometry();
+    windowRect.setSize(windowRect.size() / 2);
+    windowRect.setX(windowRect.width() / 4);
+    windowRect.setY(windowRect.height() / 4);
+    this->setGeometry(windowRect);
+    this->restoreGeometry(QByteArray::fromHex(
+        Config::instance()
+            ->getString("/fileDialog/geometry", this->saveGeometry().toHex())
+            .toLocal8Bit()));
 }
 
 /**
@@ -32,10 +49,12 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *       parent,
                                            Qt::WindowFlags flags) :
     CustomizedDialog(CustomizedDialog::BorderType::Resizable,
                      TitleBar::TitleBarButton::AllButtons,
+                     nullptr,
                      parent),
-    m_fileDialog(new QFileDialog(this, flags))
+    m_fileDialog(nullptr)
 
 {
+    m_fileDialog = new QFileDialog(this, flags);
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground, true);
     m_fileDialog->setWindowFlags(Qt::WindowType::Widget);
     m_fileDialog->setOption(QFileDialog::Option::DontUseNativeDialog);
@@ -51,7 +70,11 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *       parent,
 /**
  * @brief       Destructor.
  */
-CustomizedFileDialog::~CustomizedFileDialog() {}
+CustomizedFileDialog::~CustomizedFileDialog()
+{
+    Config::instance()->setString("/fileDialog/geometry",
+                                  this->saveGeometry().toHex());
+}
 
 /**
  * @brief       Get accept mode.
@@ -102,6 +125,23 @@ void CustomizedFileDialog::setFilter(QDir::Filters filters)
 }
 
 /**
+ * @brief       Get the options that affect the look and feel of the dialog.
+ */
+QFileDialog::Options CustomizedFileDialog::options() const
+{
+    return m_fileDialog->options();
+}
+
+/**
+ * @brief       Set the options that affect the look and feel of the dialog.
+ */
+void CustomizedFileDialog::setOptions(QFileDialog::Options options)
+{
+    m_fileDialog->setOptions(options
+                             | QFileDialog::Option::DontUseNativeDialog);
+}
+
+/**
  * @brief       Get selected files.
  */
 QStringList CustomizedFileDialog::selectedFiles() const
@@ -118,7 +158,22 @@ QString CustomizedFileDialog::getSaveFileName(QWidget *      parent,
                                               const QString &filter,
                                               QString *      selectedFilter,
                                               QFileDialog::Options options)
-{}
+{
+    CustomizedFileDialog *dialog
+        = new CustomizedFileDialog(parent, caption, dir, filter);
+    dialog->setOptions(options);
+    dialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
+    dialog->setFileMode(QFileDialog::FileMode::AnyFile);
+    (void)(selectedFilter);
+
+    QString ret;
+    if (dialog->exec() == QDialog::DialogCode::Accepted) {
+        ret = dialog->selectedFiles()[0];
+    }
+
+    delete dialog;
+    return ret;
+}
 
 /**
  * @brief       Get path to open.
@@ -129,7 +184,22 @@ QString CustomizedFileDialog::getOpenFileName(QWidget *      parent,
                                               const QString &filter,
                                               QString *      selectedFilter,
                                               QFileDialog::Options options)
-{}
+{
+    CustomizedFileDialog *dialog
+        = new CustomizedFileDialog(parent, caption, dir, filter);
+    dialog->setOptions(options);
+    dialog->setFileMode(QFileDialog::FileMode::ExistingFile);
+    dialog->setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+    (void)(selectedFilter);
+
+    QString ret;
+    if (dialog->exec() == QDialog::DialogCode::Accepted) {
+        ret = dialog->selectedFiles()[0];
+    }
+
+    delete dialog;
+    return ret;
+}
 
 /**
  * @brief       Get paths to open.
@@ -140,4 +210,19 @@ QStringList CustomizedFileDialog::getOpenFileNames(QWidget *      parent,
                                                    const QString &filter,
                                                    QString *selectedFilter,
                                                    QFileDialog::Options options)
-{}
+{
+    CustomizedFileDialog *dialog
+        = new CustomizedFileDialog(parent, caption, dir, filter);
+    dialog->setOptions(options);
+    dialog->setFileMode(QFileDialog::FileMode::ExistingFiles);
+    dialog->setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+    (void)(selectedFilter);
+
+    QStringList ret;
+
+    if (dialog->exec() == QDialog::DialogCode::Accepted) {
+        ret = dialog->selectedFiles();
+    }
+
+    return ret;
+}

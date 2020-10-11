@@ -9,7 +9,6 @@
 #include <QtGui/QWindowStateChangeEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
-#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
 #include <config.h>
@@ -568,7 +567,7 @@ void MainWindow::newAction()
  */
 void MainWindow::openAction()
 {
-    QString path = QFileDialog::getOpenFileName(
+    QString path = CustomizedFileDialog::getOpenFileName(
         this, STR("STR_OPEN_STATION"),
         Config::instance()->getString("/openPath", QDir::homePath()),
         STR("STR_SAVE_FILE_FILTER"));

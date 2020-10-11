@@ -35,6 +35,11 @@ class SquareLabel : public QLabel {
     void setIcon(const QIcon &icon);
 
     /**
+     * @brief		Resize icon.
+     */
+    void resizeIcon();
+
+    /**
      * @brief		Destructor.
      */
     virtual ~SquareLabel();

@@ -164,6 +164,9 @@ bool TitleBar::eventFilter(QObject *obj, QEvent *event)
  */
 void TitleBar::onBtnMinimizeClicked()
 {
+    if (m_btnMinimize == nullptr) {
+        return;
+    }
     m_parent->setWindowState(Qt::WindowState::WindowMinimized);
 }
 
@@ -172,6 +175,10 @@ void TitleBar::onBtnMinimizeClicked()
  */
 void TitleBar::onBtnNormalizeMaximizeClicked()
 {
+    if (m_btnNormalizeMaximize == nullptr) {
+        return;
+    }
+
     if (m_parent->windowState()
         & (Qt::WindowState::WindowMaximized | Qt::WindowState::WindowFullScreen
            | Qt::WindowState::WindowMinimized)) {

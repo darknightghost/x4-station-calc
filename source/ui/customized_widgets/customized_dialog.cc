@@ -36,6 +36,10 @@ CustomizedDialog::CustomizedDialog(BorderType                borderType,
 
     // Central widget.
     this->setWidget(widget);
+    if (widget != nullptr) {
+        widget->setSizePolicy(QSizePolicy::Policy::Expanding,
+                              QSizePolicy::Policy::Expanding);
+    }
 
     // Timer.
     m_mouseTimer = new QTimer(this);
@@ -67,6 +71,11 @@ QWidget *CustomizedDialog::setWidget(QWidget *newWidget)
     if (newWidget != nullptr) {
         newWidget->setParent(this);
         m_layout->addWidget(newWidget);
+    }
+
+    if (newWidget != nullptr) {
+        newWidget->setSizePolicy(QSizePolicy::Policy::Expanding,
+                                 QSizePolicy::Policy::Expanding);
     }
 
     return ret;

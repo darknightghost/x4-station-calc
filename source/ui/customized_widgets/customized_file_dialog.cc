@@ -12,7 +12,7 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *      parent,
                                            const QString &directory,
                                            const QString &filter) :
     CustomizedDialog(CustomizedDialog::BorderType::Resizable,
-                     TitleBar::TitleBarButton::AllButtons,
+                     TitleBar::TitleBarButton::CloseButton,
                      nullptr,
                      parent),
     m_fileDialog(nullptr)
@@ -48,7 +48,7 @@ CustomizedFileDialog::CustomizedFileDialog(QWidget *      parent,
 CustomizedFileDialog::CustomizedFileDialog(QWidget *       parent,
                                            Qt::WindowFlags flags) :
     CustomizedDialog(CustomizedDialog::BorderType::Resizable,
-                     TitleBar::TitleBarButton::AllButtons,
+                     TitleBar::TitleBarButton::CloseButton,
                      nullptr,
                      parent),
     m_fileDialog(nullptr)

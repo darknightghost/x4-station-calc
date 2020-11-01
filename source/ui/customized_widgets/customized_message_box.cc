@@ -16,7 +16,7 @@ CustomizedMessageBox::CustomizedMessageBox(QMessageBox::Icon            icon,
                                            QWidget *                    parent,
                                            Qt::WindowFlags) :
     CustomizedDialog(CustomizedDialog::BorderType::Fixed,
-                     TitleBar::TitleBarButton::AllButtons,
+                     TitleBar::TitleBarButton::CloseButton,
                      nullptr,
                      parent),
     m_msgBox(nullptr)
@@ -40,7 +40,7 @@ CustomizedMessageBox::CustomizedMessageBox(QMessageBox::Icon            icon,
  */
 CustomizedMessageBox::CustomizedMessageBox(QWidget *parent) :
     CustomizedDialog(CustomizedDialog::BorderType::Fixed,
-                     TitleBar::TitleBarButton::AllButtons,
+                     TitleBar::TitleBarButton::CloseButton,
                      nullptr,
                      parent)
 {

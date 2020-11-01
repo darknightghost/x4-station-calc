@@ -6,11 +6,11 @@
 #include <QtGui/QFocusEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <locale/string_table.h>
 #include <ui/customized_widgets/customized_file_dialog.h>
+#include <ui/customized_widgets/customized_message_box.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/editor_widget/x4sc_group_clipboard_mime_data_builder.h>
 #include <ui/main_window/editor_widget/x4sc_module_clipboard_mime_data_builder.h>
@@ -1020,7 +1020,7 @@ bool EditorWidget::closeSave()
         return true;
 
     } else {
-        switch (QMessageBox::question(
+        switch (CustomizedMessageBox::question(
             this, STR("STR_TITLE_SAVE_STATION"),
             STR("STR_SAVE_STATION").arg(this->windowTitle()),
             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No
@@ -1482,8 +1482,9 @@ void EditorWidget::save()
             qDebug() << "File" << this->windowTitle() << "Saved.";
             this->updateSaveStatus();
         } else {
-            QMessageBox::critical(this, STR("STR_ERROR"),
-                                  STR("STR_ERR_SAVE").arg(m_save->path()));
+            CustomizedMessageBox::critical(
+                this, STR("STR_ERROR"),
+                STR("STR_ERR_SAVE").arg(m_save->path()));
         }
     }
 }
@@ -1520,8 +1521,8 @@ void EditorWidget::saveAs()
         _opendFiles.remove(oldPath);
         _opendFiles[m_save->path()] = this;
     } else {
-        QMessageBox::critical(this, STR("STR_ERROR"),
-                              STR("STR_ERR_SAVE").arg(fileName));
+        CustomizedMessageBox::critical(this, STR("STR_ERROR"),
+                                       STR("STR_ERR_SAVE").arg(fileName));
     }
 }
 
@@ -1555,8 +1556,8 @@ void EditorWidget::exportAsHTML()
         this->updateTitle();
         this->updateSaveStatus();
     } else {
-        QMessageBox::critical(this, STR("STR_ERROR"),
-                              STR("STR_ERR_EXPORT").arg(fileName));
+        CustomizedMessageBox::critical(this, STR("STR_ERROR"),
+                                       STR("STR_ERR_EXPORT").arg(fileName));
     }
 }
 

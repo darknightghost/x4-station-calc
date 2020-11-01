@@ -3,13 +3,13 @@
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
 #include <QtCore/QThread>
-#include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <game_data/game_data.h>
 #include <game_data/game_texts.h>
 #include <locale/string_table.h>
 #include <ui/customized_widgets/customized_file_dialog.h>
+#include <ui/customized_widgets/customized_message_box.h>
 
 /**
  * @brief		Constructor.
@@ -41,7 +41,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             },
             [&](const QString &s) -> void {
                 splash->callFunc(::std::function<void()>([&]() -> void {
-                    QMessageBox::critical(splash, STR("STR_ERROR"), s);
+                    CustomizedMessageBox::critical(splash, STR("STR_ERROR"), s);
                 }));
             });
         if (vfs == nullptr) {
@@ -57,8 +57,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (texts == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_STRINGS"));
+                CustomizedMessageBox::critical(splash, STR("STR_ERROR"),
+                                               STR("STR_FAILED_LOAD_STRINGS"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -72,8 +72,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (macros == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_MACROS"));
+                CustomizedMessageBox::critical(splash, STR("STR_ERROR"),
+                                               STR("STR_FAILED_LOAD_MACROS"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -87,8 +87,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (components == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_COMPONENTS"));
+                CustomizedMessageBox::critical(
+                    splash, STR("STR_ERROR"),
+                    STR("STR_FAILED_LOAD_COMPONENTS"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -102,8 +103,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (races == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_RACES"));
+                CustomizedMessageBox::critical(splash, STR("STR_ERROR"),
+                                               STR("STR_FAILED_LOAD_RACES"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -117,8 +118,8 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (wares == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_WARES"));
+                CustomizedMessageBox::critical(splash, STR("STR_ERROR"),
+                                               STR("STR_FAILED_LOAD_WARES"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;
@@ -133,8 +134,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
 
         if (stationModules == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
-                QMessageBox::critical(splash, STR("STR_ERROR"),
-                                      STR("STR_FAILED_LOAD_STATION_MODULES"));
+                CustomizedMessageBox::critical(
+                    splash, STR("STR_ERROR"),
+                    STR("STR_FAILED_LOAD_STATION_MODULES"));
             }));
             Config::instance()->setString("/gamePath", "");
             continue;

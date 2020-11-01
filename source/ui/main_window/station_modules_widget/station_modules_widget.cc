@@ -3,11 +3,11 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QMessageBox>
 
 #include <common/compare.h>
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
+#include <ui/customized_widgets/customized_message_box.h>
 #include <ui/main_window/station_modules_widget/station_modules_widget.h>
 
 /**
@@ -213,8 +213,8 @@ void StationModulesWidget::onFilterByProduct(QString ware)
         }
     }
 
-    QMessageBox::warning(this, STR("STR_WARNING"),
-                         STR("STR_PRODUCT_NOT_FOUND"));
+    CustomizedMessageBox::warning(this, STR("STR_WARNING"),
+                                  STR("STR_PRODUCT_NOT_FOUND"));
 }
 
 /**
@@ -236,8 +236,8 @@ void StationModulesWidget::onFilterByResource(QString ware)
         }
     }
 
-    QMessageBox::warning(this, STR("STR_WARNING"),
-                         STR("STR_RESOURCE_NOT_FOUND"));
+    CustomizedMessageBox::warning(this, STR("STR_WARNING"),
+                                  STR("STR_RESOURCE_NOT_FOUND"));
 }
 
 /**

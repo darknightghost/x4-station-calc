@@ -9,7 +9,6 @@
 #include <QtGui/QWindowStateChangeEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
-#include <QtWidgets/QMessageBox>
 
 #include <config.h>
 #include <locale/string_table.h>
@@ -17,6 +16,7 @@
 #include <skin_manager.h>
 #include <ui/about_dialog.h>
 #include <ui/customized_widgets/customized_file_dialog.h>
+#include <ui/customized_widgets/customized_message_box.h>
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
@@ -508,8 +508,8 @@ void MainWindow::open(QString path)
     if (editorWidget == nullptr) {
         ::std::shared_ptr<Save> save = Save::load(path);
         if (save == nullptr) {
-            QMessageBox::critical(this, STR("STR_ERROR"),
-                                  STR("STR_FAILED_OPEN_FILE").arg(path));
+            CustomizedMessageBox::critical(
+                this, STR("STR_ERROR"), STR("STR_FAILED_OPEN_FILE").arg(path));
 
         } else {
             QMdiSubWindow *container = new QMdiSubWindow();
@@ -627,12 +627,12 @@ void MainWindow::askGamePath()
 
         if (GameData::instance()->checkGamePath(str)) {
             Config::instance()->setString("/gamePath", str);
-            QMessageBox::information(this, STR("STR_INFO"),
-                                     STR("STR_INFO_EFFECT_NEXT_LAUNCH"));
+            CustomizedMessageBox::information(
+                this, STR("STR_INFO"), STR("STR_INFO_EFFECT_NEXT_LAUNCH"));
             return;
         } else {
-            QMessageBox::critical(this, STR("STR_ERROR"),
-                                  STR("STR_INFO_ILLEGAL_GAME_PATH"));
+            CustomizedMessageBox::critical(this, STR("STR_ERROR"),
+                                           STR("STR_INFO_ILLEGAL_GAME_PATH"));
         }
     }
 }

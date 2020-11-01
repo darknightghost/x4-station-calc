@@ -9,7 +9,8 @@
 class SquareLabel : public QLabel {
     Q_OBJECT
   private:
-    QIcon m_icon; ///< Icon.
+    QIcon m_icon;            ///< Icon.
+    bool  m_iconInitialized; ///< Icon initialize flag.
 
   public:
     /**

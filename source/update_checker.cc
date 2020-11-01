@@ -1,10 +1,10 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QVersionNumber>
 #include <QtGui/QDesktopServices>
-#include <QtWidgets/QMessageBox>
 
 #include <common/auto_release.h>
 #include <locale/string_table.h>
+#include <ui/customized_widgets/customized_message_box.h>
 #include <update_checker.h>
 #include <version.h>
 
@@ -83,8 +83,8 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
     if (err != QNetworkReply::NetworkError::NoError) {
         qDebug() << err;
         if (! m_quiet) {
-            QMessageBox::critical(m_parent, STR("STR_ERROR"),
-                                  STR("STR_CHECKUPDATE_FAILED"));
+            CustomizedMessageBox::critical(m_parent, STR("STR_ERROR"),
+                                           STR("STR_CHECKUPDATE_FAILED"));
         }
         return;
     }
@@ -98,8 +98,9 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
 
     // Compare.
     if (newestVersion > VERSION) {
-        if (QMessageBox::question(m_parent, STR("STR_TITLE_CHECKUPDATE"),
-                                  STR("STR_NEW_VERSION_FOUND"))
+        if (CustomizedMessageBox::question(m_parent,
+                                           STR("STR_TITLE_CHECKUPDATE"),
+                                           STR("STR_NEW_VERSION_FOUND"))
             == QMessageBox::StandardButton::Yes) {
             QString downloadURL = _downloadURL.arg(s);
             qDebug() << "Download url : " << downloadURL;
@@ -109,8 +110,8 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
         return;
     } else {
         if (! m_quiet) {
-            QMessageBox::information(m_parent, STR("STR_INFO"),
-                                     STR("STR_NEW_VERSION_NOT_FOUND"));
+            CustomizedMessageBox::information(m_parent, STR("STR_INFO"),
+                                              STR("STR_NEW_VERSION_NOT_FOUND"));
         }
         return;
     }

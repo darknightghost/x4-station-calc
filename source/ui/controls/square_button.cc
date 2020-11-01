@@ -9,12 +9,12 @@
  * @brief		Constructor.
  */
 SquareButton::SquareButton(const QIcon &icon, QWidget *parent) :
-    QPushButton("", parent), m_icon(icon)
+    QPushButton("", parent), m_icon(icon), m_iconInitialized(false)
 {
     this->setProperty("class", "SquareButton");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
-    this->resizeIcon(this->size());
+    this->resize(this->height(), this->height());
 }
 
 /**
@@ -25,6 +25,7 @@ SquareButton::SquareButton(QWidget *parent) : QPushButton(parent)
     this->setProperty("class", "SquareButton");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
+    this->resize(this->height(), this->height());
 }
 
 /**
@@ -55,9 +56,16 @@ SquareButton::~SquareButton() {}
 void SquareButton::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
+
     if (sz.width() == sz.height()) {
+        if (sz == this->size() && m_iconInitialized) {
+            event->ignore();
+            return;
+        }
+
+        event->accept();
         this->resizeIcon(event->size());
-        QPushButton::resizeEvent(event);
+        m_iconInitialized = true;
     } else {
         sz.setWidth(sz.height());
         event->ignore();
@@ -86,5 +94,5 @@ void SquareButton::resizeIcon(const QSize &sz)
     }
 
     this->QPushButton::setIcon(scaledIcon);
-    this->repaint();
+    this->update();
 }

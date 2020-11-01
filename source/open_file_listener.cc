@@ -1,9 +1,9 @@
 #include <QtCore/QDebug>
 #include <QtCore/QWaitCondition>
-#include <QtWidgets/QMessageBox>
 
 #include <locale/string_table.h>
 #include <open_file_listener.h>
+#include <ui/customized_widgets/customized_message_box.h>
 
 #define KEY "X4_station_editor"
 
@@ -20,8 +20,9 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
         firstTime = true;
     } else {
         if (! m_sharedMemory->attach()) {
-            QMessageBox::critical(nullptr, STR("STR_ERROR"),
-                                  STR("STR_FAILED_OPEN_SHARED_MEMORY"));
+            CustomizedMessageBox::critical(
+                nullptr, STR("STR_ERROR"),
+                STR("STR_FAILED_OPEN_SHARED_MEMORY"));
             qDebug() << "Failed to open shared memory.";
             return;
         }
@@ -110,8 +111,8 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
     serverCreateMutex.unlock();
     if (! serverCreateFlag) {
         m_sharedMemory->unlock();
-        QMessageBox::critical(nullptr, STR("STR_ERROR"),
-                              STR("STR_FAILED_LISTEN_SOCKET"));
+        CustomizedMessageBox::critical(nullptr, STR("STR_ERROR"),
+                                       STR("STR_FAILED_LISTEN_SOCKET"));
         qDebug() << "Failed to listen.";
         return;
     }

@@ -9,12 +9,12 @@
  * @brief		Constructor.
  */
 SquareLabel::SquareLabel(const QIcon &icon, QWidget *parent) :
-    QLabel("", parent), m_icon(icon)
+    QLabel("", parent), m_icon(icon), m_iconInitialized(false)
 {
     this->setProperty("class", "SquareLabel");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
-    this->resizeIcon(this->size());
+    this->resize(this->height(), this->height());
 }
 
 /**
@@ -25,6 +25,7 @@ SquareLabel::SquareLabel(QWidget *parent) : QLabel(parent)
     this->setProperty("class", "SquareLabel");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
                         this->sizePolicy().verticalPolicy());
+    this->resize(this->height(), this->height());
 }
 
 /**
@@ -56,8 +57,14 @@ void SquareLabel::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
     if (sz.width() == sz.height()) {
+        if (sz == this->size() && m_iconInitialized) {
+            event->ignore();
+            return;
+        }
+
         this->resizeIcon(event->size());
         QLabel::resizeEvent(event);
+        m_iconInitialized = true;
     } else {
         sz.setWidth(sz.height());
         event->ignore();
@@ -80,5 +87,5 @@ void SquareLabel::resizeIcon(const QSize &sz)
         pixmap.scaled(sz, Qt::AspectRatioMode::IgnoreAspectRatio,
                       Qt::TransformationMode::SmoothTransformation));
 
-    this->repaint();
+    this->update();
 }

@@ -1,3 +1,4 @@
+#include "QtCore/qnamespace.h"
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QMimeData>
@@ -269,7 +270,9 @@ void EditorWidget::updateTitle()
         this->setWindowTitle(STR("STR_NEW_STATION"));
     } else {
         this->setWindowTitle(
-            m_save->path().split("/", Qt::SkipEmptyParts).back());
+            m_save->path()
+                .split("/", Qt::SplitBehaviorFlags::SkipEmptyParts)
+                .back());
     }
 }
 
@@ -741,7 +744,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                     GameStationModules::SupplyProduct>(
                                     property);
                             ::std::shared_ptr<GameWares::ProductionInfo>
-                                           productionInfo = supplyProfduct->productionInfo;
+                                productionInfo = supplyProfduct->productionInfo;
                             const QString &macro = productionInfo->id;
 
                             // Product.

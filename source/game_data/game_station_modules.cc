@@ -954,7 +954,7 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
         }
 
         auto tags
-            = attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts);
+            = attr["tags"].split(" ", Qt::SplitBehaviorFlags::SkipEmptyParts);
         for (QString tag : tags) {
             if (tag == "container") {
                 property->cargoType = GameWares::TransportType::Container;
@@ -1452,7 +1452,7 @@ bool GameStationModules::onStartElementInnPropertiesOfConnectionMacro(
     } else if (name == "docksize") {
         QSet<QString> tags;
         for (auto &tag :
-             attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts)) {
+             attr["tags"].split(" ", Qt::SplitBehaviorFlags::SkipEmptyParts)) {
             tags.insert(tag);
         }
         if (tags.find("dock_s") != tags.end()) {
@@ -1608,7 +1608,7 @@ bool GameStationModules::onStartElementInConnectionsOfModuleComponent(
         auto iter = attr.find("tags");
         if (iter != attr.end()) {
             auto tags
-                = iter->split(" ", QString::SplitBehavior::SkipEmptyParts);
+                = iter->split(" ", Qt::SplitBehaviorFlags::SkipEmptyParts);
             bool foundTurret = false;
             bool foundShield = false;
             bool foundMedium = false;

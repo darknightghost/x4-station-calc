@@ -70,6 +70,8 @@ class GameVFS : private IInitialized {
             QString datName; ///< Name of dat file.
             quint64 offset;  ///< Offset.
             quint64 size;    ///< Size.
+            QString hash;    ///< File hash.
+            bool    checked; ///< File checked flag.
         } fileInfo;          ///< File infomation;
 
         /**
@@ -84,7 +86,8 @@ class GameVFS : private IInitialized {
          * @param[in]	name	Name.
          */
         DatFileEntery(const QString &name) :
-            name(name), isDirectory(true), children({}), fileInfo({"", 0, 0})
+            name(name), isDirectory(true), children({}),
+            fileInfo({"", 0, 0, QString(), false})
         {}
 
         /**
@@ -94,13 +97,16 @@ class GameVFS : private IInitialized {
          * @param[in]	datName	Name of dat file.
          * @param[in]	offset	Offset in dat file.
          * @param[in]	size	File size.
+         * @param[in]	hash    Hash.
          */
         DatFileEntery(const QString &name,
                       const QString &datName,
                       quint64        offset,
-                      quint64        size) :
+                      quint64        size,
+                      const QString &hash) :
             name(name),
-            isDirectory(false), children({}), fileInfo({datName, offset, size})
+            isDirectory(false), children({}),
+            fileInfo({datName, offset, size, hash, false})
         {}
 
         DatFileEntery(const DatFileEntery &) = delete;

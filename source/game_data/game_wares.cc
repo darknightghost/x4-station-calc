@@ -156,7 +156,7 @@ bool GameWares::onStartElementInGroups(XMLLoader &loader,
 
         ::std::shared_ptr<WareGroup> group(new WareGroup(
             {attr["id"], attr["name"],
-             attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts)}));
+             attr["tags"].split(" ", Qt::SplitBehaviorFlags::SkipEmptyParts)}));
         m_wareGroups[group->id] = group;
 
         qDebug() << "Ware group : id:" << group->id
@@ -223,7 +223,7 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                           TransportType::Unknow,
                           attr["volume"].toUInt(),
                           attr["tags"].split(
-                              " ", QString::SplitBehavior::SkipEmptyParts),
+                              " ", Qt::SplitBehaviorFlags::SkipEmptyParts),
                           1,
                           1,
                           1,
@@ -251,7 +251,7 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                           transType,
                           attr["volume"].toUInt(),
                           attr["tags"].split(
-                              " ", QString::SplitBehavior::SkipEmptyParts),
+                              " ", Qt::SplitBehaviorFlags::SkipEmptyParts),
                           1,
                           1,
                           1,

@@ -18,7 +18,7 @@ SaveVersion::SaveVersion(quint8 major, quint8 minor, quint8 maintenance) :
 SaveVersion::SaveVersion(const QString &versionString)
 {
     auto splitted
-        = versionString.split(".", QString::SplitBehavior::SkipEmptyParts);
+        = versionString.split(".", Qt::SplitBehaviorFlags::SkipEmptyParts);
     if (splitted.size() != 3) {
         return;
     }

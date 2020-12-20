@@ -22,9 +22,13 @@ SkinManager::SkinManager()
         }
     }
 
-    m_currentSkin = Config::instance()->getString("/skin", "default");
+    QFile file(":/Skins/default");
+    file.open(QIODevice::OpenModeFlag::ReadOnly);
+    QString defaultSkin = file.readLine().replace("\n", "").replace("\r", "");
+
+    m_currentSkin = Config::instance()->getString("/skin", defaultSkin);
     if (m_skins.find(m_currentSkin) == m_skins.end()) {
-        m_currentSkin = "default";
+        m_currentSkin = defaultSkin;
     }
     Config::instance()->setString("/skin", m_currentSkin);
 

@@ -29,19 +29,19 @@ AmountSpinBox::AmountSpinBox(QWidget *parent) : QWidget(parent)
     m_layoutButton->setMargin(0);
     m_layoutButton->setSpacing(0);
 
-    m_btnInc = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Up.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnInc = new SquareButton();
     m_layoutButton->addWidget(m_btnInc);
     this->connect(m_btnInc, &QPushButton::clicked, this,
                   &AmountSpinBox::onBtnIncClicked);
 
-    m_btnDec = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Down.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnDec = new SquareButton();
     m_layoutButton->addWidget(m_btnDec);
     this->connect(m_btnDec, &QPushButton::clicked, this,
                   &AmountSpinBox::onBtnDecClicked);
+
+    this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
+                  this, &AmountSpinBox::onSkinChanged);
+    this->onSkinChanged();
 }
 
 /**
@@ -87,6 +87,18 @@ void AmountSpinBox::onBtnDecClicked()
 void AmountSpinBox::onEditingFinished()
 {
     this->emitEdited();
+}
+
+/**
+ * @brief		Change skin.
+ */
+void AmountSpinBox::onSkinChanged()
+{
+    m_btnInc->setIcon(QIcon(QString(":/Skins/%1/Icons/Up.png")
+                                .arg(SkinManager::instance()->currentSkin())));
+
+    m_btnDec->setIcon(QIcon(QString(":/Skins/%1/Icons/Down.png")
+                                .arg(SkinManager::instance()->currentSkin())));
 }
 
 /**

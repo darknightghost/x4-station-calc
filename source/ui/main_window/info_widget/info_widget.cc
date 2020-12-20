@@ -27,19 +27,13 @@ InfoWidget::InfoWidget(QAction *       statusAction,
     m_layout = new QGridLayout(m_widget);
     m_widget->setLayout(m_layout);
 
-    m_btnBack = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Back.png")
-                  .arg(SkinManager::instance()->currentSkin())),
-        m_widget);
+    m_btnBack = new SquareButton(m_widget);
     m_layout->addWidget(m_btnBack, 0, 0);
     m_btnBack->setEnabled(false);
     this->connect(m_btnBack, &QPushButton::clicked, this,
                   &InfoWidget::onBtnBackClicked);
 
-    m_btnForward = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Forward.png")
-                  .arg(SkinManager::instance()->currentSkin())),
-        m_widget);
+    m_btnForward = new SquareButton(m_widget);
     m_layout->addWidget(m_btnForward, 0, 1);
     m_btnForward->setEnabled(false);
     this->connect(m_btnForward, &QPushButton::clicked, this,
@@ -67,6 +61,12 @@ InfoWidget::InfoWidget(QAction *       statusAction,
                   this, &InfoWidget::onLanguageChanged);
 
     this->onLanguageChanged();
+
+    // Change skin.
+    this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
+                  this, &InfoWidget::onSkinChanged);
+
+    this->onSkinChanged();
 }
 
 /**
@@ -793,4 +793,17 @@ void InfoWidget::onBtnForwardClicked()
         ++m_historyIndex;
         this->update();
     }
+}
+
+/**
+ * @brief		Change skin.
+ */
+void InfoWidget::onSkinChanged()
+{
+    m_btnBack->setIcon(QIcon(QString(":/Skins/%1/Icons/Back.png")
+                                 .arg(SkinManager::instance()->currentSkin())));
+
+    m_btnForward->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/Forward.png")
+                  .arg(SkinManager::instance()->currentSkin())));
 }

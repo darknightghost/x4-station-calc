@@ -74,25 +74,19 @@ ModuleItemWidget::ModuleItemWidget(ModuleItem *item) : m_item(item)
                   &ModuleItemWidget::onSpinboxValueChanged);
 
     // Button Up.
-    m_btnUp = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Up.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnUp = new SquareButton();
     m_layout->addWidget(m_btnUp, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnUp, &QPushButton::clicked, this,
                   &ModuleItemWidget::onUpBtnClicked);
 
     // Button Down.
-    m_btnDown = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Down.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnDown = new SquareButton();
     m_layout->addWidget(m_btnDown, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnDown, &QPushButton::clicked, this,
                   &ModuleItemWidget::onDownBtnClicked);
 
     // Button Remove.
-    m_btnRemove = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnRemove = new SquareButton();
     m_layout->addWidget(m_btnRemove, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnRemove, &QPushButton::clicked, this,
                   &ModuleItemWidget::onRemoveBtnClicked);
@@ -103,6 +97,10 @@ ModuleItemWidget::ModuleItemWidget(ModuleItem *item) : m_item(item)
 
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &ModuleItemWidget::onLanguageChanged);
+    this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
+                  this, &ModuleItemWidget::onSkinChanged);
+
+    this->onSkinChanged();
 }
 
 /**
@@ -176,4 +174,23 @@ void ModuleItemWidget::onSpinboxValueChanged(int i)
     if (oldCount != i) {
         emit this->changeAmount(oldCount, i, m_item);
     }
+}
+
+/**
+ * @brief		Change skin.
+ */
+void ModuleItemWidget::onSkinChanged()
+{
+    // Button Up.
+    m_btnUp->setIcon(QIcon(QString(":/Skins/%1/Icons/Up.png")
+                               .arg(SkinManager::instance()->currentSkin())));
+
+    // Button Down.
+    m_btnDown->setIcon(QIcon(QString(":/Skins/%1/Icons/Down.png")
+                                 .arg(SkinManager::instance()->currentSkin())));
+
+    // Button Remove.
+    m_btnRemove->setIcon(
+        QIcon(QString("();:/Skins/%1/Icons/EditRemove.png")
+                  .arg(SkinManager::instance()->currentSkin())));
 }

@@ -170,6 +170,11 @@ class GroupItemWidget : public QWidget {
      */
     void onRemoveBtnClicked();
 
+    /**
+     * @brief		Change skin.
+     */
+    void onSkinChanged();
+
   signals:
     /**
      * @brief	    "Up" button clicked.

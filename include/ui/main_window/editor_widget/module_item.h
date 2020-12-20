@@ -126,6 +126,11 @@ class ModuleItemWidget : public QWidget {
      */
     void onLanguageChanged();
 
+    /**
+     * @brief		Change skin.
+     */
+    void onSkinChanged();
+
   signals:
     /**
      * @brief	    "Up" button clicked.

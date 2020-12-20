@@ -137,4 +137,9 @@ class InfoWidget : public ActionControlDockWidget {
      * @brief	On button forward clicked.
      */
     void onBtnForwardClicked();
+
+    /**
+     * @brief		Change skin.
+     */
+    void onSkinChanged();
 };

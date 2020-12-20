@@ -68,6 +68,11 @@ class AmountSpinBox : public QWidget {
      */
     void onEditingFinished();
 
+    /**
+     * @brief		Change skin.
+     */
+    void onSkinChanged();
+
   private:
     /**
      * @brief       Emit edited signal.

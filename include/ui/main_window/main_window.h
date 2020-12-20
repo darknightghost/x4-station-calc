@@ -174,4 +174,9 @@ class MainWindow : public CustomizedWindow {
      * @brief		Change language.
      */
     void onLanguageChanged();
+
+    /**
+     * @brief		Change skin.
+     */
+    void onSkinChanged();
 };

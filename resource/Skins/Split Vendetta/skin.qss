@@ -1,23 +1,23 @@
 * {
     color: #FFFFFF;
-    background-image: url(:/Skins/default/Background/normal.png);
+    background-image: url(:/Skins/Split Vendetta/Background/normal.png);
     background-color: rgba(0, 0, 0, 0);
 }
 
 *::item {
     color: #FFFFFF;
-    background-image: url(:/Skins/default/Background/normal-item.png);
+    background-image: url(:/Skins/Split Vendetta/Background/normal-item.png);
     background-color: rgba(0, 0, 0, 0);
 }
 
 QPushButton {
     color: #FFFFFF;
-    background-image: url(:/Skins/default/Background/button.png);
+    background-image: url(:/Skins/Split Vendetta/Background/button.png);
 }
 
 QPushButton:hover {
     color: #FFFFFF;
-    background-image: url(:/Skins/default/Background/button-hovered.png);
+    background-image: url(:/Skins/Split Vendetta/Background/button-hovered.png);
 }
 
 QWidget.TitleBar {
@@ -65,7 +65,7 @@ QDockWidget {
 
 QDockWidget::title {
     text-align: left;
-    background-image: url(:/Skins/default/Background/normal.png);;
+    background-image: url(:/Skins/Split Vendetta/Background/normal.png);;
 }
 
 QMainWindow {

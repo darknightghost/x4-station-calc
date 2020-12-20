@@ -130,23 +130,17 @@ GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)
     m_layout = new QHBoxLayout();
     this->setLayout(m_layout);
 
-    m_btnUp = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Up.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnUp = new SquareButton();
     m_layout->addWidget(m_btnUp, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnUp, &QPushButton::clicked, this,
                   &GroupItemWidget::onUpBtnClicked);
 
-    m_btnDown = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/Down.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnDown = new SquareButton();
     m_layout->addWidget(m_btnDown, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnDown, &QPushButton::clicked, this,
                   &GroupItemWidget::onDownBtnClicked);
 
-    m_btnRemove = new SquareButton(
-        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
-                  .arg(SkinManager::instance()->currentSkin())));
+    m_btnRemove = new SquareButton();
     m_layout->addWidget(m_btnRemove, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnRemove, &QPushButton::clicked, this,
                   &GroupItemWidget::onRemoveBtnClicked);
@@ -154,6 +148,9 @@ GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)
     m_layout->addStretch();
     this->setMaximumHeight(this->fontMetrics().height()
                            + m_layout->margin() * 2);
+
+    this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
+                  this, &GroupItemWidget::onSkinChanged);
 }
 
 /**
@@ -199,4 +196,20 @@ void GroupItemWidget::onDownBtnClicked()
 void GroupItemWidget::onRemoveBtnClicked()
 {
     emit this->removeBtnClicked(m_item);
+}
+
+/**
+ * @brief		Change skin.
+ */
+void GroupItemWidget::onSkinChanged()
+{
+    m_btnUp->setIcon(QIcon(QString(":/Skins/%1/Icons/Up.png")
+                               .arg(SkinManager::instance()->currentSkin())));
+
+    m_btnDown->setIcon(QIcon(QString(":/Skins/%1/Icons/Down.png")
+                                 .arg(SkinManager::instance()->currentSkin())));
+
+    m_btnRemove->setIcon(
+        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
+                  .arg(SkinManager::instance()->currentSkin())));
 }

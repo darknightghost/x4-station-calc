@@ -9,7 +9,7 @@
  * @brief		Constructor.
  */
 SquareButton::SquareButton(const QIcon &icon, QWidget *parent) :
-    QPushButton("", parent), m_icon(icon), m_iconInitialized(false)
+    QPushButton("", parent), m_icon(icon)
 {
     this->setProperty("class", "SquareButton");
     this->setSizePolicy(QSizePolicy::Policy::Fixed,
@@ -58,14 +58,13 @@ void SquareButton::resizeEvent(QResizeEvent *event)
     QSize sz = event->size();
 
     if (sz.width() == sz.height()) {
-        if (sz == this->size() && m_iconInitialized) {
+        if (sz == this->size() && m_currentIconSize == sz) {
             event->ignore();
             return;
         }
 
         event->accept();
         this->resizeIcon(event->size());
-        m_iconInitialized = true;
     } else {
         sz.setWidth(sz.height());
         event->ignore();
@@ -94,5 +93,6 @@ void SquareButton::resizeIcon(const QSize &sz)
     }
 
     this->QPushButton::setIcon(scaledIcon);
+    m_currentIconSize = sz;
     this->update();
 }

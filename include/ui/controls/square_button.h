@@ -9,7 +9,7 @@ class SquareButton : public QPushButton {
     Q_OBJECT
   private:
     QIcon m_icon;            ///< Icon.
-    bool  m_iconInitialized; ///< Icon initialize flag.
+    QSize m_currentIconSize; ///< Current icon size.
 
   public:
     /**

@@ -151,6 +151,7 @@ GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)
 
     this->connect(SkinManager::instance().get(), &SkinManager::skinChanged,
                   this, &GroupItemWidget::onSkinChanged);
+    this->onSkinChanged();
 }
 
 /**

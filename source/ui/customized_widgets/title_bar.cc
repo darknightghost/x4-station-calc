@@ -208,7 +208,7 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
         m_prevMousePos    = currentPos;
         m_parent->move(m_parent->x() + dx, m_parent->y() + dy);
     }
-    this->QWidget::mouseMoveEvent(event);
+    event->accept();
 }
 
 /**
@@ -216,10 +216,15 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
  */
 void TitleBar::mousePressEvent(QMouseEvent *event)
 {
+    if (m_parent->windowState() & Qt::WindowState::WindowMaximized
+        || m_parent->windowState() & Qt::WindowState::WindowFullScreen) {
+        event->accept();
+        return;
+    }
     m_dragFlag = true;
     this->setCursor(Qt::CursorShape::SizeAllCursor);
     m_prevMousePos = event->globalPos();
-    this->QWidget::mousePressEvent(event);
+    event->accept();
 }
 
 /**
@@ -227,9 +232,15 @@ void TitleBar::mousePressEvent(QMouseEvent *event)
  */
 void TitleBar::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (m_parent->windowState() & Qt::WindowState::WindowMaximized
+        || m_parent->windowState() & Qt::WindowState::WindowFullScreen) {
+        event->accept();
+        return;
+    }
+
     m_dragFlag = false;
     this->setCursor(Qt::CursorShape::ArrowCursor);
-    this->QWidget::mouseReleaseEvent(event);
+    event->accept();
 }
 
 /**

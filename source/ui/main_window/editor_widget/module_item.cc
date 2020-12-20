@@ -191,6 +191,6 @@ void ModuleItemWidget::onSkinChanged()
 
     // Button Remove.
     m_btnRemove->setIcon(
-        QIcon(QString("();:/Skins/%1/Icons/EditRemove.png")
+        QIcon(QString(":/Skins/%1/Icons/EditRemove.png")
                   .arg(SkinManager::instance()->currentSkin())));
 }

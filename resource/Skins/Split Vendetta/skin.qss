@@ -1,12 +1,64 @@
 * {
     color: #FFFFFF;
-    background-image: url(:/Skins/Split Vendetta/Background/normal.png);
+    background-image: url(:/Skins/Split Vendetta/Background/normal-background.png);
     background-color: rgba(0, 0, 0, 0);
 }
 
-*::item {
+TitleBar.QLabel {
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QMenu {
+    color: #FFFFFF;
+    background-image: url(:/Skins/Split Vendetta/Background/normal-background.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QMenu::item {
     color: #FFFFFF;
     background-image: url(:/Skins/Split Vendetta/Background/normal-item.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QMenu::item:disabled {
+    color: #888888;
+    background-image: url(:/Skins/Split Vendetta/Background/normal-item.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QMenu::item:selected {
+    color: #FFFFFF;
+    background-image: url(:/Skins/Split Vendetta/Background/selected-item.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QDockWidget {
+    titlebar-close-icon: url(:/Skins/Split Vendetta/Icons/WindowClose.png);
+    titlebar-normal-icon: url(:/Skins/Split Vendetta/Icons/WindowNormalize.png);
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QDockWidget::title {
+    text-align: left;
+    background-image: url(:/Skins/Split Vendetta/Background/normal-background.png);;
+}
+
+QTreeWidget {
+    background-image: url(:/Skins/Split Vendetta/Background/transparent.png);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QTreeWidget::item {
+    color: #FFFFFF;
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QTreeWidget::item:selected {
+    color: #FFFFFF;
+    background-image: url(:/Skins/Split Vendetta/Background/selected-item.png);
     background-color: rgba(0, 0, 0, 0);
 }
 
@@ -54,18 +106,6 @@ SquareButton.TitleBarBtnMinimize SquareButton.TitleBarBtnNormalizeMaximize Squar
 QWidget.MainWindow {
     margin: 0;
     padding: 0;
-}
-
-QDockWidget {
-    titlebar-close-icon: url(close.png);
-    titlebar-normal-icon: url(undock.png);
-    background-image: none;
-    background-color: rgba(0, 0, 0, 0);
-}
-
-QDockWidget::title {
-    text-align: left;
-    background-image: url(:/Skins/Split Vendetta/Background/normal.png);;
 }
 
 QMainWindow {

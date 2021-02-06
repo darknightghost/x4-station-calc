@@ -11,8 +11,7 @@
 /**
  * @brief	Item of modules module.
  */
-class ModuleItem : public QTreeWidgetItem
-{
+class ModuleItem : public QTreeWidgetItem {
   private:
     ::std::shared_ptr<SaveModule> m_module; ///<  Module.
 
@@ -55,8 +54,7 @@ class ModuleItem : public QTreeWidgetItem
 /**
  * @brief	Item of modules module.
  */
-class ModuleItemWidget : public QWidget
-{
+class ModuleItemWidget : public QWidget {
     Q_OBJECT;
 
   private:

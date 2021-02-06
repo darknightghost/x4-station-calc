@@ -12,8 +12,7 @@
 /**
  * @brief   Global informations.
  */
-class OpenFileListener : public QObject, public ISingleton<OpenFileListener>
-{
+class OpenFileListener : public QObject, public ISingleton<OpenFileListener> {
     Q_OBJECT
     SIGNLETON_OBJECT(OpenFileListener)
 

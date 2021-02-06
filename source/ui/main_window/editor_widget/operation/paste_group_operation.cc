@@ -17,23 +17,18 @@ EditorWidget::PasteGroupOperation::PasteGroupOperation(
                                 EditorWidget *>(editorWidget)
 {
     // Position to paste.
-    if (groupAfter == nullptr)
-    {
+    if (groupAfter == nullptr) {
         m_firstGroupIndex = 0;
-    }
-    else
-    {
+    } else {
         m_firstGroupIndex
             = editorWidget->m_itemGroups->indexOfChild(groupAfter);
     }
 
     // Groups to paste.
-    for (auto group : builder.groups())
-    {
+    for (auto group : builder.groups()) {
         m_groups.append(
             ::std::shared_ptr<GroupInfo>(new GroupInfo({group->name(), {}})));
-        for (auto module : group->modules())
-        {
+        for (auto module : group->modules()) {
             m_groups.back()->modules.append(::std::shared_ptr<ModuleInfo>(
                 new ModuleInfo({module->module(), module->amount()})));
         }
@@ -50,8 +45,7 @@ bool EditorWidget::PasteGroupOperation::doOperation()
     EditorWidget *editorWidget = this->editorWidget();
 
     // Paste groups.
-    for (int i = 0; i < m_groups.size(); ++i)
-    {
+    for (int i = 0; i < m_groups.size(); ++i) {
         int index = i + m_firstGroupIndex;
 
         // Save group.
@@ -76,8 +70,7 @@ bool EditorWidget::PasteGroupOperation::doOperation()
                               editorWidget, &EditorWidget::removeGroupItem);
 
         // Modules.
-        for (auto module : m_groups[i]->modules)
-        {
+        for (auto module : m_groups[i]->modules) {
             // Add module.
             // Add to save.
             int index
@@ -108,8 +101,7 @@ bool EditorWidget::PasteGroupOperation::doOperation()
         }
 
         // Update
-        if (groupItem->childCount() > 0)
-        {
+        if (groupItem->childCount() > 0) {
             {
                 ModuleItem *item
                     = dynamic_cast<ModuleItem *>(groupItem->child(0));
@@ -126,24 +118,20 @@ bool EditorWidget::PasteGroupOperation::doOperation()
     }
 
     // Update
-    if (m_firstGroupIndex == 0)
-    {
+    if (m_firstGroupIndex == 0) {
         GroupItem *item
             = dynamic_cast<GroupItem *>(editorWidget->m_itemGroups->child(0));
         Q_ASSERT(item != nullptr);
         editorWidget->updateGroupMoveButtonStatus(item);
-    }
-    else if (m_firstGroupIndex
-             == editorWidget->m_itemGroups->childCount() - m_groups.size())
-    {
+    } else if (m_firstGroupIndex
+               == editorWidget->m_itemGroups->childCount() - m_groups.size()) {
         GroupItem *item = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(m_firstGroupIndex - 1));
         Q_ASSERT(item != nullptr);
         editorWidget->updateGroupMoveButtonStatus(item);
     }
 
-    if (editorWidget->m_itemGroups->childCount() > 0)
-    {
+    if (editorWidget->m_itemGroups->childCount() > 0) {
         GroupItem *item
             = dynamic_cast<GroupItem *>(editorWidget->m_itemGroups->child(
                 editorWidget->m_itemGroups->childCount() - 1));
@@ -161,8 +149,7 @@ void EditorWidget::PasteGroupOperation::undoOperation()
 {
     EditorWidget *editorWidget = this->editorWidget();
 
-    for (int i = 0; i < m_groups.size(); ++i)
-    {
+    for (int i = 0; i < m_groups.size(); ++i) {
         editorWidget->m_save->removeGroup(m_firstGroupIndex);
         editorWidget->m_itemGroups->removeChild(
             editorWidget->m_itemGroups->child(m_firstGroupIndex));

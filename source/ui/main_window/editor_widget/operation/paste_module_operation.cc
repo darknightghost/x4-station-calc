@@ -19,21 +19,15 @@ EditorWidget::PasteModuleOperation::PasteModuleOperation(
                                 EditorWidget *>(editorWidget)
 {
     // Position to paste.
-    if (groupToPaste == nullptr)
-    {
+    if (groupToPaste == nullptr) {
         m_groupIndex = 0;
-    }
-    else
-    {
+    } else {
         m_groupIndex = editorWidget->m_itemGroups->indexOfChild(groupToPaste);
     }
 
-    if (moduleAfter == nullptr)
-    {
+    if (moduleAfter == nullptr) {
         m_firstModuleIndex = 0;
-    }
-    else
-    {
+    } else {
         m_groupIndex
             = editorWidget->m_itemGroups->indexOfChild(moduleAfter->parent());
         m_firstModuleIndex
@@ -41,8 +35,7 @@ EditorWidget::PasteModuleOperation::PasteModuleOperation(
     }
 
     // Modules to paste.
-    for (auto module : builder.modules())
-    {
+    for (auto module : builder.modules()) {
         m_modules.append(::std::shared_ptr<ModuleInfo>(
             new ModuleInfo({module->module(), module->amount()})));
     }
@@ -64,14 +57,12 @@ bool EditorWidget::PasteModuleOperation::doOperation()
     int newIndex = m_firstModuleIndex;
     int oldCount = groupItem->childCount();
 
-    for (auto module : m_modules)
-    {
+    for (auto module : m_modules) {
         QString &                    macro     = module->macro;
         ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
 
         ModuleItem *moduleItem = groupItem->child(module->macro);
-        if (moduleItem == nullptr)
-        {
+        if (moduleItem == nullptr) {
             // Add module.
             // Add to save.
             int index = groupItem->group()->insertModule(newIndex, macro,
@@ -104,9 +95,7 @@ bool EditorWidget::PasteModuleOperation::doOperation()
 
             // Update.
             editorWidget->updateModuleMoveButtonStatus(moduleItem);
-        }
-        else
-        {
+        } else {
             // Increase amount.
             moduleItem->setModuleAmount(moduleItem->moduleAmount()
                                         + module->amount);
@@ -118,10 +107,8 @@ bool EditorWidget::PasteModuleOperation::doOperation()
     }
 
     // Update
-    if (oldCount > 0)
-    {
-        if (m_firstModuleIndex == oldCount)
-        {
+    if (oldCount > 0) {
+        if (m_firstModuleIndex == oldCount) {
             ModuleItem *item = dynamic_cast<ModuleItem *>(
                 groupItem->child(m_firstModuleIndex - 1));
             Q_ASSERT(item != nullptr);
@@ -145,8 +132,7 @@ void EditorWidget::PasteModuleOperation::undoOperation()
     Q_ASSERT(groupItem != nullptr);
     ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
 
-    for (auto module : m_modules)
-    {
+    for (auto module : m_modules) {
         QString &                    macro     = module->macro;
         ::std::shared_ptr<SaveGroup> saveGroup = groupItem->group();
 
@@ -157,15 +143,12 @@ void EditorWidget::PasteModuleOperation::undoOperation()
             editorWidget->m_treeEditor->itemWidget(moduleItem, 1));
         Q_ASSERT(moduleWidget != nullptr);
 
-        if (moduleItem->moduleAmount() > module->amount)
-        {
+        if (moduleItem->moduleAmount() > module->amount) {
             // Decrease amount/
             moduleItem->setModuleAmount(moduleItem->moduleAmount()
                                         - module->amount);
             moduleWidget->updateAmount();
-        }
-        else
-        {
+        } else {
             // Remove.
             // Remove from save file.
             editorWidget->m_save->group(m_groupIndex)
@@ -175,17 +158,13 @@ void EditorWidget::PasteModuleOperation::undoOperation()
             groupItem->removeChild(moduleItem);
 
             // Update.
-            if (groupItem->childCount() > 0)
-            {
-                if (m_firstModuleIndex == 0)
-                {
+            if (groupItem->childCount() > 0) {
+                if (m_firstModuleIndex == 0) {
                     ModuleItem *nextItem
                         = dynamic_cast<ModuleItem *>(groupItem->child(0));
                     Q_ASSERT(nextItem != nullptr);
                     editorWidget->updateModuleMoveButtonStatus(nextItem);
-                }
-                else if (m_firstModuleIndex >= groupItem->childCount())
-                {
+                } else if (m_firstModuleIndex >= groupItem->childCount()) {
                     ModuleItem *prevItem = dynamic_cast<ModuleItem *>(
                         groupItem->child(m_firstModuleIndex - 1));
                     Q_ASSERT(prevItem != nullptr);

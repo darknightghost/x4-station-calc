@@ -6,8 +6,7 @@
 /**
  * @brief		Generic string.
  */
-class GenericString
-{
+class GenericString {
   protected:
     /**
      * @brief	Constructor.
@@ -31,8 +30,7 @@ class GenericString
 /**
  * @brief		Qt string.
  */
-class QtString : public GenericString
-{
+class QtString : public GenericString {
   private:
     QString m_string; ///< String.
 
@@ -63,8 +61,7 @@ class QtString : public GenericString
 /**
  * @brief		Game string.
  */
-class GameString : public GenericString
-{
+class GameString : public GenericString {
   private:
     GameTexts::IDPair m_id; ///< ID of the string.
 
@@ -95,8 +92,7 @@ class GameString : public GenericString
 /**
  * @brief		Locale string.
  */
-class LocaleString : public GenericString
-{
+class LocaleString : public GenericString {
   private:
     QString m_id; ///< String ID.
 

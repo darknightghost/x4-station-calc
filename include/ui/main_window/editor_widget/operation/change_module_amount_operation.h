@@ -16,8 +16,7 @@ class EditorWidget::ChangeModuleAmountOperation :
         int,
         int,
         int,
-        EditorWidget *>
-{
+        EditorWidget *> {
     CREATE_FUNC(EditorWidget::ChangeModuleAmountOperation,
                 int,
                 int,

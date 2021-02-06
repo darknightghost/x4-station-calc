@@ -18,8 +18,7 @@ class EditorWidget::PasteModuleOperation :
         GroupItem *,
         ModuleItem *,
         const X4SCModuleClipboardMimeDataBuilder &,
-        EditorWidget *>
-{
+        EditorWidget *> {
     CREATE_FUNC(EditorWidget::PasteModuleOperation,
                 GroupItem *,
                 ModuleItem *,

@@ -14,13 +14,9 @@ class EditorWidget::MoveModuleOperation :
         int,
         int,
         int,
-        EditorWidget *>
-{
-    CREATE_FUNC(EditorWidget::MoveModuleOperation,
-                int,
-                int,
-                int,
-                EditorWidget *);
+        EditorWidget *> {
+    CREATE_FUNC(
+        EditorWidget::MoveModuleOperation, int, int, int, EditorWidget *);
 
   private:
     int m_groupIndex; ///< Index of the group.

@@ -52,8 +52,7 @@ void UpdateChecker::checkUpdate(bool quiet)
     // Check if previous request has been finished.
     bool checkingFlag = true;
     checkingFlag      = m_checkingFlag.exchange(checkingFlag);
-    if (checkingFlag)
-    {
+    if (checkingFlag) {
         return;
     }
 
@@ -81,11 +80,9 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
 
     // Check result.
     QNetworkReply::NetworkError err = reply->error();
-    if (err != QNetworkReply::NetworkError::NoError)
-    {
+    if (err != QNetworkReply::NetworkError::NoError) {
         qDebug() << err;
-        if (! m_quiet)
-        {
+        if (! m_quiet) {
             QMessageBox::critical(m_parent, STR("STR_ERROR"),
                                   STR("STR_CHECKUPDATE_FAILED"));
         }
@@ -100,23 +97,18 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
              << ", Newest version :" << newestVersion;
 
     // Compare.
-    if (newestVersion > VERSION)
-    {
+    if (newestVersion > VERSION) {
         if (QMessageBox::question(m_parent, STR("STR_TITLE_CHECKUPDATE"),
                                   STR("STR_NEW_VERSION_FOUND"))
-            == QMessageBox::StandardButton::Yes)
-        {
+            == QMessageBox::StandardButton::Yes) {
             QString downloadURL = _downloadURL.arg(s);
             qDebug() << "Download url : " << downloadURL;
             QDesktopServices::openUrl(QUrl(downloadURL));
         }
 
         return;
-    }
-    else
-    {
-        if (! m_quiet)
-        {
+    } else {
+        if (! m_quiet) {
             QMessageBox::information(m_parent, STR("STR_INFO"),
                                      STR("STR_NEW_VERSION_NOT_FOUND"));
         }

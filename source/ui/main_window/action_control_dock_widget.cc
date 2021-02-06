@@ -61,8 +61,7 @@ ActionControlDockWidget::~ActionControlDockWidget() {}
  */
 void ActionControlDockWidget::showEvent(QShowEvent *event)
 {
-    if (! m_statusAction->isChecked())
-    {
+    if (! m_statusAction->isChecked()) {
         m_statusAction->setChecked(true);
     }
 
@@ -74,15 +73,11 @@ void ActionControlDockWidget::showEvent(QShowEvent *event)
  */
 void ActionControlDockWidget::closeEvent(QCloseEvent *event)
 {
-    if (m_enableClose)
-    {
+    if (m_enableClose) {
         event->accept();
-    }
-    else
-    {
+    } else {
         event->ignore();
-        if (m_statusAction->isChecked())
-        {
+        if (m_statusAction->isChecked()) {
             m_statusAction->setChecked(false);
         }
 
@@ -95,8 +90,7 @@ void ActionControlDockWidget::closeEvent(QCloseEvent *event)
  */
 void ActionControlDockWidget::onCheckStateChanged(bool status)
 {
-    if (this->isVisible() != status)
-    {
+    if (this->isVisible() != status) {
         this->setVisible(status);
     }
 }

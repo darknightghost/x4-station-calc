@@ -10,8 +10,7 @@
 /**
  * @brief	Tree widget item of station modules.
  */
-class StationModulesTreeWidgetItem : public QTreeWidgetItem
-{
+class StationModulesTreeWidgetItem : public QTreeWidgetItem {
   protected:
     ::std::shared_ptr<GameStationModules::StationModule>
         m_module; ///< Station module.

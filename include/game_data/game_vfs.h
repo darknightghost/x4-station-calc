@@ -15,8 +15,7 @@
 /**
  * @brief	Virtual filesystem of the game.
  */
-class GameVFS : private IInitialized
-{
+class GameVFS : private IInitialized {
   public:
     /**
      * @brief	Information of cat file.
@@ -191,8 +190,7 @@ class GameVFS : private IInitialized
  * @brief	FileReader.
  *
  */
-class GameVFS::FileReader
-{
+class GameVFS::FileReader {
   protected:
     QStringList                m_path; ///< Path of the file.
     QString                    m_name; ///< Name of the file.
@@ -202,8 +200,7 @@ class GameVFS::FileReader
     /**
      * @brief	Whence.
      */
-    enum Whence
-    {
+    enum Whence {
         Set     = 0x01, ///< From begining of the file.
         Current = 0x02, ///< From current position of the file.
         End     = 0x03  ///< From the end of the file.
@@ -292,8 +289,7 @@ class GameVFS::FileReader
 /**
  * @brief	FileReader for packed files.
  */
-class GameVFS::PackedFileReader : public GameVFS::FileReader
-{
+class GameVFS::PackedFileReader : public GameVFS::FileReader {
   protected:
     ::std::unique_ptr<QFile> m_file;   ///< File object.
     quint64                  m_offset; ///< Offset.
@@ -369,8 +365,7 @@ class GameVFS::PackedFileReader : public GameVFS::FileReader
 /**
  * @brief	FileReader for normal files.
  */
-class GameVFS::NormalFileReader : public GameVFS::FileReader
-{
+class GameVFS::NormalFileReader : public GameVFS::FileReader {
   protected:
     ::std::unique_ptr<QFile> m_file; ///< File object.
 
@@ -440,14 +435,12 @@ class GameVFS::NormalFileReader : public GameVFS::FileReader
 /**
  * @brief	Directory reader.
  */
-class GameVFS::DirReader
-{
+class GameVFS::DirReader {
   public:
     /**
      * @brief	Type of directory entery.
      */
-    enum EntryType
-    {
+    enum EntryType {
         File,     ///< Normal file.
         Directory ///< Directory.
     };
@@ -539,8 +532,7 @@ class GameVFS::DirReader
 /**
  * @brief	Iterator.
  */
-class GameVFS::DirReader::Iterator
-{
+class GameVFS::DirReader::Iterator {
   private:
     ::std::shared_ptr<QVector<DirEntry>> m_enteries; ///< Enteries.
     QVector<DirEntry>::iterator          m_iterator; ///< Iterator.

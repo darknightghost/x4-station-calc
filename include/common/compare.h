@@ -145,12 +145,9 @@ bool between(
 template<typename T, typename T1, typename... Values>
 bool in(T value, T1 value1, Values... values)
 {
-    if (value == value1)
-    {
+    if (value == value1) {
         return true;
-    }
-    else
-    {
+    } else {
         return in(value, values...);
     }
 }
@@ -184,12 +181,9 @@ bool in(T)
 template<typename T, typename T1, typename... Values>
 bool notIn(T value, T1 value1, Values... values)
 {
-    if (value == value1)
-    {
+    if (value == value1) {
         return false;
-    }
-    else
-    {
+    } else {
         return notIn(value, values...);
     }
 }

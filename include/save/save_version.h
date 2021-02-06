@@ -7,8 +7,7 @@
 /**
  * @brief		Version of save file.
  */
-class SaveVersion : virtual public IInitialized
-{
+class SaveVersion : virtual public IInitialized {
   protected:
     quint8 m_major;       ///< Major version.
     quint8 m_minor;       ///< Minor version.

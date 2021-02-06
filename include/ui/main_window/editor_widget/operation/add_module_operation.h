@@ -12,8 +12,7 @@ class EditorWidget::AddModuleOperation :
                                                int,
                                                int,
                                                const QStringList &,
-                                               EditorWidget *>
-{
+                                               EditorWidget *> {
     CREATE_FUNC(EditorWidget::AddModuleOperation,
                 int,
                 int,

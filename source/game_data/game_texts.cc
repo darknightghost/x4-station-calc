@@ -19,11 +19,9 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
 
     // Master files
     ::std::shared_ptr<GameVFS::DirReader> dirReader = vfs->openDir("t");
-    for (auto iter = dirReader->begin(); iter != dirReader->end(); ++iter)
-    {
+    for (auto iter = dirReader->begin(); iter != dirReader->end(); ++iter) {
         if (iter->type == ::GameVFS::DirReader::EntryType::File
-            && nameFilter.exactMatch(iter->name))
-        {
+            && nameFilter.exactMatch(iter->name)) {
             textFiles.append(dirReader->absPath(iter->name));
         }
     }
@@ -31,25 +29,19 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
     // Extension files
     ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
         = vfs->openDir("/extensions");
-    if (extensionsDir != nullptr)
-    {
+    if (extensionsDir != nullptr) {
         for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
-             ++iter)
-        {
-            if (iter->type == ::GameVFS::DirReader::EntryType::Directory)
-            {
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
                 ::std::shared_ptr<GameVFS::DirReader> dirReader
                     = vfs->openDir(QString("/extensions/%1/t").arg(iter->name));
-                if (dirReader == nullptr)
-                {
+                if (dirReader == nullptr) {
                     continue;
                 }
                 for (auto iter = dirReader->begin(); iter != dirReader->end();
-                     ++iter)
-                {
+                     ++iter) {
                     if (iter->type == ::GameVFS::DirReader::EntryType::File
-                        && nameFilter.exactMatch(iter->name))
-                    {
+                        && nameFilter.exactMatch(iter->name)) {
                         textFiles.append(dirReader->absPath(iter->name));
                     }
                 }
@@ -65,17 +57,13 @@ GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
     finishedCount                = 0;
     MultiRun loadTask(::std::function<void()>([&]() -> void {
         QStringList::iterator fileIter;
-        while (true)
-        {
+        while (true) {
             // Get file
             {
                 QMutexLocker locker(&allFileIterLock);
-                if (allFileIter == textFiles.end())
-                {
+                if (allFileIter == textFiles.end()) {
                     return;
-                }
-                else
-                {
+                } else {
                     fileIter = allFileIter;
                     allFileIter += 1;
                 }
@@ -118,31 +106,24 @@ QString GameTexts::text(qint32 pageID, qint32 textID)
 {
     QString ret      = "";
     auto    pageIter = m_textPages.find(pageID);
-    if (pageIter == m_textPages.end())
-    {
+    if (pageIter == m_textPages.end()) {
         return "";
     }
     auto textIter = (*pageIter)->texts.find(textID);
-    if (textIter == (*pageIter)->texts.end())
-    {
+    if (textIter == (*pageIter)->texts.end()) {
         return "";
     }
 
     auto linkIter
         = (*textIter)->links.find(StringTable::instance()->languageId());
-    if (linkIter == (*textIter)->links.end())
-    {
+    if (linkIter == (*textIter)->links.end()) {
         return "";
     }
 
-    for (auto &link : *linkIter)
-    {
-        if (link.isRef)
-        {
+    for (auto &link : *linkIter) {
+        if (link.isRef) {
             ret.append(this->text(link.refInfo.pageID, link.refInfo.textID));
-        }
-        else
-        {
+        } else {
             ret.append(link.text);
         }
     }
@@ -172,11 +153,9 @@ bool GameTexts::onStartElementInRoot(XMLLoader &                   loader,
                                      const QMap<QString, QString> &attr)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "language")
-    {
+    if (name == "language") {
         auto iter = attr.find("id");
-        if (iter == attr.end())
-        {
+        if (iter == attr.end()) {
             qWarning() << "Missing attribute 'id' in <language> element.";
             return false;
         }
@@ -189,9 +168,7 @@ bool GameTexts::onStartElementInRoot(XMLLoader &                   loader,
             ::std::placeholders::_2, ::std::placeholders::_3,
             ::std::placeholders::_4, iter.value().toInt()));
         loader.pushContext(::std::move(context));
-    }
-    else
-    {
+    } else {
         qWarning() << "Illegal name of start element in xml file";
         return false;
     }
@@ -209,11 +186,9 @@ bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
                                          quint32 languageID)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "page")
-    {
+    if (name == "page") {
         auto iter = attr.find("id");
-        if (iter == attr.end())
-        {
+        if (iter == attr.end()) {
             qWarning() << "Missing attribute 'id' in <page> element.";
             loader.pushContext(XMLLoader::Context::create());
             return true;
@@ -226,14 +201,11 @@ bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
         {
             QMutexLocker locker(&m_pageLock);
             auto         pageIter = m_textPages.find(pageID);
-            if (pageIter == m_textPages.end())
-            {
+            if (pageIter == m_textPages.end()) {
                 page                = ::std::shared_ptr<TextPage>(new TextPage);
                 page->pageID        = pageID;
                 m_textPages[pageID] = page;
-            }
-            else
-            {
+            } else {
                 page = *pageIter;
             }
         }
@@ -246,9 +218,7 @@ bool GameTexts::onStartElementInLanguage(XMLLoader &                   loader,
             ::std::placeholders::_2, ::std::placeholders::_3,
             ::std::placeholders::_4, languageID, page));
         loader.pushContext(::std::move(context));
-    }
-    else
-    {
+    } else {
         loader.pushContext(XMLLoader::Context::create());
     }
 
@@ -266,11 +236,9 @@ bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
                                      ::std::shared_ptr<TextPage>   page)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "t")
-    {
+    if (name == "t") {
         auto iter = attr.find("id");
-        if (iter == attr.end())
-        {
+        if (iter == attr.end()) {
             qWarning() << "Missing attribute 'id' in <t> element.";
             loader.pushContext(XMLLoader::Context::create());
             return true;
@@ -282,15 +250,12 @@ bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
         QMutexLocker            locker(&(page->lock));
         ::std::shared_ptr<Text> text;
         auto                    textIter = page->texts.find(id);
-        if (textIter == page->texts.end())
-        {
+        if (textIter == page->texts.end()) {
             text            = ::std::shared_ptr<Text>(new Text);
             text->pageID    = page->pageID;
             text->textID    = id;
             page->texts[id] = text;
-        }
-        else
-        {
+        } else {
             text = *textIter;
         }
 
@@ -308,9 +273,7 @@ bool GameTexts::onStartElementInPage(XMLLoader &                   loader,
                         ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, languageID, text));
         loader.pushContext(::std::move(context));
-    }
-    else
-    {
+    } else {
         loader.pushContext(XMLLoader::Context::create());
     }
 
@@ -352,11 +315,9 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
     QRegExp numExp("\\d+");
 
     s = s.replace(ignoreExp, "");
-    while (s != "")
-    {
+    while (s != "") {
         int index = referenceExp.indexIn(s);
-        if (index == -1)
-        {
+        if (index == -1) {
             // No reference exists.
             link.isRef          = false;
             link.text           = this->parseEscape(s);
@@ -364,12 +325,9 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
             link.refInfo.textID = 0;
             ret.append(link);
             break;
-        }
-        else
-        {
+        } else {
             // Reference found.
-            if (index > 0)
-            {
+            if (index > 0) {
                 // Before
                 link.isRef          = false;
                 link.text           = this->parseEscape(s.left(index));
@@ -399,18 +357,14 @@ QVector<GameTexts::TextLink> GameTexts::parseText(QString s)
 QString GameTexts::parseEscape(const QString &s)
 {
     QString ret = "";
-    for (auto iter = s.begin(); iter < s.end(); iter++)
-    {
-        if (*iter == '\\')
-        {
+    for (auto iter = s.begin(); iter < s.end(); iter++) {
+        if (*iter == '\\') {
             ++iter;
-            if (iter == s.end())
-            {
+            if (iter == s.end()) {
                 continue;
             }
             // Parse escape characters.
-            switch (iter->unicode())
-            {
+            switch (iter->unicode()) {
                 case 'n':
                     // \n
                     ret.append('\n');
@@ -451,44 +405,35 @@ QString GameTexts::parseEscape(const QString &s)
                     {
                         ushort n = 0;
                         if (iter + 1 != s.end()
-                            && between((iter + 1)->unicode(), '0', '9'))
-                        {
+                            && between((iter + 1)->unicode(), '0', '9')) {
                             n = n * 0x10 + (iter->unicode() - '0');
-                        }
-                        else if (iter + 1 != s.end()
-                                 && between((iter + 1)->unicode(), 'a', 'f'))
-                        {
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'a',
+                                              'f')) {
                             n = n * 0x10 + (iter->unicode() - 'a');
-                        }
-                        else if (iter + 1 != s.end()
-                                 && between((iter + 1)->unicode(), 'A', 'F'))
-                        {
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'A',
+                                              'F')) {
                             n = n * 0x10 + (iter->unicode() - 'A');
-                        }
-                        else
-                        {
+                        } else {
                             break;
                         }
 
                         ++iter;
-                        if (iter == s.end())
-                        {
+                        if (iter == s.end()) {
                             continue;
                         }
 
                         if (iter + 1 != s.end()
-                            && between((iter + 1)->unicode(), '0', '9'))
-                        {
+                            && between((iter + 1)->unicode(), '0', '9')) {
                             n = n * 0x10 + (iter->unicode() - '0');
-                        }
-                        else if (iter + 1 != s.end()
-                                 && between((iter + 1)->unicode(), 'a', 'f'))
-                        {
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'a',
+                                              'f')) {
                             n = n * 0x10 + (iter->unicode() - 'a');
-                        }
-                        else if (iter + 1 != s.end()
-                                 && between((iter + 1)->unicode(), 'A', 'F'))
-                        {
+                        } else if (iter + 1 != s.end()
+                                   && between((iter + 1)->unicode(), 'A',
+                                              'F')) {
                             n = n * 0x10 + (iter->unicode() - 'A');
                         }
                         ret.append(QChar(n));
@@ -497,44 +442,34 @@ QString GameTexts::parseEscape(const QString &s)
 
                 case '0':
                     // \0
-                    if ((iter + 1) == s.end() || ! (iter + 1)->isDigit())
-                    {
+                    if ((iter + 1) == s.end() || ! (iter + 1)->isDigit()) {
                         ret.append('\0');
                         break;
                     }
 
                 default:
-                    if (iter->isDigit())
-                    {
+                    if (iter->isDigit()) {
                         // \ddd
                         ushort n = iter->digitValue();
-                        if (iter + 1 != s.end() && (iter + 1)->isDigit())
-                        {
+                        if (iter + 1 != s.end() && (iter + 1)->isDigit()) {
                             ++iter;
                             n = n * 010 + iter->digitValue();
-                        }
-                        else
-                        {
+                        } else {
                             ret.append(QChar(n));
                             break;
                         }
-                        if (iter + 1 != s.end() && (iter + 1)->isDigit())
-                        {
+                        if (iter + 1 != s.end() && (iter + 1)->isDigit()) {
                             ++iter;
                             n = n * 010 + iter->digitValue();
                         }
                         ret.append(QChar(n));
 
                         break;
-                    }
-                    else
-                    {
+                    } else {
                         ret.append(*iter);
                     }
             }
-        }
-        else
-        {
+        } else {
             // Copy character.
             ret.append(*iter);
         }

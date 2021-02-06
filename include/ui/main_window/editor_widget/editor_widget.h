@@ -25,8 +25,7 @@
 /**
  * @brief		Save editor widget.
  */
-class EditorWidget : public QWidget
-{
+class EditorWidget : public QWidget {
     Q_OBJECT;
 
   private:

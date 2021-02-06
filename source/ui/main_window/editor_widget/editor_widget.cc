@@ -741,7 +741,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                     GameStationModules::SupplyProduct>(
                                     property);
                             ::std::shared_ptr<GameWares::ProductionInfo>
-                                           productionInfo = supplyProfduct->productionInfo;
+                                productionInfo = supplyProfduct->productionInfo;
                             const QString &macro = productionInfo->id;
 
                             // Product.

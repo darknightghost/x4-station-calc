@@ -139,6 +139,11 @@
 		"zh_TW" : "檢查更新(&V)",
 		"en_US" : "&Check Update"
 	},
+	"STR_MENU_HELP_GITHUB":{
+		"zh_CN" : "GitHub(&G)",
+		"zh_TW" : "GitHub(&G)",
+		"en_US" : "&GitHub"
+	},
 	"STR_SAVE_FILE_FILTER" : {
 		"zh_CN" : "空间站 (*.x4station)",
 		"zh_TW" : "空間站 (*.x4station)",

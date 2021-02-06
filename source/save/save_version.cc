@@ -18,8 +18,9 @@ SaveVersion::SaveVersion(quint8 major, quint8 minor, quint8 maintenance) :
 SaveVersion::SaveVersion(const QString &versionString)
 {
     auto splitted
-        = versionString.split(".", QString::SplitBehavior::SkipEmptyParts);
-    if (splitted.size() != 3) {
+        = versionString.split(".", Qt::SplitBehaviorFlags::SkipEmptyParts);
+    if (splitted.size() != 3)
+    {
         return;
     }
     m_major       = (quint8)splitted[0].toUShort();
@@ -98,15 +99,18 @@ SaveVersion::operator QString() const
  */
 bool SaveVersion::operator>(const SaveVersion &version) const
 {
-    if (m_major != version.m_major) {
+    if (m_major != version.m_major)
+    {
         return m_major > version.m_major;
     }
 
-    if (m_minor != version.m_minor) {
+    if (m_minor != version.m_minor)
+    {
         return m_minor > version.m_minor;
     }
 
-    if (m_maintenance != version.m_maintenance) {
+    if (m_maintenance != version.m_maintenance)
+    {
         return m_maintenance > version.m_maintenance;
     }
 
@@ -118,15 +122,18 @@ bool SaveVersion::operator>(const SaveVersion &version) const
  */
 bool SaveVersion::operator>=(const SaveVersion &version) const
 {
-    if (m_major != version.m_major) {
+    if (m_major != version.m_major)
+    {
         return m_major > version.m_major;
     }
 
-    if (m_minor != version.m_minor) {
+    if (m_minor != version.m_minor)
+    {
         return m_minor > version.m_minor;
     }
 
-    if (m_maintenance != version.m_maintenance) {
+    if (m_maintenance != version.m_maintenance)
+    {
         return m_maintenance > version.m_maintenance;
     }
 
@@ -138,15 +145,18 @@ bool SaveVersion::operator>=(const SaveVersion &version) const
  */
 bool SaveVersion::operator<(const SaveVersion &version) const
 {
-    if (m_major != version.m_major) {
+    if (m_major != version.m_major)
+    {
         return m_major < version.m_major;
     }
 
-    if (m_minor != version.m_minor) {
+    if (m_minor != version.m_minor)
+    {
         return m_minor < version.m_minor;
     }
 
-    if (m_maintenance != version.m_maintenance) {
+    if (m_maintenance != version.m_maintenance)
+    {
         return m_maintenance < version.m_maintenance;
     }
 
@@ -158,15 +168,18 @@ bool SaveVersion::operator<(const SaveVersion &version) const
  */
 bool SaveVersion::operator<=(const SaveVersion &version) const
 {
-    if (m_major != version.m_major) {
+    if (m_major != version.m_major)
+    {
         return m_major < version.m_major;
     }
 
-    if (m_minor != version.m_minor) {
+    if (m_minor != version.m_minor)
+    {
         return m_minor < version.m_minor;
     }
 
-    if (m_maintenance != version.m_maintenance) {
+    if (m_maintenance != version.m_maintenance)
+    {
         return m_maintenance < version.m_maintenance;
     }
 

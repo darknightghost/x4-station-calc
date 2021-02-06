@@ -18,11 +18,13 @@ EditorWidget::RemoveOperation::RemoveOperation(
 {
     // Scan groups.
     QSet<int> groupIndexes;
-    for (auto groupItem : groups) {
+    for (auto groupItem : groups)
+    {
         int groupIndex
             = this->editorWidget()->m_itemGroups->indexOfChild(groupItem);
         // Skip existing group.
-        if (groupIndexes.find(groupIndex) != groupIndexes.end()) {
+        if (groupIndexes.find(groupIndex) != groupIndexes.end())
+        {
             continue;
         }
 
@@ -35,7 +37,8 @@ EditorWidget::RemoveOperation::RemoveOperation(
                                {}}));
 
         // Scan modules.
-        for (int i = 0; i < groupItem->childCount(); ++i) {
+        for (int i = 0; i < groupItem->childCount(); ++i)
+        {
             ModuleItem *moduleItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(i));
             Q_ASSERT(moduleItem != nullptr);
@@ -54,14 +57,16 @@ EditorWidget::RemoveOperation::RemoveOperation(
                     return info1->groupIndex < info2->groupIndex;
                 });
 
-    for (auto moduleItem : modules) {
+    for (auto moduleItem : modules)
+    {
         GroupItem *groupItem = dynamic_cast<GroupItem *>(moduleItem->parent());
         Q_ASSERT(groupItem != nullptr);
         int groupIndex
             = this->editorWidget()->m_itemGroups->indexOfChild(groupItem);
 
         // Skip groups to remove.
-        if (groupIndexes.find(groupIndex) != groupIndexes.end()) {
+        if (groupIndexes.find(groupIndex) != groupIndexes.end())
+        {
             continue;
         }
 
@@ -90,7 +95,8 @@ bool EditorWidget::RemoveOperation::doOperation()
     EditorWidget *editorWidget = this->editorWidget();
 
     // Remove modules in reserved order.
-    for (auto iter = m_modules.rbegin(); iter != m_modules.rend(); ++iter) {
+    for (auto iter = m_modules.rbegin(); iter != m_modules.rend(); ++iter)
+    {
         ::std::shared_ptr<ModuleToRemove> moduleInfo = *iter;
         GroupItem *                       groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(moduleInfo->groupIndex));
@@ -107,14 +113,17 @@ bool EditorWidget::RemoveOperation::doOperation()
         groupItem->removeChild(moduleItem);
 
         // Update.
-        if (groupItem->childCount() > 0) {
-            if (moduleInfo->moduleIndex == 0) {
+        if (groupItem->childCount() > 0)
+        {
+            if (moduleInfo->moduleIndex == 0)
+            {
                 ModuleItem *nextItem
                     = dynamic_cast<ModuleItem *>(groupItem->child(0));
                 Q_ASSERT(nextItem != nullptr);
                 editorWidget->updateModuleMoveButtonStatus(nextItem);
-
-            } else if (moduleInfo->moduleIndex >= groupItem->childCount()) {
+            }
+            else if (moduleInfo->moduleIndex >= groupItem->childCount())
+            {
                 ModuleItem *prevItem = dynamic_cast<ModuleItem *>(
                     groupItem->child(moduleInfo->moduleIndex - 1));
                 Q_ASSERT(prevItem != nullptr);
@@ -124,7 +133,8 @@ bool EditorWidget::RemoveOperation::doOperation()
     }
 
     // Remove groups in reserved order.
-    for (auto iter = m_groups.rbegin(); iter != m_groups.rend(); ++iter) {
+    for (auto iter = m_groups.rbegin(); iter != m_groups.rend(); ++iter)
+    {
         ::std::shared_ptr<GroupToRemove> groupInfo = *iter;
         GroupItem *                      groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(groupInfo->groupIndex));
@@ -137,15 +147,18 @@ bool EditorWidget::RemoveOperation::doOperation()
         editorWidget->m_itemGroups->removeChild(groupItem);
 
         // Update.
-        if (editorWidget->m_itemGroups->childCount() > 0) {
-            if (groupInfo->groupIndex == 0) {
+        if (editorWidget->m_itemGroups->childCount() > 0)
+        {
+            if (groupInfo->groupIndex == 0)
+            {
                 GroupItem *nextItem = dynamic_cast<GroupItem *>(
                     editorWidget->m_itemGroups->child(0));
                 Q_ASSERT(nextItem != nullptr);
                 editorWidget->updateGroupMoveButtonStatus(nextItem);
-
-            } else if (groupInfo->groupIndex
-                       >= editorWidget->m_itemGroups->childCount()) {
+            }
+            else if (groupInfo->groupIndex
+                     >= editorWidget->m_itemGroups->childCount())
+            {
                 GroupItem *prevItem = dynamic_cast<GroupItem *>(
                     editorWidget->m_itemGroups->child(groupInfo->groupIndex
                                                       - 1));
@@ -166,7 +179,8 @@ void EditorWidget::RemoveOperation::undoOperation()
     EditorWidget *editorWidget = this->editorWidget();
 
     // Add groups.
-    for (auto &groupInfo : m_groups) {
+    for (auto &groupInfo : m_groups)
+    {
         // Make group.
         ::std::shared_ptr<SaveGroup> saveGroup = SaveGroup::create();
         saveGroup->setName(groupInfo->name);
@@ -195,7 +209,8 @@ void EditorWidget::RemoveOperation::undoOperation()
         editorWidget->updateGroupMoveButtonStatus(groupItem);
 
         // Add modules.
-        for (auto &moduleInfo : groupInfo->modules) {
+        for (auto &moduleInfo : groupInfo->modules)
+        {
             // Add to save.
             int index = saveGroup->insertModule(-1, moduleInfo->macro,
                                                 moduleInfo->amount);
@@ -229,7 +244,8 @@ void EditorWidget::RemoveOperation::undoOperation()
     }
 
     // Add modules.
-    for (auto &moduleInfo : m_modules) {
+    for (auto &moduleInfo : m_modules)
+    {
         GroupItem *groupItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(moduleInfo->groupIndex));
         Q_ASSERT(groupItem != nullptr);

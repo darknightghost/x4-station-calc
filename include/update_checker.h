@@ -13,7 +13,8 @@
 /**
  * @brief       Update checker.
  */
-class UpdateChecker : public QObject {
+class UpdateChecker : public QObject
+{
     Q_OBJECT;
 
   private:

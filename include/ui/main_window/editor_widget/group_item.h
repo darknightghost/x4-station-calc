@@ -11,7 +11,8 @@
 /**
  * @brief	Item of modules group.
  */
-class GroupItem : public QTreeWidgetItem {
+class GroupItem : public QTreeWidgetItem
+{
   private:
     ::std::shared_ptr<SaveGroup> m_group;    ///<  Group.
     QMap<QString, ModuleItem *>  m_macroMap; ///< Macro/ModuleItemMap.
@@ -116,7 +117,8 @@ class GroupItem : public QTreeWidgetItem {
 /**
  * @brief	Item of modules group.
  */
-class GroupItemWidget : public QWidget {
+class GroupItemWidget : public QWidget
+{
     Q_OBJECT;
 
   private:

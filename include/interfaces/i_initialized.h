@@ -4,7 +4,8 @@
  * @brief   Provide good() medthod.
  *
  */
-class IInitialized {
+class IInitialized
+{
   private:
     bool m_initialized; ///< Initialize result.
 

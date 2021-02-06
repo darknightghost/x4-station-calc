@@ -11,14 +11,17 @@ LanguageMenu::LanguageMenu(QWidget *parent) : QMenu(parent)
     m_actionGroup->setExclusive(true);
 
     auto &languages = StringTable::instance()->getStrings("STR_LANGUAGE_TYPE");
-    for (auto iter = languages.begin(); iter != languages.end(); iter++) {
+    for (auto iter = languages.begin(); iter != languages.end(); iter++)
+    {
         QAction *action = new QAction(*iter, m_actionGroup);
         action->setCheckable(true);
         m_localeMap[action] = iter.key();
-        if (iter.key() == StringTable::instance()->language()) {
+        if (iter.key() == StringTable::instance()->language())
+        {
             action->setChecked(true);
-
-        } else {
+        }
+        else
+        {
             action->setChecked(false);
         }
         this->addAction(action);

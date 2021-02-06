@@ -1,3 +1,7 @@
+v1.0.3
+    Added the link to the github page of the project in "Help" menu.
+    Improved the speed of loading game data.
+
 v1.0.2
     Fixed the bug that the amount of modules is incorrect when pasting modules.
     Added new function to export the lists of modules to .html files.

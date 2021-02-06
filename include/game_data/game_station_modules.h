@@ -41,7 +41,8 @@ class GameStationModules :
                             ::std::shared_ptr<GameTexts>,
                             ::std::shared_ptr<GameWares>,
                             ::std::shared_ptr<GameComponents>,
-                            ::std::function<void(const QString &)>> {
+                            ::std::function<void(const QString &)>>
+{
     LOAD_FUNC(GameStationModules,
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameMacros>,
@@ -58,7 +59,8 @@ class GameStationModules :
         /**
          * @brief		Property type.
          */
-        enum Type {
+        enum Type
+        {
             MTurret,          ///< Has M turret.
             MShield,          ///< Has M shield.
             LTurret,          ///< Has L turret.
@@ -99,7 +101,8 @@ class GameStationModules :
         /**
          * @brief	Class of station modules.
          */
-        enum StationModuleClass {
+        enum StationModuleClass
+        {
             Unknow,           ///< Unknow.
             BuildModule,      ///< Build module.
             ConnectionModule, ///< Connection module.
@@ -429,9 +432,16 @@ class GameStationModules :
      * @brief	Temporart docking bay information.
      */
     struct TmpDockingBayInfo {
-        quint64 count;                   ///< Count of the docking bay.
-        quint64 capacity;                ///< Ship capacity.
-        enum { S, M, L, XL, L_XL } type; ///< Type.
+        quint64 count;    ///< Count of the docking bay.
+        quint64 capacity; ///< Ship capacity.
+        enum
+        {
+            S,
+            M,
+            L,
+            XL,
+            L_XL
+        } type; ///< Type.
     };
 
   private:

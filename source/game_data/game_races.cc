@@ -28,7 +28,8 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
     // Open file.
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open("/libraries/races.xml");
-    if (file == nullptr) {
+    if (file == nullptr)
+    {
         return;
     }
     QByteArray       data = file->readAll();
@@ -76,15 +77,17 @@ bool GameRaces::onStartElementInRoot(XMLLoader &loader,
                                      const QString &name,
                                      const QMap<QString, QString> &)
 {
-    if (name == "races") {
+    if (name == "races")
+    {
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(
             ::std::bind(&GameRaces::onStartElementInRaces, this,
                         ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
-
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
     return true;
@@ -102,7 +105,8 @@ bool GameRaces::onStartElementInRaces(XMLLoader &loader,
         = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
     if (name == "race" && attr.find("id") != attr.end()
         && attr.find("name") != attr.end()
-        && attr.find("description") != attr.end()) {
+        && attr.find("description") != attr.end())
+    {
         Race race = {
             attr["id"],          //< ID.
             attr["name"],        //< Name.

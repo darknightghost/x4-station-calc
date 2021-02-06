@@ -9,7 +9,8 @@
 /**
  * @brief       About dialog.
  */
-class AboutDialog : public QDialog {
+class AboutDialog : public QDialog
+{
     Q_OBJECT
   private:
     QVBoxLayout *m_layout;           ///< Layout.

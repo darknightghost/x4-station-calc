@@ -45,13 +45,15 @@ bool EditorWidget::AddGroupOperation::doOperation()
     // Update.
     editorWidget->updateGroupMoveButtonStatus(groupItem);
 
-    if (m_index == 0) {
+    if (m_index == 0)
+    {
         GroupItem *nextItem
             = dynamic_cast<GroupItem *>(editorWidget->m_itemGroups->child(0));
         Q_ASSERT(nextItem != nullptr);
         editorWidget->updateGroupMoveButtonStatus(nextItem);
-
-    } else if (m_index == editorWidget->m_itemGroups->childCount() - 1) {
+    }
+    else if (m_index == editorWidget->m_itemGroups->childCount() - 1)
+    {
         GroupItem *prevItem = dynamic_cast<GroupItem *>(
             editorWidget->m_itemGroups->child(m_index - 1));
         Q_ASSERT(prevItem != nullptr);
@@ -80,14 +82,17 @@ void EditorWidget::AddGroupOperation::undoOperation()
     editorWidget->m_itemGroups->removeChild(groupItem);
 
     // Update.
-    if (editorWidget->m_itemGroups->childCount() > 0) {
-        if (m_index == 0) {
+    if (editorWidget->m_itemGroups->childCount() > 0)
+    {
+        if (m_index == 0)
+        {
             GroupItem *nextItem = dynamic_cast<GroupItem *>(
                 editorWidget->m_itemGroups->child(0));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateGroupMoveButtonStatus(nextItem);
-
-        } else if (m_index >= editorWidget->m_itemGroups->childCount()) {
+        }
+        else if (m_index >= editorWidget->m_itemGroups->childCount())
+        {
             GroupItem *prevItem = dynamic_cast<GroupItem *>(
                 editorWidget->m_itemGroups->child(m_index - 1));
             Q_ASSERT(prevItem != nullptr);

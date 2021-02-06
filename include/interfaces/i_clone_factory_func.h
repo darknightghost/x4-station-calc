@@ -10,7 +10,8 @@
  * @tparam	T		Type of the class implements this interface.
  */
 template<class T>
-class ICloneFactoryFunc : virtual protected IInitialized {
+class ICloneFactoryFunc : virtual protected IInitialized
+{
   public:
     /**
      * @brief	Constructor.
@@ -39,10 +40,12 @@ template<class T>
 {
     ::std::shared_ptr<T> ret(new T(*(const T *)this));
 
-    if (ret == nullptr || ! ret->initialized()) {
+    if (ret == nullptr || ! ret->initialized())
+    {
         return nullptr;
-
-    } else {
+    }
+    else
+    {
         return ret;
     }
 }

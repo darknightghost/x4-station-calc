@@ -2,6 +2,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QIcon>
 #include <QtGui/QKeySequence>
 #include <QtGui/QMoveEvent>
@@ -332,6 +333,13 @@ void MainWindow::initMenuToolBar()
                   &MainWindow::onAboutDialog);
     m_menuHelp->addSeparator();
 
+    // Menu "Help->GitHub".
+    m_helpGitHub = new QAction(this);
+    m_menuHelp->addAction(m_helpGitHub);
+    this->connect(m_helpGitHub, &QAction::triggered, this,
+                  &MainWindow::onGitHub);
+    m_menuHelp->addSeparator();
+
     // Menu "Help->Check Update".
     m_helpCheckUpdate = new QAction(this);
     m_menuHelp->addAction(m_helpCheckUpdate);
@@ -347,16 +355,19 @@ void MainWindow::initMenuToolBar()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     // Close all opend files.
-    for (auto &subWindow : m_centralWidget->subWindowList()) {
+    for (auto &subWindow : m_centralWidget->subWindowList())
+    {
         EditorWidget *editorWidget
             = dynamic_cast<EditorWidget *>(subWindow->widget());
         Q_ASSERT(editorWidget != nullptr);
 
-        if (editorWidget->closeSave()) {
+        if (editorWidget->closeSave())
+        {
             editorWidget->close();
             subWindow->close();
-
-        } else {
+        }
+        else
+        {
             event->ignore();
             return;
         }
@@ -390,13 +401,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::open(QString path)
 {
     EditorWidget *editorWidget = EditorWidget::getEditorWidgetByPath(path);
-    if (editorWidget == nullptr) {
+    if (editorWidget == nullptr)
+    {
         ::std::shared_ptr<Save> save = Save::load(path);
-        if (save == nullptr) {
+        if (save == nullptr)
+        {
             QMessageBox::critical(this, STR("STR_ERROR"),
                                   STR("STR_FAILED_OPEN_FILE").arg(path));
-
-        } else {
+        }
+        else
+        {
             QMdiSubWindow *container = new QMdiSubWindow();
             m_centralWidget->addSubWindow(container);
             editorWidget = new EditorWidget(save, &m_fileActions,
@@ -414,7 +428,9 @@ void MainWindow::open(QString path)
             m_centralWidget->setActiveSubWindow(container);
             editorWidget->show();
         }
-    } else {
+    }
+    else
+    {
         QMdiSubWindow *container
             = dynamic_cast<QMdiSubWindow *>(editorWidget->parent());
         Q_ASSERT(container != nullptr);
@@ -456,7 +472,8 @@ void MainWindow::openAction()
         this, STR("STR_OPEN_STATION"),
         Config::instance()->getString("/openPath", QDir::homePath()),
         STR("STR_SAVE_FILE_FILTER"));
-    if (path != "") {
+    if (path != "")
+    {
         QString dir = QDir(path).absolutePath();
         dir         = dir.left(dir.lastIndexOf("/"));
         Config::instance()->setString("/openPath", dir);
@@ -477,15 +494,17 @@ void MainWindow::active()
  */
 void MainWindow::editorActived(QMdiSubWindow *window)
 {
-    if (window == nullptr) {
+    if (window == nullptr)
+    {
         m_stationModulesWidget->setAddToStationStatus(false);
         m_fileActions.actionFileSave->setEnabled(false);
         m_fileActions.actionFileSaveAs->setEnabled(false);
         m_fileActions.actionFileExportAsHTML->setEnabled(false);
         m_fileActions.actionFileClose->setEnabled(false);
         m_editActions.actionEditNewGroup->setEnabled(false);
-
-    } else {
+    }
+    else
+    {
         static_cast<EditorWidget *>(window->widget())->active();
     }
 }
@@ -495,7 +514,8 @@ void MainWindow::editorActived(QMdiSubWindow *window)
  */
 void MainWindow::askGamePath()
 {
-    while (true) {
+    while (true)
+    {
         QFileDialog fileDialog(nullptr, STR("STR_TITLE_SELECT_GAME_PATH"),
                                Config::instance()->getString("/gamePath", ""),
                                "*");
@@ -504,18 +524,22 @@ void MainWindow::askGamePath()
         fileDialog.setFilter(QDir::Filter::Dirs | QDir::Filter::Hidden
                              | QDir::Filter::System);
         if (fileDialog.exec() != QDialog::DialogCode::Accepted
-            || fileDialog.selectedFiles().empty()) {
+            || fileDialog.selectedFiles().empty())
+        {
             return;
         }
         QString str = QDir(fileDialog.selectedFiles()[0]).absolutePath();
         qDebug() << "Selected:" << str;
 
-        if (GameData::instance()->checkGamePath(str)) {
+        if (GameData::instance()->checkGamePath(str))
+        {
             Config::instance()->setString("/gamePath", str);
             QMessageBox::information(this, STR("STR_INFO"),
                                      STR("STR_INFO_EFFECT_NEXT_LAUNCH"));
             return;
-        } else {
+        }
+        else
+        {
             QMessageBox::critical(this, STR("STR_ERROR"),
                                   STR("STR_INFO_ILLEGAL_GAME_PATH"));
         }
@@ -530,6 +554,15 @@ void MainWindow::onAboutDialog()
     AboutDialog aboutDialog;
 
     aboutDialog.exec();
+}
+
+/**
+ * @brief		Open GitHub page.
+ */
+void MainWindow::onGitHub()
+{
+    QDesktopServices::openUrl(
+        QUrl("https://github.com/darknightghost/x4-station-calc"));
 }
 
 /**
@@ -627,4 +660,7 @@ void MainWindow::onLanguageChanged()
 
     // Menu "Help->Check Update".
     m_helpCheckUpdate->setText(STR("STR_MENU_HELP_CHECK_UPDATE"));
+
+    // Menu "Help->GitHub".
+    m_helpGitHub->setText(STR("STR_MENU_HELP_GITHUB"));
 }

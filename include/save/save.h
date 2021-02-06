@@ -13,7 +13,8 @@
  */
 class Save :
     virtual public ICreateFactoryFunc<Save>,
-    virtual public ILoadFactoryFunc<Save, const QString &> {
+    virtual public ILoadFactoryFunc<Save, const QString &>
+{
     CREATE_FUNC(Save);
     LOAD_FUNC(Save, const QString &);
 

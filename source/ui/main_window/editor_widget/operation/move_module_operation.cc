@@ -4,7 +4,10 @@
  * @brief		Constructor.
  */
 EditorWidget::MoveModuleOperation::MoveModuleOperation(
-    int groupIndex, int oldIndex, int newIndex, EditorWidget *editorWidget) :
+    int           groupIndex,
+    int           oldIndex,
+    int           newIndex,
+    EditorWidget *editorWidget) :
     EditorWidget::OperationBase<EditorWidget::MoveModuleOperation,
                                 int,
                                 int,
@@ -53,27 +56,32 @@ bool EditorWidget::MoveModuleOperation::doOperation()
     // Update.
     editorWidget->updateModuleMoveButtonStatus(moduleItem, moduleWidget);
 
-    if (groupItem->childCount() > 0) {
-        if (m_newIndex == 0) {
+    if (groupItem->childCount() > 0)
+    {
+        if (m_newIndex == 0)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(1));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
-
-        } else if (m_newIndex == groupItem->childCount() - 1) {
+        }
+        else if (m_newIndex == groupItem->childCount() - 1)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(m_newIndex - 1));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
         }
 
-        if (m_oldIndex == 0) {
+        if (m_oldIndex == 0)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(0));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
-
-        } else if (m_oldIndex == groupItem->childCount() - 1) {
+        }
+        else if (m_oldIndex == groupItem->childCount() - 1)
+        {
             ModuleItem *prevItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(m_oldIndex));
             Q_ASSERT(prevItem != nullptr);
@@ -122,27 +130,32 @@ void EditorWidget::MoveModuleOperation::undoOperation()
     // Update.
     editorWidget->updateModuleMoveButtonStatus(moduleItem, moduleWidget);
 
-    if (groupItem->childCount() > 0) {
-        if (m_oldIndex == 0) {
+    if (groupItem->childCount() > 0)
+    {
+        if (m_oldIndex == 0)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(1));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
-
-        } else if (m_oldIndex == groupItem->childCount() - 1) {
+        }
+        else if (m_oldIndex == groupItem->childCount() - 1)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(m_oldIndex - 1));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
         }
 
-        if (m_newIndex == 0) {
+        if (m_newIndex == 0)
+        {
             ModuleItem *nextItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(0));
             Q_ASSERT(nextItem != nullptr);
             editorWidget->updateModuleMoveButtonStatus(nextItem);
-
-        } else if (m_newIndex == groupItem->childCount() - 1) {
+        }
+        else if (m_newIndex == groupItem->childCount() - 1)
+        {
             ModuleItem *prevItem
                 = dynamic_cast<ModuleItem *>(groupItem->child(m_newIndex));
             Q_ASSERT(prevItem != nullptr);

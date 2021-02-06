@@ -7,7 +7,8 @@
 /**
  * @brief		A simple thread whitch can be created easily.
  */
-class SimpleThread : virtual public QThread {
+class SimpleThread : virtual public QThread
+{
   protected:
     ::std::function<void()> m_threadFunc; ///< Thread function.
 

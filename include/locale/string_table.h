@@ -10,7 +10,8 @@
 /**
  * @brief   String table.
  */
-class StringTable : public QObject, public ISingleton<StringTable> {
+class StringTable : public QObject, public ISingleton<StringTable>
+{
     Q_OBJECT
     SIGNLETON_OBJECT(StringTable)
   private:

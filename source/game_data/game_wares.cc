@@ -16,7 +16,8 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
     // Open group file.
     ::std::shared_ptr<GameVFS::FileReader> file
         = vfs->open("/libraries/waregroups.xml");
-    if (file == nullptr) {
+    if (file == nullptr)
+    {
         return;
     }
     QByteArray       data = file->readAll();
@@ -30,13 +31,15 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                     ::std::placeholders::_3, ::std::placeholders::_4));
     XMLLoader loader;
     loader["texts"] = texts;
-    if (! loader.parse(groupReader, ::std::move(context))) {
+    if (! loader.parse(groupReader, ::std::move(context)))
+    {
         return;
     }
 
     // Open ware file.
     file = vfs->open("/libraries/wares.xml");
-    if (file == nullptr) {
+    if (file == nullptr)
+    {
         return;
     }
     data = file->readAll();
@@ -49,20 +52,25 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                     ::std::placeholders::_1, ::std::placeholders::_2,
                     ::std::placeholders::_3, ::std::placeholders::_4));
     loader["texts"] = texts;
-    if (! loader.parse(waresReader, ::std::move(context))) {
+    if (! loader.parse(waresReader, ::std::move(context)))
+    {
         return;
     }
 
     // Parse extension ware files
     ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
         = vfs->openDir("/extensions");
-    if (extensionsDir != nullptr) {
+    if (extensionsDir != nullptr)
+    {
         for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
-             ++iter) {
-            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
+             ++iter)
+        {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory)
+            {
                 file = vfs->open(QString("/extensions/%1/libraries/wares.xml")
                                      .arg(iter->name));
-                if (file == nullptr) {
+                if (file == nullptr)
+                {
                     continue;
                 }
                 data = file->readAll();
@@ -90,10 +98,12 @@ const ::std::shared_ptr<GameWares::WareGroup>
     GameWares::wareGroup(const QString &id)
 {
     auto iter = m_wareGroups.find(id);
-    if (iter == m_wareGroups.end()) {
+    if (iter == m_wareGroups.end())
+    {
         return nullptr;
-
-    } else {
+    }
+    else
+    {
         return iter.value();
     }
 }
@@ -104,9 +114,12 @@ const ::std::shared_ptr<GameWares::WareGroup>
 const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id)
 {
     auto iter = m_wares.find(id);
-    if (iter == m_wares.end()) {
+    if (iter == m_wares.end())
+    {
         return nullptr;
-    } else {
+    }
+    else
+    {
         return iter.value();
     }
 }
@@ -124,15 +137,17 @@ bool GameWares::onStartElementInGroupRoot(XMLLoader &loader,
                                           const QString &name,
                                           const QMap<QString, QString> &)
 {
-    if (name == "groups") {
+    if (name == "groups")
+    {
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(
             ::std::bind(&GameWares::onStartElementInGroups, this,
                         ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
-
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
     return true;
@@ -148,15 +163,17 @@ bool GameWares::onStartElementInGroups(XMLLoader &loader,
 {
     ::std::shared_ptr<GameTexts> texts
         = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
-    if (name == "group") {
+    if (name == "group")
+    {
         if (attr.find("id") == attr.end() || attr.find("name") == attr.end()
-            || attr.find("tags") == attr.end()) {
+            || attr.find("tags") == attr.end())
+        {
             return false;
         }
 
         ::std::shared_ptr<WareGroup> group(new WareGroup(
             {attr["id"], attr["name"],
-             attr["tags"].split(" ", QString::SplitBehavior::SkipEmptyParts)}));
+             attr["tags"].split(" ", Qt::SplitBehaviorFlags::SkipEmptyParts)}));
         m_wareGroups[group->id] = group;
 
         qDebug() << "Ware group : id:" << group->id
@@ -175,14 +192,17 @@ bool GameWares::onStartElementInWaresRoot(XMLLoader &loader,
                                           const QString &name,
                                           const QMap<QString, QString> &)
 {
-    if (name == "wares") {
+    if (name == "wares")
+    {
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(
             ::std::bind(&GameWares::onStartElementInWares, this,
                         ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
     return true;
@@ -196,25 +216,29 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                                       const QString &               name,
                                       const QMap<QString, QString> &attr)
 {
-    if (name == "ware") {
-        if (attr.find("id") == attr.end()) {
+    if (name == "ware")
+    {
+        if (attr.find("id") == attr.end())
+        {
             loader.pushContext(XMLLoader::Context::create());
             return true;
-
-        } else if (attr["id"] != "workunit_busy"
-                   && (attr.find("name") == attr.end()
-                       || attr.find("description") == attr.end()
-                       || attr.find("group") == attr.end()
-                       || attr.find("transport") == attr.end()
-                       || attr.find("volume") == attr.end()
-                       || attr.find("tags") == attr.end())) {
+        }
+        else if (attr["id"] != "workunit_busy"
+                 && (attr.find("name") == attr.end()
+                     || attr.find("description") == attr.end()
+                     || attr.find("group") == attr.end()
+                     || attr.find("transport") == attr.end()
+                     || attr.find("volume") == attr.end()
+                     || attr.find("tags") == attr.end()))
+        {
             loader.pushContext(XMLLoader::Context::create());
             return true;
         }
         ::std::shared_ptr<Ware> ware;
 
         // Create ware
-        if (attr["id"] == "workunit_busy") {
+        if (attr["id"] == "workunit_busy")
+        {
             ware = ::std::shared_ptr<Ware>(
                 new Ware({attr["id"],
                           attr["name"],
@@ -223,22 +247,30 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                           TransportType::Unknow,
                           attr["volume"].toUInt(),
                           attr["tags"].split(
-                              " ", QString::SplitBehavior::SkipEmptyParts),
+                              " ", Qt::SplitBehaviorFlags::SkipEmptyParts),
                           1,
                           1,
                           1,
                           {}}));
-
-        } else {
+        }
+        else
+        {
             TransportType transType;
 
-            if (attr["transport"] == "container") {
+            if (attr["transport"] == "container")
+            {
                 transType = TransportType::Container;
-            } else if (attr["transport"] == "liquid") {
+            }
+            else if (attr["transport"] == "liquid")
+            {
                 transType = TransportType::Liquid;
-            } else if (attr["transport"] == "solid") {
+            }
+            else if (attr["transport"] == "solid")
+            {
                 transType = TransportType::Solid;
-            } else {
+            }
+            else
+            {
                 loader.pushContext(XMLLoader::Context::create());
                 return true;
             }
@@ -251,7 +283,7 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                           transType,
                           attr["volume"].toUInt(),
                           attr["tags"].split(
-                              " ", QString::SplitBehavior::SkipEmptyParts),
+                              " ", Qt::SplitBehaviorFlags::SkipEmptyParts),
                           1,
                           1,
                           1,
@@ -266,7 +298,8 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                 ::std::shared_ptr<GameTexts> texts
                     = ::std::any_cast<::std::shared_ptr<GameTexts>>(
                         loader["texts"]);
-                if (name == "ware") {
+                if (name == "ware")
+                {
                     // Append ware
                     context.setOnStopElement(nullptr);
 
@@ -283,13 +316,15 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
                     qDebug() << "    averagePrice:" << ware->averagePrice;
                     qDebug() << "    maxPrice    :" << ware->maxPrice;
                     qDebug() << "    productionInfos:{";
-                    for (auto &info : ware->productionInfos) {
+                    for (auto &info : ware->productionInfos)
+                    {
                         qDebug() << "        time      :" << info->time;
                         qDebug() << "        method    :" << info->method;
                         qDebug() << "        amount    :" << info->amount;
                         qDebug() << "        workEffect:" << info->workEffect;
                         qDebug() << "        resource  :{";
-                        for (auto &res : info->resources) {
+                        for (auto &res : info->resources)
+                        {
                             qDebug() << "            {" << res->id << ", "
                                      << res->amount << "},";
                         }
@@ -310,7 +345,9 @@ bool GameWares::onStartElementInWares(XMLLoader &                   loader,
             ::std::placeholders::_2, ::std::placeholders::_3,
             ::std::placeholders::_4, ware));
         loader.pushContext(::std::move(context));
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
     return true;
@@ -325,23 +362,28 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
                                      const QMap<QString, QString> &attr,
                                      ::std::shared_ptr<Ware>       ware)
 {
-    if (name == "price") {
+    if (name == "price")
+    {
         // Price
         auto iter = attr.find("min");
-        if (iter != attr.end()) {
+        if (iter != attr.end())
+        {
             ware->minPrice = iter.value().toUInt();
         }
         iter = attr.find("average");
-        if (iter != attr.end()) {
+        if (iter != attr.end())
+        {
             ware->averagePrice = iter.value().toUInt();
         }
         iter = attr.find("max");
-        if (iter != attr.end()) {
+        if (iter != attr.end())
+        {
             ware->maxPrice = iter.value().toUInt();
         }
         loader.pushContext(XMLLoader::Context::create());
-
-    } else if (name == "production") {
+    }
+    else if (name == "production")
+    {
         ::std::shared_ptr<ProductionInfo> info(
             new ProductionInfo({ware->id,
                                 attr["time"].toUInt(),
@@ -355,7 +397,8 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
         context.setOnStopElement(::std::bind(
             [](XMLLoader &, XMLLoader::Context &context,
                const QString &name) -> bool {
-                if (name == "production") {
+                if (name == "production")
+                {
                     context.setOnStopElement(nullptr);
                 }
                 return true;
@@ -370,7 +413,9 @@ bool GameWares::onStartElementInWare(XMLLoader &                   loader,
             ::std::placeholders::_1, ::std::placeholders::_2,
             ::std::placeholders::_3, ::std::placeholders::_4, info));
         loader.pushContext(::std::move(context));
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
 
@@ -389,7 +434,8 @@ bool GameWares::onStartElementInProduction(
 {
     UNREFERENCED_PARAMETER(context);
     UNREFERENCED_PARAMETER(attr);
-    if (name == "primary") {
+    if (name == "primary")
+    {
         // Push context
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(::std::bind(
@@ -397,8 +443,9 @@ bool GameWares::onStartElementInProduction(
             ::std::placeholders::_2, ::std::placeholders::_3,
             ::std::placeholders::_4, info));
         loader.pushContext(::std::move(context));
-
-    } else if (name == "effects") {
+    }
+    else if (name == "effects")
+    {
         // Push context
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(::std::bind(
@@ -406,8 +453,9 @@ bool GameWares::onStartElementInProduction(
             ::std::placeholders::_2, ::std::placeholders::_3,
             ::std::placeholders::_4, info));
         loader.pushContext(::std::move(context));
-
-    } else {
+    }
+    else
+    {
         loader.pushContext(XMLLoader::Context::create());
     }
 
@@ -424,7 +472,8 @@ bool GameWares::onStartElementInPrimary(XMLLoader &                   loader,
                                         ::std::shared_ptr<ProductionInfo> info)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "ware") {
+    if (name == "ware")
+    {
         info->resources[attr["ware"]] = ::std::shared_ptr<Resource>(
             new Resource({attr["ware"], attr["amount"].toUInt()}));
     }
@@ -442,8 +491,10 @@ bool GameWares::onStartElementInEffects(XMLLoader &                   loader,
                                         ::std::shared_ptr<ProductionInfo> info)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "effect") {
-        if (attr["type"] == "work") {
+    if (name == "effect")
+    {
+        if (attr["type"] == "work")
+        {
             info->workEffect = attr["product"].toDouble();
         }
     }
@@ -462,7 +513,8 @@ bool GameWares::onStartElementInExtensionsWaresRoot(
     const QMap<QString, QString> &)
 {
     auto context = XMLLoader::Context::create();
-    if (name == "diff") {
+    if (name == "diff")
+    {
         context->setOnStartElement(
             ::std::bind(&GameWares::onStartElementInExtensionDiff, this,
                         ::std::placeholders::_1, ::std::placeholders::_2,
@@ -485,18 +537,23 @@ bool GameWares::onStartElementInExtensionDiff(
     // Filters
     QRegExp wareFilter("\\/wares\\/ware\\[@id='(\\w+)'\\]");
     wareFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    if (name == "add") {
-        if (attr["sel"] == "/wares") {
+    if (name == "add")
+    {
+        if (attr["sel"] == "/wares")
+        {
             context->setOnStartElement(
                 ::std::bind(&GameWares::onStartElementInWares, this,
                             ::std::placeholders::_1, ::std::placeholders::_2,
                             ::std::placeholders::_3, ::std::placeholders::_4));
-        } else if (wareFilter.exactMatch(attr["sel"])) {
+        }
+        else if (wareFilter.exactMatch(attr["sel"]))
+        {
             wareFilter.indexIn(attr["sel"]);
             QString id = wareFilter.capturedTexts()[1];
 
             auto iter = m_wares.find(id);
-            if (iter != m_wares.end()) {
+            if (iter != m_wares.end())
+            {
                 ::std::shared_ptr<Ware> ware = *iter;
                 currentContext.setOnStopElement(::std::bind(
                     [](XMLLoader &loader, XMLLoader::Context &context,
@@ -505,7 +562,8 @@ bool GameWares::onStartElementInExtensionDiff(
                         ::std::shared_ptr<GameTexts> texts
                             = ::std::any_cast<::std::shared_ptr<GameTexts>>(
                                 loader["texts"]);
-                        if (name == "add") {
+                        if (name == "add")
+                        {
                             // Append ware
                             context.setOnStopElement(nullptr);
 
@@ -525,7 +583,8 @@ bool GameWares::onStartElementInExtensionDiff(
                                 << "    averagePrice:" << ware->averagePrice;
                             qDebug() << "    maxPrice    :" << ware->maxPrice;
                             qDebug() << "    productionInfos:{";
-                            for (auto &info : ware->productionInfos) {
+                            for (auto &info : ware->productionInfos)
+                            {
                                 qDebug() << "        time      :" << info->time;
                                 qDebug()
                                     << "        method    :" << info->method;
@@ -534,7 +593,8 @@ bool GameWares::onStartElementInExtensionDiff(
                                 qDebug() << "        workEffect:"
                                          << info->workEffect;
                                 qDebug() << "        resource  :{";
-                                for (auto &res : info->resources) {
+                                for (auto &res : info->resources)
+                                {
                                     qDebug() << "            {" << res->id
                                              << ", " << res->amount << "},";
                                 }

@@ -28,7 +28,8 @@ LanguageSettingDialog::LanguageSettingDialog() : QDialog(nullptr)
     /// Combobox
     m_comboLang     = new QComboBox();
     auto &languages = StringTable::instance()->getStrings("STR_LANGUAGE_TYPE");
-    for (auto iter = languages.begin(); iter != languages.end(); iter++) {
+    for (auto iter = languages.begin(); iter != languages.end(); iter++)
+    {
         m_comboLang->addItem(*iter, iter.key());
     }
     m_comboLang->setCurrentIndex(

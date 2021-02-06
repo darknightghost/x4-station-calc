@@ -37,12 +37,14 @@ GroupItem::~GroupItem() {}
  */
 bool GroupItem::addChild(ModuleItem *child)
 {
-    if (m_macroMap.find(child->module()->module()) == m_macroMap.end()) {
+    if (m_macroMap.find(child->module()->module()) == m_macroMap.end())
+    {
         this->QTreeWidgetItem::addChild(child);
         m_macroMap[child->module()->module()] = child;
         return true;
-
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
@@ -64,10 +66,12 @@ ModuleItem *GroupItem::child(const QString &macro) const
 {
     auto iter = m_macroMap.find(macro);
 
-    if (iter == m_macroMap.end()) {
+    if (iter == m_macroMap.end())
+    {
         return nullptr;
-
-    } else {
+    }
+    else
+    {
         return *iter;
     }
 }
@@ -85,12 +89,14 @@ int GroupItem::indexOfChild(ModuleItem *child) const
  */
 bool GroupItem::insertChild(int index, ModuleItem *child)
 {
-    if (m_macroMap.find(child->module()->module()) == m_macroMap.end()) {
+    if (m_macroMap.find(child->module()->module()) == m_macroMap.end())
+    {
         this->QTreeWidgetItem::insertChild(index, child);
         m_macroMap[child->module()->module()] = child;
         return true;
-
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
@@ -112,7 +118,8 @@ ModuleItem *GroupItem::takeChild(int index)
     ModuleItem *ret
         = dynamic_cast<ModuleItem *>(this->QTreeWidgetItem::takeChild(index));
 
-    if (ret != nullptr) {
+    if (ret != nullptr)
+    {
         m_macroMap.remove(ret->module()->module());
     }
 

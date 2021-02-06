@@ -11,7 +11,8 @@
 /**
  * @brief	Loader context.
  */
-class XMLLoader::Context {
+class XMLLoader::Context
+{
   protected:
     // Stack
     QVector<QString> m_elementStack; ///< Element stack.

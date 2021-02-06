@@ -11,7 +11,8 @@
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ILoadFactoryFunc : virtual protected IInitialized {
+class ILoadFactoryFunc : virtual protected IInitialized
+{
   public:
     /**
      * @brief	Constructor.
@@ -42,10 +43,12 @@ template<class T, typename... Args>
 {
     ::std::shared_ptr<T> ret(new T(args...));
 
-    if (ret == nullptr || ! ret->initialized()) {
+    if (ret == nullptr || ! ret->initialized())
+    {
         return nullptr;
-
-    } else {
+    }
+    else
+    {
         return ret;
     }
 }

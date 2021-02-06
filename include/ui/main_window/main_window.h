@@ -14,7 +14,8 @@
 /**
  * @brief	Main window.
  */
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
     Q_OBJECT
   public:
     /**
@@ -71,6 +72,7 @@ class MainWindow : public QMainWindow {
     QMenu *  m_menuHelp;        ///< Menu "Help".
     QAction *m_helpAbout;       ///< Menu "Help->About".
     QAction *m_helpCheckUpdate; ///< Menu "Help->Check Update".
+    QAction *m_helpGitHub;      ///< Menu "Help->GitHub".
 
     // Dock widgets
     // Station module widget.
@@ -148,6 +150,11 @@ class MainWindow : public QMainWindow {
      * @brief		Open about dialog.
      */
     void onAboutDialog();
+
+    /**
+     * @brief		Open GitHub page.
+     */
+    void onGitHub();
 
   protected slots:
     /**

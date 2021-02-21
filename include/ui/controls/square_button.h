@@ -5,7 +5,8 @@
 /**
  * @brief	Square button.
  */
-class SquareButton : public QPushButton {
+class SquareButton : public QPushButton
+{
     Q_OBJECT
   private:
     QIcon m_icon; ///< Icon;

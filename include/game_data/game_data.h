@@ -24,7 +24,8 @@
 /**
  * @brief   Game datas.
  */
-class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
+class GameData : public QObject, public ISingleton<GameData, SplashWidget *>
+{
     Q_OBJECT
   private:
     SIGNLETON_OBJECT(GameData, SplashWidget *)

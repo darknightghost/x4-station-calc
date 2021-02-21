@@ -16,7 +16,8 @@
 /**
  * @brief	Station module.
  */
-class StationModulesWidget : public ActionControlDockWidget {
+class StationModulesWidget : public ActionControlDockWidget
+{
     Q_OBJECT
   protected:
     QWidget *    m_widget; ///< Widget.

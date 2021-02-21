@@ -12,7 +12,8 @@
 /**
  * @brief   Global informations.
  */
-class Global : public ISingleton<Global, int &, char **&, int &> {
+class Global : public ISingleton<Global, int &, char **&, int &>
+{
     SIGNLETON_OBJECT(Global, int &, char **&, int &)
   private:
     /**

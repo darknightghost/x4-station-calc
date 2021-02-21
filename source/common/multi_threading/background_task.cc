@@ -39,8 +39,10 @@ void BackgroundTask::runTask(::std::function<void()> task)
 {
     QMutexLocker locker(&m_lock);
 
-    switch (m_runType) {
-        case RunType::Immediately: {
+    switch (m_runType)
+    {
+        case RunType::Immediately:
+        {
             BackgroundTaskThread *taskThread
                 = new BackgroundTaskThread(task, this);
             this->connect(taskThread, &BackgroundTaskThread::finished, this,
@@ -48,7 +50,8 @@ void BackgroundTask::runTask(::std::function<void()> task)
                           Qt::ConnectionType::QueuedConnection);
             taskThread->start();
             return;
-        } break;
+        }
+        break;
 
         case RunType::Queued:
             m_taskQueue.push_back(::std::move(task));
@@ -59,7 +62,8 @@ void BackgroundTask::runTask(::std::function<void()> task)
             break;
     }
 
-    if (m_threadCount == 0) {
+    if (m_threadCount == 0)
+    {
         this->nextTask();
     }
 }
@@ -72,16 +76,19 @@ void BackgroundTask::cancle()
     QMutexLocker locker(&m_lock);
 
     bool hasTask = false;
-    switch (m_runType) {
+    switch (m_runType)
+    {
         case RunType::Queued:
-            if (! m_taskQueue.empty()) {
+            if (! m_taskQueue.empty())
+            {
                 hasTask = true;
                 m_taskQueue.clear();
             }
             break;
 
         case RunType::Newest:
-            if (m_newestTask != nullptr) {
+            if (m_newestTask != nullptr)
+            {
                 hasTask      = true;
                 m_newestTask = nullptr;
             }
@@ -91,7 +98,8 @@ void BackgroundTask::cancle()
             return;
     }
 
-    if (hasTask && m_threadCount == 0) {
+    if (hasTask && m_threadCount == 0)
+    {
         emit this->finished();
         m_waitCondition.notify_all();
     }
@@ -105,7 +113,8 @@ void BackgroundTask::wait()
     QMutexLocker locker(&m_lock);
     if (m_threadCount > 0
         || (m_runType == RunType::Queued && ! m_taskQueue.empty())
-        || (m_runType == RunType::Newest && m_newestTask != nullptr)) {
+        || (m_runType == RunType::Newest && m_newestTask != nullptr))
+    {
         m_waitCondition.wait(&m_lock);
     }
 
@@ -125,14 +134,18 @@ BackgroundTask::~BackgroundTask()
  */
 void BackgroundTask::nextTask()
 {
-    if (m_threadCount > 0) {
+    if (m_threadCount > 0)
+    {
         return;
     }
 
-    switch (m_runType) {
-        case RunType::Queued: {
+    switch (m_runType)
+    {
+        case RunType::Queued:
+        {
             // Get task.
-            if (m_taskQueue.empty()) {
+            if (m_taskQueue.empty())
+            {
                 return;
             }
             ::std::function<void()> task = ::std::move(m_taskQueue.front());
@@ -145,11 +158,14 @@ void BackgroundTask::nextTask()
                           &BackgroundTask::onTaskFinished,
                           Qt::ConnectionType::QueuedConnection);
             taskThread->start();
-        } break;
+        }
+        break;
 
-        case RunType::Newest: {
+        case RunType::Newest:
+        {
             // Get task.
-            if (m_newestTask == nullptr) {
+            if (m_newestTask == nullptr)
+            {
                 return;
             }
 
@@ -160,7 +176,8 @@ void BackgroundTask::nextTask()
                           &BackgroundTask::onTaskFinished,
                           Qt::ConnectionType::QueuedConnection);
             taskThread->start();
-        } break;
+        }
+        break;
 
         default:
             return;
@@ -180,7 +197,8 @@ void BackgroundTask::onTaskFinished(BackgroundTaskThread *thread)
 
     this->nextTask();
 
-    if (m_threadCount == 0) {
+    if (m_threadCount == 0)
+    {
         emit this->finished();
         m_waitCondition.notify_all();
     }

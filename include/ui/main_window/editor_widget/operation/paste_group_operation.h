@@ -17,7 +17,8 @@ class EditorWidget::PasteGroupOperation :
         EditorWidget::PasteGroupOperation,
         GroupItem *,
         const X4SCGroupClipboardMimeDataBuilder &,
-        EditorWidget *> {
+        EditorWidget *>
+{
     CREATE_FUNC(EditorWidget::PasteGroupOperation,
                 GroupItem *,
                 const X4SCGroupClipboardMimeDataBuilder &,

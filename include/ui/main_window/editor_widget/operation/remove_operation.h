@@ -15,7 +15,8 @@ class EditorWidget::RemoveOperation :
     virtual public EditorWidget::OperationBase<EditorWidget::RemoveOperation,
                                                const QVector<GroupItem *> &,
                                                const QVector<ModuleItem *> &,
-                                               EditorWidget *> {
+                                               EditorWidget *>
+{
     CREATE_FUNC(EditorWidget::RemoveOperation,
                 const QVector<GroupItem *> &,
                 const QVector<ModuleItem *> &,

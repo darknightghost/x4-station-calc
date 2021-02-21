@@ -28,11 +28,15 @@ void XMLLoader::Context::pushElement(const QString &name)
  */
 bool XMLLoader::Context::popElement(const QString &name)
 {
-    while (! m_elementStack.empty()) {
-        if (m_elementStack.back() == name) {
+    while (! m_elementStack.empty())
+    {
+        if (m_elementStack.back() == name)
+        {
             m_elementStack.pop_back();
             return true;
-        } else {
+        }
+        else
+        {
             m_elementStack.pop_back();
         }
     }
@@ -55,7 +59,8 @@ void XMLLoader::Context::setOnStartDocument(
  */
 bool XMLLoader::Context::onStartDocument(XMLLoader &loader, Context &context)
 {
-    if (m_onStartDocument) {
+    if (m_onStartDocument)
+    {
         return m_onStartDocument(loader, context);
     }
 
@@ -76,7 +81,8 @@ void XMLLoader::Context::onSetStopDocument(
  */
 bool XMLLoader::Context::onStopDocument(XMLLoader &loader, Context &context)
 {
-    if (m_onStopDocument) {
+    if (m_onStopDocument)
+    {
         return m_onStopDocument(loader, context);
     }
 
@@ -104,7 +110,8 @@ bool XMLLoader::Context::onStartElement(XMLLoader &                   loader,
                                         const QString &               name,
                                         const QMap<QString, QString> &attr)
 {
-    if (m_onStartElement) {
+    if (m_onStartElement)
+    {
         return m_onStartElement(loader, context, name, attr);
     }
 
@@ -128,7 +135,8 @@ bool XMLLoader::Context::onStopElement(XMLLoader &    loader,
                                        Context &      context,
                                        const QString &name)
 {
-    if (m_onStopElement) {
+    if (m_onStopElement)
+    {
         return m_onStopElement(loader, context, name);
     }
 
@@ -152,7 +160,8 @@ bool XMLLoader::Context::onCharacters(XMLLoader &    loader,
                                       Context &      context,
                                       const QString &text)
 {
-    if (m_onCharacters) {
+    if (m_onCharacters)
+    {
         return m_onCharacters(loader, context, text);
     }
 

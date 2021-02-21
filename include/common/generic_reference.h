@@ -15,8 +15,7 @@
  * @tparam		deleter	Callback to delete the object.
  */
 template<typename T>
-class GenericReference
-{
+class GenericReference {
   private:
     /**
      * @brief		Reference infomation.
@@ -56,8 +55,7 @@ class GenericReference
      *						already been managed, this parameter is ignored.
      */
     GenericReference(
-        T *                        p,
-        ::std::function<void(T *)> deleter = [](T *pt) -> void {
+        T *p, ::std::function<void(T *)> deleter = [](T *pt) -> void {
             delete pt;
         });
 
@@ -112,12 +110,9 @@ bool GenericReference<T>::managed(T *p)
 {
     QMutexLocker locker(&_referenceLock);
     auto         iter = _references.find(p);
-    if (iter == _references.end())
-    {
+    if (iter == _references.end()) {
         return false;
-    }
-    else
-    {
+    } else {
         return true;
     }
 }
@@ -130,15 +125,12 @@ GenericReference<T>::GenericReference(T *p, ::std::function<void(T *)> deleter)
 {
     QMutexLocker locker(&_referenceLock);
     auto         iter = _references.find(p);
-    if (iter == _references.end())
-    {
+    if (iter == _references.end()) {
         // Initialize reference count.
         m_referenceInfo = ::std::shared_ptr<ReferenceInfo>(
             new ReferenceInfo({p, 1, deleter}));
         _references[p] = m_referenceInfo;
-    }
-    else
-    {
+    } else {
         // Increase referencerence count.
         _references[p]->refCount += 1;
     }
@@ -172,14 +164,11 @@ GenericReference<T>::~GenericReference()
 {
     QMutexLocker locker(&_referenceLock);
 
-    if (m_referenceInfo->refCount == 1)
-    {
+    if (m_referenceInfo->refCount == 1) {
         // Delete object.
         _references.remove(m_referenceInfo->object);
         m_referenceInfo->deleter(m_referenceInfo->object);
-    }
-    else
-    {
+    } else {
         // Decrease reference count.
         m_referenceInfo->refCount -= 1;
     }

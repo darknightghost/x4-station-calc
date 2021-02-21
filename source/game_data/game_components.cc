@@ -35,17 +35,13 @@ GameComponents::GameComponents(
     // Parse extension files
     ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
         = vfs->openDir("/extensions");
-    if (extensionsDir != nullptr)
-    {
+    if (extensionsDir != nullptr) {
         for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
-             ++iter)
-        {
-            if (iter->type == ::GameVFS::DirReader::EntryType::Directory)
-            {
+             ++iter) {
+            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
                 file = vfs->open(QString("/extensions/%1/index/components.xml")
                                      .arg(iter->name));
-                if (file == nullptr)
-                {
+                if (file == nullptr) {
                     continue;
                 }
                 data = file->readAll();
@@ -88,17 +84,14 @@ bool GameComponents::onStartElementInRoot(XMLLoader &                   loader,
 {
     UNREFERENCED_PARAMETER(context);
     UNREFERENCED_PARAMETER(attr);
-    if (name == "index")
-    {
+    if (name == "index") {
         auto context = XMLLoader::Context::create();
         context->setOnStartElement(
             ::std::bind(&GameComponents::onStartElementInIndex, this,
                         ::std::placeholders::_1, ::std::placeholders::_2,
                         ::std::placeholders::_3, ::std::placeholders::_4));
         loader.pushContext(::std::move(context));
-    }
-    else
-    {
+    } else {
         loader.pushContext(XMLLoader::Context::create());
     }
     return true;
@@ -113,12 +106,10 @@ bool GameComponents::onStartElementInIndex(XMLLoader &         loader,
                                            const QMap<QString, QString> &attr)
 {
     UNREFERENCED_PARAMETER(context);
-    if (name == "entry")
-    {
+    if (name == "entry") {
         auto nameIter  = attr.find("name");
         auto valueIter = attr.find("value");
-        if (nameIter != attr.end() && valueIter != attr.end())
-        {
+        if (nameIter != attr.end() && valueIter != attr.end()) {
             QString name  = nameIter.value();
             QString value = "/";
             value.append(valueIter.value());

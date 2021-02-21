@@ -13,8 +13,7 @@ class EditorWidget::RenameGroupOperation :
         int,
         const QString &,
         const QString &,
-        EditorWidget *>
-{
+        EditorWidget *> {
     CREATE_FUNC(EditorWidget::RenameGroupOperation,
                 int,
                 const QString &,

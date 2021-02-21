@@ -16,13 +16,10 @@ Config::Config() : m_globalInfo(Global::instance())
     QFile      file(m_globalInfo->configPath());
     QByteArray jsonStr;
 
-    if (file.open(QIODevice::ReadOnly))
-    {
+    if (file.open(QIODevice::ReadOnly)) {
         jsonStr = file.readAll();
         file.close();
-    }
-    else
-    {
+    } else {
         jsonStr = "{}";
     }
 
@@ -30,8 +27,7 @@ Config::Config() : m_globalInfo(Global::instance())
     QJsonParseError jsonError;
     m_doc = QJsonDocument::fromJson(jsonStr, &jsonError);
 
-    if (jsonError.error != QJsonParseError::NoError)
-    {
+    if (jsonError.error != QJsonParseError::NoError) {
         qDebug() << jsonError.errorString();
         m_doc.fromJson("{}", &jsonError);
     }
@@ -46,16 +42,14 @@ Config::ValueType Config::valueType(const QString &key)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return ValueType::None;
     }
 
     // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
-    if (! this->findNode(splitedKey, value))
-    {
+    if (! this->findNode(splitedKey, value)) {
         return ValueType::None;
     }
 
@@ -69,22 +63,19 @@ bool Config::getBool(const QString &key, bool defaultVal)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
     // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
-    if (! this->findNode(splitedKey, value))
-    {
+    if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
     // Check type.
-    if (this->valueType(value) != ValueType::Bool)
-    {
+    if (this->valueType(value) != ValueType::Bool) {
         return defaultVal;
     }
 
@@ -99,22 +90,19 @@ double Config::getFloat(const QString &key, double defaultVal)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
     // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
-    if (! this->findNode(splitedKey, value))
-    {
+    if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
     // Check type.
-    if (this->valueType(value) != ValueType::Number)
-    {
+    if (this->valueType(value) != ValueType::Number) {
         return defaultVal;
     }
 
@@ -129,22 +117,19 @@ int64_t Config::getInt(const QString &key, int64_t defaultVal)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
     // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
-    if (! this->findNode(splitedKey, value))
-    {
+    if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
     // Check type.
-    if (this->valueType(value) != ValueType::Number)
-    {
+    if (this->valueType(value) != ValueType::Number) {
         return defaultVal;
     }
 
@@ -159,22 +144,19 @@ QString Config::getString(const QString &key, const QString &defaultVal)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return defaultVal;
     }
 
     // Find value
     QReadLocker locker(&m_lock);
     QJsonValue  value;
-    if (! this->findNode(splitedKey, value))
-    {
+    if (! this->findNode(splitedKey, value)) {
         return defaultVal;
     }
 
     // Check type.
-    if (this->valueType(value) != ValueType::String)
-    {
+    if (this->valueType(value) != ValueType::String) {
         return defaultVal;
     }
 
@@ -190,8 +172,7 @@ void Config::setBool(const QString &key, bool value)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
@@ -207,8 +188,7 @@ void Config::setFloat(const QString &key, double value)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
@@ -224,8 +204,7 @@ void Config::setInt(const QString &key, int64_t value)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
@@ -241,8 +220,7 @@ void Config::setString(const QString &key, const QString &value)
 {
     // Split key.
     QVector<QString> splitedKey;
-    if (! this->splitKey(key, splitedKey))
-    {
+    if (! this->splitKey(key, splitedKey)) {
         return;
     }
 
@@ -256,26 +234,21 @@ void Config::setString(const QString &key, const QString &value)
  */
 bool Config::splitKey(const QString &key, QVector<QString> &splitedKey)
 {
-    if (key.isEmpty() || key[0] != '/')
-    {
+    if (key.isEmpty() || key[0] != '/') {
         return false;
     }
 
-    for (auto &c : key)
-    {
+    for (auto &c : key) {
         if ((c > '9' || c < '0') && (c > 'z' || c < 'a') && (c > 'Z' || c < 'A')
-            && (c != '/') && (c != '_'))
-        {
+            && (c != '/') && (c != '_')) {
             return false;
         }
     }
 
     splitedKey.clear();
     QStringList splitted = key.split('/');
-    for (auto &s : splitted)
-    {
-        if (s != "")
-        {
+    for (auto &s : splitted) {
+        if (s != "") {
             splitedKey.append(s);
         }
     }
@@ -289,8 +262,7 @@ bool Config::splitKey(const QString &key, QVector<QString> &splitedKey)
 QString Config::joinKey(const QVector<QString> &splitted)
 {
     QString ret;
-    for (auto &s : splitted)
-    {
+    for (auto &s : splitted) {
         ret += '/';
         ret += s;
     }
@@ -303,36 +275,27 @@ QString Config::joinKey(const QVector<QString> &splitted)
  */
 bool Config::findNode(const QVector<QString> &key, QJsonValue &ret)
 {
-    if (key.empty())
-    {
+    if (key.empty()) {
         return false;
     }
 
     // Search
     QJsonObject obj = m_doc.object();
-    for (auto iter = key.begin(); iter < key.end() - 1; iter++)
-    {
-        if (obj.contains(*iter))
-        {
+    for (auto iter = key.begin(); iter < key.end() - 1; iter++) {
+        if (obj.contains(*iter)) {
             QJsonValue v = obj.value(*iter);
-            if (v.isObject())
-            {
+            if (v.isObject()) {
                 obj = v.toObject();
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     }
 
-    if (obj.contains(key.back()))
-    {
+    if (obj.contains(key.back())) {
         ret = obj.value(key.back());
         return true;
-    }
-    else
-    {
+    } else {
         return false;
     }
 }
@@ -342,8 +305,7 @@ bool Config::findNode(const QVector<QString> &key, QJsonValue &ret)
  */
 void Config::setNode(const QVector<QString> &key, QJsonValue &node)
 {
-    if (key.empty())
-    {
+    if (key.empty()) {
         return;
     }
 
@@ -351,22 +313,15 @@ void Config::setNode(const QVector<QString> &key, QJsonValue &node)
     nodeStack.push_back(m_doc.object());
 
     // Search and create parent nodes
-    for (auto iter = key.begin(); iter < key.end() - 1; iter++)
-    {
-        if (nodeStack.back().contains(*iter))
-        {
+    for (auto iter = key.begin(); iter < key.end() - 1; iter++) {
+        if (nodeStack.back().contains(*iter)) {
             QJsonValue v = nodeStack.back().value(*iter);
-            if (v.isObject())
-            {
+            if (v.isObject()) {
                 nodeStack.push_back(v.toObject());
-            }
-            else
-            {
+            } else {
                 nodeStack.push_back(QJsonObject());
             }
-        }
-        else
-        {
+        } else {
             nodeStack.push_back(QJsonObject());
         }
     }
@@ -375,8 +330,7 @@ void Config::setNode(const QVector<QString> &key, QJsonValue &node)
     nodeStack.back().insert(key.back(), node);
 
     // Save nodes to document.
-    for (auto iter = key.rbegin() + 1; iter < key.rend(); iter++)
-    {
+    for (auto iter = key.rbegin() + 1; iter < key.rend(); iter++) {
         QJsonObject obj(nodeStack.takeLast());
         nodeStack.back().insert(*iter, QJsonValue(obj));
     }
@@ -389,8 +343,7 @@ void Config::setNode(const QVector<QString> &key, QJsonValue &node)
  */
 Config::ValueType Config::valueType(QJsonValue &node)
 {
-    switch (node.type())
-    {
+    switch (node.type()) {
         case QJsonValue::Null:
             return ValueType::None;
 
@@ -421,8 +374,7 @@ Config::~Config()
     qDebug() << "Saving config file " << m_globalInfo->configPath() << ".";
     QFile file(m_globalInfo->configPath());
 
-    if (! file.open(QIODevice::WriteOnly))
-    {
+    if (! file.open(QIODevice::WriteOnly)) {
         qDebug() << "Failed to save config file " << m_globalInfo->configPath()
                  << ".";
         return;

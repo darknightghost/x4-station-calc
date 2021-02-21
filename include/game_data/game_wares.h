@@ -28,8 +28,7 @@ class GameWares :
     public ILoadFactoryFunc<GameWares,
                             ::std::shared_ptr<GameVFS>,
                             ::std::shared_ptr<GameTexts>,
-                            ::std::function<void(const QString &)>>
-{
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameWares,
               ::std::shared_ptr<GameVFS>,
               ::std::shared_ptr<GameTexts>,
@@ -70,8 +69,7 @@ class GameWares :
     /**
      * @brief	Transport type.
      */
-    enum TransportType
-    {
+    enum TransportType {
         Container, ///< Container.
         Solid,     ///< Solid.
         Liquid,    ///< Liquid.

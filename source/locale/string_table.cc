@@ -68,13 +68,11 @@ StringTable::StringTable() :
 
     // Read string tables.
     QDir stringDir(":/StringTable");
-    for (QString &name : stringDir.entryList())
-    {
+    for (QString &name : stringDir.entryList()) {
         QString path = stringDir.absoluteFilePath(name);
         qDebug() << "Loading string table :" << path;
         QFile jsonFile(path);
-        if (! jsonFile.open(QFile::ReadOnly))
-        {
+        if (! jsonFile.open(QFile::ReadOnly)) {
             qDebug() << "Failed to open string table.";
             return;
         }
@@ -84,17 +82,14 @@ StringTable::StringTable() :
         // Parse string table
         QJsonParseError err;
         QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &err);
-        if (err.error != QJsonParseError::NoError)
-        {
+        if (err.error != QJsonParseError::NoError) {
             qDebug() << "Failed to parse string table : " << err.errorString();
             return;
         }
         QJsonObject root = doc.object();
-        for (auto iter = root.begin(); iter != root.end(); iter++)
-        {
+        for (auto iter = root.begin(); iter != root.end(); iter++) {
             QJsonValue value = iter.value();
-            if (! value.isObject())
-            {
+            if (! value.isObject()) {
                 qDebug() << "Illegal string, ID = " << iter.key() << ".";
                 return;
             }
@@ -104,27 +99,21 @@ StringTable::StringTable() :
             QJsonObject strObject   = value.toObject();
             bool        defaultFlag = false;
             for (auto strIter = strObject.begin(); strIter != strObject.end();
-                 strIter++)
-            {
+                 strIter++) {
                 QJsonValue value = strIter.value();
-                if (! value.isString())
-                {
+                if (! value.isString()) {
                     qDebug() << "Illegal string, ID = " << iter.key() << ".";
                     return;
                 }
                 m_stringTable[iter.key()][strIter.key()]
                     = strIter.value().toString();
-                if (strIter.key() == "en_US")
-                {
+                if (strIter.key() == "en_US") {
                     defaultFlag = true;
                 }
             }
-            if (defaultFlag)
-            {
+            if (defaultFlag) {
                 qDebug() << "String" << iter.key() << "loaded.";
-            }
-            else
-            {
+            } else {
                 qDebug() << "String" << iter.key()
                          << "requires \"en_US\" support.";
                 return;
@@ -160,18 +149,14 @@ const QString &StringTable::getString(const QString &id)
 {
     QReadLocker lock(&m_lock);
     auto        iter = m_stringTable.find(id);
-    if (iter == m_stringTable.end())
-    {
+    if (iter == m_stringTable.end()) {
         qDebug() << "Illegal string ID :" << id << ".";
         return m_notFoundStr;
     }
     auto strIter = (*iter).find(m_language);
-    if (strIter == (*iter).end())
-    {
+    if (strIter == (*iter).end()) {
         return (*iter)["en_US"];
-    }
-    else
-    {
+    } else {
         return *strIter;
     }
 }
@@ -184,8 +169,7 @@ const QMap<QString, QString> &StringTable::getStrings(const QString &id)
     QReadLocker lock(&m_lock);
 
     auto iter = m_stringTable.find(id);
-    if (iter == m_stringTable.end())
-    {
+    if (iter == m_stringTable.end()) {
         qDebug() << "Illegal string ID :" << id << ".";
         return m_notFoundMap;
     }
@@ -203,15 +187,13 @@ void StringTable::setLanguage(const QString &language)
 {
     {
         QWriteLocker lock(&m_lock);
-        if (language == m_language)
-        {
+        if (language == m_language) {
             return;
         }
 
         // Search language
         auto iter = _languageIDTable.find(language);
-        if (iter == _languageIDTable.end())
-        {
+        if (iter == _languageIDTable.end()) {
             return;
         }
 
@@ -237,14 +219,10 @@ QString StringTable::systemLanguage()
     QLocale locale = QLocale::system();
     auto    iter   = _languageTable.find(locale.language());
 
-    if (iter == _languageTable.end())
-    {
+    if (iter == _languageTable.end()) {
         return "en_US";
-    }
-    else
-    {
-        if (*iter == "zh_CN" && locale.country() != QLocale::Country::China)
-        {
+    } else {
+        if (*iter == "zh_CN" && locale.country() != QLocale::Country::China) {
             // Where is QLocale::Country::Scotland, QLocale::Country::Catalonian
             // or QLocale::Country::California.
             return "zh_TW";

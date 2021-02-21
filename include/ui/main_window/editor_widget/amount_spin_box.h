@@ -11,8 +11,7 @@
 /**
  * @brief   Spin box for module amount.
  */
-class AmountSpinBox : public QWidget
-{
+class AmountSpinBox : public QWidget {
     Q_OBJECT;
 
   private:

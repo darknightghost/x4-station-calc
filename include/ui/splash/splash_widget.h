@@ -20,8 +20,7 @@ Q_DECLARE_METATYPE(::std::function<void()>);
 /**
  * @brief		Splash widget.
  */
-class SplashWidget : public QWidget
-{
+class SplashWidget : public QWidget {
     Q_OBJECT
   private:
     SplashThread *      m_thread;     //< Working thread.
@@ -60,8 +59,7 @@ class SplashWidget : public QWidget
     typename ::std::enable_if<! ::std::is_void<R>::value, R>::type
         callFunc(::std::function<R(Args...)> func, Args... args)
     {
-        if (QThread::currentThread() == this->thread())
-        {
+        if (QThread::currentThread() == this->thread()) {
             /// Call directlly in the same thread.
             return func(args...);
         }
@@ -91,8 +89,7 @@ class SplashWidget : public QWidget
     template<typename... Args>
     void callFunc(::std::function<void(Args...)> func, Args... args)
     {
-        if (QThread::currentThread() == this->thread())
-        {
+        if (QThread::currentThread() == this->thread()) {
             /// Call directlly in the same thread.
             func(args...);
             return;

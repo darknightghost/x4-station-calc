@@ -10,8 +10,7 @@
  * @tparam  incRB   \c true if including right boundary.
  */
 template<typename T, bool incLB = true, bool incRB = true>
-class Range
-{
+class Range {
   private:
     T m_min; ///< Minimum value.
     T m_max; ///< Maxium value.
@@ -119,33 +118,23 @@ class Range
     int compare(T value)
     {
         // Left boundary.
-        if (incLB)
-        {
-            if (value < m_min)
-            {
+        if (incLB) {
+            if (value < m_min) {
                 return -1;
             };
-        }
-        else
-        {
-            if (value <= m_min)
-            {
+        } else {
+            if (value <= m_min) {
                 return -1;
             };
         }
 
         // Right boundary.
-        if (incRB)
-        {
-            if (value > m_max)
-            {
+        if (incRB) {
+            if (value > m_max) {
                 return 1;
             };
-        }
-        else
-        {
-            if (value >= m_max)
-            {
+        } else {
+            if (value >= m_max) {
                 return 1;
             };
         }

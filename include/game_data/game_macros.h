@@ -21,8 +21,7 @@ class GameVFS;
 class GameMacros :
     public ILoadFactoryFunc<GameMacros,
                             ::std::shared_ptr<GameVFS>,
-                            ::std::function<void(const QString &)>>
-{
+                            ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameMacros,
               ::std::shared_ptr<GameVFS>,
               ::std::function<void(const QString &)>);

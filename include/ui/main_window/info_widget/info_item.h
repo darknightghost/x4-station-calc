@@ -12,8 +12,7 @@
 /**
  * @brief		Item in imformation widget.
  */
-class InfoItem : public QTreeWidgetItem
-{
+class InfoItem : public QTreeWidgetItem {
   private:
     ::std::unique_ptr<GenericString> m_first;  ///< ID of string in column 1.
     ::std::unique_ptr<GenericString> m_second; ///< String in column 2.

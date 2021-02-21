@@ -15,15 +15,13 @@
 /**
  * @brief   Config reader/writer.
  */
-class Config : public ISingleton<Config>
-{
+class Config : public ISingleton<Config> {
     SIGNLETON_OBJECT(Config)
   public:
     /**
      * @brief   Value types.
      */
-    enum ValueType
-    {
+    enum ValueType {
         None   = 0x00, ///< The value does not exists.
         Bool   = 0x01, ///< The value is a boolean.
         Number = 0x02, ///< The value is a number.

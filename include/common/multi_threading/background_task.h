@@ -8,8 +8,7 @@
 /**
  * @brief	Background task thread.
  */
-class BackgroundTaskThread : public QThread
-{
+class BackgroundTaskThread : public QThread {
     Q_OBJECT;
 
   private:
@@ -47,16 +46,14 @@ class BackgroundTaskThread : public QThread
 /**
  * @brief	Background task.
  */
-class BackgroundTask : public QObject
-{
+class BackgroundTask : public QObject {
     Q_OBJECT;
 
   public:
     /**
      * @brief	How to run tasks.
      */
-    enum RunType
-    {
+    enum RunType {
         Immediately, ///< Run the task immetiately.
         Queued,      ///< Put the task in a queu and run it one by one.
         Newest       ///< Run the newest task.

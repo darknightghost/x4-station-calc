@@ -5,8 +5,7 @@
 /**
  * @brief	QDockWidget whose wisibility can be controlled by an action.
  */
-class ActionControlDockWidget : public QDockWidget
-{
+class ActionControlDockWidget : public QDockWidget {
     Q_OBJECT
   protected:
     QAction

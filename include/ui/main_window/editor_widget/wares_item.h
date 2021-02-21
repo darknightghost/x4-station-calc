@@ -9,8 +9,7 @@
 /**
  * @brief	Item of game wares.
  */
-class WaresItem : public QTreeWidgetItem
-{
+class WaresItem : public QTreeWidgetItem {
   private:
     QMap<QString, WareItem *> m_macroMap; ///< Macro/Ware item map.
 

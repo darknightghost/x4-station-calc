@@ -90,8 +90,7 @@ void AmountSpinBox::onEditingFinished()
 void AmountSpinBox::emitEdited()
 {
     int num = m_txtAmount->text().toInt();
-    if (m_oldValue != num)
-    {
+    if (m_oldValue != num) {
         m_oldValue = num;
         emit this->amountEdited(num);
         this->updateBtnStatus();
@@ -104,21 +103,15 @@ void AmountSpinBox::emitEdited()
 void AmountSpinBox::updateBtnStatus()
 {
     int num = m_txtAmount->text().toInt();
-    if (num <= m_validAmount->bottom())
-    {
+    if (num <= m_validAmount->bottom()) {
         m_btnDec->setEnabled(false);
-    }
-    else
-    {
+    } else {
         m_btnDec->setEnabled(true);
     }
 
-    if (num >= m_validAmount->top())
-    {
+    if (num >= m_validAmount->top()) {
         m_btnInc->setEnabled(false);
-    }
-    else
-    {
+    } else {
         m_btnInc->setEnabled(true);
     }
 }

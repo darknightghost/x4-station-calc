@@ -5,8 +5,7 @@
 /**
  * @brief   Transparent label.
  */
-class TransparentLabel : public QLabel
-{
+class TransparentLabel : public QLabel {
     Q_OBJECT;
 
   public:

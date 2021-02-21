@@ -7,8 +7,7 @@
 /**
  * @brief		Warning widget.
  */
-class WarningWidget : public QLabel
-{
+class WarningWidget : public QLabel {
     Q_OBJECT;
 
   private:

@@ -12,8 +12,7 @@
  * @tparam	Args	Types of the arguments of the constructor.
  */
 template<class T, typename... Args>
-class ISingleton : virtual protected IInitialized
-{
+class ISingleton : virtual protected IInitialized {
   protected:
     static ::std::shared_ptr<T> _instance;     ///< Instance.
     static ::std::mutex         _instanceLock; ///< Instance lock.
@@ -80,13 +79,11 @@ template<class T, typename... Args>
 {
     ::std::lock_guard<::std::mutex> locker(_instanceLock);
 
-    if (_instance == nullptr)
-    {
+    if (_instance == nullptr) {
         /// Create new instance
         _instance = ::std::shared_ptr<T>(new T(args...));
 
-        if (! _instance->initialized())
-        {
+        if (! _instance->initialized()) {
             _instance = nullptr;
         }
     }

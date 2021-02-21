@@ -10,8 +10,7 @@
 /**
  * @brief	Language select dialog.
  */
-class LanguageSettingDialog : public QDialog
-{
+class LanguageSettingDialog : public QDialog {
     Q_OBJECT
   private:
     QVBoxLayout *m_layout;          //< Layout.

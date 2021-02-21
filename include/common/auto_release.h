@@ -8,8 +8,7 @@
  * @tparam  RefType     Reference type.
  */
 template<typename RefType>
-class AutoRelease
-{
+class AutoRelease {
   public:
     /**
      * @brief     Release callback.
@@ -49,8 +48,7 @@ class AutoRelease
      */
     virtual ~AutoRelease()
     {
-        if (m_releaseCallback)
-        {
+        if (m_releaseCallback) {
             m_releaseCallback(m_ref);
         }
     }

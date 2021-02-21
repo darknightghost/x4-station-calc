@@ -14,15 +14,13 @@
 /**
  * @brief	Information widget.
  */
-class InfoWidget : public ActionControlDockWidget
-{
+class InfoWidget : public ActionControlDockWidget {
     Q_OBJECT
 
     /**
      * @brief	History type.
      */
-    enum HistoryType
-    {
+    enum HistoryType {
         Race,         ///< Race.
         Ware,         ///< Ware.
         StationModule ///< Station module.

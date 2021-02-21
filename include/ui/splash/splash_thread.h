@@ -9,8 +9,7 @@ class SplashWidget;
 /**
  * @brief	Working thread of splash widget.
  */
-class SplashThread : public QThread
-{
+class SplashThread : public QThread {
     Q_OBJECT
   private:
     ::std::function<int()> m_workFunc; //< Work to do.

@@ -36,7 +36,7 @@
         1. `sudo pacman -S gcc`
 1. Ubuntu
     1. Qt5
-        1. Download and install qt5 from <https://download.qt.io/0archive/qt/>(the version must be greater than 5.14.0).
+        1. Download and install qt5 from <https://download.qt.io/archive/qt/>(the version must be greater than 5.14.0).
         1. Append the path of `gcc_64/lib` in your qt5 installalion path to environment variable `LD_LIBRARY_PATH`.
         1. Set the path of `gcc_64` in your qt5 installalion path to environment variable `QT`.
         1. Restart your computer.

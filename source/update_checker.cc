@@ -1,3 +1,6 @@
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QVersionNumber>
 #include <QtGui/QDesktopServices>
@@ -10,19 +13,8 @@
 
 /// Check update URL.
 const QString UpdateChecker::_checkUpdateURL
-    = "https://raw.githubusercontent.com/darknightghost/"
-      "darknightghost.github.io/master/x4-station-calc/version";
-
-/// Download URL.
-#if defined(OS_WINDOWS)
-const QString UpdateChecker::_downloadURL
-    = "https://github.com/darknightghost/darknightghost.github.io/raw/master/"
-      "x4-station-calc/v%1.7z";
-#else
-const QString UpdateChecker::_downloadURL
-    = "https://github.com/darknightghost/x4-station-calc/releases/tag/v%1";
-
-#endif
+    = "https://api.github.com/repos/darknightghost/x4-station-calc/releases/"
+      "latest";
 
 /**
  * @brief       Constructor.
@@ -89,9 +81,32 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
         return;
     }
 
+    // Parse json.
+    // Parse data.
+    QJsonParseError jsonError;
+    QJsonDocument   doc = QJsonDocument::fromJson(reply->readAll(), &jsonError);
+
+    if (jsonError.error != QJsonParseError::NoError) {
+        qDebug() << "Failed to parse version info : "
+                 << jsonError.errorString();
+        return;
+    }
+    QJsonObject root = doc.object();
+
     // Make version.
-    QString s = QString::fromUtf8(reply->readAll());
-    s.replace(QRegularExpression("[\\s\\r\\n]"), "");
+    auto iter = root.find("tag_name");
+    if (iter == root.end()) {
+        qDebug() << "Failed to parse version info : Missing key \"/tag_name\".";
+        return;
+    }
+    if (! iter->isString()) {
+        qDebug() << "Failed to parse version info : Key \"/tag_name\" should "
+                    "be string.";
+        return;
+    }
+
+    QString s = iter->toString();
+    s.replace(QRegularExpression("[vV\\s\\r\\n]"), "");
     QVersionNumber newestVersion = QVersionNumber::fromString(s);
     qDebug() << "Current version :" << VERSION
              << ", Newest version :" << newestVersion;
@@ -101,7 +116,19 @@ void UpdateChecker::onRequestFinished(QNetworkReply *reply)
         if (QMessageBox::question(m_parent, STR("STR_TITLE_CHECKUPDATE"),
                                   STR("STR_NEW_VERSION_FOUND"))
             == QMessageBox::StandardButton::Yes) {
-            QString downloadURL = _downloadURL.arg(s);
+            iter = root.find("html_url");
+            if (iter == root.end()) {
+                qDebug() << "Failed to parse download url info : Missing key "
+                            "\"/html_url\".";
+                return;
+            }
+            if (! iter->isString()) {
+                qDebug() << "Failed to parse download url : Key \"/html_url\" "
+                            "should be string.";
+                return;
+            }
+
+            QString downloadURL = iter->toString();
             qDebug() << "Download url : " << downloadURL;
             QDesktopServices::openUrl(QUrl(downloadURL));
         }

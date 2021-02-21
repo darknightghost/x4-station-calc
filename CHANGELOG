@@ -1,3 +1,6 @@
+v1.0.4
+    Changed the behavior of checking for updates.
+
 v1.0.3
     Added the link to the github page of the project in "Help" menu.
     Improved the speed of loading game data.

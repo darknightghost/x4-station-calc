@@ -18,7 +18,6 @@ class UpdateChecker : public QObject {
 
   private:
     static const QString _checkUpdateURL; ///< Check update URL.
-    static const QString _downloadURL;    ///< Download URL.
 
   private:
     QWidget *              m_parent;              ///< Parent;

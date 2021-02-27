@@ -44,11 +44,11 @@
     1. OpenSSL
         1. `sudo apt-get install libssl-dev`
     1. cmake
-        1. `sudo apt-get isntall cmake`
-        1. `sudo apt-get isntall make`
+        1. `sudo apt-get install cmake`
+        1. `sudo apt-get install make`
     1. gcc
-        1. `sudo apt-get isntall gcc`
-        1. `sudo apt-get isntall g++`
+        1. `sudo apt-get install gcc`
+        1. `sudo apt-get install g++`
 
 ###### Build Commands
 

@@ -21,6 +21,8 @@ endif()
 message (STATUS "Build Type - ${CMAKE_BUILD_TYPE}.")
 message (STATUS "Host System - ${CMAKE_HOST_SYSTEM_NAME}.")
 message (STATUS "Host Processor - ${CMAKE_HOST_SYSTEM_PROCESSOR}.")
+message (STATUS "Target System - ${CMAKE_SYSTEM_NAME}.")
+message (STATUS "Target Processor - ${CMAKE_SYSTEM_PROCESSOR}.")
 
 # Environment.
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -36,7 +38,7 @@ elseif (UNIX)
 endif ()
 
 # Output path.
-set (OUTPUT_SUB_DIR "${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}")
+set (OUTPUT_SUB_DIR "${CMAKE_BUILD_TYPE}/${CMAKE_SYSTEM_NAME}/${CMAKE_SYSTEM_PROCESSOR}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
@@ -66,16 +68,16 @@ endif ()
 # Compiler.
 if (MSVC)
     # Set compile options.
-    if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+    if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64")
         set (CMAKE_C_FLAGS_DEBUG "/DAMD64 /DDEBUG /RTC1 /Od ${C_CXX_FLAGS}")
         set (CMAKE_C_FLAGS_RELEASE "/DAMD64 /DNDEBUG /O2 ${C_CXX_FLAGS}")
 
-    elseif (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "x86")
+    elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86")
         set (CMAKE_C_FLAGS_DEBUG "/DDEBUG /RTC1 /Od ${C_CXX_FLAGS} /arch:IA32")
         set (CMAKE_C_FLAGS_RELEASE "/DNDEBUG /O2 ${C_CXX_FLAGS} /arch:IA32")
 
     else ()
-        message (FATAL_ERROR "Unsupported Platform: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+        message (FATAL_ERROR "Unsupported Platform: ${CMAKE_SYSTEM_PROCESSOR}")
 
     endif ()
 

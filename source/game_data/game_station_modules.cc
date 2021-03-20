@@ -821,6 +821,9 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
+        
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
 
     if (name == "identification") {
         module->name        = GameTexts::IDPair(attr["name"]);
@@ -883,7 +886,7 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
                 = ::std::any_cast<::std::shared_ptr<GameWares>>(
                     loader["wares"]);
             const ::std::shared_ptr<::GameWares::Ware> workunit
-                = wares->ware("workunit_busy");
+                = wares->ware("workunit_busy", texts);
             for (auto &info : workunit->productionInfos) {
                 if (info->method == attr["race"] || info->method == "default") {
                     ::std::shared_ptr<::GameWares::ProductionInfo> supplyInfo(
@@ -1024,6 +1027,9 @@ bool GameStationModules::onStartElementInProductionOfModuleMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
+        
+    ::std::shared_ptr<GameTexts> texts
+        = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
 
     if (name == "queue") {
         ::std::shared_ptr<GameWares> wares
@@ -1034,7 +1040,7 @@ bool GameStationModules::onStartElementInProductionOfModuleMacro(
         if (iter != attr.end()) {
             method = *iter;
         }
-        ::std::shared_ptr<GameWares::Ware> ware = wares->ware(attr["ware"]);
+        ::std::shared_ptr<GameWares::Ware> ware = wares->ware(attr["ware"], texts);
 
         auto productionInfoIter = ware->productionInfos.find(method);
         if (productionInfoIter == ware->productionInfos.end()) {

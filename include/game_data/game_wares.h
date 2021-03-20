@@ -117,16 +117,24 @@ class GameWares :
     /**
      * @brief	Get ware group information.
      *
+     * @param[in]   id              Ware group ID.
+     * @param[in]	texts			Game texts.
+     *
      * @return	Information of ware group.
      */
-    const ::std::shared_ptr<WareGroup> wareGroup(const QString &id);
+    const ::std::shared_ptr<WareGroup> wareGroup(const QString &id, 
+            ::std::shared_ptr<GameTexts> texts = nullptr);
 
     /**
      * @brief	Get ware information.
      *
+     * @param[in]   id              Ware ID.
+     * @param[in]	texts			Game texts.
+     *
      * @return	Information of ware.
      */
-    const ::std::shared_ptr<Ware> ware(const QString &id);
+    const ::std::shared_ptr<Ware> ware(const QString &id,
+        ::std::shared_ptr<GameTexts> texts = nullptr);
 
     /**
      * @brief		Destructor.

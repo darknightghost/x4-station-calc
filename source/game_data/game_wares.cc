@@ -90,13 +90,17 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
  * @brief	Get ware group information.
  */
 const ::std::shared_ptr<GameWares::WareGroup>
-    GameWares::wareGroup(const QString &id)
+    GameWares::wareGroup(const QString &id, ::std::shared_ptr<GameTexts> texts)
 {
+    if (texts == nullptr) {
+        texts = GameData::instance()->texts();
+    }
+        
     auto iter = m_wareGroups.find(id);
     if (iter == m_wareGroups.end()) {
         ::std::shared_ptr<GameWares::WareGroup> unknowWareGroup(new WareGroup(
             {id,
-             GameData::instance()->texts()->addText(
+             texts->addText(
                  QString("UNKNOW_WARE_GROUP_%d")
                      .arg(m_unknowWareGroupIndex.fetchAndAddAcquire(1))),
              {}}));
@@ -111,14 +115,18 @@ const ::std::shared_ptr<GameWares::WareGroup>
 /**
  * @brief	Get ware information.
  */
-const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id)
+const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id, ::std::shared_ptr<GameTexts> texts)
 {
+    if (texts == nullptr) {
+        texts = GameData::instance()->texts();
+    }
+    
     auto iter = m_wares.find(id);
     if (iter == m_wares.end()) {
         // Generate an unknow ware.
         ::std::shared_ptr<GameWares::Ware> unknowWare(
             new Ware({id,
-                      GameData::instance()->texts()->addText(
+                      texts->addText(
                           QString("UNKNOW_WARE_%d")
                               .arg(m_unknowWareIndex.fetchAndAddAcquire(1))),
                       QString(""),

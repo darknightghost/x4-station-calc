@@ -199,8 +199,10 @@ bool GameData::checkGamePath(const QString &                      path,
     // Filters
     QRegExp execFilter("x4|x4\\.exe");
     execFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp catFilter("\\w+\\.cat");
+    QRegExp catFilter("\\d+\\.cat");
     catFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp extCatFilter("ext_\\d+\\.cat");
+    extCatFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
     QRegExp datFilter("\\w+\\.dat");
     datFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
 
@@ -236,7 +238,7 @@ bool GameData::checkGamePath(const QString &                      path,
                     QDir modDir(modEntry.absoluteFilePath());
                     for (auto &modFile : modDir.entryInfoList(
                              QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
-                        if (catFilter.exactMatch(modFile.fileName())
+                        if (extCatFilter.exactMatch(modFile.fileName())
                             && ! modFile.isDir()) {
                             QString filename = QString("extensions/%1/%2")
                                                    .arg(modEntry.fileName())

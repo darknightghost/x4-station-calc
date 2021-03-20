@@ -97,8 +97,11 @@ GameVFS::GameVFS(const QString &                        gamePath,
 
             // Parent
             ::std::shared_ptr<DatFileEntery> entry = m_datEntry;
+            
+            QString path = "";
             for (auto iter = splittedPath.begin();
                  iter < splittedPath.end() - 1; iter++) {
+                path += *iter + "/";
                 {
                     QMutexLocker locker(&(entry->lock));
                     auto         pathIter = entry->children.find(*iter);
@@ -125,7 +128,8 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 = ::std::shared_ptr<DatFileEntery>(
                     new DatFileEntery(splittedPath.back(), datFile.fileName(),
                                       offset, size, splittedLine.back()));
-            qDebug() << "Packed file loaded :" << splittedLine[0] << ".";
+            path += splittedPath.back();
+            qDebug() << "Packed file loaded from "<< catDatInfo.cat  << ":" << path << ".";
 
             {
                 quint64 tm = QDateTime::currentMSecsSinceEpoch();

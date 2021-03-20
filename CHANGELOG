@@ -1,3 +1,6 @@
+v1.0.5
+    Changed the regular-expressions to match cat files to ignore the mods whitch installed in a wrong place.
+
 v1.0.4
     Changed the behavior of checking for updates.
 

@@ -58,10 +58,13 @@ SquareButton::~SquareButton() {}
 void SquareButton::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
-    if (sz.width() == sz.height()) {
+    if (sz.width() == sz.height())
+    {
         QPushButton::resizeEvent(event);
         this->resizeIcon(event->size());
-    } else {
+    }
+    else
+    {
         sz.setWidth(sz.height());
         event->ignore();
         this->resize(sz);
@@ -73,13 +76,15 @@ void SquareButton::resizeEvent(QResizeEvent *event)
  */
 void SquareButton::resizeIcon(const QSize &sz)
 {
-    if (m_icon.isNull()) {
+    if (m_icon.isNull())
+    {
         return;
     }
 
     QIcon scaledIcon;
     for (auto mode : {QIcon::Mode::Normal, QIcon::Mode::Disabled,
-                      QIcon::Mode::Active, QIcon::Mode::Selected}) {
+                      QIcon::Mode::Active, QIcon::Mode::Selected})
+    {
         QSize   iconSize = m_icon.actualSize(QSize(65535, 65535), mode);
         QPixmap pixmap   = m_icon.pixmap(iconSize, mode);
         scaledIcon.addPixmap(

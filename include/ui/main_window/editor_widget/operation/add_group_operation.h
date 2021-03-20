@@ -9,7 +9,8 @@
  */
 class EditorWidget::AddGroupOperation :
     virtual public EditorWidget::
-        OperationBase<EditorWidget::AddGroupOperation, int, EditorWidget *> {
+        OperationBase<EditorWidget::AddGroupOperation, int, EditorWidget *>
+{
     CREATE_FUNC(EditorWidget::AddGroupOperation, int, EditorWidget *);
 
   private:

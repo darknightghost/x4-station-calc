@@ -19,7 +19,8 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
     m_txtLicense = new QTextEdit();
     m_txtLicense->setReadOnly(true);
     QString templateCode;
-    for (int i = 0; i < 80; i++) {
+    for (int i = 0; i < 80; i++)
+    {
         templateCode += 'A';
     }
     QSize txtSize
@@ -78,7 +79,8 @@ void LicenseDialog::loadLicense()
     QString document;
     {
         QFile licenseFile(":/License/head");
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;
@@ -92,7 +94,8 @@ void LicenseDialog::loadLicense()
     {
         QFile licenseFile(QString(":/License/license.%1")
                               .arg(StringTable::instance()->language()));
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;
@@ -106,7 +109,8 @@ void LicenseDialog::loadLicense()
     /// GPLv3
     {
         QFile licenseFile(":/License/gplv3");
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;
@@ -124,7 +128,8 @@ void LicenseDialog::loadLicense()
     /// Qt5(LGPLv3)
     {
         QFile licenseFile(":/License/lgplv3");
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;
@@ -138,7 +143,8 @@ void LicenseDialog::loadLicense()
     /// Egosoft
     {
         QFile licenseFile(":/License/egosoft");
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;
@@ -152,7 +158,8 @@ void LicenseDialog::loadLicense()
     /// Tail
     {
         QFile licenseFile(":/License/tail");
-        if (! licenseFile.open(QFile::ReadOnly)) {
+        if (! licenseFile.open(QFile::ReadOnly))
+        {
             qDebug() << "Failed to open license file.";
             this->reject();
             return;

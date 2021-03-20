@@ -111,7 +111,8 @@ void SplashWidget::paintEvent(QPaintEvent *event)
     QPen        shadowPen(QColor(0, 0, 0));
     QPen        forgroundPen(QColor(255, 255, 255));
     QReadLocker locker(&m_textLock);
-    if (! m_text.empty()) {
+    if (! m_text.empty())
+    {
         /// Compute position
         int lineHeight  = this->fontMetrics().height();
         int totalHeight = lineHeight * m_text.size();
@@ -120,7 +121,8 @@ void SplashWidget::paintEvent(QPaintEvent *event)
         int x = MARGIN;
 
         /// Draw text
-        for (auto &s : m_text) {
+        for (auto &s : m_text)
+        {
             /// Shadow
             painter.setPen(shadowPen);
             /// Top
@@ -164,9 +166,12 @@ void SplashWidget::paintEvent(QPaintEvent *event)
  */
 void SplashWidget::closeEvent(QCloseEvent *event)
 {
-    if (m_closeable) {
+    if (m_closeable)
+    {
         event->accept();
-    } else {
+    }
+    else
+    {
         event->ignore();
     }
 }
@@ -181,22 +186,29 @@ void SplashWidget::setText(QString text)
     /// Split lines.
     int         lineWidth = this->width() - MARGIN - MARGIN;
     QStringList lines;
-    if (! (text.isNull() || text.isEmpty())) {
+    if (! (text.isNull() || text.isEmpty()))
+    {
         QString line("");
-        for (auto &c : text) {
-            if (c == '\n') {
+        for (auto &c : text)
+        {
+            if (c == '\n')
+            {
                 lines.append(line);
                 line = "";
-            } else {
+            }
+            else
+            {
                 line.append(c);
-                if (this->fontMetrics().horizontalAdvance(line) > lineWidth) {
+                if (this->fontMetrics().horizontalAdvance(line) > lineWidth)
+                {
                     line.remove(line.size() - 1, 1);
                     lines.append(line);
                     line = c;
                 }
             }
         }
-        if (line != "") {
+        if (line != "")
+        {
             lines.append(line);
         }
     }

@@ -9,7 +9,8 @@
 /**
  * @brief	Item of ware.
  */
-class WareItem : public QTreeWidgetItem {
+class WareItem : public QTreeWidgetItem
+{
   private:
     QString       m_ware;  ///< Ware.
     Range<qint64> m_range; ///< Range of the amount each hour.

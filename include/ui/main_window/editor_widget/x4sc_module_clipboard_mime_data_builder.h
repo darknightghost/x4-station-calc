@@ -9,7 +9,8 @@
 /**
  * @brief       Clipboard data builder.
  */
-class X4SCModuleClipboardMimeDataBuilder {
+class X4SCModuleClipboardMimeDataBuilder
+{
   public:
     static const QString _mimeTypeStr; ///< Mime type.
 

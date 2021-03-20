@@ -26,14 +26,16 @@ void X4SCGroupClipboardMimeDataBuilder::loadMimeData(const QMimeData *mimeData)
     QString       jsonStr = mimeData->data(_mimeTypeStr);
     QJsonDocument doc     = QJsonDocument::fromJson(jsonStr.toUtf8());
 
-    if (doc.isNull()) {
+    if (doc.isNull())
+    {
         m_jsonRoot = QJsonDocument::fromJson("{\"groups\":[]}").object();
         m_jsonRoot.insert("version", (QString)Save::_currentVersion);
         return;
     }
 
     QJsonValue versionValue = doc.object().value("version");
-    if (! versionValue.isString()) {
+    if (! versionValue.isString())
+    {
         m_jsonRoot = QJsonDocument::fromJson("{\"groups\":[]}").object();
         m_jsonRoot.insert("version", (QString)Save::_currentVersion);
         return;
@@ -41,7 +43,8 @@ void X4SCGroupClipboardMimeDataBuilder::loadMimeData(const QMimeData *mimeData)
 
     SaveVersion version(versionValue.toString());
 
-    if (version > Save::_currentVersion) {
+    if (version > Save::_currentVersion)
+    {
         m_jsonRoot = QJsonDocument::fromJson("{\"groups\":[]}").object();
         m_jsonRoot.insert("version", (QString)Save::_currentVersion);
         return;
@@ -49,7 +52,8 @@ void X4SCGroupClipboardMimeDataBuilder::loadMimeData(const QMimeData *mimeData)
 
     // Get groups.
     QJsonValue groupValue = doc.object().value("groups");
-    if (groupValue.isArray()) {
+    if (groupValue.isArray())
+    {
         m_jsonRoot.insert("groups", groupValue);
     }
 }
@@ -71,7 +75,8 @@ void X4SCGroupClipboardMimeDataBuilder::setData(
 {
     // Groups.
     QJsonArray groupsArray;
-    for (auto &group : groups) {
+    for (auto &group : groups)
+    {
         groupsArray.append(group->toJson());
     }
     m_jsonRoot.insert("groups", groupsArray);
@@ -88,13 +93,17 @@ QVector<::std::shared_ptr<SaveGroup>>
     QVector<::std::shared_ptr<SaveGroup>> groups;
 
     QJsonValue value = m_jsonRoot.value("groups");
-    if (value.isArray()) {
-        for (auto groupValue : value.toArray()) {
-            if (groupValue.isObject()) {
+    if (value.isArray())
+    {
+        for (auto groupValue : value.toArray())
+        {
+            if (groupValue.isObject())
+            {
                 QJsonObject groupObject = groupValue.toObject();
                 ::std::shared_ptr<SaveGroup> group
                     = SaveGroup::load(groupObject, version);
-                if (group != nullptr) {
+                if (group != nullptr)
+                {
                     groups.append(group);
                 }
             }

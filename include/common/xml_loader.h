@@ -11,7 +11,8 @@
 /**
  * @brief		XML parser.QXmlStreamReader
  */
-class XMLLoader {
+class XMLLoader
+{
   public:
     /**
      * @brief		Reader context.

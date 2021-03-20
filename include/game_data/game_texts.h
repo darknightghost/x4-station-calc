@@ -22,7 +22,8 @@ class GameVFS;
 class GameTexts :
     public ILoadFactoryFunc<GameTexts,
                             ::std::shared_ptr<GameVFS>,
-                            ::std::function<void(const QString &)>> {
+                            ::std::function<void(const QString &)>>
+{
     LOAD_FUNC(GameTexts,
               ::std::shared_ptr<GameVFS>,
               ::std::function<void(const QString &)>)
@@ -47,7 +48,8 @@ class GameTexts :
             QRegExp referenceExp("\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}");
             int     index = referenceExp.indexIn(s);
 
-            if (index == -1) {
+            if (index == -1)
+            {
                 return;
             }
 

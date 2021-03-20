@@ -11,7 +11,8 @@ class EditorWidget::MoveGroupOperation :
     virtual public EditorWidget::OperationBase<EditorWidget::MoveGroupOperation,
                                                int,
                                                int,
-                                               EditorWidget *> {
+                                               EditorWidget *>
+{
     CREATE_FUNC(EditorWidget::MoveGroupOperation, int, int, EditorWidget *);
 
   private:

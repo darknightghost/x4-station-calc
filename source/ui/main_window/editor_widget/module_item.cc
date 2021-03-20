@@ -166,7 +166,8 @@ void ModuleItemWidget::onSpinboxValueChanged(int i)
 {
     int oldCount = m_item->moduleAmount();
 
-    if (oldCount != i) {
+    if (oldCount != i)
+    {
         emit this->changeAmount(oldCount, i, m_item);
     }
 }

@@ -76,7 +76,8 @@ void InfoWidget::onLanguageChanged()
     this->setWindowTitle(STR("STR_INFO_WIDGET_TITLE"));
 
     // Items
-    for (QTreeWidgetItemIterator iter(m_treeInfo); *iter; ++iter) {
+    for (QTreeWidgetItemIterator iter(m_treeInfo); *iter; ++iter)
+    {
         InfoItem *item = static_cast<InfoItem *>(*iter);
         item->onLanguageChanged();
     }
@@ -88,9 +89,12 @@ void InfoWidget::onLanguageChanged()
 void InfoWidget::showStationModuleInfo(QString macro, bool keepPrevious)
 {
     qDebug() << "Show module" << macro;
-    if (! keepPrevious) {
+    if (! keepPrevious)
+    {
         m_history.clear();
-    } else {
+    }
+    else
+    {
         m_history.erase(m_history.begin() + m_historyIndex + 1,
                         m_history.end());
     }
@@ -107,9 +111,12 @@ void InfoWidget::showStationModuleInfo(QString macro, bool keepPrevious)
  */
 void InfoWidget::showWareInfo(QString macro, bool keepPrevious)
 {
-    if (! keepPrevious) {
+    if (! keepPrevious)
+    {
         m_history.clear();
-    } else {
+    }
+    else
+    {
         m_history.erase(m_history.begin() + m_historyIndex + 1,
                         m_history.end());
     }
@@ -126,9 +133,12 @@ void InfoWidget::showWareInfo(QString macro, bool keepPrevious)
  */
 void InfoWidget::showRaceInfo(QString macro, bool keepPrevious)
 {
-    if (! keepPrevious) {
+    if (! keepPrevious)
+    {
         m_history.clear();
-    } else {
+    }
+    else
+    {
         m_history.erase(m_history.begin() + m_historyIndex + 1,
                         m_history.end());
     }
@@ -148,7 +158,8 @@ void InfoWidget::update()
     m_treeInfo->clear();
 
     // Set button status.
-    if (m_history.empty()) {
+    if (m_history.empty())
+    {
         m_btnBack->setEnabled(false);
         m_btnForward->setEnabled(false);
 
@@ -158,7 +169,8 @@ void InfoWidget::update()
     m_btnForward->setEnabled(m_historyIndex < m_history.size() - 1);
 
     // Show info
-    switch (m_history[m_historyIndex].type) {
+    switch (m_history[m_historyIndex].type)
+    {
         case HistoryType::Race:
             this->updateRace(m_history[m_historyIndex].macro);
             break;
@@ -202,7 +214,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // Type
     QTreeWidgetItem *typeItem = nullptr;
-    switch (module->moduleClass) {
+    switch (module->moduleClass)
+    {
         case GameStationModules::StationModule::StationModuleClass::BuildModule:
             typeItem
                 = new InfoItem(::std::unique_ptr<GenericString>(
@@ -264,7 +277,8 @@ void InfoWidget::updateModule(const QString &macro)
         default:
             break;
     }
-    if (typeItem != nullptr) {
+    if (typeItem != nullptr)
+    {
         m_treeInfo->addTopLevelItem(typeItem);
     }
 
@@ -272,7 +286,8 @@ void InfoWidget::updateModule(const QString &macro)
     QTreeWidgetItem *racesItem = new InfoItem(
         ::std::unique_ptr<GenericString>(new LocaleString("STR_INFO_RACE")));
     m_treeInfo->addTopLevelItem(racesItem);
-    for (auto &race : module->races) {
+    for (auto &race : module->races)
+    {
         QTreeWidgetItem *raceItem
             = new InfoItem(::std::unique_ptr<GenericString>(new GameString(
                                GameData::instance()->races()->race(race).name)),
@@ -301,7 +316,8 @@ void InfoWidget::updateModule(const QString &macro)
     // M turret
     auto iter
         = module->properties.find(GameStationModules::Property::Type::MTurret);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasMTurret> property
             = ::std::static_pointer_cast<GameStationModules::HasMTurret>(*iter);
         QTreeWidgetItem *item
@@ -314,7 +330,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // M shield
     iter = module->properties.find(GameStationModules::Property::Type::MShield);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasMShield> property
             = ::std::static_pointer_cast<GameStationModules::HasMShield>(*iter);
         QTreeWidgetItem *item
@@ -327,7 +344,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // L turret
     iter = module->properties.find(GameStationModules::Property::Type::LTurret);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasLTurret> property
             = ::std::static_pointer_cast<GameStationModules::HasLTurret>(*iter);
         QTreeWidgetItem *item
@@ -340,7 +358,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // L shield
     iter = module->properties.find(GameStationModules::Property::Type::LShield);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasLShield> property
             = ::std::static_pointer_cast<GameStationModules::HasLShield>(*iter);
         QTreeWidgetItem *item
@@ -354,7 +373,8 @@ void InfoWidget::updateModule(const QString &macro)
     // S launch tube
     iter = module->properties.find(
         GameStationModules::Property::Type::SLaunchTube);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasSLaunchTube> property
             = ::std::static_pointer_cast<GameStationModules::HasSLaunchTube>(
                 *iter);
@@ -369,7 +389,8 @@ void InfoWidget::updateModule(const QString &macro)
     // M launch tube
     iter = module->properties.find(
         GameStationModules::Property::Type::MLaunchTube);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasMLaunchTube> property
             = ::std::static_pointer_cast<GameStationModules::HasMLaunchTube>(
                 *iter);
@@ -384,7 +405,8 @@ void InfoWidget::updateModule(const QString &macro)
     // Harbor
     // S docking bay
     iter = module->properties.find(GameStationModules::Property::Type::SDock);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasSDock> property
             = ::std::static_pointer_cast<GameStationModules::HasSDock>(*iter);
         QTreeWidgetItem *item
@@ -398,7 +420,8 @@ void InfoWidget::updateModule(const QString &macro)
     // S ship cargo
     iter = module->properties.find(
         GameStationModules::Property::Type::SShipCargo);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasSShipCargo> property
             = ::std::static_pointer_cast<GameStationModules::HasSShipCargo>(
                 *iter);
@@ -412,7 +435,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // M docking bay
     iter = module->properties.find(GameStationModules::Property::Type::MDock);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasMDock> property
             = ::std::static_pointer_cast<GameStationModules::HasMDock>(*iter);
         QTreeWidgetItem *item
@@ -426,7 +450,8 @@ void InfoWidget::updateModule(const QString &macro)
     // M ship cargo
     iter = module->properties.find(
         GameStationModules::Property::Type::MShipCargo);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasMShipCargo> property
             = ::std::static_pointer_cast<GameStationModules::HasMShipCargo>(
                 *iter);
@@ -440,7 +465,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // L docking bay
     iter = module->properties.find(GameStationModules::Property::Type::LDock);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasLDock> property
             = ::std::static_pointer_cast<GameStationModules::HasLDock>(*iter);
         QTreeWidgetItem *item
@@ -453,7 +479,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // XL docking bay
     iter = module->properties.find(GameStationModules::Property::Type::XLDock);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasXLDock> property
             = ::std::static_pointer_cast<GameStationModules::HasXLDock>(*iter);
         QTreeWidgetItem *item
@@ -466,7 +493,8 @@ void InfoWidget::updateModule(const QString &macro)
 
     // L/XL docking bay
     iter = module->properties.find(GameStationModules::Property::Type::LXLDock);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasLXLDock> property
             = ::std::static_pointer_cast<GameStationModules::HasLXLDock>(*iter);
         QTreeWidgetItem *item
@@ -483,7 +511,8 @@ void InfoWidget::updateModule(const QString &macro)
     // Workforce supply
     iter = module->properties.find(
         GameStationModules::Property::Type::SupplyWorkforce);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::SupplyWorkforce> property
             = ::std::static_pointer_cast<GameStationModules::SupplyWorkforce>(
                 *iter);
@@ -493,12 +522,14 @@ void InfoWidget::updateModule(const QString &macro)
                            ::std::unique_ptr<GenericString>(new QtString(
                                QString("%1").arg(property->workforce))));
 
-        if (resourcesItem == nullptr) {
+        if (resourcesItem == nullptr)
+        {
             resourcesItem = new InfoItem(::std::unique_ptr<GenericString>(
                 new LocaleString("STR_INFO_RESOURCE")));
         }
 
-        for (auto &resource : property->supplyInfo->resources) {
+        for (auto &resource : property->supplyInfo->resources)
+        {
             QString   id           = resource->id;
             InfoItem *resourceItem = new InfoItem(
                 ::std::unique_ptr<GenericString>(new GameString(
@@ -521,7 +552,8 @@ void InfoWidget::updateModule(const QString &macro)
     // Workforce required
     iter = module->properties.find(
         GameStationModules::Property::Type::RequireWorkforce);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::RequireWorkforce> property
             = ::std::static_pointer_cast<GameStationModules::RequireWorkforce>(
                 *iter);
@@ -536,7 +568,8 @@ void InfoWidget::updateModule(const QString &macro)
     // Product
     iter = module->properties.find(
         GameStationModules::Property::Type::SupplyProduct);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::SupplyProduct> property
             = ::std::static_pointer_cast<GameStationModules::SupplyProduct>(
                 *iter);
@@ -561,12 +594,14 @@ void InfoWidget::updateModule(const QString &macro)
         productsItem->addChild(productItem);
         m_treeInfo->addTopLevelItem(productsItem);
 
-        if (resourcesItem == nullptr) {
+        if (resourcesItem == nullptr)
+        {
             resourcesItem = new InfoItem(::std::unique_ptr<GenericString>(
                 new LocaleString("STR_INFO_RESOURCE")));
         }
 
-        for (auto &resource : property->productionInfo->resources) {
+        for (auto &resource : property->productionInfo->resources)
+        {
             QString   id           = resource->id;
             InfoItem *resourceItem = new InfoItem(
                 ::std::unique_ptr<GenericString>(new GameString(
@@ -588,7 +623,8 @@ void InfoWidget::updateModule(const QString &macro)
     }
 
     // Resource
-    if (resourcesItem != nullptr) {
+    if (resourcesItem != nullptr)
+    {
         m_treeInfo->addTopLevelItem(resourcesItem);
     }
 
@@ -596,12 +632,14 @@ void InfoWidget::updateModule(const QString &macro)
     // Cargo type
     // Cargo size
     iter = module->properties.find(GameStationModules::Property::Type::Cargo);
-    if (iter != module->properties.end()) {
+    if (iter != module->properties.end())
+    {
         ::std::shared_ptr<GameStationModules::HasCargo> property
             = ::std::static_pointer_cast<GameStationModules::HasCargo>(*iter);
         QTreeWidgetItem *cargoTypeItem = nullptr;
 
-        switch (property->cargoType) {
+        switch (property->cargoType)
+        {
             case GameWares::TransportType::Container:
                 cargoTypeItem = new InfoItem(
                     ::std::unique_ptr<GenericString>(
@@ -630,7 +668,8 @@ void InfoWidget::updateModule(const QString &macro)
                 break;
         }
 
-        if (cargoTypeItem != nullptr) {
+        if (cargoTypeItem != nullptr)
+        {
             m_treeInfo->addTopLevelItem(cargoTypeItem);
         }
 
@@ -667,7 +706,8 @@ void InfoWidget::updateWare(const QString &macro)
     // Transport type
     QTreeWidgetItem *transportTypeItem = nullptr;
 
-    switch (ware->transportType) {
+    switch (ware->transportType)
+    {
         case GameWares::TransportType::Container:
             transportTypeItem = new InfoItem(
                 ::std::unique_ptr<GenericString>(
@@ -696,7 +736,8 @@ void InfoWidget::updateWare(const QString &macro)
             break;
     }
 
-    if (transportTypeItem != nullptr) {
+    if (transportTypeItem != nullptr)
+    {
         m_treeInfo->addTopLevelItem(transportTypeItem);
     }
 
@@ -770,7 +811,8 @@ void InfoWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 void InfoWidget::onBtnBackClicked()
 {
     qDebug() << "Back";
-    if (m_historyIndex > 0) {
+    if (m_historyIndex > 0)
+    {
         --m_historyIndex;
         this->update();
     }
@@ -782,7 +824,8 @@ void InfoWidget::onBtnBackClicked()
 void InfoWidget::onBtnForwardClicked()
 {
     qDebug() << "Forward";
-    if (m_historyIndex < m_history.size() - 1) {
+    if (m_historyIndex < m_history.size() - 1)
+    {
         ++m_historyIndex;
         this->update();
     }

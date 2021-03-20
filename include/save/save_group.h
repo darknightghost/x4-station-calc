@@ -14,7 +14,8 @@ class SaveGroup :
     virtual public ICreateFactoryFunc<SaveGroup>,
     virtual public ILoadFactoryFunc<SaveGroup,
                                     QJsonObject &,
-                                    const SaveVersion &> {
+                                    const SaveVersion &>
+{
     CREATE_FUNC(SaveGroup);
     LOAD_FUNC(SaveGroup, QJsonObject &, const SaveVersion &);
 

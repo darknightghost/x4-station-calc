@@ -137,14 +137,17 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
 
     // Load modules
     this->loadStationModules();
-    for (auto &resource : m_resources) {
+    for (auto &resource : m_resources)
+    {
         m_comboByResource->insertItem(-1, "", resource);
     }
 
-    for (auto &product : m_products) {
+    for (auto &product : m_products)
+    {
         m_comboByProduction->insertItem(-1, "", product);
     }
-    for (auto &race : m_races) {
+    for (auto &race : m_races)
+    {
         m_comboByRaces->insertItem(-1, "", race);
     }
 
@@ -198,11 +201,14 @@ void StationModulesWidget::setAddToStationStatus(bool enabled)
  */
 void StationModulesWidget::onFilterByProduct(QString ware)
 {
-    for (auto i = 0; i < m_comboByProduction->count(); ++i) {
+    for (auto i = 0; i < m_comboByProduction->count(); ++i)
+    {
         QString macro = m_comboByProduction->itemData(i).toString();
-        if (macro == ware) {
+        if (macro == ware)
+        {
             m_comboByProduction->setCurrentIndex(i);
-            if (! m_widgetFilters->isVisible()) {
+            if (! m_widgetFilters->isVisible())
+            {
                 this->onBtnShowHideFilterWidgetClicked();
             }
 
@@ -221,12 +227,15 @@ void StationModulesWidget::onFilterByProduct(QString ware)
  */
 void StationModulesWidget::onFilterByResource(QString ware)
 {
-    for (auto i = 0; i < m_comboByResource->count(); ++i) {
+    for (auto i = 0; i < m_comboByResource->count(); ++i)
+    {
         QString macro = m_comboByResource->itemData(i).toString();
-        if (macro == ware) {
+        if (macro == ware)
+        {
             m_comboByResource->setCurrentIndex(i);
 
-            if (! m_widgetFilters->isVisible()) {
+            if (! m_widgetFilters->isVisible())
+            {
                 this->onBtnShowHideFilterWidgetClicked();
             }
 
@@ -250,57 +259,72 @@ StationModulesWidget::~StationModulesWidget() {}
 void StationModulesWidget::loadStationModules()
 {
     for (::std::shared_ptr<GameStationModules::StationModule> module :
-         GameData::instance()->stationModules()->modules()) {
-        for (auto &race : module->races) {
+         GameData::instance()->stationModules()->modules())
+    {
+        for (auto &race : module->races)
+        {
             m_races.insert(race);
         }
-        switch (module->moduleClass) {
+        switch (module->moduleClass)
+        {
             case GameStationModules::StationModule::StationModuleClass::
-                BuildModule: {
+                BuildModule:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemBuild, module);
                 m_itemBuild->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             case GameStationModules::StationModule::StationModuleClass::
-                ConnectionModule: {
+                ConnectionModule:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemConnect, module);
                 m_itemConnect->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             case GameStationModules::StationModule::StationModuleClass::
-                DefenceModule: {
+                DefenceModule:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemDefence, module);
                 m_itemDefence->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             case GameStationModules::StationModule::StationModuleClass::
-                Dockarea: {
+                Dockarea:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemDock, module);
                 m_itemDock->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             case GameStationModules::StationModule::StationModuleClass::
-                Habitation: {
+                Habitation:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemHabitation,
                                                        module);
                 m_itemHabitation->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             case GameStationModules::StationModule::StationModuleClass::
-                Production: {
+                Production:
+            {
                 auto iter = module->properties.find(
                     GameStationModules::Property::Type::SupplyProduct);
-                if (iter == module->properties.end()) {
+                if (iter == module->properties.end())
+                {
                     break;
                 }
 
@@ -314,18 +338,21 @@ void StationModulesWidget::loadStationModules()
                     = ::std::static_pointer_cast<
                         GameStationModules::SupplyProduct>(*iter);
                 m_products.insert(property->product);
-                for (auto resource : property->productionInfo->resources) {
+                for (auto resource : property->productionInfo->resources)
+                {
                     m_resources.insert(resource->id);
                 }
-            } break;
+            }
+            break;
 
-            case GameStationModules::StationModule::StationModuleClass::
-                Storage: {
+            case GameStationModules::StationModule::StationModuleClass::Storage:
+            {
                 StationModulesTreeWidgetItem *item
                     = new StationModulesTreeWidgetItem(m_itemStorage, module);
                 m_itemStorage->insertChild(-1, item);
                 m_moduleItems.push_back(item);
-            } break;
+            }
+            break;
 
             default:
                 break;
@@ -344,23 +371,28 @@ void StationModulesWidget::onLanguageChanged()
     this->setWindowTitle(STR("STR_STATION_MODULE_WIDGET_TITLE"));
 
     // Button bar.
-    if (m_widgetFilters->isVisible()) {
+    if (m_widgetFilters->isVisible())
+    {
         m_btnShowHideFilter->setText(STR("STR_HIDE_FILTER"));
-    } else {
+    }
+    else
+    {
         m_btnShowHideFilter->setText(STR("STR_SHOW_FILTER"));
     }
     m_btnAddToStation->setText(STR("STR_ADD_TO_STATION"));
 
     // Filters.
     m_chkByRace->setText(STR("STR_BY_RACE"));
-    for (int i = 0; i < m_comboByRaces->count(); ++i) {
+    for (int i = 0; i < m_comboByRaces->count(); ++i)
+    {
         QString id = m_comboByRaces->itemData(i).toString();
         m_comboByRaces->setItemText(
             i, gameTexts->text(GameData::instance()->races()->race(id).name));
     }
     this->sortComboBox(m_comboByRaces);
     m_chkByProduction->setText(STR("STR_BY_PRODUCT"));
-    for (int i = 0; i < m_comboByProduction->count(); ++i) {
+    for (int i = 0; i < m_comboByProduction->count(); ++i)
+    {
         QString id = m_comboByProduction->itemData(i).toString();
         m_comboByProduction->setItemText(
             i, gameTexts->text(GameData::instance()->wares()->ware(id)->name));
@@ -368,7 +400,8 @@ void StationModulesWidget::onLanguageChanged()
     this->sortComboBox(m_comboByProduction);
 
     m_chkByResource->setText(STR("STR_BY_RESOURCE"));
-    for (int i = 0; i < m_comboByResource->count(); ++i) {
+    for (int i = 0; i < m_comboByResource->count(); ++i)
+    {
         QString id = m_comboByResource->itemData(i).toString();
         m_comboByResource->setItemText(
             i, gameTexts->text(GameData::instance()->wares()->ware(id)->name));
@@ -387,7 +420,8 @@ void StationModulesWidget::onLanguageChanged()
     m_itemConnect->setText(0, STR("STATION_TYPE_CONNECT"));
 
     // Items
-    for (auto module : m_moduleItems) {
+    for (auto module : m_moduleItems)
+    {
         module->onLanguageChanged();
     }
 
@@ -407,9 +441,12 @@ void StationModulesWidget::sortComboBox(QComboBox *combo)
 {
     QCollator collator;
     int       index = combo->currentIndex();
-    for (int i = 0; i < combo->count(); ++i) {
-        for (int j = i + 1; j < combo->count(); ++j) {
-            if (collator.compare(combo->itemText(i), combo->itemText(j)) > 0) {
+    for (int i = 0; i < combo->count(); ++i)
+    {
+        for (int j = i + 1; j < combo->count(); ++j)
+        {
+            if (collator.compare(combo->itemText(i), combo->itemText(j)) > 0)
+            {
                 // Swap
                 QVariant v = combo->itemData(i);
                 QString  s = combo->itemText(i);
@@ -417,9 +454,12 @@ void StationModulesWidget::sortComboBox(QComboBox *combo)
                 combo->setItemText(i, combo->itemText(j));
                 combo->setItemData(j, v);
                 combo->setItemText(j, s);
-                if (index == i) {
+                if (index == i)
+                {
                     index = j;
-                } else if (index == j) {
+                }
+                else if (index == j)
+                {
                     index = i;
                 }
             }
@@ -434,21 +474,26 @@ void StationModulesWidget::sortComboBox(QComboBox *combo)
  */
 void StationModulesWidget::filterModules()
 {
-    for (auto &moduleItem : m_moduleItems) {
-        if (m_chkByRace->isChecked()) {
+    for (auto &moduleItem : m_moduleItems)
+    {
+        if (m_chkByRace->isChecked())
+        {
             if ((! moduleItem->module()->races.empty())
                 && moduleItem->module()->races.find(
                        m_comboByRaces->currentData().toString())
-                       == moduleItem->module()->races.end()) {
+                       == moduleItem->module()->races.end())
+            {
                 moduleItem->setHidden(true);
                 continue;
             }
         }
 
-        if (m_chkByResource->isChecked()) {
+        if (m_chkByResource->isChecked())
+        {
             if (moduleItem->module()->moduleClass
                 == GameStationModules::StationModule::StationModuleClass::
-                    Production) {
+                    Production)
+            {
                 ::std::shared_ptr<GameStationModules::StationModule> module
                     = moduleItem->module();
                 ::std::shared_ptr<GameStationModules::SupplyProduct> property
@@ -459,17 +504,20 @@ void StationModulesWidget::filterModules()
 
                 if (property->productionInfo->resources.find(
                         m_comboByResource->currentData().toString())
-                    == property->productionInfo->resources.end()) {
+                    == property->productionInfo->resources.end())
+                {
                     moduleItem->setHidden(true);
                     continue;
                 }
             }
         }
 
-        if (m_chkByProduction->isChecked()) {
+        if (m_chkByProduction->isChecked())
+        {
             if (moduleItem->module()->moduleClass
                 == GameStationModules::StationModule::StationModuleClass::
-                    Production) {
+                    Production)
+            {
                 ::std::shared_ptr<GameStationModules::StationModule> module
                     = moduleItem->module();
                 ::std::shared_ptr<GameStationModules::SupplyProduct> property
@@ -478,15 +526,18 @@ void StationModulesWidget::filterModules()
                         module->properties[GameStationModules::Property::Type::
                                                SupplyProduct]);
                 if (property->product
-                    != m_comboByProduction->currentData().toString()) {
+                    != m_comboByProduction->currentData().toString())
+                {
                     moduleItem->setHidden(true);
                     continue;
                 }
             }
         }
 
-        if (m_chkByKeyword->isChecked()) {
-            if (! moduleItem->text(0).contains(m_txtKeyword->text())) {
+        if (m_chkByKeyword->isChecked())
+        {
+            if (! moduleItem->text(0).contains(m_txtKeyword->text()))
+            {
                 moduleItem->setHidden(true);
                 continue;
             }
@@ -502,10 +553,13 @@ void StationModulesWidget::filterModules()
 void StationModulesWidget::onBtnShowHideFilterWidgetClicked()
 {
     // Button bar.
-    if (m_widgetFilters->isVisible()) {
+    if (m_widgetFilters->isVisible())
+    {
         m_widgetFilters->setVisible(false);
         m_btnShowHideFilter->setText(STR("STR_SHOW_FILTER"));
-    } else {
+    }
+    else
+    {
         m_widgetFilters->setVisible(true);
         m_btnShowHideFilter->setText(STR("STR_HIDE_FILTER"));
     }
@@ -516,9 +570,12 @@ void StationModulesWidget::onBtnShowHideFilterWidgetClicked()
  */
 void StationModulesWidget::onByRaceChkChanged(int status)
 {
-    if (status == Qt::CheckState::Unchecked) {
+    if (status == Qt::CheckState::Unchecked)
+    {
         m_comboByRaces->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_comboByRaces->setEnabled(true);
     }
     this->filterModules();
@@ -529,9 +586,12 @@ void StationModulesWidget::onByRaceChkChanged(int status)
  */
 void StationModulesWidget::onByProductionChkChanged(int status)
 {
-    if (status == Qt::CheckState::Unchecked) {
+    if (status == Qt::CheckState::Unchecked)
+    {
         m_comboByProduction->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_comboByProduction->setEnabled(true);
     }
     this->filterModules();
@@ -542,9 +602,12 @@ void StationModulesWidget::onByProductionChkChanged(int status)
  */
 void StationModulesWidget::onByResourceChkChanged(int status)
 {
-    if (status == Qt::CheckState::Unchecked) {
+    if (status == Qt::CheckState::Unchecked)
+    {
         m_comboByResource->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_comboByResource->setEnabled(true);
     }
     this->filterModules();
@@ -555,9 +618,12 @@ void StationModulesWidget::onByResourceChkChanged(int status)
  */
 void StationModulesWidget::onByKeywordChkChanged(int status)
 {
-    if (status == Qt::CheckState::Unchecked) {
+    if (status == Qt::CheckState::Unchecked)
+    {
         m_txtKeyword->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_txtKeyword->setEnabled(true);
     }
     this->filterModules();
@@ -569,16 +635,19 @@ void StationModulesWidget::onByKeywordChkChanged(int status)
 void StationModulesWidget::onAddToStationClicked()
 {
     QStringList macros;
-    for (auto item : m_treeStationModules->selectedItems()) {
+    for (auto item : m_treeStationModules->selectedItems())
+    {
         if (notIn(item, m_itemBuild, m_itemDock, m_itemProduction,
                   m_itemStorage, m_itemHabitation, m_itemDefence,
-                  m_itemConnect)) {
+                  m_itemConnect))
+        {
             StationModulesTreeWidgetItem *moduleItem
                 = (StationModulesTreeWidgetItem *)item;
             macros.push_back((moduleItem->module()->macro));
         }
     }
-    if (! macros.empty()) {
+    if (! macros.empty())
+    {
         emit this->addToStation(::std::move(macros));
     }
 }
@@ -589,9 +658,12 @@ void StationModulesWidget::onAddToStationClicked()
 void StationModulesWidget::onItemClicked(QTreeWidgetItem *item)
 {
     if (in(item, m_itemBuild, m_itemDock, m_itemProduction, m_itemStorage,
-           m_itemHabitation, m_itemDefence, m_itemConnect)) {
+           m_itemHabitation, m_itemDefence, m_itemConnect))
+    {
         return;
-    } else {
+    }
+    else
+    {
         StationModulesTreeWidgetItem *moduleItem
             = (StationModulesTreeWidgetItem *)item;
         qDebug() << moduleItem->module()->macro << "clicked.";

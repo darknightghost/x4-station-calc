@@ -15,7 +15,8 @@ QMap<QString, QString> SaveModule::_idMacroMap; ///< ID to macro map.
  */
 SaveModule::SaveModule(const QString &module) : m_module(module), m_amount(1)
 {
-    if (GameData::instance()->stationModules()->module(module) != nullptr) {
+    if (GameData::instance()->stationModules()->module(module) != nullptr)
+    {
         this->setInitialized();
     }
 }
@@ -25,45 +26,57 @@ SaveModule::SaveModule(const QString &module) : m_module(module), m_amount(1)
  */
 SaveModule::SaveModule(QJsonObject &entry, const SaveVersion &version)
 {
-    if (version < SaveVersion(1, 0, 0)) {
+    if (version < SaveVersion(1, 0, 0))
+    {
         this->load0_x_x();
-        if (! entry.contains("id")) {
+        if (! entry.contains("id"))
+        {
             return;
         }
-        if (! entry.contains("amount")) {
+        if (! entry.contains("amount"))
+        {
             return;
         }
         QJsonValue idValue = entry.value("id");
-        if (! idValue.isString()) {
+        if (! idValue.isString())
+        {
             return;
         }
         QJsonValue amountValue = entry.value("amount");
-        if (! amountValue.isDouble()) {
+        if (! amountValue.isDouble())
+        {
             return;
         }
         auto iter = _idMacroMap.find(idValue.toString());
-        if (iter == _idMacroMap.end()) {
+        if (iter == _idMacroMap.end())
+        {
             return;
         }
         m_module = *iter;
         m_amount = (quint64)(amountValue.toInt());
 
         this->setInitialized();
-    } else {
-        if (! entry.contains("macro")) {
+    }
+    else
+    {
+        if (! entry.contains("macro"))
+        {
             return;
         }
-        if (! entry.contains("amount")) {
+        if (! entry.contains("amount"))
+        {
             return;
         }
         QJsonValue macroValue = entry.value("macro");
-        if (! macroValue.isString()) {
+        if (! macroValue.isString())
+        {
             return;
         }
         m_module = macroValue.toString();
 
         QJsonValue amountValue = entry.value("amount");
-        if (! amountValue.isDouble()) {
+        if (! amountValue.isDouble())
+        {
             return;
         }
         m_amount = (quint64)(amountValue.toInt());
@@ -93,9 +106,12 @@ quint64 SaveModule::amount() const
  */
 void SaveModule::setAmount(quint64 amount)
 {
-    if (amount < 1) {
+    if (amount < 1)
+    {
         m_amount = 1;
-    } else {
+    }
+    else
+    {
         m_amount = amount;
     }
 }
@@ -122,7 +138,8 @@ SaveModule::~SaveModule() {}
  */
 void SaveModule::load0_x_x()
 {
-    if (! _idMacroMap.empty()) {
+    if (! _idMacroMap.empty())
+    {
         return;
     }
 
@@ -130,10 +147,13 @@ void SaveModule::load0_x_x()
     QFile      file(":/Save/id_map_0.x.x.json");
     QByteArray jsonStr;
 
-    if (file.open(QIODevice::ReadOnly)) {
+    if (file.open(QIODevice::ReadOnly))
+    {
         jsonStr = file.readAll();
         file.close();
-    } else {
+    }
+    else
+    {
         qCritical() << "Missing resource \":/Save/id_map_0.x.x.json\".";
     }
 
@@ -141,13 +161,15 @@ void SaveModule::load0_x_x()
     QJsonParseError jsonError;
     QJsonDocument   doc = QJsonDocument::fromJson(jsonStr, &jsonError);
 
-    if (jsonError.error != QJsonParseError::NoError) {
+    if (jsonError.error != QJsonParseError::NoError)
+    {
         qCritical() << "Illegal resource file \":/Save/id_map_0.x.x.json\".";
     }
 
     //  Load pairs.
     QJsonObject root = doc.object();
-    for (auto &k : root.keys()) {
+    for (auto &k : root.keys())
+    {
         _idMacroMap[k] = root.value(k).toString();
     }
 

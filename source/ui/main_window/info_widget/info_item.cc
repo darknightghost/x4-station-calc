@@ -73,7 +73,8 @@ InfoItem::~InfoItem() {}
 void InfoItem::onLanguageChanged()
 {
     this->setText(0, m_first->toString());
-    if (m_second != nullptr) {
+    if (m_second != nullptr)
+    {
         TransparentLabel *label
             = new TransparentLabel(m_second->toString(), this->treeWidget());
         this->treeWidget()->setItemWidget(this, 1, label);
@@ -87,7 +88,8 @@ void InfoItem::onLanguageChanged()
  */
 void InfoItem::onDoubleClicked(int column)
 {
-    if (m_onDblClick) {
+    if (m_onDblClick)
+    {
         m_onDblClick(column);
     }
 }

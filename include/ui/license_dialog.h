@@ -10,7 +10,8 @@
 /**
  * @brief	License widget.
  */
-class LicenseDialog : public QDialog {
+class LicenseDialog : public QDialog
+{
     Q_OBJECT
   private:
     QVBoxLayout *m_layout; //< Layout

@@ -23,9 +23,12 @@ QMap<QString, EditorWidget *> EditorWidget::_opendFiles; ///< Opened files.
 EditorWidget *EditorWidget::getEditorWidgetByPath(const QString &path)
 {
     auto iter = _opendFiles.find(QDir(".").absoluteFilePath(path));
-    if (iter == _opendFiles.end()) {
+    if (iter == _opendFiles.end())
+    {
         return nullptr;
-    } else {
+    }
+    else
+    {
         return *iter;
     }
 }
@@ -42,8 +45,9 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     QWidget(parent),
     m_stationModulesWidget(stationModulesWidget), m_infoWidget(infoWidget),
     m_save(save), m_savedUndoCount(0), m_fileActions(fileActions),
-    m_editActions(editActions), m_backgroundTasks(new BackgroundTask(
-                                    BackgroundTask::RunType::Newest, this)),
+    m_editActions(editActions),
+    m_backgroundTasks(
+        new BackgroundTask(BackgroundTask::RunType::Newest, this)),
     m_treeEditor(nullptr)
 {
     this->connect(this, &EditorWidget::windowTitleChanged, parent,
@@ -228,7 +232,8 @@ EditorWidget::EditorWidget(::std::shared_ptr<Save>  save,
     this->setAttribute(Qt::WA_DeleteOnClose);
     parent->setAttribute(Qt::WA_DeleteOnClose);
 
-    if (m_save->path() != "") {
+    if (m_save->path() != "")
+    {
         _opendFiles[m_save->path()] = this;
     }
 
@@ -246,14 +251,17 @@ EditorWidget::~EditorWidget() {}
  */
 void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
 {
-    if (operation->doOperation()) {
+    if (operation->doOperation())
+    {
         m_redoStack.clear();
         m_undoStack.push_back(operation);
         qDebug() << "Operation done.";
         this->updateSaveStatus();
         this->updateUndoRedoStatus();
         this->updateSummary();
-    } else {
+    }
+    else
+    {
         qDebug() << "Operation failed.";
     }
 }
@@ -263,9 +271,12 @@ void EditorWidget::doOperation(::std::shared_ptr<Operation> operation)
  */
 void EditorWidget::updateTitle()
 {
-    if (m_save->path() == "") {
+    if (m_save->path() == "")
+    {
         this->setWindowTitle(STR("STR_NEW_STATION"));
-    } else {
+    }
+    else
+    {
         this->setWindowTitle(
             m_save->path().split("/", Qt::SkipEmptyParts).back());
     }
@@ -276,9 +287,12 @@ void EditorWidget::updateTitle()
  */
 void EditorWidget::updateSaveStatus()
 {
-    if (m_savedUndoCount == m_undoStack.size()) {
+    if (m_savedUndoCount == m_undoStack.size())
+    {
         m_fileActions->actionFileSave->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_fileActions->actionFileSave->setEnabled(true);
     }
 }
@@ -288,9 +302,12 @@ void EditorWidget::updateSaveStatus()
  */
 void EditorWidget::updateAddToStationStatus()
 {
-    if (m_itemGroups->childCount() == 0) {
+    if (m_itemGroups->childCount() == 0)
+    {
         emit this->addToStationStatusChaged(false);
-    } else {
+    }
+    else
+    {
         emit this->addToStationStatusChaged(true);
     }
 }
@@ -300,15 +317,21 @@ void EditorWidget::updateAddToStationStatus()
  */
 void EditorWidget::updateUndoRedoStatus()
 {
-    if (m_undoStack.empty()) {
+    if (m_undoStack.empty())
+    {
         m_editActions->actionEditUndo->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_editActions->actionEditUndo->setEnabled(true);
     }
 
-    if (m_redoStack.empty()) {
+    if (m_redoStack.empty())
+    {
         m_editActions->actionEditRedo->setEnabled(false);
-    } else {
+    }
+    else
+    {
         m_editActions->actionEditRedo->setEnabled(true);
     }
 }
@@ -321,21 +344,32 @@ void EditorWidget::updateCutCopyRemoveStatus()
     bool found       = false;
     bool foundGroup  = false;
     bool foundModule = false;
-    if (m_treeEditor != nullptr) {
-        for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
-            if (dynamic_cast<GroupItem *>(rawItem) != nullptr) {
-                if (foundModule) {
+    if (m_treeEditor != nullptr)
+    {
+        for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems())
+        {
+            if (dynamic_cast<GroupItem *>(rawItem) != nullptr)
+            {
+                if (foundModule)
+                {
                     found = false;
                     break;
-                } else {
+                }
+                else
+                {
                     foundGroup = true;
                     found      = true;
                 }
-            } else if (dynamic_cast<ModuleItem *>(rawItem) != nullptr) {
-                if (foundGroup) {
+            }
+            else if (dynamic_cast<ModuleItem *>(rawItem) != nullptr)
+            {
+                if (foundGroup)
+                {
                     found = false;
                     break;
-                } else {
+                }
+                else
+                {
                     foundModule = true;
                     found       = true;
                 }
@@ -357,26 +391,35 @@ void EditorWidget::updatePasteStatus()
     QClipboard *clipboard = QApplication::clipboard();
 
     const QMimeData *data = clipboard->mimeData();
-    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr)) {
+    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr))
+    {
         // Check selection.
         QTreeWidgetItem *item = m_treeEditor->currentItem();
-        if (item == m_itemGroups
-            || dynamic_cast<GroupItem *>(item) != nullptr) {
+        if (item == m_itemGroups || dynamic_cast<GroupItem *>(item) != nullptr)
+        {
             m_editActions->actionEditPaste->setEnabled(true);
-        } else {
+        }
+        else
+        {
             m_editActions->actionEditPaste->setEnabled(false);
         }
-    } else if (data->hasFormat(
-                   X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr)) {
+    }
+    else if (data->hasFormat(X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr))
+    {
         // Check selection.
         QTreeWidgetItem *item = m_treeEditor->currentItem();
         if (dynamic_cast<GroupItem *>(item) != nullptr
-            || dynamic_cast<ModuleItem *>(item) != nullptr) {
+            || dynamic_cast<ModuleItem *>(item) != nullptr)
+        {
             m_editActions->actionEditPaste->setEnabled(true);
-        } else {
+        }
+        else
+        {
             m_editActions->actionEditPaste->setEnabled(false);
         }
-    } else {
+    }
+    else
+    {
         m_editActions->actionEditPaste->setEnabled(false);
     }
 }
@@ -389,24 +432,33 @@ void EditorWidget::updateGroupMoveButtonStatus(GroupItem *      item,
 {
     int index = m_itemGroups->indexOfChild(item);
 
-    if (itemWidget == nullptr) {
+    if (itemWidget == nullptr)
+    {
         itemWidget = dynamic_cast<GroupItemWidget *>(
             m_treeEditor->itemWidget(item, 1));
         Q_ASSERT(itemWidget != nullptr);
     }
 
-    if (index == 0) {
-        if (index == m_itemGroups->childCount() - 1) {
+    if (index == 0)
+    {
+        if (index == m_itemGroups->childCount() - 1)
+        {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(false);
-        } else {
+        }
+        else
+        {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(true);
         }
-    } else if (index == m_itemGroups->childCount() - 1) {
+    }
+    else if (index == m_itemGroups->childCount() - 1)
+    {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(false);
-    } else {
+    }
+    else
+    {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(true);
     }
@@ -422,24 +474,33 @@ void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *      item,
     Q_ASSERT(groupItem != nullptr);
     int index = groupItem->indexOfChild(item);
 
-    if (itemWidget == nullptr) {
+    if (itemWidget == nullptr)
+    {
         itemWidget = dynamic_cast<ModuleItemWidget *>(
             m_treeEditor->itemWidget(item, 1));
         Q_ASSERT(itemWidget != nullptr);
     }
 
-    if (index == 0) {
-        if (index == groupItem->childCount() - 1) {
+    if (index == 0)
+    {
+        if (index == groupItem->childCount() - 1)
+        {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(false);
-        } else {
+        }
+        else
+        {
             itemWidget->setUpBtnEnabled(false);
             itemWidget->setDownBtnEnabled(true);
         }
-    } else if (index == groupItem->childCount() - 1) {
+    }
+    else if (index == groupItem->childCount() - 1)
+    {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(false);
-    } else {
+    }
+    else
+    {
         itemWidget->setUpBtnEnabled(true);
         itemWidget->setDownBtnEnabled(true);
     }
@@ -467,8 +528,10 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
     auto gameWares          = GameData::instance()->wares();
 
     // Count summary.
-    for (auto saveGroup : m_save->groups()) {
-        for (auto saveModule : saveGroup->modules()) {
+    for (auto saveGroup : m_save->groups())
+    {
+        for (auto saveModule : saveGroup->modules())
+        {
             auto module = gameStationModules->module(saveModule->module());
 
             // Hull & explosion damage.
@@ -477,8 +540,10 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                 += module->explosiondamage * saveModule->amount();
 
             // Properties.
-            for (auto property : module->properties) {
-                switch (property->type) {
+            for (auto property : module->properties)
+            {
+                switch (property->type)
+                {
                     case GameStationModules::Property::Type::MTurret:
                         // Has M turret.
                         {
@@ -648,11 +713,13 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
 
                             // Supply.
                             for (auto resource :
-                                 supplyWorkforce->supplyInfo->resources) {
+                                 supplyWorkforce->supplyInfo->resources)
+                            {
                                 // Find/create ware.
                                 const QString &macro = resource->id;
                                 auto iter = summary.resources.find(macro);
-                                if (iter == summary.resources.end()) {
+                                if (iter == summary.resources.end())
+                                {
                                     summary.resources[macro] = Range<
                                         long double>(
                                         0.0,
@@ -661,7 +728,9 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                          * saveModule->amount()
                                          / supplyWorkforce->supplyInfo->amount
                                          / supplyWorkforce->supplyInfo->time));
-                                } else {
+                                }
+                                else
+                                {
                                     // Increase amount.
                                     iter->setMax(
                                         iter->max()
@@ -674,7 +743,8 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                 }
 
                                 // Transport type.
-                                switch (gameWares->ware(macro)->transportType) {
+                                switch (gameWares->ware(macro)->transportType)
+                                {
                                     case GameWares::TransportType::Container:
                                         // Container.
                                         summary.requirements
@@ -730,7 +800,8 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                             // Product.
                             // Find/create ware.
                             auto iter = summary.products.find(macro);
-                            if (iter == summary.products.end()) {
+                            if (iter == summary.products.end())
+                            {
                                 summary.products[macro] = Range<long double>(
                                     (long double)(productionInfo->amount) * 3600
                                         * saveModule->amount()
@@ -739,7 +810,9 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                         * saveModule->amount()
                                         * (1.0 + productionInfo->workEffect)
                                         / productionInfo->time);
-                            } else {
+                            }
+                            else
+                            {
                                 // Increase amount.
                                 iter->setRange(
                                     (long double)(productionInfo->amount) * 3600
@@ -754,7 +827,8 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                             }
 
                             // Transport type.
-                            switch (gameWares->ware(macro)->transportType) {
+                            switch (gameWares->ware(macro)->transportType)
+                            {
                                 case GameWares::TransportType::Container:
                                     // Container.
                                     summary.requirements.requireContainerStorage
@@ -778,12 +852,14 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                             }
 
                             // Resources.
-                            for (auto resouce : productionInfo->resources) {
+                            for (auto resouce : productionInfo->resources)
+                            {
                                 const QString &macro = resouce->id;
 
                                 // Find/create ware.
                                 auto iter = summary.resources.find(macro);
-                                if (iter == summary.resources.end()) {
+                                if (iter == summary.resources.end())
+                                {
                                     summary.resources[macro]
                                         = Range<long double>(
                                             (long double)(resouce->amount)
@@ -794,7 +870,9 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                                 * (1.0
                                                    + productionInfo->workEffect)
                                                 / productionInfo->time);
-                                } else {
+                                }
+                                else
+                                {
                                     // Increase amount.
                                     iter->setRange(
                                         (long double)(resouce->amount) * 3600
@@ -810,7 +888,8 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                 }
 
                                 // Transport type.
-                                switch (gameWares->ware(macro)->transportType) {
+                                switch (gameWares->ware(macro)->transportType)
+                                {
                                     case GameWares::TransportType::Container:
                                         // Container.
                                         summary.requirements
@@ -845,7 +924,8 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                 hasCargo = ::std::dynamic_pointer_cast<
                                     GameStationModules::HasCargo>(property);
 
-                            switch (hasCargo->cargoType) {
+                            switch (hasCargo->cargoType)
+                            {
                                 case GameWares::TransportType::Container:
                                     // Container.
                                     summary.storage.container
@@ -878,8 +958,10 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
     }
 
     // Intermediates
-    for (auto macro : summary.products.keys()) {
-        if (summary.resources.find(macro) != summary.resources.end()) {
+    for (auto macro : summary.products.keys())
+    {
+        if (summary.resources.find(macro) != summary.resources.end())
+        {
             auto productRange  = summary.products[macro];
             auto resourceRange = summary.resources[macro];
             summary.intermediates[macro]
@@ -966,26 +1048,30 @@ void EditorWidget::showSummary(const SummaryInfo &summary)
 void EditorWidget::checkSummary(const SummaryInfo &summary)
 {
     this->clearWarnings();
-    if (summary.surplusWorkforce < 0) {
+    if (summary.surplusWorkforce < 0)
+    {
         this->addWarning("STR_EDITOR_WARING_NOT_ENOUGH_WORKFORCE");
     }
 
     if (summary.requirements.requireContainerStorage
-        && summary.storage.container == 0) {
+        && summary.storage.container == 0)
+    {
         this->addWarning("STR_EDITOR_WARING_MISSING_CONTAINER_STORAGE");
     }
 
-    if (summary.requirements.requireSolidStorage
-        && summary.storage.solid == 0) {
+    if (summary.requirements.requireSolidStorage && summary.storage.solid == 0)
+    {
         this->addWarning("STR_EDITOR_WARING_MISSING_SOLID_STORAGE");
     }
 
     if (summary.requirements.requireLiquidStorage
-        && summary.storage.liquid == 0) {
+        && summary.storage.liquid == 0)
+    {
         this->addWarning("STR_EDITOR_WARING_MISSING_LIQUID_STORAGE");
     }
 
-    if (summary.dockingBay.sDock == 0 && summary.dockingBay.mDock == 0) {
+    if (summary.dockingBay.sDock == 0 && summary.dockingBay.mDock == 0)
+    {
         this->addWarning("STR_EDITOR_WARING_MISSING_DOCKINGBAY");
     }
 }
@@ -995,19 +1081,24 @@ void EditorWidget::checkSummary(const SummaryInfo &summary)
  */
 bool EditorWidget::closeSave()
 {
-    if (m_save == nullptr) {
+    if (m_save == nullptr)
+    {
         return true;
     }
 
-    if (m_savedUndoCount == m_undoStack.size()) {
+    if (m_savedUndoCount == m_undoStack.size())
+    {
         return true;
-    } else {
+    }
+    else
+    {
         switch (QMessageBox::question(
             this, STR("STR_TITLE_SAVE_STATION"),
             STR("STR_SAVE_STATION").arg(this->windowTitle()),
             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No
                 | QMessageBox::StandardButton::Cancel,
-            QMessageBox::StandardButton::Yes)) {
+            QMessageBox::StandardButton::Yes))
+        {
             case QMessageBox::StandardButton::Yes:
                 this->save();
                 return m_savedUndoCount == m_undoStack.size();
@@ -1031,7 +1122,8 @@ bool EditorWidget::closeSave()
 void EditorWidget::loadGroups()
 {
     // Load groups.
-    for (::std::shared_ptr<SaveGroup> group : m_save->groups()) {
+    for (::std::shared_ptr<SaveGroup> group : m_save->groups())
+    {
         GroupItem *groupItem = new GroupItem(group);
         m_itemGroups->addChild(groupItem);
         GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
@@ -1045,7 +1137,8 @@ void EditorWidget::loadGroups()
                       &EditorWidget::removeGroupItem);
 
         // Load modules.
-        for (::std::shared_ptr<SaveModule> module : group->modules()) {
+        for (::std::shared_ptr<SaveModule> module : group->modules())
+        {
             ModuleItem *moduleItem = new ModuleItem(module);
             groupItem->addChild(moduleItem);
             ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
@@ -1066,25 +1159,29 @@ void EditorWidget::loadGroups()
         }
 
         ModuleItem *first = dynamic_cast<ModuleItem *>(groupItem->child(0));
-        if (first != nullptr) {
+        if (first != nullptr)
+        {
             this->updateModuleMoveButtonStatus(first);
         }
 
         ModuleItem *last = dynamic_cast<ModuleItem *>(
             groupItem->child(groupItem->childCount() - 1));
-        if (last != nullptr) {
+        if (last != nullptr)
+        {
             this->updateModuleMoveButtonStatus(last);
         }
     }
 
     GroupItem *first = dynamic_cast<GroupItem *>(m_itemGroups->child(0));
-    if (first != nullptr) {
+    if (first != nullptr)
+    {
         this->updateGroupMoveButtonStatus(first);
     }
 
     GroupItem *last = dynamic_cast<GroupItem *>(
         m_itemGroups->child(m_itemGroups->childCount() - 1));
-    if (last != nullptr) {
+    if (last != nullptr)
+    {
         this->updateGroupMoveButtonStatus(last);
     }
 }
@@ -1094,10 +1191,13 @@ void EditorWidget::loadGroups()
  */
 void EditorWidget::closeEvent(QCloseEvent *event)
 {
-    if (this->closeSave()) {
+    if (this->closeSave())
+    {
         _opendFiles.remove(m_save->path());
         event->accept();
-    } else {
+    }
+    else
+    {
         event->ignore();
     }
 }
@@ -1114,10 +1214,14 @@ void EditorWidget::addModules(const QStringList &macros)
     ModuleItem *moduleItem = nullptr;
 
     QTreeWidgetItem *item = m_treeEditor->currentItem();
-    if (item != nullptr) {
-        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+    if (item != nullptr)
+    {
+        if (dynamic_cast<GroupItem *>(item) != nullptr)
+        {
             groupItem = static_cast<GroupItem *>(item);
-        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+        }
+        else if (dynamic_cast<ModuleItem *>(item) != nullptr)
+        {
             moduleItem = static_cast<ModuleItem *>(item);
             groupItem  = static_cast<GroupItem *>(item->parent());
         }
@@ -1125,9 +1229,12 @@ void EditorWidget::addModules(const QStringList &macros)
 
     int groupIndex  = m_itemGroups->indexOfChild(groupItem);
     int moduleIndex = 0;
-    if (moduleItem == nullptr) {
+    if (moduleItem == nullptr)
+    {
         moduleIndex = groupItem->childCount();
-    } else {
+    }
+    else
+    {
         moduleIndex = groupItem->indexOfChild(moduleItem) + 1;
     }
 
@@ -1146,10 +1253,14 @@ void EditorWidget::newGroup()
     int index = m_itemGroups->childCount();
 
     QTreeWidgetItem *item = m_treeEditor->currentItem();
-    if (item != nullptr) {
-        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+    if (item != nullptr)
+    {
+        if (dynamic_cast<GroupItem *>(item) != nullptr)
+        {
             index = m_itemGroups->indexOfChild(item) + 1;
-        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+        }
+        else if (dynamic_cast<ModuleItem *>(item) != nullptr)
+        {
             index = m_itemGroups->indexOfChild(item->parent()) + 1;
         }
     }
@@ -1167,7 +1278,8 @@ void EditorWidget::newGroup()
  */
 void EditorWidget::undo()
 {
-    if (m_undoStack.empty()) {
+    if (m_undoStack.empty())
+    {
         return;
     }
 
@@ -1190,7 +1302,8 @@ void EditorWidget::undo()
  */
 void EditorWidget::redo()
 {
-    if (m_redoStack.empty()) {
+    if (m_redoStack.empty())
+    {
         return;
     }
 
@@ -1217,11 +1330,13 @@ void EditorWidget::cut()
     QVector<::std::shared_ptr<const SaveModule>> modules;
 
     // Scan items.
-    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems())
+    {
         {
             GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
 
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 groupItems.push_back(item);
                 groups.append(item->group());
             }
@@ -1230,14 +1345,16 @@ void EditorWidget::cut()
         {
             ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
 
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 moduleItems.push_back(item);
                 modules.append(item->module());
             }
         }
     }
 
-    if (moduleItems.empty()) {
+    if (moduleItems.empty())
+    {
         // Groups
         // Get mimedata.
         QMimeData *                       mimeData = new QMimeData();
@@ -1253,7 +1370,9 @@ void EditorWidget::cut()
         ::std::shared_ptr<Operation> operation
             = RemoveOperation::create(groupItems, {}, this);
         this->doOperation(operation);
-    } else if (! moduleItems.empty()) {
+    }
+    else if (! moduleItems.empty())
+    {
         // Modules
         // Get mimedata.
         QMimeData *                        mimeData = new QMimeData();
@@ -1284,11 +1403,13 @@ void EditorWidget::copy()
     QVector<::std::shared_ptr<const SaveModule>> modules;
 
     // Scan items.
-    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems())
+    {
         {
             GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
 
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 groups.append(item->group());
             }
         }
@@ -1296,13 +1417,15 @@ void EditorWidget::copy()
         {
             ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
 
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 modules.append(item->module());
             }
         }
     }
 
-    if (modules.empty()) {
+    if (modules.empty())
+    {
         // Groups
         // Get mimedata.
         QMimeData *                       mimeData = new QMimeData();
@@ -1313,7 +1436,9 @@ void EditorWidget::copy()
         // Set clipboard.
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setMimeData(mimeData);
-    } else if (! modules.empty()) {
+    }
+    else if (! modules.empty())
+    {
         // Modules
         // Get mimedata.
         QMimeData *                        mimeData = new QMimeData();
@@ -1339,7 +1464,8 @@ void EditorWidget::paste()
     QClipboard *clipboard = QApplication::clipboard();
 
     const QMimeData *data = clipboard->mimeData();
-    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr)) {
+    if (data->hasFormat(X4SCGroupClipboardMimeDataBuilder::_mimeTypeStr))
+    {
         // Groups.
         // Get data.
         X4SCGroupClipboardMimeDataBuilder builder;
@@ -1348,11 +1474,15 @@ void EditorWidget::paste()
 
         // Get position.
         GroupItem *groupItem = nullptr;
-        if (m_itemGroups->childCount() > 0) {
-            if (item == m_itemGroups) {
+        if (m_itemGroups->childCount() > 0)
+        {
+            if (item == m_itemGroups)
+            {
                 groupItem = dynamic_cast<GroupItem *>(
                     item->child(item->childCount() - 1));
-            } else {
+            }
+            else
+            {
                 groupItem = dynamic_cast<GroupItem *>(item);
             }
         }
@@ -1361,8 +1491,9 @@ void EditorWidget::paste()
         ::std::shared_ptr<Operation> operation
             = PasteGroupOperation::create(groupItem, builder, this);
         this->doOperation(operation);
-    } else if (data->hasFormat(
-                   X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr)) {
+    }
+    else if (data->hasFormat(X4SCModuleClipboardMimeDataBuilder::_mimeTypeStr))
+    {
         // Moudles.
         // Get data.
         X4SCModuleClipboardMimeDataBuilder builder;
@@ -1371,13 +1502,17 @@ void EditorWidget::paste()
 
         GroupItem * groupItem  = nullptr;
         ModuleItem *moduleItem = nullptr;
-        if (dynamic_cast<GroupItem *>(item) != nullptr) {
+        if (dynamic_cast<GroupItem *>(item) != nullptr)
+        {
             groupItem = dynamic_cast<GroupItem *>(item);
-            if (groupItem->childCount() != 0) {
+            if (groupItem->childCount() != 0)
+            {
                 moduleItem = dynamic_cast<ModuleItem *>(
                     groupItem->child(groupItem->childCount() - 1));
             }
-        } else if (dynamic_cast<ModuleItem *>(item) != nullptr) {
+        }
+        else if (dynamic_cast<ModuleItem *>(item) != nullptr)
+        {
             groupItem = dynamic_cast<GroupItem *>(item->parent());
             Q_ASSERT(groupItem != nullptr);
             moduleItem = dynamic_cast<ModuleItem *>(item);
@@ -1397,11 +1532,13 @@ void EditorWidget::remove()
 {
     QVector<GroupItem *>  groupItems;
     QVector<ModuleItem *> moduleItems;
-    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems()) {
+    for (QTreeWidgetItem *rawItem : m_treeEditor->selectedItems())
+    {
         {
             GroupItem *item = dynamic_cast<GroupItem *>(rawItem);
 
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 groupItems.push_back(item);
                 continue;
             }
@@ -1409,7 +1546,8 @@ void EditorWidget::remove()
 
         {
             ModuleItem *item = dynamic_cast<ModuleItem *>(rawItem);
-            if (item != nullptr) {
+            if (item != nullptr)
+            {
                 moduleItems.push_back(item);
             }
         }
@@ -1449,14 +1587,20 @@ void EditorWidget::removeModuleItem(ModuleItem *item)
  */
 void EditorWidget::save()
 {
-    if (m_save->path() == "") {
+    if (m_save->path() == "")
+    {
         this->saveAs();
-    } else {
-        if (m_save->write()) {
+    }
+    else
+    {
+        if (m_save->write())
+        {
             m_savedUndoCount = m_undoStack.size();
             qDebug() << "File" << this->windowTitle() << "Saved.";
             this->updateSaveStatus();
-        } else {
+        }
+        else
+        {
             QMessageBox::critical(this, STR("STR_ERROR"),
                                   STR("STR_ERR_SAVE").arg(m_save->path()));
         }
@@ -1476,7 +1620,8 @@ void EditorWidget::saveAs()
             Config::instance()->getString("/openPath", QDir::homePath())),
         STR("STR_SAVE_FILE_FILTER"));
 
-    if (fileName == "") {
+    if (fileName == "")
+    {
         return;
     }
 
@@ -1487,14 +1632,17 @@ void EditorWidget::saveAs()
     QString oldPath = m_save->path();
 
     // Save file.
-    if (m_save->write(fileName)) {
+    if (m_save->write(fileName))
+    {
         m_savedUndoCount = m_undoStack.size();
         qDebug() << "File" << this->windowTitle() << "Saved.";
         this->updateTitle();
         this->updateSaveStatus();
         _opendFiles.remove(oldPath);
         _opendFiles[m_save->path()] = this;
-    } else {
+    }
+    else
+    {
         QMessageBox::critical(this, STR("STR_ERROR"),
                               STR("STR_ERR_SAVE").arg(fileName));
     }
@@ -1515,7 +1663,8 @@ void EditorWidget::exportAsHTML()
                 Config::instance()->getString("/openPath", QDir::homePath()))),
         STR("STR_SAVE_HTML_FILTER"));
 
-    if (fileName == "") {
+    if (fileName == "")
+    {
         return;
     }
 
@@ -1524,12 +1673,15 @@ void EditorWidget::exportAsHTML()
     Config::instance()->setString("/exportPath", dir);
 
     // Save file.
-    if (m_save->writeHTML(fileName, this->windowTitle())) {
+    if (m_save->writeHTML(fileName, this->windowTitle()))
+    {
         m_savedUndoCount = m_undoStack.size();
         qDebug() << "File" << this->windowTitle() << "exported.";
         this->updateTitle();
         this->updateSaveStatus();
-    } else {
+    }
+    else
+    {
         QMessageBox::critical(this, STR("STR_ERROR"),
                               STR("STR_ERR_EXPORT").arg(fileName));
     }
@@ -1588,7 +1740,8 @@ void EditorWidget::onLanguageChanged()
  */
 void EditorWidget::clearWarnings()
 {
-    while (! m_widgetsWarningInfos.empty()) {
+    while (! m_widgetsWarningInfos.empty())
+    {
         m_widgetsWarningInfos.back()->close();
         delete m_widgetsWarningInfos.back();
         m_widgetsWarningInfos.pop_back();
@@ -1612,9 +1765,11 @@ void EditorWidget::addWarning(QString id)
 void EditorWidget::onItemChanged(QTreeWidgetItem *item, int column)
 {
     GroupItem *groupItem = dynamic_cast<GroupItem *>(item);
-    if (groupItem != nullptr && column == 0) {
+    if (groupItem != nullptr && column == 0)
+    {
         int index = m_itemGroups->indexOfChild(item);
-        if (groupItem->text(0) != groupItem->group()->name()) {
+        if (groupItem->text(0) != groupItem->group()->name())
+        {
             ::std::shared_ptr<Operation> operation
                 = RenameGroupOperation::create(index,
                                                groupItem->group()->name(),
@@ -1632,8 +1787,10 @@ void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     // Module item.
     ModuleItem *moduleItem = dynamic_cast<ModuleItem *>(item);
-    if (moduleItem != nullptr) {
-        if (column != 0) {
+    if (moduleItem != nullptr)
+    {
+        if (column != 0)
+        {
             return;
         }
         m_infoWidget->showStationModuleInfo(moduleItem->module()->module());
@@ -1642,7 +1799,8 @@ void EditorWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
 
     // Ware item.
     WareItem *wareItem = dynamic_cast<WareItem *>(item);
-    if (wareItem != nullptr) {
+    if (wareItem != nullptr)
+    {
         m_infoWidget->showWareInfo(wareItem->ware());
         return;
     }
@@ -1656,7 +1814,8 @@ void EditorWidget::onChangeAmount(quint64     oldAmount,
                                   ModuleItem *moduleItem)
 {
     GroupItem *groupItem = dynamic_cast<GroupItem *>(moduleItem->parent());
-    if (groupItem != nullptr) {
+    if (groupItem != nullptr)
+    {
         ::std::shared_ptr<Operation> operation
             = ChangeModuleAmountOperation::create(
                 m_itemGroups->indexOfChild(groupItem),
@@ -1752,13 +1911,14 @@ void EditorWidget::onCustomContextMenuRequested(const QPoint &)
 {
     // Check item.
     QTreeWidgetItem *item = m_treeEditor->currentItem();
-    if (item == nullptr) {
+    if (item == nullptr)
+    {
         return;
     }
 
     if (dynamic_cast<GroupItem *>(item) != nullptr
-        || dynamic_cast<ModuleItem *>(item) != nullptr
-        || item == m_itemGroups) {
+        || dynamic_cast<ModuleItem *>(item) != nullptr || item == m_itemGroups)
+    {
         // Pop menu.
         QMenu menu;
 
@@ -1777,7 +1937,8 @@ void EditorWidget::onCustomContextMenuRequested(const QPoint &)
         return;
     }
 
-    if (dynamic_cast<WareItem *>(item) != nullptr) {
+    if (dynamic_cast<WareItem *>(item) != nullptr)
+    {
         WareItem *wareItem = static_cast<WareItem *>(item);
 
         QMenu menu;

@@ -8,7 +8,8 @@
 /**
  * @brief	Thread to run task.
  */
-class MultiRunThread : public QThread {
+class MultiRunThread : public QThread
+{
     Q_OBJECT
   private:
     ::std::function<void()> m_task; ///< Tash to run.
@@ -37,7 +38,8 @@ class MultiRunThread : public QThread {
 /**
  * @brief	Run task in multiple threads.
  */
-class MultiRun : public QObject {
+class MultiRun : public QObject
+{
     Q_OBJECT
   private:
     QVector<MultiRunThread *> m_threads; ///< Threads.

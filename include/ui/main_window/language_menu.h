@@ -10,7 +10,8 @@
 /**
  * @brief	Language menu.
  */
-class LanguageMenu : public QMenu {
+class LanguageMenu : public QMenu
+{
     Q_OBJECT
   protected:
     QMap<QAction *, QString> m_localeMap;   ///< Map action and value.

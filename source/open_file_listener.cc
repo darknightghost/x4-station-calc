@@ -16,10 +16,14 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
 
     // Create shared memory.
     m_sharedMemory = new QSharedMemory(KEY, this);
-    if (m_sharedMemory->create(sizeof(quint16))) {
+    if (m_sharedMemory->create(sizeof(quint16)))
+    {
         firstTime = true;
-    } else {
-        if (! m_sharedMemory->attach()) {
+    }
+    else
+    {
+        if (! m_sharedMemory->attach())
+        {
             QMessageBox::critical(nullptr, STR("STR_ERROR"),
                                   STR("STR_FAILED_OPEN_SHARED_MEMORY"));
             qDebug() << "Failed to open shared memory.";
@@ -29,15 +33,18 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
 
     m_sharedMemory->lock();
 
-    if (! firstTime) {
+    if (! firstTime)
+    {
         // Try to connect.
         ::std::shared_ptr<QTcpSocket> s(new QTcpSocket(this));
         s->connectToHost(QHostAddress::LocalHost,
                          *(quint16 *)(m_sharedMemory->data()));
-        if (s->waitForConnected(30000)) {
+        if (s->waitForConnected(30000))
+        {
             // Connected
             m_opened = true;
-            if (Global::instance()->hasFileToOpen()) {
+            if (Global::instance()->hasFileToOpen())
+            {
                 s->write(Global::instance()->fileToOpen().toUtf8());
                 s->flush();
                 qDebug() << "Path sent to port "
@@ -47,7 +54,9 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
             m_sharedMemory->unlock();
             this->setInitialized();
             return;
-        } else {
+        }
+        else
+        {
             firstTime = true;
         }
     }
@@ -62,7 +71,8 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
         // Create server.
         serverCreateMutex.lock();
         m_server = ::std::shared_ptr<QTcpServer>(new QTcpServer());
-        if (! m_server->listen(QHostAddress::LocalHost)) {
+        if (! m_server->listen(QHostAddress::LocalHost))
+        {
             serverCreateFlag = false;
             serverCreateCond.notify_all();
             serverCreateMutex.unlock();
@@ -77,21 +87,27 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
         serverCreateCond.notify_all();
         serverCreateMutex.unlock();
 
-        if (Global::instance()->hasFileToOpen()) {
+        if (Global::instance()->hasFileToOpen())
+        {
             m_paths.push_back(Global::instance()->fileToOpen());
         }
 
         // Listen.
-        while (m_recv) {
-            if (m_server->waitForNewConnection(500)) {
+        while (m_recv)
+        {
+            if (m_server->waitForNewConnection(500))
+            {
                 QTcpSocket *s = m_server->nextPendingConnection();
                 s->waitForDisconnected();
                 QByteArray data = s->readAll();
                 m_paths.push_back(data);
                 m_pathsLock.lock();
-                if (! m_block) {
-                    while (! m_paths.empty()) {
-                        if (m_paths.front() != "") {
+                if (! m_block)
+                {
+                    while (! m_paths.empty())
+                    {
+                        if (m_paths.front() != "")
+                        {
                             emit this->openFile(m_paths.front());
                         }
                         emit this->active();
@@ -108,7 +124,8 @@ OpenFileListener::OpenFileListener() : QObject(), m_opened(false)
     m_recvThread.start();
     serverCreateCond.wait(&serverCreateMutex);
     serverCreateMutex.unlock();
-    if (! serverCreateFlag) {
+    if (! serverCreateFlag)
+    {
         m_sharedMemory->unlock();
         QMessageBox::critical(nullptr, STR("STR_ERROR"),
                               STR("STR_FAILED_LISTEN_SOCKET"));
@@ -134,7 +151,8 @@ bool OpenFileListener::opened()
  */
 void OpenFileListener::block()
 {
-    if (m_opened) {
+    if (m_opened)
+    {
         return;
     }
     m_block = true;
@@ -145,14 +163,18 @@ void OpenFileListener::block()
  */
 void OpenFileListener::unblock()
 {
-    if (m_opened) {
+    if (m_opened)
+    {
         return;
     }
-    if (m_block) {
+    if (m_block)
+    {
         m_block = false;
         m_pathsLock.lock();
-        while (! m_paths.empty()) {
-            if (m_paths.front() != "") {
+        while (! m_paths.empty())
+        {
+            if (m_paths.front() != "")
+            {
                 emit this->openFile(m_paths.front());
             }
             emit this->active();
@@ -167,7 +189,8 @@ void OpenFileListener::unblock()
  */
 OpenFileListener::~OpenFileListener()
 {
-    if (m_recvThread.isRunning()) {
+    if (m_recvThread.isRunning())
+    {
         m_recv = false;
         m_recvThread.wait();
     }

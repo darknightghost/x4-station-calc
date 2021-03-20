@@ -98,6 +98,8 @@ class GameWares :
   private:
     QMap<QString, ::std::shared_ptr<WareGroup>> m_wareGroups; ///< Ware groups.
     QMap<QString, ::std::shared_ptr<Ware>>      m_wares;      ///< Wares.
+    QAtomicInt m_unknowWareIndex;      ///< Unknow ware index.
+    QAtomicInt m_unknowWareGroupIndex; ///< Unknow ware group index.
 
   protected:
     /**

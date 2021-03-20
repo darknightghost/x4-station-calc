@@ -36,6 +36,10 @@ class GameTexts :
 
         IDPair() : pageID(-1), textID(-1) {}
 
+        IDPair(qint32 _pageID, qint32 _textID) :
+            pageID(_pageID), textID(_textID)
+        {}
+
         IDPair(const ::std::array<qint32, 2> &pair) :
             pageID(pair[0]), textID(pair[1])
         {}
@@ -93,6 +97,7 @@ class GameTexts :
   private:
     QMap<qint32, ::std::shared_ptr<TextPage>> m_textPages; ///< Text pages.
     QMutex                                    m_pageLock;  ///< Test page lock.
+    QAtomicInt                                m_unknowIndex; ///< Unknow index.
 
   protected:
     /**
@@ -123,6 +128,15 @@ class GameTexts :
      * @return		Text.
      */
     QString text(const IDPair &idPair);
+
+    /**
+     * @brief		Add text.
+     *
+     * @param[in]	str     String to append.
+     *
+     * @return		ID.
+     */
+    IDPair addText(const QString &str);
 
     /**
      * @brief		Destructor.

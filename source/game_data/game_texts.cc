@@ -11,7 +11,8 @@
  * @brief		Constructor.
  */
 GameTexts::GameTexts(::std::shared_ptr<GameVFS>             vfs,
-                     ::std::function<void(const QString &)> setTextFunc)
+                     ::std::function<void(const QString &)> setTextFunc) :
+    m_unknowIndex(0)
 {
     QStringList textFiles;
     QRegExp     nameFilter("\\d+-L\\d+\\.xml");
@@ -117,7 +118,10 @@ QString GameTexts::text(qint32 pageID, qint32 textID)
     auto linkIter
         = (*textIter)->links.find(StringTable::instance()->languageId());
     if (linkIter == (*textIter)->links.end()) {
-        return "";
+        linkIter = (*textIter)->links.find(44);
+        if (linkIter == (*textIter)->links.end()) {
+            return "";
+        }
     }
 
     for (auto &link : *linkIter) {
@@ -137,6 +141,40 @@ QString GameTexts::text(qint32 pageID, qint32 textID)
 QString GameTexts::text(const IDPair &idPair)
 {
     return this->text(idPair.pageID, idPair.textID);
+}
+
+/**
+ * @brief		Add text.
+ */
+GameTexts::IDPair GameTexts::addText(const QString &str)
+{
+    // Get page.
+    ::std::shared_ptr<TextPage> page;
+    {
+        QMutexLocker lock(&m_pageLock);
+        auto         pageIter = m_textPages.find(-1);
+        if (pageIter == m_textPages.end()) {
+            page            = ::std::shared_ptr<TextPage>(new TextPage);
+            page->pageID    = -1;
+            m_textPages[-1] = page;
+        } else {
+            page = *pageIter;
+        }
+    }
+
+    // set text;
+    qint32 id = m_unknowIndex.fetchAndAddAcquire(1);
+    {
+        QMutexLocker            locker(&(page->lock));
+        ::std::shared_ptr<Text> text;
+        text            = ::std::shared_ptr<Text>(new Text);
+        text->pageID    = page->pageID;
+        text->textID    = id;
+        text->links[44] = this->parseText(str);
+        page->texts[id] = text;
+    }
+
+    return IDPair(static_cast<qint32>(-1), id);
 }
 
 /**

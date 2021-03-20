@@ -1,6 +1,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QRegExp>
 
+#include <game_data/game_data.h>
 #include <game_data/game_wares.h>
 
 /**
@@ -8,7 +9,9 @@
  */
 GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
                      ::std::shared_ptr<GameTexts>           texts,
-                     ::std::function<void(const QString &)> setTextFunc)
+                     ::std::function<void(const QString &)> setTextFunc) :
+    m_unknowWareIndex(0),
+    m_unknowWareGroupIndex(0)
 {
     setTextFunc(STR("STR_LOADING_WARES"));
     qDebug() << "Loading wares...";
@@ -91,7 +94,15 @@ const ::std::shared_ptr<GameWares::WareGroup>
 {
     auto iter = m_wareGroups.find(id);
     if (iter == m_wareGroups.end()) {
-        return nullptr;
+        ::std::shared_ptr<GameWares::WareGroup> unknowWareGroup(new WareGroup(
+            {id,
+             GameData::instance()->texts()->addText(
+                 QString("UNKNOW_WARE_GROUP_%d")
+                     .arg(m_unknowWareGroupIndex.fetchAndAddAcquire(1))),
+             {}}));
+        m_wareGroups[id] = unknowWareGroup;
+        qWarning() << "Unknow ware group, id =" << id << ".";
+        return unknowWareGroup;
     } else {
         return iter.value();
     }
@@ -104,7 +115,24 @@ const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id)
 {
     auto iter = m_wares.find(id);
     if (iter == m_wares.end()) {
-        return nullptr;
+        // Generate an unknow ware.
+        ::std::shared_ptr<GameWares::Ware> unknowWare(
+            new Ware({id,
+                      GameData::instance()->texts()->addText(
+                          QString("UNKNOW_WARE_%d")
+                              .arg(m_unknowWareIndex.fetchAndAddAcquire(1))),
+                      QString(""),
+                      QString(""),
+                      TransportType::Unknow,
+                      0,
+                      {},
+                      1,
+                      1,
+                      1,
+                      {}}));
+        m_wares[id] = unknowWare;
+        qWarning() << "Unknow ware, id =" << id << ".";
+        return unknowWare;
     } else {
         return iter.value();
     }

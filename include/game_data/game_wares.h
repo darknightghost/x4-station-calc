@@ -122,8 +122,9 @@ class GameWares :
      *
      * @return	Information of ware group.
      */
-    const ::std::shared_ptr<WareGroup> wareGroup(const QString &id, 
-            ::std::shared_ptr<GameTexts> texts = nullptr);
+    const ::std::shared_ptr<WareGroup>
+        wareGroup(const QString &              id,
+                  ::std::shared_ptr<GameTexts> texts = nullptr);
 
     /**
      * @brief	Get ware information.
@@ -133,8 +134,8 @@ class GameWares :
      *
      * @return	Information of ware.
      */
-    const ::std::shared_ptr<Ware> ware(const QString &id,
-        ::std::shared_ptr<GameTexts> texts = nullptr);
+    const ::std::shared_ptr<Ware>
+        ware(const QString &id, ::std::shared_ptr<GameTexts> texts = nullptr);
 
     /**
      * @brief		Destructor.

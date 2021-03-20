@@ -95,7 +95,7 @@ const ::std::shared_ptr<GameWares::WareGroup>
     if (texts == nullptr) {
         texts = GameData::instance()->texts();
     }
-        
+
     auto iter = m_wareGroups.find(id);
     if (iter == m_wareGroups.end()) {
         ::std::shared_ptr<GameWares::WareGroup> unknowWareGroup(new WareGroup(
@@ -115,29 +115,29 @@ const ::std::shared_ptr<GameWares::WareGroup>
 /**
  * @brief	Get ware information.
  */
-const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id, ::std::shared_ptr<GameTexts> texts)
+const ::std::shared_ptr<GameWares::Ware>
+    GameWares::ware(const QString &id, ::std::shared_ptr<GameTexts> texts)
 {
     if (texts == nullptr) {
         texts = GameData::instance()->texts();
     }
-    
+
     auto iter = m_wares.find(id);
     if (iter == m_wares.end()) {
         // Generate an unknow ware.
-        ::std::shared_ptr<GameWares::Ware> unknowWare(
-            new Ware({id,
-                      texts->addText(
-                          QString("UNKNOW_WARE_%1")
-                              .arg(m_unknowWareIndex.fetchAndAddAcquire(1))),
-                      QString(""),
-                      QString(""),
-                      TransportType::Unknow,
-                      0,
-                      {},
-                      1,
-                      1,
-                      1,
-                      {}}));
+        ::std::shared_ptr<GameWares::Ware> unknowWare(new Ware(
+            {id,
+             texts->addText(QString("UNKNOW_WARE_%1")
+                                .arg(m_unknowWareIndex.fetchAndAddAcquire(1))),
+             QString(""),
+             QString(""),
+             TransportType::Unknow,
+             0,
+             {},
+             1,
+             1,
+             1,
+             {}}));
         m_wares[id] = unknowWare;
         qWarning() << "Unknow ware, id =" << id << ".";
         return unknowWare;

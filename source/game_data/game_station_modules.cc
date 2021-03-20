@@ -821,7 +821,7 @@ bool GameStationModules::onStartElementInPropertiesOfModuleMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
-        
+
     ::std::shared_ptr<GameTexts> texts
         = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
 
@@ -1027,7 +1027,7 @@ bool GameStationModules::onStartElementInProductionOfModuleMacro(
 {
     ::std::unique_ptr<XMLLoader::Context> context
         = XMLLoader::Context::create();
-        
+
     ::std::shared_ptr<GameTexts> texts
         = ::std::any_cast<::std::shared_ptr<GameTexts>>(loader["texts"]);
 
@@ -1040,7 +1040,8 @@ bool GameStationModules::onStartElementInProductionOfModuleMacro(
         if (iter != attr.end()) {
             method = *iter;
         }
-        ::std::shared_ptr<GameWares::Ware> ware = wares->ware(attr["ware"], texts);
+        ::std::shared_ptr<GameWares::Ware> ware
+            = wares->ware(attr["ware"], texts);
 
         auto productionInfoIter = ware->productionInfos.find(method);
         if (productionInfoIter == ware->productionInfos.end()) {

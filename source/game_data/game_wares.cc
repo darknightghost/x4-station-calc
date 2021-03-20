@@ -101,7 +101,7 @@ const ::std::shared_ptr<GameWares::WareGroup>
         ::std::shared_ptr<GameWares::WareGroup> unknowWareGroup(new WareGroup(
             {id,
              texts->addText(
-                 QString("UNKNOW_WARE_GROUP_%d")
+                 QString("UNKNOW_WARE_GROUP_%1")
                      .arg(m_unknowWareGroupIndex.fetchAndAddAcquire(1))),
              {}}));
         m_wareGroups[id] = unknowWareGroup;
@@ -127,7 +127,7 @@ const ::std::shared_ptr<GameWares::Ware> GameWares::ware(const QString &id, ::st
         ::std::shared_ptr<GameWares::Ware> unknowWare(
             new Ware({id,
                       texts->addText(
-                          QString("UNKNOW_WARE_%d")
+                          QString("UNKNOW_WARE_%1")
                               .arg(m_unknowWareIndex.fetchAndAddAcquire(1))),
                       QString(""),
                       QString(""),

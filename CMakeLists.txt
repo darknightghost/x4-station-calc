@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
 set (CMAKE_CXX_STANDARD 17) 
 
+cmake_policy(SET CMP0054 NEW)
+
 # Project
 project (x4-station-calc)
 
 # Build type
 if (NOT CMAKE_BUILD_TYPE)
-	set (CMAKE_BUILD_TYPE "Debug")
+    set (CMAKE_BUILD_TYPE "Debug")
 
 endif ()
 
@@ -29,7 +31,7 @@ include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include")
 add_definitions ("-DQIODEVICE_BUFFERSIZE=Q_INT64_C(64 * 1024 * 1024)")
 
 if (WIN32)
-	include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows")
     add_definitions ("-DOS_WINDOWS=1")
 
 elseif (UNIX)
@@ -40,27 +42,27 @@ endif ()
 # Output path.
 set (OUTPUT_SUB_DIR "${CMAKE_BUILD_TYPE}/${CMAKE_SYSTEM_NAME}/${CMAKE_SYSTEM_PROCESSOR}")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY	"${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/lib/${OUTPUT_SUB_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/bin/${OUTPUT_SUB_DIR}")
 
 # Platform options.
 # Debug/Release.
 # Enable address sanitizer in debug mode if possible.
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"
-			OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"
-			OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		# Enable address sanitizer.
-		add_compile_options (-fno-omit-frame-pointer -fsanitize=address)
-		add_link_options (-fno-omit-frame-pointer -fsanitize=address)
-		message (STATUS "Address sanitizer is enabled.")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"
+            OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang"
+            OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+        # Enable address sanitizer.
+        add_compile_options (-fno-omit-frame-pointer -fsanitize=address)
+        add_link_options (-fno-omit-frame-pointer -fsanitize=address)
+        message (STATUS "Address sanitizer is enabled.")
 
-	endif()
+    endif()
 
 endif ()
 
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_definitions ("-DQT_NO_DEBUG=1")
 
 endif ()
@@ -91,12 +93,12 @@ if (MSVC)
     # Ignore warnings of functions like strcpy(), strcmp()...
     add_compile_options ("-D_CRT_SECURE_NO_WARNINGS")
     if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-		add_link_options ("/subsystem:console" "/entry:mainCRTStartup")
+        add_link_options ("/subsystem:console" "/entry:mainCRTStartup")
 
     elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-		add_link_options ("/subsystem:windows" "/entry:mainCRTStartup")
+        add_link_options ("/subsystem:windows" "/entry:mainCRTStartup")
 
-	endif ()
+    endif ()
 endif ()
 
 # Dependencies
@@ -127,69 +129,70 @@ endif()
 
 # Sources
 file (GLOB_RECURSE HEADERS
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
-	)
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+    )
 
 file (GLOB_RECURSE SRC
-	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.c"
-	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cc"
-	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.C"
-	)
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.C"
+    )
 
 if (WIN32)
-	file (GLOB_RECURSE WINDOWS_SRC
-		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.c"
-		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cpp"
-		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cc"
-		"${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.C"
+    file (GLOB_RECURSE WINDOWS_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/windows/*.C"
         "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.rc"
-		)
+        )
 
-	list (APPEND SRC
-		${WINDOWS_SRC}
-		)
+    list (APPEND SRC
+        ${WINDOWS_SRC}
+        )
     
 endif ()
 
 # Recources
-set (RESOURCE_LIST_FILE		"${CMAKE_CURRENT_SOURCE_DIR}/resource/resources.qrc")
-set (GENERATE_RESOURCE_CMD	"${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_resource.py")
+set (RESOURCE_LIST_FILE     "${CMAKE_CURRENT_SOURCE_DIR}/resource/resources.qrc")
+set (GENERATE_RESOURCE_CMD  "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_resource.py")
 
 file (GLOB_RECURSE RESOURCES
-	"${CMAKE_CURRENT_SOURCE_DIR}/resource/*"
-	)
-list (REMOVE_ITEM RESOURCES		${RESOURCE_LIST_FILE})
+    "${CMAKE_CURRENT_SOURCE_DIR}/resource/*"
+    )
+list (REMOVE_ITEM RESOURCES     ${RESOURCE_LIST_FILE})
 
 add_custom_command (
-	OUTPUT		${RESOURCE_LIST_FILE}
-	COMMAND		${GENERATE_RESOURCE_CMD} ${RESOURCES} -r "${CMAKE_CURRENT_SOURCE_DIR}/resource" -o "${RESOURCE_LIST_FILE}"
-    DEPENDS		${RESOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG" "${CMAKE_CURRENT_SOURCE_DIR}/generate_resource.py")
+    OUTPUT      ${RESOURCE_LIST_FILE}
+    COMMAND     ${GENERATE_RESOURCE_CMD} ${RESOURCES} -r "${CMAKE_CURRENT_SOURCE_DIR}/resource" -o "${RESOURCE_LIST_FILE}"
+    DEPENDS     ${RESOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG" "${CMAKE_CURRENT_SOURCE_DIR}/generate_resource.py")
 
 # Qt wrappers
 qt5_wrap_cpp (WRAPPED_HEADERS ${HEADERS})
 qt5_add_resources (WRAPPED_RESOURCE "${RESOURCE_LIST_FILE}")
 
 add_executable(${PROJECT_NAME}
-	${SRC}
-	${WRAPPED_HEADERS}
-	${WRAPPED_RESOURCE})
+    ${SRC}
+    ${WRAPPED_HEADERS}
+    ${WRAPPED_RESOURCE})
 
 target_link_libraries(${PROJECT_NAME}
-	Qt5::Core
-	Qt5::Widgets
-	Qt5::Network
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::Network
     ${OPENSSL_LIBRARIES}
     ${OPENSSL_SSL_LIBRARY}
     ${OPENSSL_CRYPTO_LIBRARY}
-	)
+    )
+
 
 #Doc
 if (DOXYGEN_EXECUTABLE)
     add_custom_target("doc" ALL
-        COMMAND				${DOXYGEN_EXECUTABLE}
-        WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR})
+        COMMAND             ${DOXYGEN_EXECUTABLE}
+        WORKING_DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR})
    
 endif ()
 

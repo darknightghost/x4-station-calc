@@ -4,8 +4,8 @@
 
 class CrashHandler {
   private:
-    typedef LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (
-        *SetUnhandledExceptionFilterFuncType)(LPTOP_LEVEL_EXCEPTION_FILTER);
+    typedef LPTOP_LEVEL_EXCEPTION_FILTER (*SetUnhandledExceptionFilterFuncType)(
+        LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.

@@ -100,8 +100,8 @@ CrashHandler::CrashHandler() :
     }
 
     // Register crash handler.
-    // m_realSetUnhandledExceptionFilter(&CrashHandler::onCrash);
-    SetUnhandledExceptionFilter(&CrashHandler::onCrash);
+    m_topLevelExceptionFiler.restore(
+        m_realSetUnhandledExceptionFilter(&CrashHandler::onCrash));
 }
 
 /**

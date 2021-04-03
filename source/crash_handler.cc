@@ -79,7 +79,14 @@ CrashHandler::CrashHandler() :
     m_realSetUnhandledExceptionFilter(nullptr),
     m_topLevelExceptionFiler(nullptr)
 {
-    m_realSetUnhandledExceptionFilter = SetUnhandledExceptionFilter;
+    SetUnhandledExceptionFilterFuncType a = &SetUnhandledExceptionFilter;
+    m_realSetUnhandledExceptionFilter
+        = static_cast<SetUnhandledExceptionFilterFuncType>(::GetProcAddress(
+            GetModuleHandle("KERNEL32.dll"), "SetUnhandledExceptionFilter"));
+    if (m_realSetUnhandledExceptionFilter == nullptr) {
+        ::MessageBoxA(NULL, "Failed to find SetUnhandledExceptionFilter().",
+                      "Unknow Error", MB_OK | MB_ICONERROR);
+    }
 
     // Enable EAT hook.
     if (! this->enableEATHook()) {
@@ -192,9 +199,11 @@ bool CrashHandler::enableIATHook()
             LPCTSTR dllName = reinterpret_cast<LPCTSTR>(
                 moduleBaseAddr + importDescriptor->Name);
 
-            ::MessageBoxA(NULL, dllName, "Found", MB_OK);
-            if (::_stricmp(dllName, "kernel32.dll") == 0) {
-                ::MessageBoxA(NULL, "Found.", "Found", MB_OK);
+            if (::_stricmp(dllName, "KERNEL32.dll") == 0) {
+                ::MessageBoxA(NULL, "Found dll.", "Found", MB_OK);
+                PIMAGE_THUNK_DATA thunkData
+                    = reinterpret_cast<PIMAGE_THUNK_DATA>(
+                        moduleBaseAddr + importDescriptor->FirstThunk);
             }
         }
     }

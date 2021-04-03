@@ -100,7 +100,8 @@ CrashHandler::CrashHandler() :
     }
 
     // Register crash handler.
-    m_realSetUnhandledExceptionFilter(&CrashHandler::onCrash);
+    // m_realSetUnhandledExceptionFilter(&CrashHandler::onCrash);
+    SetUnhandledExceptionFilter(&CrashHandler::onCrash);
 }
 
 /**
@@ -126,6 +127,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
+    ::MessageBoxA(NULL, "fake", "fake", MB_OK);
     return _instance.m_topLevelExceptionFiler.exchange(
         lpTopLevelExceptionFilter);
 }

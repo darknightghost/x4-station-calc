@@ -102,6 +102,7 @@ if (MSVC)
 
     if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
 
     endif ()
 endif ()
@@ -196,14 +197,6 @@ if (WIN32)
     target_link_libraries(${PROJECT_NAME}
         Dbghelp
         )
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-        target_link_libraries(${PROJECT_NAME}
-            "/DEBUG"
-            "/OPT:REF"
-            "/OPT:ICF"
-            )
-
-    endif ()
 
 endif ()
 

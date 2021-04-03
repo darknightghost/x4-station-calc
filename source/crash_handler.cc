@@ -210,15 +210,14 @@ bool CrashHandler::enableIATHook()
                      ++originalThunkData, ++thunkData) {
                     if (! (originalThunkData->u1.Ordinal
                            & IMAGE_ORDINAL_FLAG)) {
-                        LPCTSTR symbolName = reinterpret_cast<LPCTSTR>(
-                            moduleBaseAddr + originalThunkData->u1.Ordinal);
-                        if (::_stricmp(symbolName,
+                        PIMAGE_IMPORT_BY_NAME importByName
+                            = reinterpret_cast<PIMAGE_IMPORT_BY_NAME>(
+                                moduleBaseAddr + originalThunkData->u1.Ordinal);
+                        if (::_stricmp(importByName->Name,
                                        "SetUnhandledExceptionFilter")
                             == 0) {
                             ::MessageBoxA(NULL, "Found symbol.", "Found",
                                           MB_OK);
-                        } else {
-                            ::MessageBoxA(NULL, symbolName, "Sym", MB_OK);
                         }
                     }
                 }

@@ -352,6 +352,8 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
         static_cast<DWORD>(sizeof(m_dumpFilePath) / sizeof(WCHAR)
                            - (p - m_dumpFilePath)),
         p);
+    ::wcscpy(p, L"\\");
+    p += 1;
     ::_snwprintf(p,
                  sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
                  L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",

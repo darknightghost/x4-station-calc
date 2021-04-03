@@ -177,11 +177,11 @@ bool CrashHandler::enableEATHook()
 
         if (::strcmp(symbolName, "SetUnhandledExceptionFilter") == 0) {
             PWORD addressOfNameOrdinals = reinterpret_cast<PWORD>(
-                moduleBaseAddr + exportDirectory->AddressOfNamesOrdinals);
+                moduleBaseAddr + exportDirectory->AddressOfNameOrdinals);
             PDWORD addressOfFunctions
                 = reinterpret_cast<PDWORD>(
                       moduleBaseAddr + exportDirectory->AddressOfFunctions)
-                  + AddressOfNamesOrdinals[i];
+                  + addressOfNameOrdinals[i];
 
             return true;
         }

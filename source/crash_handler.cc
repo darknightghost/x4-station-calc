@@ -169,12 +169,20 @@ bool CrashHandler::enableEATHook()
                   .VirtualAddress);
     PDWORD addressOfNames = reinterpret_cast<PDWORD>(
         moduleBaseAddr + exportDirectory->AddressOfNames);
+
+    // Search for symbol name.
     for (DWORD i = 0; i < exportDirectory->NumberOfNames; ++i) {
         LPCTSTR symbolName
             = reinterpret_cast<LPCTSTR>(moduleBaseAddr + addressOfNames[i]);
 
         if (::strcmp(symbolName, "SetUnhandledExceptionFilter") == 0) {
-            ::MessageBoxA(NULL, "EAT hooked", "EAT hooked", MB_OK);
+            PWORD addressOfNameOrdinals = reinterpret_cast<PWORD>(
+                moduleBaseAddr + exportDirectory - AddressOfNamesOrdinals);
+            PDWORD addressOfFunctions
+                = reinterpret_cast<PDWORD>(
+                      moduleBaseAddr + exportDirectory->AddressOfFunctions)
+                  + AddressOfNamesOrdinals[i];
+
             return true;
         }
     }
@@ -267,8 +275,6 @@ bool CrashHandler::enableIATHook()
                             // Resume memory attribute.
                             ::VirtualProtect(targetAddress, sizeof(void *),
                                              oldMemAttr, &oldMemAttr);
-
-                            ::MessageBoxA(NULL, "hook", "hook", MB_OK);
                         }
                     }
                 }

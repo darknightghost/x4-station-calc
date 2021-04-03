@@ -19,7 +19,9 @@ class CrashHandler {
   private:
     static CrashHandler _instance; ///< Instance.
     WCHAR
-    m_dumpFilePath[MAX_PATH + 1]; ///< Buffer of the path of the dump file.
+    m_dumpFilePath[32000]; ///< Buffer of the path of the dump file.
+    WCHAR m_dumpFileMessage[32000
+                            + 256]; ///< Buffer of the message of the dump file.
     SetUnhandledExceptionFilterFuncType
         m_realSetUnhandledExceptionFilter; ///< Real
                                            ///< SetUnhandledExceptionFilter().
@@ -83,7 +85,6 @@ CrashHandler CrashHandler::_instance; ///< Instance.
  * @brief	Constructor.
  */
 CrashHandler::CrashHandler() :
-    m_dumpFilePath(L"x4-station-calc.dmp"),
     m_realSetUnhandledExceptionFilter(nullptr),
     m_topLevelExceptionFiler(nullptr)
 {
@@ -339,14 +340,51 @@ bool CrashHandler::enableIATHook()
  */
 void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
-    // Make filename.
+    // Make path.
     time_t     timestamp   = ::time(NULL);
     struct tm *currentTime = ::localtime(timestamp);
-    ::_snwprintf(m_dumpFilePath, sizeof(m_dumpFilePath) / sizeof(WCHAR),
-                 L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",
-                 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
-                 tm->tm_min, tm->tm_sec);
-    ::MessageBoxW(NULL, m_dumpFilePath, L"dump", MB_OK);
+    WCHAR *    p           = m_dumpFilePath;
+    ::wcscpy(p, "\\\\?\\");
+    p += 4;
+    p += :
+        GetCurrentDirecotryW(
+            sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath), p);
+    ::_snwprintf(
+        p, sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
+        L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp", tm->tm_year + 1900,
+        tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+    ::MessageBoxW(NULL, m_dumpFilePath, L"Error", MB_OK | MB_ICONERROR);
+    return;
+
+    // Save dump file.
+    HANDLE dumpFile
+        = CreateFileW(m_dumpFilePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
+                      CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        // Write dump file.
+        MINIDUMP_EXCEPTION_INFORMATION exInfo;
+        exInfo.ThreadId          = GetCurrentThreadId();
+        exInfo.ExceptionPointers = exceptionInfo;
+        exInfo.ClientPointers    = NULL;
+        if (::MiniDumpWriteDump(::GetCurrentProcess(), ::GetCurrentProcessId(),
+                                dumpFile, MiniDumpNormal, &exInfo, NULL,
+                                NULL)) {
+            // Show result.
+            ::_snwprintf(m_dumpFileMessage,
+                         sizeof(m_dumpFileMessage) / sizeof(WCHAR),
+                         L"Dump file \"%s\" saved.", m_dumpFileMessage);
+            ::MessageBoxW(NULL, m_dumpFileMessage, L"Dump File Saved",
+                          MB_OK | MB_ICONINFORMATION);
+        } else {
+            ::MessageBoxW(NULL, L"Failed to save dump file.", L"Error",
+                          MB_OK | MB_ICONERROR);
+        }
+        ::CloseHandle(dumpFile);
+    } else {
+        ::MessageBoxW(NULL, L"Failed to save dump file.", L"Error",
+                      MB_OK | MB_ICONERROR);
+    }
 }
 
 #endif

@@ -79,7 +79,6 @@ CrashHandler::CrashHandler() :
     m_realSetUnhandledExceptionFilter(nullptr),
     m_topLevelExceptionFiler(nullptr)
 {
-    SetUnhandledExceptionFilterFuncType a = &SetUnhandledExceptionFilter;
     m_realSetUnhandledExceptionFilter
         = reinterpret_cast<SetUnhandledExceptionFilterFuncType>(
             ::GetProcAddress(GetModuleHandle("KERNEL32.dll"),
@@ -201,10 +200,25 @@ bool CrashHandler::enableIATHook()
                 moduleBaseAddr + importDescriptor->Name);
 
             if (::_stricmp(dllName, "KERNEL32.dll") == 0) {
-                ::MessageBoxA(NULL, "Found dll.", "Found", MB_OK);
+                PIMAGE_THUNK_DATA originalThunkData
+                    = reinterpret_cast<PIMAGE_THUNK_DATA>(
+                        moduleBaseAddr + importDescriptor->OriginalFirstThunk);
                 PIMAGE_THUNK_DATA thunkData
                     = reinterpret_cast<PIMAGE_THUNK_DATA>(
                         moduleBaseAddr + importDescriptor->FirstThunk);
+                for (; originalThunkData->Ordinal != 0;
+                     ++originalThunkData, ++thunkData) {
+                    if (! (originalThunkData->Ordinal & IMAGE_ORDINAL_FLAG)) {
+                        LPCTSTR symbolName = reinterpret_cast<LPCTSTR>(
+                            moduleBaseAddr + originalThunkData->Ordinal);
+                        if (::_stricmp(symbolName,
+                                       "SetUnhandledExceptionFilter")
+                            == 0) {
+                            ::MessageBoxA(NULL, "Found symbol.", "Found",
+                                          MB_OK);
+                        }
+                    }
+                }
             }
         }
     }

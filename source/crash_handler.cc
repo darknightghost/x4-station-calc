@@ -154,9 +154,11 @@ bool CrashHandler::enableIATHook()
     MODULEENTRY32 entery;
     for (BOOL hasNext = ::Module32First(snapshot, &entery); hasNext;
          hasNext      = ::Module32Next(snapshot, &entery)) {
+        uint8_t *moduleBaseAddr
+            = reinterpret_cast<uint8_t *>(entery.modBaseAddr);
         // Find DOS header.
         PIMAGE_DOS_HEADER dosHeader
-            = reinterpret_cast<PIMAGE_DOS_HEADER>(entery.modBaseAddr);
+            = reinterpret_cast<PIMAGE_DOS_HEADER>(moduleBaseAddr);
 
         if (dosHeader == NULL) {
             return false;
@@ -168,10 +170,27 @@ bool CrashHandler::enableIATHook()
 
         // Find NT header.
         PIMAGE_NT_HEADERS ntHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(
-            reinterpret_cast<uint8_t *>(dosHeader) + dosHeader->e_lfanew);
+            moduleBaseAddr + dosHeader->e_lfanew);
 
         if (ntHeader->Signature != IMAGE_NT_SIGNATURE) {
             return false;
+        }
+
+        // Find optional header.
+        PIMAGE_OPTIONAL_HEADER32 optionalHeader = &(ntHeader->OptionalHeader);
+
+        // Find import descriptors
+        for (PIMAGE_IMPORT_DESCRIPTOR importDescriptor
+             = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
+                 moduleBaseAddr
+                 + optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
+                       .VirtualAddress);
+             importDescriptor.Name != 0; ++importDescriptor) {
+            LPCTSTR dllName = reinterpret_cast<LPCTSTR>(
+                moduleBaseAddr + importDescriptor->Name);
+            if (::_tcscmp(dllName, "kernel32.dll") == 0) {
+                ::MessageBoxA(NULL, "Found.", "Found", MB_OK);
+            }
         }
     }
 

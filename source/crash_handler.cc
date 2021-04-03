@@ -144,7 +144,7 @@ bool CrashHandler::enableIATHook()
 {
     // Traverse loaded modules.
     HANDLE snapshot = ::CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
-    if (hdn == INVALID_HANDLE_VALUE) {
+    if (hnd == INVALID_HANDLE_VALUE) {
         return false;
     }
     AutoRelease<HANDLE> releaseSnapshot(snapshot, [](HANDLE &hnd) -> void {
@@ -170,7 +170,7 @@ bool CrashHandler::enableIATHook()
         PIMAGE_NT_HEADERS ntHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(
             reinterpret_cast<uint8_t *>(dosHeader) + dosHeader->e_lfanew);
 
-        if (ntHeader->->Signature != IMAGE_NT_SIGNATURE) {
+        if (ntHeader->Signature != IMAGE_NT_SIGNATURE) {
             return false;
         }
     }

@@ -7,6 +7,8 @@
     #include <Windows.h>
     #include <tlhelp32.h>
 
+    #include <Dbghelp.h>
+
     #include <Memoryapi.h>
 
     #include <common/auto_release.h>
@@ -364,7 +366,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     HANDLE dumpFile
         = CreateFileW(m_dumpFilePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
                       CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile != INVALID_HANDLE_VALUE) {
+    if (dumpFile != INVALID_HANDLE_VALUE) {
         // Write dump file.
         MINIDUMP_EXCEPTION_INFORMATION exInfo;
         exInfo.ThreadId          = GetCurrentThreadId();

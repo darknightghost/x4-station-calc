@@ -138,7 +138,7 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
     if (_instance.m_topLevelExceptionFiler != nullptr) {
         return _instance.m_topLevelExceptionFiler.load()(exceptionInfo);
     }
-    return EXCEPTION_CONTINUE_SEARCH;
+    return EXCEPTION_EXECUTE_HANDLER;
 }
 
 /**

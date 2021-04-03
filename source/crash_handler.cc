@@ -346,7 +346,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     WCHAR *    p           = m_dumpFilePath;
     ::wcscpy(p, L"\\\\?\\");
     p += 4;
-    p += ::GetCurrentDirecotryW(
+    p += ::GetCurrentDirectoryW(
         sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath), p);
     ::_snwprintf(
         p, sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),

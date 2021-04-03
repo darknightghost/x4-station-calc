@@ -59,11 +59,6 @@ class CrashHandler {
     bool enableEATHook();
 
     /**
-     * @@brief		Disable EAT hook.
-     */
-    void disableEATHook();
-
-    /**
      * @@brief		Enable IAT hook.
      *
      * @return      On success, the method returns \c true. Otherwise returns
@@ -95,7 +90,6 @@ CrashHandler::CrashHandler() :
         ::MessageBoxA(NULL,
                       "Failed to make EAT hook, the crash handler is disabled.",
                       "EAT Hook Failed", MB_OK | MB_ICONERROR);
-        return;
     }
 
     // Enable IAT hook.
@@ -103,8 +97,6 @@ CrashHandler::CrashHandler() :
         ::MessageBoxA(NULL,
                       "Failed to make IAT hook, the crash handler is disabled.",
                       "IAT Hook Failed", MB_OK | MB_ICONERROR);
-        this->disableEATHook();
-        return;
     }
 
     // Register crash handler.
@@ -143,13 +135,51 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
  */
 bool CrashHandler::enableEATHook()
 {
-    return true;
-}
+    uint8_t *moduleBaseAddr
+        = reinterpret_cast<uint8_t *>(::GetModuleHandleA("KERNEL32.dll"));
 
-/**
- * @@brief		Disable EAT hook.
- */
-void CrashHandler::disableEATHook() {}
+    // Find DOS header.
+    PIMAGE_DOS_HEADER dosHeader
+        = reinterpret_cast<PIMAGE_DOS_HEADER>(moduleBaseAddr);
+
+    if (dosHeader == NULL) {
+        return false;
+    }
+
+    if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
+        return false;
+    }
+
+    // Find NT header.
+    PIMAGE_NT_HEADERS ntHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(
+        moduleBaseAddr + dosHeader->e_lfanew);
+
+    if (ntHeader->Signature != IMAGE_NT_SIGNATURE) {
+        return false;
+    }
+
+    // Find optional header.
+    PIMAGE_OPTIONAL_HEADER optionalHeader = &(ntHeader->OptionalHeader);
+
+    // Find exprot descriptor.
+    PIMAGE_EXPORT_DIRECTORY exportDirectory
+        = reinterpret_cast<PIMAGE_EXPORT_DIRECTORY>(
+            moduleBaseAddr
+            + optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT]
+                  .VirtualAddress);
+    PUINT_PTR addressOfNames = reinterpret_cast<PUINT_PTR>(
+        moduleBaseAddr + exportDirectory->AddressOfNames);
+    for (UINT_PTR i = 0; i < exportDirectory->NumberOfNames; ++i) {
+        LPCTSTR symbolName = moduleBaseAddr + addressOfNames[i];
+
+        if (::strcmp(symbolName, "SetUnhandledExceptionFilter") == 0) {
+            ::MessageBoxA(NULL, "EAT hooked", "EAT hooked", MB_OK);
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * @@brief		Enable IAT hook.
@@ -217,8 +247,8 @@ bool CrashHandler::enableIATHook()
                         PIMAGE_IMPORT_BY_NAME importByName
                             = reinterpret_cast<PIMAGE_IMPORT_BY_NAME>(
                                 moduleBaseAddr + originalThunkData->u1.Ordinal);
-                        if (::_stricmp(importByName->Name,
-                                       "SetUnhandledExceptionFilter")
+                        if (::strcmp(importByName->Name,
+                                     "SetUnhandledExceptionFilter")
                             == 0) {
                             DWORD  oldMemAttr    = 0;
                             SIZE_T written       = 0;

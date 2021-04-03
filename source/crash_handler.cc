@@ -101,7 +101,27 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
  */
 bool CrashHandler::enableIATHook()
 {
-    return false;
+    // Find DOS header.
+    PIMAGE_DOS_HEADER dosHeader
+        = reinterpret_cast<PIMAGE_DOS_HEADER>(::GetModuleHandle(NULL));
+
+    if (dosHeader == NULL) {
+        return false;
+    }
+
+    if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
+        return false;
+    }
+
+    // Find NT header.
+    PIMAGE_NT_HEADERS ntHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(
+        reinterpret_cast<uint8_t *>(dosHeader) + dosHeader->e_lfanew);
+
+    if (ntHeader->->Signature != IMAGE_NT_SIGNATURE) {
+        return false;
+    }
+
+    return true;
 }
 
 #endif

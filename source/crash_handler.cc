@@ -38,9 +38,9 @@ class CrashHandler {
     /**
      * @brief		Exception handler.
      *
-     * @param[in]	exception		Exception pointser.
+     * @param[in]	exceptionInfo       Exception information.
      */
-    static LONG WINAPI onCrash(struct _EXCEPTION_POINTERS *exceptions);
+    static LONG WINAPI onCrash(struct _EXCEPTION_POINTERS *exceptionInfo);
 
     /**
      * @brief		Fake SetUnhandledExceptionFilter().
@@ -67,9 +67,11 @@ class CrashHandler {
     bool enableIATHook();
 
     /**
-     * @@brief		Save the dump file.
+     * @brief		Save the dump file.
+     *
+     * @param[in]	exceptionInfo       Exception information.
      */
-    void saveDump();
+    void saveDump(struct _EXCEPTION_POINTERS *exceptionInfo);
 };
 
 CrashHandler CrashHandler::_instance; ///< Instance.
@@ -83,8 +85,8 @@ CrashHandler::CrashHandler() :
 {
     m_realSetUnhandledExceptionFilter
         = reinterpret_cast<SetUnhandledExceptionFilterFuncType>(
-            ::GetProcAddressA(GetModuleHandleA("KERNEL32.dll"),
-                              "SetUnhandledExceptionFilter"));
+            ::GetProcAddress(GetModuleHandle("KERNEL32.dll"),
+                             "SetUnhandledExceptionFilter"));
     if (m_realSetUnhandledExceptionFilter == nullptr) {
         ::MessageBoxA(NULL, "Failed to find SetUnhandledExceptionFilter().",
                       "Unknow Error", MB_OK | MB_ICONERROR);
@@ -117,7 +119,7 @@ CrashHandler::~CrashHandler() {}
 /**
  * @brief		Exception handler.
  */
-LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
+LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
     // Ask user to save a dump file.
     if (::MessageBoxA(
@@ -126,12 +128,12 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
             "save a core dump?",
             "Crash", MB_YESNO | MB_ICONERROR)
         == IDOK) {
-        _instance.saveDump();
+        _instance.saveDump(exceptionInfo);
     }
 
     // Call default exception handler.
     if (_instance.m_topLevelExceptionFiler != nullptr) {
-        return _instance.m_topLevelExceptionFiler(exception);
+        return _instance.m_topLevelExceptionFiler(exceptionInfo);
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -333,7 +335,7 @@ bool CrashHandler::enableIATHook()
 /**
  * @@brief		Save the dump file.
  */
-void CrashHandler::saveDump()
+void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
     ::MessageBoxA(NULL, "Dump.", "Dump", MB_OK);
 }

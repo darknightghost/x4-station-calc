@@ -99,6 +99,9 @@ if (MSVC)
         add_link_options ("/subsystem:windows" "/entry:mainCRTStartup")
 
     endif ()
+
+    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+    set (CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
 endif ()
 
 # Dependencies

@@ -358,7 +358,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
         return;
     }
 
-    ::MessageBoxW(NULL, m_dumpFilePath, L"dump", MB_YES);
+    ::MessageBoxW(NULL, m_dumpFilePath, L"dump", MB_OK);
 }
 
 #endif

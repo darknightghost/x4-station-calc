@@ -1,11 +1,18 @@
 #if defined(OS_WINDOWS)
 
     #include <Dbghelp.h>
-    #include <windows.h>
+    #include <Windows.h>
 
 class CrashHandler {
   private:
+    using SetUnhandledExceptionFilterFuncType
+        = WINAPI LPTOP_LEVEL_EXCEPTION_FILTER (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
+
+  private:
     static CrashHandler _instance; ///< Instance.
+    SetUnhandledExceptionFilterFuncType
+        m_realSetUnhandledExceptionFilter; ///< Real
+                                           ///< SetUnhandledExceptionFilter().
 
   public:
     /**
@@ -27,9 +34,17 @@ class CrashHandler {
     static WINAPI LONG onCrash(struct _EXCEPTION_POINTERS *exceptions);
 
     /**
-     * @@brief		Disable \c SetUnhandledExceptionFilter().
+     * @brief		Fake SetUnhandledExceptionFilter().
+     *
+     * @param[in]	exception		Exception pointser.
      */
-    void disableSetUnhandledExceptionFilter();
+    static WINAPI LPTOP_LEVEL_EXCEPTION_FILTER fakeSetUnhandledExceptionFilter(
+        LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter);
+
+    /**
+     * @@brief		Enable IAT hook.
+     */
+    bool enableIATHook();
 };
 
 CrashHandler::_instance(); ///< Instance.

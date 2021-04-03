@@ -4,8 +4,8 @@
 
 class CrashHandler {
   private:
-    using SetUnhandledExceptionFilterFuncType
-        = LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
+    typedef LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (
+        *SetUnhandledExceptionFilterFuncType)(LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.
@@ -30,7 +30,7 @@ class CrashHandler {
      *
      * @param[in]	exception		Exception pointser.
      */
-    static WINAPI LONG onCrash(struct _EXCEPTION_POINTERS *exceptions);
+    static LONG WINAPI onCrash(struct _EXCEPTION_POINTERS *exceptions);
 
     /**
      * @brief		Fake SetUnhandledExceptionFilter().

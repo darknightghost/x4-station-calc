@@ -187,6 +187,13 @@ target_link_libraries(${PROJECT_NAME}
     ${OPENSSL_CRYPTO_LIBRARY}
     )
 
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        Dbghelp
+        )
+
+endif ()
+
 
 #Doc
 if (DOXYGEN_EXECUTABLE)

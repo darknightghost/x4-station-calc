@@ -177,7 +177,7 @@ bool CrashHandler::enableIATHook()
         }
 
         // Find optional header.
-        PIMAGE_OPTIONAL_HEADER32 optionalHeader = &(ntHeader->OptionalHeader);
+        PIMAGE_OPTIONAL_HEADER optionalHeader = &(ntHeader->OptionalHeader);
 
         // Find import descriptors
         for (PIMAGE_IMPORT_DESCRIPTOR importDescriptor
@@ -188,7 +188,7 @@ bool CrashHandler::enableIATHook()
              importDescriptor.Name != 0; ++importDescriptor) {
             LPCTSTR dllName = reinterpret_cast<LPCTSTR>(
                 moduleBaseAddr + importDescriptor->Name);
-            if (::_tcscmp(dllName, "kernel32.dll") == 0) {
+            if (_tcscmp(dllName, "kernel32.dll") == 0) {
                 ::MessageBoxA(NULL, "Found.", "Found", MB_OK);
             }
         }

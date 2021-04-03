@@ -127,7 +127,7 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
             "X4 Station Calculator has been crashed, would you like to "
             "save a core dump?",
             "Crash", MB_YESNO | MB_ICONERROR)
-        == IDOK) {
+        == IDYES) {
         _instance.saveDump(exceptionInfo);
     }
 

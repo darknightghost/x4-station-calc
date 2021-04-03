@@ -1,5 +1,7 @@
 #if defined(OS_WINDOWS)
 
+    #include <atomic>
+
     #include <Windows.h>
 
 class CrashHandler {
@@ -12,6 +14,8 @@ class CrashHandler {
     SetUnhandledExceptionFilterFuncType
         m_realSetUnhandledExceptionFilter; ///< Real
                                            ///< SetUnhandledExceptionFilter().
+    ::std::atomic<LPTOP_LEVEL_EXCEPTION_FILTER>
+        m_topLevelExceptionFiler; ///< Top level exception filter.
 
   public:
     /**
@@ -51,9 +55,10 @@ CrashHandler CrashHandler::_instance; ///< Instance.
 /**
  * @brief	Constructor.
  */
-CrashHandler::CrashHandler() : m_realSetUnhandledExceptionFilter(nullptr)
+CrashHandler::CrashHandler() :
+    m_realSetUnhandledExceptionFilter(nullptr),
+    m_topLevelExceptionFiler(nullptr)
 {
-    m_realSetUnhandledExceptionFilter = fakeSetUnhandledExceptionFilter;
     // Enable IAT hook.
     if (! this->enableIATHook()) {
         ::MessageBoxA(NULL,
@@ -87,7 +92,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
-    return nullptr;
+    return m_topLevelExceptionFiler.exchange(lpTopLevelExceptionFilter);
 }
 
 /**

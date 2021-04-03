@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 
 #include <QtCore/QTextCodec>
 #include <QtWidgets/QApplication>
@@ -44,7 +45,7 @@ int firstRun()
  */
 int main(int argc, char *argv[])
 {
-    *((int *)nullptr) = 1;
+    ::memset(nullptr, 1, 10);
     // Force UTF-8.
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 

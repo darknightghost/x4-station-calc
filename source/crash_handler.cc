@@ -108,6 +108,7 @@ CrashHandler::CrashHandler() :
     }
 
     // Register crash handler.
+    ::SetUnhandledExceptionFilter(&CrashHandler::onCrash);
 }
 
 /**

@@ -346,9 +346,8 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     WCHAR *    p           = m_dumpFilePath;
     ::wcscpy(p, L"\\\\?\\");
     p += 4;
-    p += :
-        GetCurrentDirecotryW(
-            sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath), p);
+    p += ::GetCurrentDirecotryW(
+        sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath), p);
     ::_snwprintf(
         p, sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
         L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp", tm->tm_year + 1900,

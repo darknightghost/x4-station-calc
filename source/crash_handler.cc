@@ -361,8 +361,6 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
                  currentTime->tm_mday, currentTime->tm_hour,
                  currentTime->tm_min, currentTime->tm_sec);
 
-    ::MessageBoxW(NULL, m_dumpFilePath, L"Error", MB_OK | MB_ICONERROR);
-
     // Save dump file.
     HANDLE dumpFile
         = CreateFileW(m_dumpFilePath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,

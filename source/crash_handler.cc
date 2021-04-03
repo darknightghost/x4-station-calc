@@ -133,7 +133,7 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
 
     // Call default exception handler.
     if (_instance.m_topLevelExceptionFiler != nullptr) {
-        return _instance.m_topLevelExceptionFiler(exceptionInfo);
+        return _instance.m_topLevelExceptionFiler.load()(exceptionInfo);
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }

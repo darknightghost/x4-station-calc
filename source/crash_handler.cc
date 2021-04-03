@@ -5,7 +5,7 @@
 class CrashHandler {
   private:
     using SetUnhandledExceptionFilterFuncType
-        = WINAPI LPTOP_LEVEL_EXCEPTION_FILTER (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
+        = LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.
@@ -37,7 +37,7 @@ class CrashHandler {
      *
      * @param[in]	exception		Exception pointser.
      */
-    static WINAPI LPTOP_LEVEL_EXCEPTION_FILTER fakeSetUnhandledExceptionFilter(
+    static LPTOP_LEVEL_EXCEPTION_FILTER WINAPI fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter);
 
     /**

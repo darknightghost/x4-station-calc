@@ -121,6 +121,7 @@ CrashHandler::~CrashHandler() {}
  */
 LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
 {
+    ::MessageBoxA(NULL, "crash", "crash", MB_OK);
     return EXCEPTION_CONTINUE_SEARCH;
 }
 

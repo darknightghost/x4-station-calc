@@ -44,6 +44,7 @@ int firstRun()
  */
 int main(int argc, char *argv[])
 {
+    *((int *)nullptr) = 1;
     // Force UTF-8.
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 

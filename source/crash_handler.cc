@@ -5,7 +5,7 @@
 class CrashHandler {
   private:
     using SetUnhandledExceptionFilterFuncType
-        = LPTOP_LEVEL_EXCEPTION_FILTER (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
+        = LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.

@@ -92,7 +92,8 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
-    return m_topLevelExceptionFiler.exchange(lpTopLevelExceptionFilter);
+    auto ret = m_topLevelExceptionFiler.exchange(lpTopLevelExceptionFilter);
+    return ret;
 }
 
 /**

@@ -47,16 +47,22 @@ class CrashHandler {
     bool enableIATHook();
 };
 
-CrashHandler::_instance(); ///< Instance.
+CrashHandler CrashHandler::_instance; ///< Instance.
 
 /**
  * @brief	Constructor.
  */
-CrashHandler::CrashHandler()
+CrashHandler::CrashHandler() : m_realSetUnhandledExceptionFilter(nullptr)
 {
+    // Enable IAT hook.
+    if (! this->enableIATHook()) {
+        ::MessageBoxA(NULL,
+                      "Failed to make IAT hook, the crash handler is disabled.",
+                      "IAT Hook Failed", MB_OK | MB_ICONERROR);
+        return;
+    }
+
     // Register crash handler.
-    ::SetUnhandledExceptionFilter(&CrashHandler::onCrash);
-    disableSetUnhandledExceptionFilter();
 }
 
 /**
@@ -73,8 +79,11 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
 }
 
 /**
- * @@brief		Disable \c SetUnhandledExceptionFilter().
+ * @@brief		Enable IAT hook.
  */
-void CrashHandler::disableSetUnhandledExceptionFilter() {}
+bool CrashHandler::enableIATHook()
+{
+    return false;
+}
 
 #endif

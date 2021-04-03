@@ -86,7 +86,9 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
 LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
-{}
+{
+    return nullptr;
+}
 
 /**
  * @@brief		Enable IAT hook.

@@ -217,6 +217,8 @@ bool CrashHandler::enableIATHook()
                             == 0) {
                             ::MessageBoxA(NULL, "Found symbol.", "Found",
                                           MB_OK);
+                        } else {
+                            ::MessageBoxA(NULL, symbolName, "Sym", MB_OK);
                         }
                     }
                 }

@@ -144,7 +144,7 @@ bool CrashHandler::enableIATHook()
 {
     // Traverse loaded modules.
     HANDLE snapshot = ::CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
-    if (hnd == INVALID_HANDLE_VALUE) {
+    if (snapshot == INVALID_HANDLE_VALUE) {
         return false;
     }
     AutoRelease<HANDLE> releaseSnapshot(snapshot, [](HANDLE &hnd) -> void {

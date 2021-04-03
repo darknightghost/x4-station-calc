@@ -79,6 +79,8 @@ CrashHandler::CrashHandler() :
     m_realSetUnhandledExceptionFilter(nullptr),
     m_topLevelExceptionFiler(nullptr)
 {
+    m_realSetUnhandledExceptionFilter = SetUnhandledExceptionFilter;
+
     // Enable EAT hook.
     if (! this->enableEATHook()) {
         ::MessageBoxA(NULL,

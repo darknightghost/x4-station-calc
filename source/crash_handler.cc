@@ -189,7 +189,7 @@ bool CrashHandler::enableIATHook()
              importDescriptor->Name != 0; ++importDescriptor) {
             LPCTSTR dllName = reinterpret_cast<LPCTSTR>(
                 moduleBaseAddr + importDescriptor->Name);
-            if (::stricmp(dllName, "kernel32.dll") == 0) {
+            if (::_stricmp(dllName, "kernel32.dll") == 0) {
                 ::MessageBoxA(NULL, "Found.", "Found", MB_OK);
             }
         }

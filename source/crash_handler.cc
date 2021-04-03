@@ -4,8 +4,8 @@
 
 class CrashHandler {
   private:
-    typedef LPTOP_LEVEL_EXCEPTION_FILTER (*SetUnhandledExceptionFilterFuncType)(
-        LPTOP_LEVEL_EXCEPTION_FILTER);
+    using SetUnhandledExceptionFilterFuncType
+        = LPTOP_LEVEL_EXCEPTION_FILTER (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.
@@ -67,7 +67,7 @@ CrashHandler::CrashHandler() : m_realSetUnhandledExceptionFilter(nullptr)
 /**
  * @brief	Destructor.
  */
-~CrashHandler() {}
+CrashHandler::~CrashHandler() {}
 
 /**
  * @brief		Exception handler.

@@ -126,12 +126,12 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
             "save a core dump?",
             "Crash", MB_YESNO | MB_ICONERROR)
         == IDOK) {
-        this->saveDump();
+        _instance.saveDump();
     }
 
     // Call default exception handler.
-    if (m_topLevelExceptionFiler != nullptr) {
-        return m_topLevelExceptionFiler(exception);
+    if (_instance.m_topLevelExceptionFiler != nullptr) {
+        return _instance.m_topLevelExceptionFiler(exception);
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }

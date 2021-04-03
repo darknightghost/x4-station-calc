@@ -167,9 +167,9 @@ bool CrashHandler::enableEATHook()
             moduleBaseAddr
             + optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT]
                   .VirtualAddress);
-    PUINT_PTR addressOfNames = reinterpret_cast<PUINT_PTR>(
+    PDWORD addressOfNames = reinterpret_cast<PDWORD>(
         moduleBaseAddr + exportDirectory->AddressOfNames);
-    for (UINT_PTR i = 0; i < exportDirectory->NumberOfNames; ++i) {
+    for (DWORD i = 0; i < exportDirectory->NumberOfNames; ++i) {
         LPCTSTR symbolName
             = reinterpret_cast<LPCTSTR>(moduleBaseAddr + addressOfNames[i]);
 

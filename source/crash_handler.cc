@@ -236,6 +236,8 @@ bool CrashHandler::enableIATHook()
                             // Resume memory attribute.
                             ::VirtualProtect(targetAddress, sizeof(void *),
                                              oldMemAttr, &oldMemAttr);
+
+                            ::MessageBoxA(NULL, "hook", "hook", MB_OK);
                         }
                     }
                 }

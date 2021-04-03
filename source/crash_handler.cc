@@ -344,7 +344,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     time_t     timestamp   = ::time(NULL);
     struct tm *currentTime = ::localtime(&timestamp);
     WCHAR *    p           = m_dumpFilePath;
-    ::wcscpy(p, "\\\\?\\");
+    ::wcscpy(p, L"\\\\?\\");
     p += 4;
     p += :
         GetCurrentDirecotryW(

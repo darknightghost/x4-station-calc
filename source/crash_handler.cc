@@ -347,11 +347,15 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     ::wcscpy(p, L"\\\\?\\");
     p += 4;
     p += ::GetCurrentDirectoryW(
-        sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath), p);
-    ::_snwprintf(
-        p, sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
-        L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp", tm->tm_year + 1900,
-        tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+        static_cast<DWORD>(sizeof(m_dumpFilePath) / sizeof(WCHAR)
+                           - (p - m_dumpFilePath)),
+        p);
+    ::_snwprintf(p,
+                 sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
+                 L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",
+                 currentTime->tm_year + 1900, currentTime->tm_mon + 1,
+                 currentTime->tm_mday, currentTime->tm_hour,
+                 currentTime->tm_min, currentTime->tm_sec);
 
     ::MessageBoxW(NULL, m_dumpFilePath, L"Error", MB_OK | MB_ICONERROR);
     return;

@@ -15,7 +15,7 @@ class AutoRelease {
      *
      * @param[in] data        Data to release.
      */
-    typedef ::std::function<void(RefType)> ReleaseCallback;
+    typedef ::std::function<void(RefType &)> ReleaseCallback;
 
   private:
     RefType &       m_ref;             ///< Referenced object.
@@ -28,7 +28,7 @@ class AutoRelease {
      * @param[in]   ref         Reference to data.
      * @param[in]   callback    Release callback.
      */
-    AutoRelease(RefType ref, ReleaseCallback callback) :
+    AutoRelease(RefType &ref, ReleaseCallback callback) :
         m_ref(ref), m_releaseCallback(callback)
     {}
 

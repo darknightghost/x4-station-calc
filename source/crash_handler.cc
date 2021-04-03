@@ -17,6 +17,8 @@ class CrashHandler {
 
   private:
     static CrashHandler _instance; ///< Instance.
+    WCHAR
+    m_dumpFilePath[MAX_PATH + 1]; ///< Buffer of the path of the dump file.
     SetUnhandledExceptionFilterFuncType
         m_realSetUnhandledExceptionFilter; ///< Real
                                            ///< SetUnhandledExceptionFilter().
@@ -80,6 +82,7 @@ CrashHandler CrashHandler::_instance; ///< Instance.
  * @brief	Constructor.
  */
 CrashHandler::CrashHandler() :
+    m_dumpFilePath(L"x4-station-calc.dmp"),
     m_realSetUnhandledExceptionFilter(nullptr),
     m_topLevelExceptionFiler(nullptr)
 {
@@ -88,22 +91,22 @@ CrashHandler::CrashHandler() :
             ::GetProcAddress(GetModuleHandle("KERNEL32.dll"),
                              "SetUnhandledExceptionFilter"));
     if (m_realSetUnhandledExceptionFilter == nullptr) {
-        ::MessageBoxA(NULL, "Failed to find SetUnhandledExceptionFilter().",
-                      "Unknow Error", MB_OK | MB_ICONERROR);
+        ::MessageBoxW(NULL, L"Failed to find SetUnhandledExceptionFilter().",
+                      L"Unknow Error", MB_OK | MB_ICONERROR);
     }
 
     // Enable EAT hook.
     if (! this->enableEATHook()) {
-        ::MessageBoxA(NULL,
-                      "Failed to make EAT hook, the crash handler is disabled.",
-                      "EAT Hook Failed", MB_OK | MB_ICONERROR);
+        ::MessageBoxW(
+            NULL, L"Failed to make EAT hook, the crash handler is disabled.",
+            L"EAT Hook Failed", MB_OK | MB_ICONERROR);
     }
 
     // Enable IAT hook.
     if (! this->enableIATHook()) {
-        ::MessageBoxA(NULL,
-                      "Failed to make IAT hook, the crash handler is disabled.",
-                      "IAT Hook Failed", MB_OK | MB_ICONERROR);
+        ::MessageBoxW(
+            NULL, L"Failed to make IAT hook, the crash handler is disabled.",
+            L"IAT Hook Failed", MB_OK | MB_ICONERROR);
     }
 
     // Register crash handler.
@@ -122,11 +125,11 @@ CrashHandler::~CrashHandler() {}
 LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
     // Ask user to save a dump file.
-    if (::MessageBoxA(
+    if (::MessageBoxW(
             NULL,
-            "X4 Station Calculator has been crashed, would you like to "
+            L"X4 Station Calculator has been crashed, would you like to "
             "save a core dump?",
-            "Crash", MB_YESNO | MB_ICONERROR)
+            L"Crash", MB_YESNO | MB_ICONERROR)
         == IDYES) {
         _instance.saveDump(exceptionInfo);
     }
@@ -337,7 +340,25 @@ bool CrashHandler::enableIATHook()
  */
 void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
-    ::MessageBoxA(NULL, "Dump.", "Dump", MB_OK);
+    // Get path.
+    OPENFILENAMEW saveInfo;
+    ::memset(&saveInfo, 0, sizeof(saveInfo));
+    saveInfo.lStructSize     = sizeof(saveInfo);
+    saveInfo.lpstrFilter     = L"Dump Files\0*.dmp\0";
+    saveInfo.nFilterIndex    = 0;
+    saveInfo.lpstrFile       = m_dumpFilePath;
+    saveInfo.nMaxFile        = sizeof(m_dumpFilePath) / sizeof(WCHAR);
+    saveInfo.lpstrFileTitle  = NULL;
+    saveInfo.nMaxFileTitle   = NULL;
+    saveInfo.lpstrInitialDir = NULL;
+    saveInfo.lpstrTitle      = L"Select a Path to Save the Dump File";
+    saveInfo.Flags           = OFN_OVERWRITEPROMPT;
+
+    if (! ::GetSaveFileNameW(&saveInfo)) {
+        return;
+    }
+
+    ::MessageBoxW(NULL, m_dumpFilePath, L"dump", MB_YES);
 }
 
 #endif

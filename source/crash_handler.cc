@@ -362,7 +362,6 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
                  currentTime->tm_min, currentTime->tm_sec);
 
     ::MessageBoxW(NULL, m_dumpFilePath, L"Error", MB_OK | MB_ICONERROR);
-    return;
 
     // Save dump file.
     HANDLE dumpFile
@@ -377,20 +376,24 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
         if (::MiniDumpWriteDump(::GetCurrentProcess(), ::GetCurrentProcessId(),
                                 dumpFile, MiniDumpNormal, &exInfo, NULL,
                                 NULL)) {
-            // Show result.
             ::_snwprintf(m_dumpFileMessage,
                          sizeof(m_dumpFileMessage) / sizeof(WCHAR),
-                         L"Dump file \"%s\" saved.", m_dumpFileMessage);
+                         L"Dump file \"%s\" saved.", m_dumpFilePath);
             ::MessageBoxW(NULL, m_dumpFileMessage, L"Dump File Saved",
                           MB_OK | MB_ICONINFORMATION);
         } else {
-            ::MessageBoxW(NULL, L"Failed to save dump file.", L"Error",
+            ::_snwprintf(m_dumpFileMessage,
+                         sizeof(m_dumpFileMessage) / sizeof(WCHAR),
+                         L"Failed to write dump file \"%s\".", m_dumpFilePath);
+            ::MessageBoxW(NULL, m_dumpFileMessage, L"Error",
                           MB_OK | MB_ICONERROR);
         }
         ::CloseHandle(dumpFile);
     } else {
-        ::MessageBoxW(NULL, L"Failed to save dump file.", L"Error",
-                      MB_OK | MB_ICONERROR);
+        ::_snwprintf(m_dumpFileMessage,
+                     sizeof(m_dumpFileMessage) / sizeof(WCHAR),
+                     L"Failed to create dump file \"%s\".", m_dumpFilePath);
+        ::MessageBoxW(NULL, m_dumpFileMessage, L"Error", MB_OK | MB_ICONERROR);
     }
 }
 

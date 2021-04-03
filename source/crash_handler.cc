@@ -176,12 +176,36 @@ bool CrashHandler::enableEATHook()
             = reinterpret_cast<LPCTSTR>(moduleBaseAddr + addressOfNames[i]);
 
         if (::strcmp(symbolName, "SetUnhandledExceptionFilter") == 0) {
+            // Find RVA.
             PWORD addressOfNameOrdinals = reinterpret_cast<PWORD>(
                 moduleBaseAddr + exportDirectory->AddressOfNameOrdinals);
-            PDWORD addressOfFunctions
-                = reinterpret_cast<PDWORD>(
-                      moduleBaseAddr + exportDirectory->AddressOfFunctions)
-                  + addressOfNameOrdinals[i];
+            PDWORD addressOfFunctions = reinterpret_cast<PDWORD>(
+                moduleBaseAddr + exportDirectory->AddressOfFunctions);
+            PDWORD targetRVA = addressOfFunctions + addressOfNameOrdinals[i];
+
+            // Get real address.
+            m_realSetUnhandledExceptionFilter
+                = reinterpret_cast<SetUnhandledExceptionFilterFuncType>(
+                    moduleBaseAddr + *targetRVA);
+
+            DWORD  oldMemAttr = 0;
+            SIZE_T written    = 0;
+
+            // Make memory writable.
+            ::VirtualProtect(targetRVA, sizeof(*targetRVA), PAGE_READWRITE,
+                             &oldMemAttr);
+
+            // Set hook.
+            DWORD newRVA = static_cast<DWORD>(
+                reinterpret_cast<UINT_PTR>(
+                    &CrashHandler::fakeSetUnhandledExceptionFilter)
+                - reinterpret_cast<UINT_PTR>(moduleBaseAddr));
+            ::WriteProcessMemory(::GetCurrentProcess(), targetRVA, &newRVA,
+                                 sizeof(newRVA), &written);
+
+            // Resume memory attribute.
+            ::VirtualProtect(targetRVA, sizeof(*targetRVA), oldMemAttr,
+                             &oldMemAttr);
 
             return true;
         }
@@ -267,10 +291,12 @@ bool CrashHandler::enableIATHook()
                                              PAGE_READWRITE, &oldMemAttr);
 
                             // Set hook.
-                            ::WriteProcessMemory(
-                                ::GetCurrentProcess(), targetAddress,
-                                &CrashHandler::fakeSetUnhandledExceptionFilter,
-                                sizeof(void *), &written);
+                            void *hookFunc
+                                = &CrashHandler::
+                                      fakeSetUnhandledExceptionFilter;
+                            ::WriteProcessMemory(::GetCurrentProcess(),
+                                                 targetAddress, &hookFunc,
+                                                 sizeof(hookFunc), &written);
 
                             // Resume memory attribute.
                             ::VirtualProtect(targetAddress, sizeof(void *),

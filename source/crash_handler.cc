@@ -3,6 +3,7 @@
     #include <atomic>
     #include <cstring>
 
+    #include <Memoryapi.h>
     #include <Windows.h>
     #include <tlhelp32.h>
 
@@ -130,6 +131,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
+    ::MessageBoxA(NULL, "fake", "fake", MB_OK);
     return _instance.m_topLevelExceptionFiler.exchange(
         lpTopLevelExceptionFilter);
 }
@@ -189,7 +191,7 @@ bool CrashHandler::enableIATHook()
         // Find optional header.
         PIMAGE_OPTIONAL_HEADER optionalHeader = &(ntHeader->OptionalHeader);
 
-        // Find import descriptors
+        // Find import descriptors.
         for (PIMAGE_IMPORT_DESCRIPTOR importDescriptor
              = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
                  moduleBaseAddr
@@ -216,8 +218,22 @@ bool CrashHandler::enableIATHook()
                         if (::_stricmp(importByName->Name,
                                        "SetUnhandledExceptionFilter")
                             == 0) {
-                            ::MessageBoxA(NULL, "Found symbol.", "Found",
-                                          MB_OK);
+                            DWORD  oldMemAttr    = 0;
+                            SIZE_T written       = 0;
+                            void * targetAddress = &(thunkData->u1.Ordinal);
+                            // Make memory writable.
+                            ::VirtualProtect(targetAddress, sizeof(void *),
+                                             PAGE_READWRITE, &oldMemAttr);
+
+                            // Set hook.
+                            ::WriteProcessMemory(
+                                ::GetCurrentProcess(), targetAddress,
+                                &CrashHandler::fakeSetUnhandledExceptionFilter,
+                                sizeof(void *), &written);
+
+                            // Resume memory attribute.
+                            ::VirtualProtect(targetAddress, sizeof(void *),
+                                             oldMemAttr, &oldMemAttr);
                         }
                     }
                 }

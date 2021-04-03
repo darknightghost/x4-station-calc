@@ -1,6 +1,5 @@
 #if defined(OS_WINDOWS)
 
-    #include <Dbghelp.h>
     #include <Windows.h>
 
 class CrashHandler {

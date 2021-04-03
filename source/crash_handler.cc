@@ -81,8 +81,9 @@ CrashHandler::CrashHandler() :
 {
     SetUnhandledExceptionFilterFuncType a = &SetUnhandledExceptionFilter;
     m_realSetUnhandledExceptionFilter
-        = static_cast<SetUnhandledExceptionFilterFuncType>(::GetProcAddress(
-            GetModuleHandle("KERNEL32.dll"), "SetUnhandledExceptionFilter"));
+        = reinterpret_cast<SetUnhandledExceptionFilterFuncType>(
+            ::GetProcAddress(GetModuleHandle("KERNEL32.dll"),
+                             "SetUnhandledExceptionFilter"));
     if (m_realSetUnhandledExceptionFilter == nullptr) {
         ::MessageBoxA(NULL, "Failed to find SetUnhandledExceptionFilter().",
                       "Unknow Error", MB_OK | MB_ICONERROR);

@@ -1,6 +1,7 @@
 #if defined(OS_WINDOWS)
 
     #include <atomic>
+    #include <cstring>
 
     #include <Windows.h>
     #include <tlhelp32.h>
@@ -185,10 +186,10 @@ bool CrashHandler::enableIATHook()
                  moduleBaseAddr
                  + optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
                        .VirtualAddress);
-             importDescriptor.Name != 0; ++importDescriptor) {
+             importDescriptor->Name != 0; ++importDescriptor) {
             LPCTSTR dllName = reinterpret_cast<LPCTSTR>(
                 moduleBaseAddr + importDescriptor->Name);
-            if (_tcscmp(dllName, "kernel32.dll") == 0) {
+            if (::stricmp(dllName, "kernel32.dll") == 0) {
                 ::MessageBoxA(NULL, "Found.", "Found", MB_OK);
             }
         }

@@ -65,6 +65,11 @@ class CrashHandler {
      *              \c false.
      */
     bool enableIATHook();
+
+    /**
+     * @@brief		Save the dump file.
+     */
+    void saveDump();
 };
 
 CrashHandler CrashHandler::_instance; ///< Instance.
@@ -78,8 +83,8 @@ CrashHandler::CrashHandler() :
 {
     m_realSetUnhandledExceptionFilter
         = reinterpret_cast<SetUnhandledExceptionFilterFuncType>(
-            ::GetProcAddress(GetModuleHandle("KERNEL32.dll"),
-                             "SetUnhandledExceptionFilter"));
+            ::GetProcAddressA(GetModuleHandleA("KERNEL32.dll"),
+                              "SetUnhandledExceptionFilter"));
     if (m_realSetUnhandledExceptionFilter == nullptr) {
         ::MessageBoxA(NULL, "Failed to find SetUnhandledExceptionFilter().",
                       "Unknow Error", MB_OK | MB_ICONERROR);
@@ -114,7 +119,20 @@ CrashHandler::~CrashHandler() {}
  */
 LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
 {
-    ::MessageBoxA(NULL, "crash", "crash", MB_OK);
+    // Ask user to save a dump file.
+    if (::MessageBoxA(
+            NULL,
+            "X4 Station Calculator has been crashed, would you like to "
+            "save a core dump?",
+            "Crash", MB_YESNO | MB_ICONERROR)
+        == IDOK) {
+        this->saveDump();
+    }
+
+    // Call default exception handler.
+    if (m_topLevelExceptionFiler != nullptr) {
+        return m_topLevelExceptionFiler(exception);
+    }
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -127,7 +145,6 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
-    ::MessageBoxA(NULL, "fake", "fake", MB_OK);
     return _instance.m_topLevelExceptionFiler.exchange(
         lpTopLevelExceptionFilter);
 }
@@ -311,6 +328,14 @@ bool CrashHandler::enableIATHook()
     }
 
     return true;
+}
+
+/**
+ * @@brief		Save the dump file.
+ */
+void CrashHandler::saveDump()
+{
+    ::MessageBoxA(NULL, "Dump.", "Dump", MB_OK);
 }
 
 #endif

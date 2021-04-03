@@ -3,9 +3,10 @@
     #include <atomic>
     #include <cstring>
 
-    #include <Memoryapi.h>
     #include <Windows.h>
     #include <tlhelp32.h>
+
+    #include <Memoryapi.h>
 
     #include <common/auto_release.h>
 

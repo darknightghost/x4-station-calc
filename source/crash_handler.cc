@@ -206,11 +206,12 @@ bool CrashHandler::enableIATHook()
                 PIMAGE_THUNK_DATA thunkData
                     = reinterpret_cast<PIMAGE_THUNK_DATA>(
                         moduleBaseAddr + importDescriptor->FirstThunk);
-                for (; originalThunkData->Ordinal != 0;
+                for (; originalThunkData->u1.Ordinal != 0;
                      ++originalThunkData, ++thunkData) {
-                    if (! (originalThunkData->Ordinal & IMAGE_ORDINAL_FLAG)) {
+                    if (! (originalThunkData->u1.Ordinal
+                           & IMAGE_ORDINAL_FLAG)) {
                         LPCTSTR symbolName = reinterpret_cast<LPCTSTR>(
-                            moduleBaseAddr + originalThunkData->Ordinal);
+                            moduleBaseAddr + originalThunkData->u1.Ordinal);
                         if (::_stricmp(symbolName,
                                        "SetUnhandledExceptionFilter")
                             == 0) {

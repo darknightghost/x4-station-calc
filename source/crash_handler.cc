@@ -342,7 +342,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
     // Make path.
     time_t     timestamp   = ::time(NULL);
-    struct tm *currentTime = ::localtime(timestamp);
+    struct tm *currentTime = ::localtime(&timestamp);
     WCHAR *    p           = m_dumpFilePath;
     ::wcscpy(p, "\\\\?\\");
     p += 4;

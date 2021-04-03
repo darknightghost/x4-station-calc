@@ -79,6 +79,16 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptions)
 }
 
 /**
+ * @brief		Fake SetUnhandledExceptionFilter().
+ *
+ * @param[in]	exception		Exception pointser.
+ */
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
+    CrashHandler::fakeSetUnhandledExceptionFilter(
+        LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
+{}
+
+/**
  * @@brief		Enable IAT hook.
  */
 bool CrashHandler::enableIATHook()

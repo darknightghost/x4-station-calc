@@ -170,7 +170,8 @@ bool CrashHandler::enableEATHook()
     PUINT_PTR addressOfNames = reinterpret_cast<PUINT_PTR>(
         moduleBaseAddr + exportDirectory->AddressOfNames);
     for (UINT_PTR i = 0; i < exportDirectory->NumberOfNames; ++i) {
-        LPCTSTR symbolName = moduleBaseAddr + addressOfNames[i];
+        LPCTSTR symbolName
+            = reinterpret_cast<LPCTSTR>(moduleBaseAddr + addressOfNames[i]);
 
         if (::strcmp(symbolName, "SetUnhandledExceptionFilter") == 0) {
             ::MessageBoxA(NULL, "EAT hooked", "EAT hooked", MB_OK);

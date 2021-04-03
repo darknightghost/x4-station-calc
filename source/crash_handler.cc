@@ -5,7 +5,7 @@
 class CrashHandler {
   private:
     using SetUnhandledExceptionFilterFuncType
-        = LPTOP_LEVEL_EXCEPTION_FILTER WINAPI (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
+        = LPTOP_LEVEL_EXCEPTION_FILTER (*)(LPTOP_LEVEL_EXCEPTION_FILTER);
 
   private:
     static CrashHandler _instance; ///< Instance.
@@ -53,6 +53,7 @@ CrashHandler CrashHandler::_instance; ///< Instance.
  */
 CrashHandler::CrashHandler() : m_realSetUnhandledExceptionFilter(nullptr)
 {
+    m_realSetUnhandledExceptionFilter = fakeSetUnhandledExceptionFilter;
     // Enable IAT hook.
     if (! this->enableIATHook()) {
         ::MessageBoxA(NULL,

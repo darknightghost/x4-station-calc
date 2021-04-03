@@ -341,16 +341,17 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     // Get path.
     OPENFILENAMEW saveInfo;
     ::memset(&saveInfo, 0, sizeof(saveInfo));
-    saveInfo.lStructSize     = sizeof(saveInfo);
-    saveInfo.lpstrFilter     = L"Dump Files\0*.dmp\0";
-    saveInfo.nFilterIndex    = 0;
+    saveInfo.lStructSize = sizeof(saveInfo);
+    // saveInfo.lpstrFilter     = L"Dump Files\0*.dmp\0";
+    // saveInfo.nFilterIndex    = 0;
+    m_dumpFilePath[0]        = L'\0';
     saveInfo.lpstrFile       = m_dumpFilePath;
     saveInfo.nMaxFile        = sizeof(m_dumpFilePath) / sizeof(WCHAR);
     saveInfo.lpstrFileTitle  = NULL;
-    saveInfo.nMaxFileTitle   = NULL;
+    saveInfo.nMaxFileTitle   = 0;
     saveInfo.lpstrInitialDir = NULL;
-    saveInfo.lpstrTitle      = L"Select a Path to Save the Dump File";
-    saveInfo.Flags           = OFN_OVERWRITEPROMPT;
+    // saveInfo.lpstrTitle      = L"Select a Path to Save the Dump File";
+    // saveInfo.Flags           = OFN_OVERWRITEPROMPT;
 
     if (! ::GetSaveFileNameW(&saveInfo)) {
         return;

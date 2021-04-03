@@ -2,6 +2,7 @@
 
     #include <atomic>
     #include <cstring>
+    #include <ctime>
 
     #include <Windows.h>
     #include <tlhelp32.h>
@@ -338,26 +339,13 @@ bool CrashHandler::enableIATHook()
  */
 void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
-    // Get path.
-    OPENFILENAMEW saveInfo;
-    ::memset(&saveInfo, 0, sizeof(saveInfo));
-    saveInfo.lStructSize     = sizeof(saveInfo);
-    saveInfo.hwndOwner       = NULL;
-    saveInfo.lpstrFilter     = L"Dump Files\0*.dmp\0";
-    saveInfo.nFilterIndex    = 0;
-    saveInfo.lpstrFile       = m_dumpFilePath;
-    saveInfo.nMaxFile        = sizeof(m_dumpFilePath) / sizeof(WCHAR);
-    saveInfo.lpstrFileTitle  = NULL;
-    saveInfo.nMaxFileTitle   = 0;
-    saveInfo.lpstrInitialDir = NULL;
-    saveInfo.lpstrTitle      = L"Select a Path to Save the Dump File";
-    saveInfo.Flags           = OFN_OVERWRITEPROMPT;
-    saveInfo.lpstrDefExt     = L"dmp";
-
-    if (! ::GetSaveFileNameW(&saveInfo)) {
-        return;
-    }
-
+    // Make filename.
+    time_t     timestamp   = ::time(NULL);
+    struct tm *currentTime = ::localtime(timestamp);
+    ::_snwprintf(m_dumpFilePath, sizeof(m_dumpFilePath) / sizeof(WCHAR),
+                 L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",
+                 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
+                 tm->tm_min, tm->tm_sec);
     ::MessageBoxW(NULL, m_dumpFilePath, L"dump", MB_OK);
 }
 

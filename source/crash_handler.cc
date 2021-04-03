@@ -143,8 +143,6 @@ LONG CrashHandler::onCrash(struct _EXCEPTION_POINTERS *exceptionInfo)
 
 /**
  * @brief		Fake SetUnhandledExceptionFilter().
- *
- * @param[in]	exception		Exception pointser.
  */
 LPTOP_LEVEL_EXCEPTION_FILTER WINAPI
     CrashHandler::fakeSetUnhandledExceptionFilter(

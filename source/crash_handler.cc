@@ -381,13 +381,13 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
                                 NULL)) {
             ::_snwprintf(m_dumpFileMessage,
                          sizeof(m_dumpFileMessage) / sizeof(WCHAR),
-                         L"Dump file \"%s\" saved.", m_dumpFilePath);
-            ::MessageBoxW(NULL, m_dumpFileMessage + 4, L"Dump File Saved",
+                         L"Dump file \"%s\" saved.", m_dumpFilePath + 4);
+            ::MessageBoxW(NULL, m_dumpFileMessage, L"Dump File Saved",
                           MB_OK | MB_ICONINFORMATION);
         } else {
-            ::_snwprintf(m_dumpFileMessage,
-                         sizeof(m_dumpFileMessage) / sizeof(WCHAR),
-                         L"Failed to write dump file \"%s\".", m_dumpFilePath);
+            ::_snwprintf(
+                m_dumpFileMessage, sizeof(m_dumpFileMessage) / sizeof(WCHAR),
+                L"Failed to write dump file \"%s\".", m_dumpFilePath + 4);
             ::MessageBoxW(NULL, m_dumpFileMessage, L"Error",
                           MB_OK | MB_ICONERROR);
         }

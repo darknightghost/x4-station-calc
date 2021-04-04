@@ -35,11 +35,11 @@ bool EditorWidget::AddGroupOperation::doOperation()
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
     groupItem->setExpanded(true);
 
-    editorWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+    editorWidget->connect(groupWidget, &GroupItemWidget::btnUpClicked,
                           editorWidget, &EditorWidget::onGroupMoveUp);
-    editorWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+    editorWidget->connect(groupWidget, &GroupItemWidget::btnDownClicked,
                           editorWidget, &EditorWidget::onGroupMoveDown);
-    editorWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+    editorWidget->connect(groupWidget, &GroupItemWidget::btnRemoveClicked,
                           editorWidget, &EditorWidget::removeGroupItem);
 
     // Update.

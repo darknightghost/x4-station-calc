@@ -450,16 +450,115 @@ void EditorWidget::updateModuleMoveButtonStatus(ModuleItem *      item,
  */
 void EditorWidget::updateSummary()
 {
+    this->disableSuggestedAmounts();
+
     SummaryInfo summary;
     this->makeSummary(summary);
     this->showSummary(summary);
     this->checkSummary(summary);
+
+    this->updateSuggestedAmounts(summary);
+}
+
+/**
+ * @brief       Disable suggested amounts.
+ */
+void EditorWidget::disableSuggestedAmounts()
+{
+    // Group.
+    for (int groupIndex = 0; groupIndex < m_itemGroups->childCount();
+         ++groupIndex) {
+        QTreeWidgetItem *groupItem = m_itemGroups->child(groupIndex);
+
+        // Module.
+        for (int moduleIndex = 0; moduleIndex < groupItem->childCount();
+             ++moduleIndex) {
+            QTreeWidgetItem * moduleItem = groupItem->child(moduleIndex);
+            ModuleItemWidget *widget     = dynamic_cast<ModuleItemWidget *>(
+                m_treeEditor->itemWidget(moduleItem, 1));
+            if (widget != nullptr) {
+                widget->setSuggestAmountEnabled(false);
+            }
+        }
+    }
+}
+
+/**
+ * @brief       Update suggested amounts.
+ */
+void EditorWidget::updateSuggestedAmounts(SummaryInfo &summary)
+{
+    // Group.
+    for (int groupIndex = 0; groupIndex < m_itemGroups->childCount();
+         ++groupIndex) {
+        QTreeWidgetItem *groupItem = m_itemGroups->child(groupIndex);
+
+        // Item.
+        for (int moduleIndex = 0; moduleIndex < groupItem->childCount();
+             ++moduleIndex) {
+            // Module Item.
+            ModuleItem *moduleItem
+                = dynamic_cast<ModuleItem *>(groupItem->child(moduleIndex));
+            if (moduleItem == nullptr) {
+                continue;
+            }
+
+            // Module Widget.
+            ModuleItemWidget *widget = dynamic_cast<ModuleItemWidget *>(
+                m_treeEditor->itemWidget(moduleItem, 1));
+            if (widget == nullptr) {
+                continue;
+            }
+
+            // Station module.
+            auto module = GameData::instance()->stationModules()->module(
+                moduleItem->module()->module());
+            if (module == nullptr) {
+                continue;
+            }
+
+            switch (module->moduleClass) {
+                case GameStationModules::StationModule::StationModuleClass::
+                    Habitation: {
+                    widget->setSuggestedAmountToChange(
+                        static_cast<qint64>(-summary.surplusWorkforce));
+                    widget->setSuggestAmountEnabled(true);
+
+                } break;
+
+                case GameStationModules::StationModule::StationModuleClass::
+                    Production: {
+                    // Search property.
+                    auto iter = module->properties.find(
+                        GameStationModules::Property::SupplyProduct);
+                    if (iter == module->properties.end()) {
+                        break;
+                    }
+                    ::std::shared_ptr<GameStationModules::SupplyProduct>
+                        property = ::std::static_pointer_cast<
+                            GameStationModules::SupplyProduct>(*iter);
+
+                    // Search intermediate.
+                    auto intermediatesIter
+                        = summary.intermediates.find(property->product);
+                    if (intermediatesIter == summary.intermediates.end()) {
+                        break;
+                    }
+
+                    widget->setSuggestedAmountToChange(
+                        static_cast<qint64>(-intermediatesIter->max()));
+                    widget->setSuggestAmountEnabled(true);
+                } break;
+
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 /**
  * @brief       Make summary.
- *
- * @param[out]  summary     Summary.
  */
 void EditorWidget::makeSummary(SummaryInfo &summary)
 {
@@ -1037,11 +1136,11 @@ void EditorWidget::loadGroups()
         GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
         groupItem->treeWidget()->setItemWidget(groupItem, 1, groupWidget);
         groupWidget->show();
-        this->connect(groupWidget, &GroupItemWidget::upBtnClicked, this,
+        this->connect(groupWidget, &GroupItemWidget::btnUpClicked, this,
                       &EditorWidget::onGroupMoveUp);
-        this->connect(groupWidget, &GroupItemWidget::downBtnClicked, this,
+        this->connect(groupWidget, &GroupItemWidget::btnDownClicked, this,
                       &EditorWidget::onGroupMoveDown);
-        this->connect(groupWidget, &GroupItemWidget::removeBtnClicked, this,
+        this->connect(groupWidget, &GroupItemWidget::btnRemoveClicked, this,
                       &EditorWidget::removeGroupItem);
 
         // Load modules.
@@ -1057,11 +1156,11 @@ void EditorWidget::loadGroups()
 
             this->connect(moduleWidget, &ModuleItemWidget::changeAmount, this,
                           &EditorWidget::onChangeAmount);
-            this->connect(moduleWidget, &ModuleItemWidget::upBtnClicked, this,
+            this->connect(moduleWidget, &ModuleItemWidget::btnUpClicked, this,
                           &EditorWidget::onModuleMoveUp);
-            this->connect(moduleWidget, &ModuleItemWidget::downBtnClicked, this,
+            this->connect(moduleWidget, &ModuleItemWidget::btnDownClicked, this,
                           &EditorWidget::onModuleMoveDown);
-            this->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+            this->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                           this, &EditorWidget::removeModuleItem);
         }
 

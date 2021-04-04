@@ -200,7 +200,7 @@ class GameVFS::FileReader {
     /**
      * @brief	Whence.
      */
-    enum Whence {
+    enum class Whence {
         Set     = 0x01, ///< From begining of the file.
         Current = 0x02, ///< From current position of the file.
         End     = 0x03  ///< From the end of the file.

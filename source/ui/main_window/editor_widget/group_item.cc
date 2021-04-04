@@ -129,17 +129,17 @@ GroupItemWidget::GroupItemWidget(GroupItem *item) : m_item(item)
     m_btnUp = new SquareButton(QIcon(":/Icons/Up.png"));
     m_layout->addWidget(m_btnUp, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnUp, &QPushButton::clicked, this,
-                  &GroupItemWidget::onUpBtnClicked);
+                  &GroupItemWidget::onBtnUpClicked);
 
     m_btnDown = new SquareButton(QIcon(":/Icons/Down.png"));
     m_layout->addWidget(m_btnDown, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnDown, &QPushButton::clicked, this,
-                  &GroupItemWidget::onDownBtnClicked);
+                  &GroupItemWidget::onBtnDownClicked);
 
     m_btnRemove = new SquareButton(QIcon(":/Icons/EditRemove.png"));
     m_layout->addWidget(m_btnRemove, Qt::AlignmentFlag::AlignLeft);
     this->connect(m_btnRemove, &QPushButton::clicked, this,
-                  &GroupItemWidget::onRemoveBtnClicked);
+                  &GroupItemWidget::onBtnRemoveClicked);
 
     m_layout->addStretch();
     this->setMaximumHeight(this->fontMetrics().height()
@@ -170,23 +170,23 @@ void GroupItemWidget::setDownBtnEnabled(bool enabled)
 /**
  * @brief	On "up" button clicked.
  */
-void GroupItemWidget::onUpBtnClicked()
+void GroupItemWidget::onBtnUpClicked()
 {
-    emit this->upBtnClicked(m_item);
+    emit this->btnUpClicked(m_item);
 }
 
 /**
  * @brief	On "down" button clicked.
  */
-void GroupItemWidget::onDownBtnClicked()
+void GroupItemWidget::onBtnDownClicked()
 {
-    emit this->downBtnClicked(m_item);
+    emit this->btnDownClicked(m_item);
 }
 
 /**
  * @brief	On "remove" button clicked.
  */
-void GroupItemWidget::onRemoveBtnClicked()
+void GroupItemWidget::onBtnRemoveClicked()
 {
-    emit this->removeBtnClicked(m_item);
+    emit this->btnRemoveClicked(m_item);
 }

@@ -69,7 +69,7 @@ class GameWares :
     /**
      * @brief	Transport type.
      */
-    enum TransportType {
+    enum class TransportType {
         Container, ///< Container.
         Solid,     ///< Solid.
         Liquid,    ///< Liquid.

@@ -31,11 +31,11 @@ bool EditorWidget::MoveGroupOperation::doOperation()
     // Insert group item.
     editorWidget->m_itemGroups->insertChild(m_newIndex, groupItem);
     GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
-    groupWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnUpClicked,
                          editorWidget, &EditorWidget::onGroupMoveUp);
-    groupWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnDownClicked,
                          editorWidget, &EditorWidget::onGroupMoveDown);
-    groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnRemoveClicked,
                          editorWidget, &EditorWidget::removeGroupItem);
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
     groupItem->setExpanded(expandStatus);
@@ -48,11 +48,11 @@ bool EditorWidget::MoveGroupOperation::doOperation()
         ModuleItem *moduleItem = groupItem->child(i);
 
         ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                               editorWidget, &EditorWidget::onModuleMoveUp);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnDownClicked,
                               editorWidget, &EditorWidget::onModuleMoveDown);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                               editorWidget, &EditorWidget::removeModuleItem);
 
         editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
@@ -115,11 +115,11 @@ void EditorWidget::MoveGroupOperation::undoOperation()
     // Insert group item.
     editorWidget->m_itemGroups->insertChild(m_oldIndex, groupItem);
     GroupItemWidget *groupWidget = new GroupItemWidget(groupItem);
-    groupWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnUpClicked,
                          editorWidget, &EditorWidget::onGroupMoveUp);
-    groupWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnDownClicked,
                          editorWidget, &EditorWidget::onGroupMoveDown);
-    groupWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+    groupWidget->connect(groupWidget, &GroupItemWidget::btnRemoveClicked,
                          editorWidget, &EditorWidget::removeGroupItem);
     editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
     groupItem->setExpanded(expandStatus);
@@ -132,11 +132,11 @@ void EditorWidget::MoveGroupOperation::undoOperation()
         ModuleItem *moduleItem = groupItem->child(i);
 
         ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                               editorWidget, &EditorWidget::onModuleMoveUp);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnDownClicked,
                               editorWidget, &EditorWidget::onModuleMoveDown);
-        moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+        moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                               editorWidget, &EditorWidget::removeModuleItem);
 
         editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);

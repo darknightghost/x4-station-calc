@@ -182,11 +182,11 @@ void EditorWidget::RemoveOperation::undoOperation()
         editorWidget->m_treeEditor->setItemWidget(groupItem, 1, groupWidget);
         groupItem->setExpanded(groupInfo->expanded);
 
-        editorWidget->connect(groupWidget, &GroupItemWidget::upBtnClicked,
+        editorWidget->connect(groupWidget, &GroupItemWidget::btnUpClicked,
                               editorWidget, &EditorWidget::onGroupMoveUp);
-        editorWidget->connect(groupWidget, &GroupItemWidget::downBtnClicked,
+        editorWidget->connect(groupWidget, &GroupItemWidget::btnDownClicked,
                               editorWidget, &EditorWidget::onGroupMoveDown);
-        editorWidget->connect(groupWidget, &GroupItemWidget::removeBtnClicked,
+        editorWidget->connect(groupWidget, &GroupItemWidget::btnRemoveClicked,
                               editorWidget, &EditorWidget::removeGroupItem);
 
         // Update.
@@ -212,13 +212,13 @@ void EditorWidget::RemoveOperation::undoOperation()
 
             editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                                   editorWidget, &EditorWidget::onChangeAmount);
-            editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+            editorWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                                   editorWidget, &EditorWidget::onModuleMoveUp);
             editorWidget->connect(
-                moduleWidget, &ModuleItemWidget::downBtnClicked, editorWidget,
+                moduleWidget, &ModuleItemWidget::btnDownClicked, editorWidget,
                 &EditorWidget::onModuleMoveDown);
             editorWidget->connect(
-                moduleWidget, &ModuleItemWidget::removeBtnClicked, editorWidget,
+                moduleWidget, &ModuleItemWidget::btnRemoveClicked, editorWidget,
                 &EditorWidget::removeModuleItem);
 
             // Update.
@@ -251,11 +251,11 @@ void EditorWidget::RemoveOperation::undoOperation()
 
         editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                               editorWidget, &EditorWidget::onChangeAmount);
-        editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                               editorWidget, &EditorWidget::onModuleMoveUp);
-        editorWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::btnDownClicked,
                               editorWidget, &EditorWidget::onModuleMoveDown);
-        editorWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+        editorWidget->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                               editorWidget, &EditorWidget::removeModuleItem);
 
         // Update.

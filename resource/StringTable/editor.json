@@ -193,5 +193,10 @@
         "zh_CN": "按资源过滤空间站模块",
         "zh_TW": "按資源過濾空間站模塊",
         "en_US": "Filter Station Modules by &Resource"
+    },
+    "STR_SET_TO_SUGGESTED_AMOUNT": {
+        "zh_CN": "设置为推荐数量",
+        "zh_TW": "設置爲推薦數量",
+        "en_US": "Set to Suggested Amount"
     }
 }

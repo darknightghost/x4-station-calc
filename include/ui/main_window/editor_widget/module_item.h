@@ -58,12 +58,15 @@ class ModuleItemWidget : public QWidget {
     Q_OBJECT;
 
   private:
-    ModuleItem *   m_item;       ///< Item.
-    QHBoxLayout *  m_layout;     ///< Layout.
-    AmountSpinBox *m_spinAmount; ///< Spinbox amount.
-    SquareButton * m_btnUp;      ///< Button up.
-    SquareButton * m_btnDown;    ///< Button down.
-    SquareButton * m_btnRemove;  ///< Button remove.
+    ModuleItem *   m_item;                  ///< Item.
+    QHBoxLayout *  m_layout;                ///< Layout.
+    AmountSpinBox *m_spinAmount;            ///< Spinbox amount.
+    SquareButton * m_btnUp;                 ///< Button up.
+    SquareButton * m_btnDown;               ///< Button down.
+    SquareButton * m_btnRemove;             ///< Button remove.
+    QPushButton *m_btnSetToSuggestedAmount; ///< Button set to suggested amount.
+
+    int m_suggestedAmountToChange; ///< Suggested amount to change.
 
   public:
     /**
@@ -98,21 +101,41 @@ class ModuleItemWidget : public QWidget {
      */
     void updateAmount();
 
+    /**
+     * @brief       Set suggest amount enable status.
+     *
+     * @param[in]   enabled     Enable status.
+     */
+    void setSuggestAmountEnabled(bool enabled);
+
+    /**
+     * @brief       Set suggested amount to change.
+     *
+     * @param[in]   productPerHourToChange      Suggested value to change of the
+     *                                          amount of product each hour.
+     */
+    void setSuggestedAmountToChange(qint64 productPerHourToChange);
+
   private slots:
     /**
      * @brief	On "up" button clicked.
      */
-    void onUpBtnClicked();
+    void onBtnUpClicked();
 
     /**
      * @brief	On "down" button clicked.
      */
-    void onDownBtnClicked();
+    void onBtnDownClicked();
 
     /**
      * @brief	On "remove" button clicked.
      */
-    void onRemoveBtnClicked();
+    void onBtnRemoveClicked();
+
+    /**
+     * @brief   On "Set to Suggested Amount" button clicked.
+     */
+    void onBtnSetToSuggestedAmountClicked();
 
     /**
      * @brief	    On value of spinbox changed.
@@ -132,21 +155,21 @@ class ModuleItemWidget : public QWidget {
      *
      * @param[in]   item    Item.
      */
-    void upBtnClicked(ModuleItem *item);
+    void btnUpClicked(ModuleItem *item);
 
     /**
      * @brief	    "Down" button clicked.
      *
      * @param[in]   item    Item.
      */
-    void downBtnClicked(ModuleItem *item);
+    void btnDownClicked(ModuleItem *item);
 
     /**
      * @brief	    "Remove" button clicked.
      *
      * @param[in]   item    Item.
      */
-    void removeBtnClicked(ModuleItem *item);
+    void btnRemoveClicked(ModuleItem *item);
 
     /**
      * @brief	    Amount changed.
@@ -156,4 +179,15 @@ class ModuleItemWidget : public QWidget {
      * @param[in]   item            Item.
      */
     void changeAmount(quint64 oldAmount, quint64 newAmount, ModuleItem *item);
+
+  private:
+    /**
+     * @brief       Compute suggested amount to change.
+     *
+     * @param[in]   productPerHourToChange      Suggested value to change of the
+     *                                          amount of product each hour.
+     *
+     * @return      Suggested amount.
+     */
+    int suggestedAmountToChange(qint64 productPerHourToChange);
 };

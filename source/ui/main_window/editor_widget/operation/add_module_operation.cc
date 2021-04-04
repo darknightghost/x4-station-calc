@@ -62,13 +62,13 @@ bool EditorWidget::AddModuleOperation::doOperation()
 
             editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                                   editorWidget, &EditorWidget::onChangeAmount);
-            editorWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+            editorWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                                   editorWidget, &EditorWidget::onModuleMoveUp);
             editorWidget->connect(
-                moduleWidget, &ModuleItemWidget::downBtnClicked, editorWidget,
+                moduleWidget, &ModuleItemWidget::btnDownClicked, editorWidget,
                 &EditorWidget::onModuleMoveDown);
             editorWidget->connect(
-                moduleWidget, &ModuleItemWidget::removeBtnClicked, editorWidget,
+                moduleWidget, &ModuleItemWidget::btnRemoveClicked, editorWidget,
                 &EditorWidget::removeModuleItem);
             ++newIndex;
 

@@ -158,17 +158,17 @@ class GroupItemWidget : public QWidget {
     /**
      * @brief	On "up" button clicked.
      */
-    void onUpBtnClicked();
+    void onBtnUpClicked();
 
     /**
      * @brief	On "down" button clicked.
      */
-    void onDownBtnClicked();
+    void onBtnDownClicked();
 
     /**
      * @brief	On "remove" button clicked.
      */
-    void onRemoveBtnClicked();
+    void onBtnRemoveClicked();
 
   signals:
     /**
@@ -176,19 +176,19 @@ class GroupItemWidget : public QWidget {
      *
      * @param[in]   item    Item.
      */
-    void upBtnClicked(GroupItem *item);
+    void btnUpClicked(GroupItem *item);
 
     /**
      * @brief	    "Down" button clicked.
      *
      * @param[in]   item    Item.
      */
-    void downBtnClicked(GroupItem *item);
+    void btnDownClicked(GroupItem *item);
 
     /**
      * @brief	    "Remove" button clicked.
      *
      * @param[in]   item    Item.
      */
-    void removeBtnClicked(GroupItem *item);
+    void btnRemoveClicked(GroupItem *item);
 };

@@ -291,6 +291,18 @@ class EditorWidget : public QWidget {
     void updateSummary();
 
     /**
+     * @brief       Disable suggested amounts.
+     */
+    void disableSuggestedAmounts();
+
+    /**
+     * @brief       Update suggested amounts.
+     *
+     * @param[out]  summary     Summary.
+     */
+    void updateSuggestedAmounts(SummaryInfo &summary);
+
+    /**
      * @brief       Make summary.
      *
      * @param[out]  summary     Summary.

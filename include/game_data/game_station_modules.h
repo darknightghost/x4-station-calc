@@ -99,7 +99,7 @@ class GameStationModules :
         /**
          * @brief	Class of station modules.
          */
-        enum StationModuleClass {
+        enum class StationModuleClass {
             Unknow,           ///< Unknow.
             BuildModule,      ///< Build module.
             ConnectionModule, ///< Connection module.

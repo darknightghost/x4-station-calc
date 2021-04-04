@@ -39,11 +39,11 @@ bool EditorWidget::MoveModuleOperation::doOperation()
     ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
     editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                           editorWidget, &EditorWidget::onChangeAmount);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                           editorWidget, &EditorWidget::onModuleMoveUp);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnDownClicked,
                           editorWidget, &EditorWidget::onModuleMoveDown);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                           editorWidget, &EditorWidget::removeModuleItem);
     editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
 
@@ -106,11 +106,11 @@ void EditorWidget::MoveModuleOperation::undoOperation()
     ModuleItemWidget *moduleWidget = new ModuleItemWidget(moduleItem);
     editorWidget->connect(moduleWidget, &ModuleItemWidget::changeAmount,
                           editorWidget, &EditorWidget::onChangeAmount);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::upBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnUpClicked,
                           editorWidget, &EditorWidget::onModuleMoveUp);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::downBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnDownClicked,
                           editorWidget, &EditorWidget::onModuleMoveDown);
-    moduleWidget->connect(moduleWidget, &ModuleItemWidget::removeBtnClicked,
+    moduleWidget->connect(moduleWidget, &ModuleItemWidget::btnRemoveClicked,
                           editorWidget, &EditorWidget::removeModuleItem);
     editorWidget->m_treeEditor->setItemWidget(moduleItem, 1, moduleWidget);
 

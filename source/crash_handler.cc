@@ -382,7 +382,7 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
             ::_snwprintf(m_dumpFileMessage,
                          sizeof(m_dumpFileMessage) / sizeof(WCHAR),
                          L"Dump file \"%s\" saved.", m_dumpFilePath);
-            ::MessageBoxW(NULL, m_dumpFileMessage, L"Dump File Saved",
+            ::MessageBoxW(NULL, m_dumpFileMessage + 4, L"Dump File Saved",
                           MB_OK | MB_ICONINFORMATION);
         } else {
             ::_snwprintf(m_dumpFileMessage,

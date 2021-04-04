@@ -196,6 +196,7 @@ target_link_libraries(${PROJECT_NAME}
 if (WIN32)
     target_link_libraries(${PROJECT_NAME}
         Dbghelp
+        shell32
         )
 
 endif ()

@@ -5,11 +5,11 @@
     #include <ctime>
 
     #include <Windows.h>
-    #include <tlhelp32.h>
 
     #include <Dbghelp.h>
-
     #include <Memoryapi.h>
+    #include <shlobj.h>
+    #include <tlhelp32.h>
 
     #include <common/auto_release.h>
 
@@ -348,15 +348,20 @@ void CrashHandler::saveDump(struct _EXCEPTION_POINTERS *exceptionInfo)
     WCHAR *    p           = m_dumpFilePath;
     ::wcscpy(p, L"\\\\?\\");
     p += 4;
-    p += ::GetCurrentDirectoryW(
-        static_cast<DWORD>(sizeof(m_dumpFilePath) / sizeof(WCHAR)
-                           - (p - m_dumpFilePath)),
-        p);
-    ::wcscpy(p, L"\\");
-    p += 1;
+    PWSTR myDocumentsPath;
+    if (::SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &myDocumentsPath)
+        != S_OK) {
+        ::MessageBoxW(NULL, L"Failed to get the path of \"My Documents\".",
+                      L"Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+    ::wcscpy(p, myDocumentsPath);
+    while (*p != L'\0') {
+        ++p;
+    }
     ::_snwprintf(p,
                  sizeof(m_dumpFilePath) / sizeof(WCHAR) - (p - m_dumpFilePath),
-                 L"x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",
+                 L"\\x4-station-calc-%d-%.2d-%.2d_%.2d_%.2d_%.2d.dmp",
                  currentTime->tm_year + 1900, currentTime->tm_mon + 1,
                  currentTime->tm_mday, currentTime->tm_hour,
                  currentTime->tm_min, currentTime->tm_sec);

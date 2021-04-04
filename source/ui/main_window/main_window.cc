@@ -20,6 +20,7 @@
 #include <ui/main_window/editor_widget/editor_widget.h>
 #include <ui/main_window/language_menu.h>
 #include <ui/main_window/main_window.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard.h>
 
 /**
  * @brief		Constructor of main window.
@@ -465,7 +466,30 @@ void MainWindow::newAction()
 /**
  * @brief		Open new factory wizard.
  */
-void MainWindow::newFactoryWizardAction() {}
+void MainWindow::newFactoryWizardAction()
+{
+    ::std::shared_ptr<Save> save = NewFactoryWizard::showWizard(this);
+    if (save == nullptr) {
+        return;
+    }
+
+    QMdiSubWindow *container = new QMdiSubWindow();
+    m_centralWidget->addSubWindow(container);
+    EditorWidget *editorWidget
+        = new EditorWidget(save, &m_fileActions, &m_editActions, m_infoWidget,
+                           m_stationModulesWidget, container);
+    this->connect(editorWidget, &EditorWidget::addToStationStatusChaged,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::setAddToStationStatus);
+    this->connect(editorWidget, &EditorWidget::filterByProduct,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::onFilterByProduct);
+    this->connect(editorWidget, &EditorWidget::filterByResource,
+                  m_stationModulesWidget,
+                  &StationModulesWidget::onFilterByResource);
+    m_centralWidget->setActiveSubWindow(container);
+    editorWidget->show();
+}
 
 /**
  * @brief		Open file.

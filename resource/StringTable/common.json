@@ -33,5 +33,20 @@
 		"zh_CN" : "浏览(&B)",
 		"zh_TW" : "瀏覽(&B)",
 		"en_US" : "&Browse"
+	},
+	"STR_BTN_BACK" : {
+		"zh_CN" : "上一步(&B)",
+		"zh_TW" : "上一步(&B)",
+		"en_US" : "&Back"
+	},
+	"STR_BTN_NEXT" : {
+		"zh_CN" : "下一步(&N)",
+		"zh_TW" : "下一步(&N)",
+		"en_US" : "&Next"
+	},
+	"STR_BTN_FINISH" : {
+		"zh_CN" : "完成(&F)",
+		"zh_TW" : "完成(&F)",
+		"en_US" : "&Finish"
 	}
 }

@@ -158,6 +158,15 @@ void MainWindow::initMenuToolBar()
     this->connect(m_fileActions.actionFileNew, &QAction::triggered, this,
                   &MainWindow::newAction);
 
+    // Menu "File->New Factory Wizard".
+    m_fileActions.actionFileNewFactoryWizard = new QAction(this);
+    m_fileActions.actionFileNewFactoryWizard->setIcon(
+        QIcon(":/Icons/FileNewFactoryWizard.png"));
+    m_menuFile->addAction(m_fileActions.actionFileNewFactoryWizard);
+    m_toolbarFile->addAction(m_fileActions.actionFileNewFactoryWizard);
+    this->connect(m_fileActions.actionFileNewFactoryWizard, &QAction::triggered,
+                  this, &MainWindow::newFactoryWizardAction);
+
     // Menu "File->Open".
     m_fileActions.actionFileOpen = new QAction(this);
     m_fileActions.actionFileOpen->setIcon(QIcon(":/Icons/FileOpen.png"));
@@ -454,6 +463,11 @@ void MainWindow::newAction()
 }
 
 /**
+ * @brief		Open new factory wizard.
+ */
+void MainWindow::newFactoryWizardAction() {}
+
+/**
  * @brief		Open file.
  */
 void MainWindow::openAction()
@@ -564,6 +578,10 @@ void MainWindow::onLanguageChanged()
 
     // Menu "File->New".
     m_fileActions.actionFileNew->setText(STR("STR_MENU_FILE_NEW"));
+
+    // Menu "File->New Factory Wizard".
+    m_fileActions.actionFileNewFactoryWizard->setText(
+        STR("STR_MENU_FILE_NEW_FACTORY_WIZARD"));
 
     // Menu "File->Open".
     m_fileActions.actionFileOpen->setText(STR("STR_MENU_FILE_OPEN"));

@@ -19,6 +19,11 @@
 		"zh_TW" : "新建(&N)",
 		"en_US" : "&New"
 	},
+	"STR_MENU_FILE_NEW_FACTORY_WIZARD":{
+		"zh_CN" : "新建工厂向导(&W)",
+		"zh_TW" : "新建工廠嚮導(&W)",
+		"en_US" : "New Factory &Wizard"
+	},
 	"STR_MENU_FILE_OPEN":{
 		"zh_CN" : "打开(&O)",
 		"zh_TW" : "打開(&O)",

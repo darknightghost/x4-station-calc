@@ -21,7 +21,9 @@ class MainWindow : public QMainWindow {
      * @brief		Actions in file menu.
      */
     struct FileActions {
-        QAction *actionFileNew;          ///< Menu "File->New".
+        QAction *actionFileNew; ///< Menu "File->New".
+        QAction
+            *actionFileNewFactoryWizard; ///< Menu "File->New Factory Wizard".
         QAction *actionFileOpen;         ///< Menu "File->Open".
         QAction *actionFileSave;         ///< Menu "File->Save".
         QAction *actionFileSaveAs;       ///< Menu "File->Save As".
@@ -122,6 +124,11 @@ class MainWindow : public QMainWindow {
      * @brief		Create new file.
      */
     void newAction();
+
+    /**
+     * @brief		Open new factory wizard.
+     */
+    void newFactoryWizardAction();
 
     /**
      * @brief		Open file.

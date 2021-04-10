@@ -9,7 +9,7 @@
 /**
  * @brief   New factory wizard.
  */
-class NewFactoryWizardWorkforceWidget : public NewFactoryWizardCentralWidget {
+class NewFactoryWizardFinishWidget : public NewFactoryWizardCentralWidget {
     Q_OBJECT
 
   public:
@@ -18,10 +18,10 @@ class NewFactoryWizardWorkforceWidget : public NewFactoryWizardCentralWidget {
      *
      * @param[in]   wizard      Wizard widget.
      */
-    NewFactoryWizardWorkforceWidget(NewFactoryWizard *wizard);
+    NewFactoryWizardFinishWidget(NewFactoryWizard *wizard);
 
     /**
      * @brief       Destructor.
      */
-    virtual ~NewFactoryWizardWorkforceWidget();
+    virtual ~NewFactoryWizardFinishWidget();
 };

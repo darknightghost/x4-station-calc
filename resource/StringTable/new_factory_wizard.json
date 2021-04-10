@@ -3,5 +3,35 @@
 		"zh_CN" : "新建工厂向导",
 		"zh_TW" : "新建工廠嚮導",
 		"en_US" : "New Factory Wizard"
+	},
+	"STR_STEP_SELECT_PRODUCTS" : {
+		"zh_CN" : "选择产品",
+		"zh_TW" : "選擇產品",
+		"en_US" : "Select Products"
+	},
+	"STR_STEP_SET_WORKFORCE" : {
+		"zh_CN" : "设置劳动力",
+		"zh_TW" : "設置勞動力",
+		"en_US" : "Set Workforce"
+	},
+	"STR_STEP_SET_INTERMEDIATE" : {
+		"zh_CN" : "设置中间产品",
+		"zh_TW" : "設置中間產品",
+		"en_US" : "Set Intermediate"
+	},
+	"STR_STEP_FINISH" : {
+		"zh_CN" : "完成",
+		"zh_TW" : "完成",
+		"en_US" : "Finish"
+	},
+	"STR_SELECTABLE_PRODUCTS" : {
+		"zh_CN" : "可选产品",
+		"zh_TW" : "可選產品",
+		"en_US" : "Selectable Products :"
+	},
+	"STR_SELECTED_PRODUCTS" : {
+		"zh_CN" : "已选产品",
+		"zh_TW" : "已選產品",
+		"en_US" : "Selected Products :"
 	}
 }

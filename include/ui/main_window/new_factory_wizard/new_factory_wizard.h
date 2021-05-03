@@ -6,6 +6,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
+#include <game_data/game_wares.h>
 #include <save/save.h>
 #include <ui/controls/scroll_area_auto_fill.h>
 
@@ -19,6 +20,15 @@ class NewFactoryWizardCentralWidget;
  */
 class NewFactoryWizard : public QWidget {
     Q_OBJECT
+
+  public:
+    /**
+     * @brief   Product infomation.
+     */
+    struct ProductInfo {
+        QString ware;   ///< Ware.
+        quint64 amount; ///< Amount.
+    };
 
   private:
     /**
@@ -49,6 +59,10 @@ class NewFactoryWizard : public QWidget {
     WizardStatus m_status; ///< Current status.
 
     NewFactoryWizardCentralWidget *m_centralWidget; ///< Central widget.
+
+    QSet<QString>              m_products;         ///< Products.
+    QSet<QString>              m_resource;         ///< Resources.
+    QMap<QString, ProductInfo> m_selectedProducts; ///< Selected products.
 
   private:
     /**

@@ -2,6 +2,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
 
+#include <game_data/game_data.h>
 #include <locale/string_table.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard_finish_widget.h>
@@ -66,6 +67,22 @@ NewFactoryWizard::NewFactoryWizard(QWidget *parent) :
 
     this->setFixedSize(windowRect.size());
 
+    // Scan products.
+    auto wares = GameData::instance()->wares();
+    for (auto stationModule :
+         GameData::instance()->stationModules()->modules()) {
+        if (stationModule->playerModule) {
+            auto propertyIter = stationModule->properties.find(
+                GameStationModules::Property::SupplyProduct);
+            if (propertyIter != stationModule->properties.end()) {
+                ::std::shared_ptr<GameStationModules::SupplyProduct> property
+                    = ::std::static_pointer_cast<
+                        GameStationModules::SupplyProduct>(*propertyIter);
+                m_products.insert(property->product);
+            }
+        }
+    }
+
     // Initialize.
     this->switchToSelectProduct();
 }
@@ -127,7 +144,8 @@ void NewFactoryWizard::switchToSelectProduct()
     m_btnFinish->setVisible(false);
     m_btnFinish->setEnabled(false);
 
-    m_centralWidget = new NewFactoryWizardProductWidget(this);
+    m_centralWidget = new NewFactoryWizardProductWidget(this, m_products,
+                                                        m_selectedProducts);
     m_clientArea->setWidget(m_centralWidget);
     m_status = WizardStatus::SelectProduct;
 

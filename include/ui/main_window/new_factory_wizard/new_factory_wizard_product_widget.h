@@ -29,13 +29,21 @@ class NewFactoryWizardProductWidget : public NewFactoryWizardCentralWidget {
     QPushButton *m_btnAdd;    ///< Button "Add".
     QPushButton *m_btnRemove; ///< Button "Remove".
 
+    QMap<QString, NewFactoryWizard::ProductInfo>
+        &m_selectedProducts; ///< Selected products.
+
   public:
     /**
      * @brief       Constructor.
      *
-     * @param[in]   wizard      Wizard widget.
+     * @param[in]   wizard              Wizard widget.
+     * @param[in]   products            Products.
+     * @param[out]  selectedProducts    Products selected.
      */
-    NewFactoryWizardProductWidget(NewFactoryWizard *wizard);
+    NewFactoryWizardProductWidget(
+        NewFactoryWizard *                            wizard,
+        const QSet<QString> &                         products,
+        QMap<QString, NewFactoryWizard::ProductInfo> &selectedProducts);
 
     /**
      * @brief       Destructor.

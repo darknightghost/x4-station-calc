@@ -89,7 +89,7 @@ GameWares::GameWares(::std::shared_ptr<GameVFS>             vfs,
 /**
  * @brief	Get ware group information.
  */
-const ::std::shared_ptr<GameWares::WareGroup>
+::std::shared_ptr<GameWares::WareGroup>
     GameWares::wareGroup(const QString &id, ::std::shared_ptr<GameTexts> texts)
 {
     if (texts == nullptr) {
@@ -115,7 +115,7 @@ const ::std::shared_ptr<GameWares::WareGroup>
 /**
  * @brief	Get ware information.
  */
-const ::std::shared_ptr<GameWares::Ware>
+::std::shared_ptr<GameWares::Ware>
     GameWares::ware(const QString &id, ::std::shared_ptr<GameTexts> texts)
 {
     if (texts == nullptr) {

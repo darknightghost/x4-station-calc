@@ -7,8 +7,11 @@
  * @brief       Constructor.
  */
 NewFactoryWizardProductWidget::NewFactoryWizardProductWidget(
-    NewFactoryWizard *wizard) :
-    NewFactoryWizardCentralWidget(wizard)
+    NewFactoryWizard *                            wizard,
+    const QSet<QString> &                         products,
+    QMap<QString, NewFactoryWizard::ProductInfo> &selectedProducts) :
+    NewFactoryWizardCentralWidget(wizard),
+    m_selectedProducts(selectedProducts)
 {
     this->setWindowTitle(STR("STR_STEP_SELECT_PRODUCTS"));
 
@@ -43,6 +46,13 @@ NewFactoryWizardProductWidget::NewFactoryWizardProductWidget(
     m_treeTargetProducts = new QTreeWidget();
     m_layout->addWidget(m_treeTargetProducts, 1, 2);
     m_treeTargetProducts->header()->setVisible(false);
+
+    // Add items.
+    for (auto &p : products) {
+        if (selectedProducts.find(p) == selectedProducts.end()) {
+        } else {
+        }
+    }
 }
 
 /**

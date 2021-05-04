@@ -5,9 +5,9 @@
 		"en_US" : "New Factory Wizard"
 	},
 	"STR_STEP_SELECT_PRODUCTS" : {
-		"zh_CN" : "选择产品",
-		"zh_TW" : "選擇產品",
-		"en_US" : "Select Products"
+		"zh_CN" : "选择最终产品",
+		"zh_TW" : "選擇最終產品",
+		"en_US" : "Select Final Products"
 	},
 	"STR_STEP_SET_WORKFORCE" : {
 		"zh_CN" : "设置劳动力",
@@ -33,5 +33,15 @@
 		"zh_CN" : "已选产品",
 		"zh_TW" : "已選產品",
 		"en_US" : "Selected Products :"
+	},
+	"STR_HEAD_PRODUCTS" : {
+		"zh_CN" : "产品",
+		"zh_TW" : "產品",
+		"en_US" : "Products"
+	},
+	"STR_HEAD_MINIMUM_PRODUCTION" : {
+		"zh_CN" : "最小产量",
+		"zh_TW" : "最小產",
+		"en_US" : "Minimum Production"
 	}
 }

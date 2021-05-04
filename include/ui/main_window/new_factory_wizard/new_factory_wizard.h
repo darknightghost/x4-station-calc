@@ -26,8 +26,8 @@ class NewFactoryWizard : public QWidget {
      * @brief   Product infomation.
      */
     struct ProductInfo {
-        QString ware;   ///< Ware.
-        quint64 amount; ///< Amount.
+        QString ware;       ///< Ware.
+        quint64 production; ///< Production.
     };
 
   private:

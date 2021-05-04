@@ -10,6 +10,7 @@
 #include <save/save.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard_central_widget.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_product_widget/target_product_item.h>
 
 /**
  * @brief   New factory wizard.
@@ -49,4 +50,33 @@ class NewFactoryWizardProductWidget : public NewFactoryWizardCentralWidget {
      * @brief       Destructor.
      */
     virtual ~NewFactoryWizardProductWidget();
+
+  private slots:
+    /**
+     * @brief       On production changed.
+     *
+     * @param[in]   item        Item.
+     * @param[in]   production  New production.
+     */
+    void onProductionChanged(TargetProductItem *item, quint64 production);
+
+    /**
+     * @brief       On button "Add" clicked.
+     */
+    void onBtnAddClicked();
+
+    /**
+     * @brief       On button "Remove" clicked.
+     */
+    void onBtnRemoveClicked();
+
+    /**
+     * @brief       On tree products to add selection changed.
+     */
+    void onTreeProductToAddSelectionChange();
+
+    /**
+     * @brief       On tree target products selection changed.
+     */
+    void onTreeTargetProductsSelectionChange();
 };

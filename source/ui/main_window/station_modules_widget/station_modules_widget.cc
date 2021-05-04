@@ -8,6 +8,7 @@
 #include <common/compare.h>
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
+#include <ui/locale/q_tree_widget_item_locale.h>
 #include <ui/main_window/station_modules_widget/station_modules_widget.h>
 
 /**
@@ -101,31 +102,31 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
     m_treeStationModules->setSelectionMode(
         QAbstractItemView::SelectionMode::ExtendedSelection);
 
-    m_itemBuild = new QTreeWidgetItem(m_treeStationModules);
+    m_itemBuild = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemBuild->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemBuild->setExpanded(false);
 
-    m_itemDock = new QTreeWidgetItem(m_treeStationModules);
+    m_itemDock = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemDock->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemDock->setExpanded(false);
 
-    m_itemProduction = new QTreeWidgetItem(m_treeStationModules);
+    m_itemProduction = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemProduction->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemProduction->setExpanded(false);
 
-    m_itemStorage = new QTreeWidgetItem(m_treeStationModules);
+    m_itemStorage = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemStorage->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemStorage->setExpanded(false);
 
-    m_itemHabitation = new QTreeWidgetItem(m_treeStationModules);
+    m_itemHabitation = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemHabitation->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemHabitation->setExpanded(false);
 
-    m_itemDefence = new QTreeWidgetItem(m_treeStationModules);
+    m_itemDefence = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemDefence->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemDefence->setExpanded(false);
 
-    m_itemConnect = new QTreeWidgetItem(m_treeStationModules);
+    m_itemConnect = new QTreeWidgetItemLocale(m_treeStationModules);
     m_itemConnect->setFlags(Qt::ItemFlag::ItemIsEnabled);
     m_itemConnect->setExpanded(false);
 
@@ -152,7 +153,6 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
     this->connect(StringTable::instance().get(), &StringTable::languageChanged,
                   this, &StationModulesWidget::onLanguageChanged);
 
-    this->onLanguageChanged();
     m_comboByResource->setCurrentIndex(0);
     m_comboByProduction->setCurrentIndex(0);
     m_comboByRaces->setCurrentIndex(0);
@@ -183,6 +183,8 @@ StationModulesWidget::StationModulesWidget(QAction *       statusAction,
 
     this->connect(m_treeStationModules, &QTreeWidget::itemDoubleClicked, this,
                   &StationModulesWidget::onItemClicked);
+
+    this->onLanguageChanged();
 }
 
 /**
@@ -405,8 +407,8 @@ void StationModulesWidget::onLanguageChanged()
  */
 void StationModulesWidget::sortComboBox(QComboBox *combo)
 {
-    QCollator collator;
-    int       index = combo->currentIndex();
+    QCollator collator = StringTable::instance()->collator();
+    int       index    = combo->currentIndex();
     for (int i = 0; i < combo->count(); ++i) {
         for (int j = i + 1; j < combo->count(); ++j) {
             if (collator.compare(combo->itemText(i), combo->itemText(j)) > 0) {

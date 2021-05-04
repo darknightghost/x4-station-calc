@@ -2,15 +2,14 @@
 
 #include <functional>
 
-#include <QtWidgets/QTreeWidgetItem>
-
 #include <game_data/game_data.h>
 #include <locale/string_table.h>
+#include <ui/locale/q_tree_widget_item_locale.h>
 
 /**
  * @brief	Tree widget item of station modules.
  */
-class StationModulesTreeWidgetItem : public QTreeWidgetItem {
+class StationModulesTreeWidgetItem : public QTreeWidgetItemLocale {
   protected:
     ::std::shared_ptr<GameStationModules::StationModule>
         m_module; ///< Station module.
@@ -42,13 +41,4 @@ class StationModulesTreeWidgetItem : public QTreeWidgetItem {
      * @brief		Change language.
      */
     void onLanguageChanged();
-
-    /**
-     * @brief		Operator <.
-     *
-     * @param[in]	other		Other item to compare.
-     *
-     * @return		Compare result.
-     */
-    virtual bool operator<(const QTreeWidgetItem &other) const override;
 };

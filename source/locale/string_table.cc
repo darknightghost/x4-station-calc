@@ -207,6 +207,14 @@ void StringTable::setLanguage(const QString &language)
 }
 
 /**
+ * @brief   Get a \c QCollator object.
+ */
+QCollator StringTable::collator()
+{
+    return QCollator(_qtLanguageTable[m_language]);
+}
+
+/**
  * @brief Destructor.
  */
 StringTable::~StringTable() {}

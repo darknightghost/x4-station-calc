@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCore/QCollator>
 #include <QtCore/QLocale>
 #include <QtCore/QMap>
 #include <QtCore/QObject>
@@ -78,6 +79,13 @@ class StringTable : public QObject, public ISingleton<StringTable> {
      *
      */
     void setLanguage(const QString &language);
+
+    /**
+     * @brief   Get a \c QCollator object.
+     *
+     * @return  \c QCollator object of current locale.
+     */
+    QCollator collator();
 
   signals:
     /**

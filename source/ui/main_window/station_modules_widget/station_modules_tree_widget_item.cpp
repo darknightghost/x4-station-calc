@@ -7,7 +7,7 @@
 StationModulesTreeWidgetItem::StationModulesTreeWidgetItem(
     QTreeWidgetItem *                                    parent,
     ::std::shared_ptr<GameStationModules::StationModule> module) :
-    QTreeWidgetItem(parent),
+    QTreeWidgetItemLocale(parent),
     m_module(module)
 {}
 
@@ -31,12 +31,4 @@ StationModulesTreeWidgetItem::~StationModulesTreeWidgetItem() {}
 void StationModulesTreeWidgetItem::onLanguageChanged()
 {
     this->setText(0, GameData::instance()->texts()->text(m_module->name));
-}
-
-/**
- * @brief		Operator <.
- */
-bool StationModulesTreeWidgetItem::operator<(const QTreeWidgetItem &other) const
-{
-    return this->text(0) < other.text(0);
 }

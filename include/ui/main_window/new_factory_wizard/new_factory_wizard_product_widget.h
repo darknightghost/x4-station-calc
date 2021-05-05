@@ -51,6 +51,12 @@ class NewFactoryWizardProductWidget : public NewFactoryWizardCentralWidget {
      */
     virtual ~NewFactoryWizardProductWidget();
 
+  private:
+    /**
+     * @brief       Update next button status.
+     */
+    void updateNextBtnStatus();
+
   private slots:
     /**
      * @brief       On production changed.

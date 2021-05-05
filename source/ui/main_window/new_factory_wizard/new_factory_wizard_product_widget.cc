@@ -98,12 +98,22 @@ NewFactoryWizardProductWidget::NewFactoryWizardProductWidget(
 
     this->onTreeTargetProductsSelectionChange();
     this->onTreeProductToAddSelectionChange();
+    this->updateNextBtnStatus();
 }
 
 /**
  * @brief       Destructor.
  */
 NewFactoryWizardProductWidget::~NewFactoryWizardProductWidget() {}
+
+/**
+ * @brief       Update next button status.
+ */
+void NewFactoryWizardProductWidget::updateNextBtnStatus()
+{
+    this->wizard()->setNextBtnEnabled(m_treeTargetProducts->topLevelItemCount()
+                                      != 0);
+}
 
 /**
  * @brief       On production changed.
@@ -143,6 +153,7 @@ void NewFactoryWizardProductWidget::onBtnAddClicked()
     }
 
     m_treeTargetProducts->sortItems(0, Qt::SortOrder::AscendingOrder);
+    this->updateNextBtnStatus();
 }
 
 /**
@@ -167,6 +178,7 @@ void NewFactoryWizardProductWidget::onBtnRemoveClicked()
     }
 
     m_treeProductToAdd->sortItems(0, Qt::SortOrder::AscendingOrder);
+    this->updateNextBtnStatus();
 }
 
 /**

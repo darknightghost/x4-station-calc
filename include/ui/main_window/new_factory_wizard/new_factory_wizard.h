@@ -30,6 +30,14 @@ class NewFactoryWizard : public QWidget {
         quint64 production; ///< Production.
     };
 
+    /**
+     * @brief   Workforce infomation.
+     */
+    struct WorkforceInfo {
+        QString race;       ///< Race.
+        quint32 percentage; ///< Percentage.
+    };
+
   private:
     /**
      * @brief   Wizard status.
@@ -63,6 +71,8 @@ class NewFactoryWizard : public QWidget {
     QSet<QString>              m_products;         ///< Products.
     QSet<QString>              m_resource;         ///< Resources.
     QMap<QString, ProductInfo> m_selectedProducts; ///< Selected products.
+
+    QMap<QString, WorkforceInfo> m_workforce; ///< Workforce information.
 
   private:
     /**
@@ -128,7 +138,7 @@ class NewFactoryWizard : public QWidget {
      */
     void closeCentralWidgetOnBtnNext();
 
-  private slots:
+  public slots:
     /**
      * @brief       Set the enable status of button "Next".
      *

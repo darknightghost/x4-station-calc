@@ -83,6 +83,18 @@ NewFactoryWizard::NewFactoryWizard(QWidget *parent) :
         }
     }
 
+    // Scan races.
+    auto      races     = GameData::instance()->races();
+    QCollator collator  = StringTable::instance()->collator();
+    QString   firstRace = *(races->playerRaces().begin());
+    for (auto &race : races->playerRaces()) {
+        m_workforce[race] = {race, 0};
+        if (collator.compare(race, firstRace) < 0) {
+            firstRace = race;
+        }
+    }
+    m_workforce[firstRace].percentage = 100;
+
     // Initialize.
     this->switchToSelectProduct();
 }
@@ -121,6 +133,7 @@ void NewFactoryWizard::setNextBtnEnabled(bool enabled)
         case WizardStatus::SetWorkforce:
         case WizardStatus::SetIntermediate:
             m_btnNext->setEnabled(enabled);
+            break;
 
         default:
             m_btnNext->setEnabled(false);
@@ -164,7 +177,7 @@ void NewFactoryWizard::switchToSetWorkforce()
     m_btnFinish->setVisible(false);
     m_btnFinish->setEnabled(false);
 
-    m_centralWidget = new NewFactoryWizardWorkforceWidget(this);
+    m_centralWidget = new NewFactoryWizardWorkforceWidget(m_workforce, this);
     m_clientArea->setWidget(m_centralWidget);
     m_status = WizardStatus::SetWorkforce;
 

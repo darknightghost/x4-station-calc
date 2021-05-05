@@ -1,0 +1,14 @@
+WareButton#Product {
+	background: #0000FF;
+	color: #000000;
+}
+
+WareButton#Intermediate {
+	background: #FFFF00;
+	color: #000000;
+}
+
+WareButton#Resource {
+	background: #FF0000;
+	color: #000000;
+}

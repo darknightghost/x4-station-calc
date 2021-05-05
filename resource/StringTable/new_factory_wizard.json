@@ -40,8 +40,25 @@
 		"en_US" : "Products"
 	},
 	"STR_HEAD_MINIMUM_PRODUCTION" : {
-		"zh_CN" : "最小产量",
-		"zh_TW" : "最小產",
+		"zh_CN" : "最低产量",
+		"zh_TW" : "最低產量",
 		"en_US" : "Minimum Production"
+	},
+	"STR_WARE_BUTTON_PRODUCT" : {
+		"zh_CN" : "%1(目标产品)",
+		"zh_TW" : "%1(目標產品)",
+		"en_US" : "%1(Production)"
+	},
+	"STR_WARE_BUTTON_INTERMEDIATE" : {
+		"zh_CN" : "%1(中间产品)",
+		"zh_TW" : "%1(中間產品)",
+		"en_US" : "%1(Intermediate)"
+	},
+	"STR_WARE_BUTTON_RESOURCE" : {
+		"zh_CN" : "%1(原料)",
+		"zh_TW" : "%1(原料)",
+		"en_US" : "%1(Resource)"
 	}
+
+
 }

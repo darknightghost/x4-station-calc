@@ -43,4 +43,10 @@ class NewFactoryWizardWorkforceWidget : public NewFactoryWizardCentralWidget {
      * @param[in]   edit        The widget which emited this signal.
      */
     void onEditingFinished(RacePercentageEdit *edit);
+
+  private:
+    /**
+     * @brief       Update next button.
+     */
+    void updateNextButton();
 };

@@ -56,6 +56,8 @@ NewFactoryWizardWorkforceWidget::NewFactoryWizardWorkforceWidget(
         RacePercentageEdit *txtPercentage = new RacePercentageEdit(
             races[i], m_total, m_workforceInfo[races[i]].percentage, this);
         raceLayout->addWidget(txtPercentage, i, 1);
+        this->connect(txtPercentage, &RacePercentageEdit::editingFinished, this,
+                      &NewFactoryWizardWorkforceWidget::onEditingFinished);
 
         // Label percentage.
         QLabel *lblPercentage = new QLabel("%", this);
@@ -65,6 +67,7 @@ NewFactoryWizardWorkforceWidget::NewFactoryWizardWorkforceWidget(
     }
 
     layout->addStretch();
+    this->updateNextButton();
 }
 
 /**
@@ -79,4 +82,18 @@ void NewFactoryWizardWorkforceWidget::onEditingFinished(
     RacePercentageEdit *edit)
 {
     m_workforceInfo[edit->race()].percentage = edit->value();
+    this->updateNextButton();
+}
+
+/**
+ * @brief       Update next button.
+ */
+void NewFactoryWizardWorkforceWidget::updateNextButton()
+{
+    if (m_total == 100) {
+        this->wizard()->setNextBtnEnabled(true);
+
+    } else {
+        this->wizard()->setNextBtnEnabled(false);
+    }
 }

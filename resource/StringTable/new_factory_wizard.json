@@ -9,15 +9,15 @@
 		"zh_TW" : "選擇最終產品",
 		"en_US" : "Select Final Products"
 	},
-	"STR_STEP_SET_WORKFORCE" : {
-		"zh_CN" : "设置劳动力",
-		"zh_TW" : "設置勞動力",
-		"en_US" : "Set Workforce"
+	"STR_STEP_SET_RACE" : {
+		"zh_CN" : "设置种族",
+		"zh_TW" : "設置種族",
+		"en_US" : "Set Race"
 	},
-	"STR_STEP_SET_INTERMEDIATE" : {
-		"zh_CN" : "设置中间产品",
-		"zh_TW" : "設置中間產品",
-		"en_US" : "Set Intermediate"
+	"STR_STEP_SET_RESOURCE" : {
+		"zh_CN" : "设置原料",
+		"zh_TW" : "設置原料",
+		"en_US" : "Set Resource"
 	},
 	"STR_STEP_FINISH" : {
 		"zh_CN" : "完成",
@@ -44,6 +44,16 @@
 		"zh_TW" : "最低產量",
 		"en_US" : "Minimum Production"
 	},
+	"STR_RACE_OF_WORKFORCE" : {
+		"zh_CN" : "劳动力种族",
+		"zh_TW" : "勞動力種族",
+		"en_US" : "Race of Workforce"
+	},
+	"STR_ORDER_OF_PRODUCTION_METHOD" : {
+		"zh_CN" : "生产方式优先级",
+		"zh_TW" : "生產方式優先級",
+		"en_US" : "Order of Protuction Method"
+	},
 	"STR_WARE_BUTTON_PRODUCT" : {
 		"zh_CN" : "%1(目标产品)",
 		"zh_TW" : "%1(目標產品)",
@@ -59,6 +69,4 @@
 		"zh_TW" : "%1(原料)",
 		"en_US" : "%1(Resource)"
 	}
-
-
 }

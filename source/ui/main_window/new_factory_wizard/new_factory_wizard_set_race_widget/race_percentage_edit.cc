@@ -1,6 +1,6 @@
 #include <QtCore/QDebug>
 
-#include <ui/main_window/new_factory_wizard/new_factory_wizard_workforce_widget/race_percentage_edit.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_set_race_widget/race_percentage_edit.h>
 
 /**
  * @brief       Constructor.

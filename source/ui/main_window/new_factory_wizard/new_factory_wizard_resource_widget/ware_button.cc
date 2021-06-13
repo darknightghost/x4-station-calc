@@ -1,6 +1,6 @@
 #include <common/compare.h>
 #include <game_data/game_data.h>
-#include <ui/main_window/new_factory_wizard/new_factory_wizard_intermediate_widget/ware_button.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_resource_widget/ware_button.h>
 
 /**
  * @brief       Constructor.
@@ -9,6 +9,11 @@ WareButton::WareButton(const QString &ware, Type type, QWidget *parent) :
     QPushButton(parent), m_ware(ware), m_type(type)
 {
     switch (m_type) {
+        case Type::Workforce:
+            this->setText(STR("STR_SUMMARY_WORKFORCE"));
+            this->setObjectName("Product");
+            break;
+
         case Type::Product:
             this->changeToStatusProduct();
             break;
@@ -61,6 +66,7 @@ void WareButton::setStatus(Status status)
 {
     if (status != m_status) {
         switch (m_type) {
+            case Type::Workforce:
             case Type::Product:
                 break;
 

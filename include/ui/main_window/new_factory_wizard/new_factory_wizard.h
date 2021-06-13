@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QtCore/QList>
+#include <QtCore/QSet>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
@@ -45,7 +47,7 @@ class NewFactoryWizard : public QWidget {
     enum class WizardStatus {
         None,            ///< None.
         SelectProduct,   ///< Select product.
-        SetWorkforce,    ///< Set workforce.
+        SetRace,         ///< Set race.
         SetIntermediate, ///< Set intermediate.
         Finish,          ///< Finish.
     };
@@ -72,7 +74,9 @@ class NewFactoryWizard : public QWidget {
     QSet<QString>              m_resource;         ///< Resources.
     QMap<QString, ProductInfo> m_selectedProducts; ///< Selected products.
 
-    QMap<QString, WorkforceInfo> m_workforce; ///< Workforce information.
+    QMap<QString, WorkforceInfo> m_workforce;   ///< Workforce information.
+    QSet<QString>                m_resources;   ///< Resources.
+    QVector<QString> m_orderOfProductionMethod; ///< Order of production method.
 
   private:
     /**
@@ -116,7 +120,7 @@ class NewFactoryWizard : public QWidget {
     /**
      * @brief       Switch to set workforce status.
      */
-    void switchToSetWorkforce();
+    void switchToSetRace();
 
     /**
      * @brief       Switch to set intermediate status.

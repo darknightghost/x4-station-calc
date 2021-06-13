@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QScrollArea>
 
 #include <save/save.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard.h>
@@ -8,7 +8,7 @@
 /**
  * @brief   New factory wizard.
  */
-class NewFactoryWizardCentralWidget : public QWidget {
+class NewFactoryWizardCentralWidget : public QScrollArea {
     Q_OBJECT
 
   private:

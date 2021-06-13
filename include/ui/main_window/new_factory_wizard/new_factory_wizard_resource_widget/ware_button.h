@@ -22,6 +22,7 @@ class WareButton : public QPushButton {
      * @brief   Type.
      */
     enum class Type {
+        Workforce,              ///< Workforce.
         Product,                ///< Product.
         IntermediateOrResource, ///< Intermediate or resource.
         ResourceOnly,           ///< Resource only.

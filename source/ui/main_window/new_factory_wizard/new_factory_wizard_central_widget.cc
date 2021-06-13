@@ -6,7 +6,7 @@
  */
 NewFactoryWizardCentralWidget::NewFactoryWizardCentralWidget(
     NewFactoryWizard *wizard) :
-    QWidget(nullptr),
+    QScrollArea(nullptr),
     m_wizardWidget(wizard)
 {}
 

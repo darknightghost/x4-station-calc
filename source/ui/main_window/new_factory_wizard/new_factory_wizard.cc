@@ -6,9 +6,9 @@
 #include <locale/string_table.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard_finish_widget.h>
-#include <ui/main_window/new_factory_wizard/new_factory_wizard_intermediate_widget.h>
 #include <ui/main_window/new_factory_wizard/new_factory_wizard_product_widget.h>
-#include <ui/main_window/new_factory_wizard/new_factory_wizard_workforce_widget.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_resource_widget.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_set_race_widget.h>
 
 /**
  * @brief       Constructor.
@@ -92,6 +92,7 @@ NewFactoryWizard::NewFactoryWizard(QWidget *parent) :
         if (collator.compare(race, firstRace) < 0) {
             firstRace = race;
         }
+        m_orderOfProductionMethod.push_back(race);
     }
     m_workforce[firstRace].percentage = 100;
 
@@ -130,7 +131,7 @@ void NewFactoryWizard::setNextBtnEnabled(bool enabled)
 {
     switch (m_status) {
         case WizardStatus::SelectProduct:
-        case WizardStatus::SetWorkforce:
+        case WizardStatus::SetRace:
         case WizardStatus::SetIntermediate:
             m_btnNext->setEnabled(enabled);
             break;
@@ -168,7 +169,7 @@ void NewFactoryWizard::switchToSelectProduct()
 /**
  * @brief       Switch to select workforce status.
  */
-void NewFactoryWizard::switchToSetWorkforce()
+void NewFactoryWizard::switchToSetRace()
 {
     m_btnNext->setEnabled(true);
     m_btnNext->setVisible(true);
@@ -177,9 +178,10 @@ void NewFactoryWizard::switchToSetWorkforce()
     m_btnFinish->setVisible(false);
     m_btnFinish->setEnabled(false);
 
-    m_centralWidget = new NewFactoryWizardWorkforceWidget(m_workforce, this);
+    m_centralWidget = new NewFactoryWizardSetRaceWidget(
+        m_workforce, m_orderOfProductionMethod, this);
     m_clientArea->setWidget(m_centralWidget);
-    m_status = WizardStatus::SetWorkforce;
+    m_status = WizardStatus::SetRace;
 
     m_lblTitle->setText(m_centralWidget->windowTitle());
 }
@@ -196,7 +198,8 @@ void NewFactoryWizard::switchToSetIntermediate()
     m_btnFinish->setVisible(false);
     m_btnFinish->setEnabled(false);
 
-    m_centralWidget = new NewFactoryWizardIntermediateWidget(this);
+    m_centralWidget = new NewFactoryWizardResourceWidget(
+        this, m_selectedProducts, m_workforce, m_resources);
     m_clientArea->setWidget(m_centralWidget);
     m_status = WizardStatus::SetIntermediate;
 
@@ -254,14 +257,14 @@ void NewFactoryWizard::closeCentralWidgetOnBtnNext()
 void NewFactoryWizard::onBtnBackClicked()
 {
     switch (m_status) {
-        case WizardStatus::SetWorkforce:
+        case WizardStatus::SetRace:
             this->closeCentralWidgetOnBtnBack();
             this->switchToSelectProduct();
             break;
 
         case WizardStatus::SetIntermediate:
             this->closeCentralWidgetOnBtnBack();
-            this->switchToSetWorkforce();
+            this->switchToSetRace();
             break;
 
         case WizardStatus::Finish:
@@ -283,10 +286,10 @@ void NewFactoryWizard::onBtnNextClicked()
     switch (m_status) {
         case WizardStatus::SelectProduct:
             this->closeCentralWidgetOnBtnNext();
-            this->switchToSetWorkforce();
+            this->switchToSetRace();
             break;
 
-        case WizardStatus::SetWorkforce:
+        case WizardStatus::SetRace:
             this->closeCentralWidgetOnBtnNext();
             this->switchToSetIntermediate();
             break;

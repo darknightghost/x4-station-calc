@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QLineEdit>
 
-#include <ui/main_window/new_factory_wizard/new_factory_wizard_workforce_widget/race_percentage_validator.h>
+#include <ui/main_window/new_factory_wizard/new_factory_wizard_set_race_widget/race_percentage_validator.h>
 
 /**
  * @brief   Race percentage editor.

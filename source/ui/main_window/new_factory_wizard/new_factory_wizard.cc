@@ -199,7 +199,8 @@ void NewFactoryWizard::switchToSetIntermediate()
     m_btnFinish->setEnabled(false);
 
     m_centralWidget = new NewFactoryWizardResourceWidget(
-        this, m_selectedProducts, m_workforce, m_resources);
+        this, m_selectedProducts, m_workforce, m_orderOfProductionMethod,
+        m_resources);
     m_clientArea->setWidget(m_centralWidget);
     m_status = WizardStatus::SetIntermediate;
 

@@ -13,7 +13,7 @@
  * @return		Minimum value.
  */
 template<typename T>
-T min(T v1, T v2)
+constexpr inline T min(T v1, T v2)
 {
     return v1 > v2 ? v2 : v1;
 }
@@ -31,7 +31,7 @@ T min(T v1, T v2)
  * @return		Minimum value.
  */
 template<typename T, typename... Args>
-T min(T v1, T v2, T v3, Args... args)
+constexpr inline T min(T v1, T v2, T v3, Args... args)
 {
     T v = v1 > v2 ? v2 : v1;
     return min(v, v3, args...);
@@ -47,7 +47,7 @@ T min(T v1, T v2, T v3, Args... args)
  * @return		Maxium value.
  */
 template<typename T>
-T max(T v1, T v2)
+constexpr inline T max(T v1, T v2)
 {
     return v1 > v2 ? v1 : v2;
 }
@@ -65,7 +65,7 @@ T max(T v1, T v2)
  * @return		Maxium value.
  */
 template<typename T, typename... Args>
-T max(T v1, T v2, T v3, Args... args)
+constexpr inline T max(T v1, T v2, T v3, Args... args)
 {
     T v = v1 > v2 ? v1 : v2;
     return max(v, v3, args...);
@@ -83,7 +83,7 @@ T max(T v1, T v2, T v3, Args... args)
  *				returns \c false.
  */
 template<typename T>
-bool betweenImpl(T value, T b1, T b2)
+constexpr inline bool betweenImpl(T value, T b1, T b2)
 {
     T minBorder = min(b1, b2);
     T maxBorder = max(b1, b2);
@@ -103,7 +103,7 @@ bool betweenImpl(T value, T b1, T b2)
  *				returns \c false.
  */
 template<typename T>
-bool between(
+constexpr inline bool between(
     T value,
     typename ::std::conditional<
         ::std::is_integral<T>::value,
@@ -143,7 +143,7 @@ bool between(
  *				otherwise returns \c false.
  */
 template<typename T, typename T1, typename... Values>
-bool in(T value, T1 value1, Values... values)
+constexpr inline bool in(T value, T1 value1, Values... values)
 {
     if (value == value1) {
         return true;
@@ -160,7 +160,7 @@ bool in(T value, T1 value1, Values... values)
  * @return		\c false.
  */
 template<typename T, typename... Values>
-bool in(T)
+constexpr inline bool in(T)
 {
     return false;
 }
@@ -179,7 +179,7 @@ bool in(T)
  *				returned. otherwise returns \c false.
  */
 template<typename T, typename T1, typename... Values>
-bool notIn(T value, T1 value1, Values... values)
+constexpr inline bool notIn(T value, T1 value1, Values... values)
 {
     if (value == value1) {
         return false;
@@ -196,7 +196,7 @@ bool notIn(T value, T1 value1, Values... values)
  * @return		\c true.
  */
 template<typename T, typename... Values>
-bool notIn(T)
+constexpr inline bool notIn(T)
 {
     return true;
 }

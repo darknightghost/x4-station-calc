@@ -22,8 +22,8 @@ class NewFactoryWizardResourceWidget : public NewFactoryWizardCentralWidget {
      * @brief       Node of product tree.
      */
     struct ProductTreeNode {
-        QSet<::std::weak_ptr<ProductTreeNode>> prevNodes; ///< Previous nodes.
-        QSet<::std::weak_ptr<ProductTreeNode>> nextNodes; ///< Next nodes.
+        QSet<ProductTreeNode *> prevNodes; ///< Previous nodes.
+        QSet<ProductTreeNode *> nextNodes; ///< Next nodes.
 
         QString ware; ///< Ware.
         enum class NodeType {
@@ -56,16 +56,18 @@ class NewFactoryWizardResourceWidget : public NewFactoryWizardCentralWidget {
     /**
      * @brief       Constructor.
      *
-     * @param[in]   wizard              Wizard widget.
-     * @param[in]   selectedProducts    Products selected.
-     * @param[in]   workforceInfo       Workforce information.
-     * @param[out]  resources           Resources.
+     * @param[in]   wizard                  Wizard widget.
+     * @param[in]   selectedProducts        Products selected.
+     * @param[in]   workforceInfo           Workforce information.
+     * @param[in]   orderOfProductionMethod Order of production method.
+     * @param[out]  resources               Resources.
      */
     NewFactoryWizardResourceWidget(
         NewFactoryWizard *                                    wizard,
         const QMap<QString, NewFactoryWizard::ProductInfo> &  selectedProducts,
         const QMap<QString, NewFactoryWizard::WorkforceInfo> &workforceInfo,
-        QSet<QString> &                                       resources);
+        const QVector<QString> &orderOfProductionMethod,
+        QSet<QString> &         resources);
 
     /**
      * @brief       Destructor.
@@ -74,15 +76,35 @@ class NewFactoryWizardResourceWidget : public NewFactoryWizardCentralWidget {
 
   private:
     /**
+     * @brief       Insert ware node and resources.
+     *
+     * @param[in]   ware                    Ware to insert.
+     * @param[in]   parent                  Parent node.
+     * @param[in]   nodeType                Node type.
+     * @param[in]   layer                   Layer.
+     * @param[in]   orderOfProductionMethod Order of production method.
+     */
+    void insertWare(const QString &                    ware,
+                    ::std::shared_ptr<ProductTreeNode> parent,
+                    ProductTreeNode::NodeType          nodeType,
+                    int                                layer,
+                    const QVector<QString> &           orderOfProductionMethod);
+
+    /**
      * @brief       Insert node.
      *
      * @param[in]   ware        Ware to insert.
      * @param[in]   parent      Parent node.
+     * @param[in]   nodeType    Node type.
      * @param[in]   layer       Layer.
+     *
+     * @return      Node.
      */
-    void insertNode(const QString &                    ware,
-                    ::std::shared_ptr<ProductTreeNode> parent,
-                    int                                layer);
+    ::std::shared_ptr<NewFactoryWizardResourceWidget::ProductTreeNode>
+        insertNode(const QString &                    ware,
+                   ::std::shared_ptr<ProductTreeNode> parent,
+                   ProductTreeNode::NodeType          nodeType,
+                   int                                layer);
 
     /**
      * @brief       Paint event.

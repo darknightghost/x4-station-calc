@@ -77,37 +77,6 @@ class GameRaces :
     virtual ~GameRaces();
 
   private:
-    /**
-     * @brief		Start element callback in root.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInRoot(XMLLoader &                   loader,
-                              XMLLoader::Context &          context,
-                              const QString &               name,
-                              const QMap<QString, QString> &attr);
-
-    /**
-     * @brief		Start element callback in races.
-     *
-     * @param[in]	loader		XML loader.
-     * @param[in]	context		Context.
-     * @param[in]	name		Name of the element.
-     * @param[in]	attr		Attributes.
-     *
-     * @return		Return \c true if the parsing should be continued.
-     *				otherwise returns \c false.
-     */
-    bool onStartElementInRaces(XMLLoader &                   loader,
-                               XMLLoader::Context &          context,
-                               const QString &               name,
-                               const QMap<QString, QString> &attr);
 };
 
 #include <game_data/game_vfs.h>

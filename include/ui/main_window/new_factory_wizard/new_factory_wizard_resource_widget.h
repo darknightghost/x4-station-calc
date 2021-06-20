@@ -1,9 +1,8 @@
 #pragma once
 
 #include <QtGui/QPaintEvent>
-#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QScrollArea>
-#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 #include <save/save.h>
@@ -44,13 +43,27 @@ class NewFactoryWizardResourceWidget : public NewFactoryWizardCentralWidget {
         WareButton *button; ///< Button.
     };
 
-  private:
-    QVBoxLayout *m_layout; ///< Layout.
+    /**
+     * @brief       Button row.
+     */
+    struct ButtonRow {
+        int index; ///< Index.
+    };
 
+    /**
+     * @brief       Button row.
+     */
+    struct ButtonInfo {
+        int index; ///< Index.
+    };
+
+  private:
     QMap<QString, ::std::shared_ptr<ProductTreeNode>>
                                        m_productNodes; ///< Product nodes.
     ::std::shared_ptr<ProductTreeNode> m_rootNode;     ///< Root node.
     QSet<QString> &                    m_resources;    ///< Resources.
+
+    QGridLayout *m_layout; ///< Layout.
 
   public:
     /**
@@ -75,6 +88,11 @@ class NewFactoryWizardResourceWidget : public NewFactoryWizardCentralWidget {
     virtual ~NewFactoryWizardResourceWidget();
 
   private:
+    /**
+     * @brief       Create buttons.
+     */
+    void createButtons();
+
     /**
      * @brief       Insert ware node and resources.
      *

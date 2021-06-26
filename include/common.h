@@ -11,4 +11,3 @@
 //#include <common/generic_string.h>
 #include <common/multi_threading.h>
 #include <common/types.h>
-#include <common/xml_loader.h>

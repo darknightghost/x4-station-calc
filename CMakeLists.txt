@@ -171,6 +171,7 @@ endif ()
 find_package (Qt5Core REQUIRED)
 find_package (Qt5Widgets REQUIRED)
 find_package (Qt5Network REQUIRED)
+find_package (Qt5Xml REQUIRED)
 
 if ("${Qt5Core_VERSION}" VERSION_LESS "5.14.1")
     message (FATAL_ERROR "The version of Qt5 must be greater than 5.14.1.")
@@ -239,6 +240,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Widgets
     Qt5::Network
+    Qt5::Xml
     ${OPENSSL_LIBRARIES}
     ${OPENSSL_SSL_LIBRARY}
     ${OPENSSL_CRYPTO_LIBRARY}

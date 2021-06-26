@@ -35,7 +35,6 @@ GameRaces::GameRaces(::std::shared_ptr<GameVFS>             vfs,
     QXmlStreamReader reader(data);
 
     // Parse file
-    auto context = XMLLoader::Context::create();
 
     this->setInitialized();
 }

@@ -9,6 +9,7 @@
 #include <config.h>
 #include <game_data/game_data.h>
 #include <game_data/game_texts.h>
+#include <game_data/xml_loader/xml_loader.h>
 #include <locale/string_table.h>
 
 /**
@@ -47,6 +48,26 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+
+        // TODO:Test
+        XMLLoader loader;
+        /*
+        ::std::shared_ptr<GameVFS::FileReader> fileReader = vfs->open(
+            "/assets/structures/habitat/macros/hab_arg_l_01_macro.xml");*/
+        XMLLoader::ErrorInfo info;
+        loader.loadData("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                        "<root>"
+                        "  <bar>"
+                        "    <foo a=\"1\"/>"
+                        "    <foo a=\"2\"/>"
+                        "  </bar>"
+                        "</root>",
+                        info);
+        loader.loadPatch(
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><diff><remove "
+            "sel=\"root/bar/foo[@a='1']\"/></diff>",
+            info);
+        loader.parse();
 
         // Load text
         ::std::shared_ptr<GameTexts> texts

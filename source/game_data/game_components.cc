@@ -24,8 +24,8 @@ GameComponents::GameComponents(
     QXmlStreamReader reader(data);
 
     // Parse file
-    auto context = XMLLoader::Context::create();
     /*
+    auto context = XMLLoader::Context::create();
     context->setOnStartElement(
         ::std::bind(&GameComponents::onStartElementInRoot, this,
                     ::std::placeholders::_1, ::std::placeholders::_2,

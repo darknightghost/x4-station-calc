@@ -1,8 +1,10 @@
 #pragma once
 
 #include <any>
+#include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <QtCore/QString>
@@ -28,9 +30,22 @@ class XMLLoader {
     /**
      * @brief       Sel infomation.
      */
+    struct SelPathNodeInfo {
+        QString name; ///< Name.
+        ::std::optional<::std::pair<QString, QString>>
+            attribute; ///< Attribute.
+    };
+
+    /**
+     * @brief       Sel infomation.
+     */
     struct SelInfo {
-        ::std::vector<QString>       path;       ///< Path of target element.
-        ::std::map<QString, QString> attributes; ///< Attributes.
+        ::std::vector<SelPathNodeInfo> path; ///< Path of target element.
+        enum class PathType {
+            Element,  ///< The path is an element.
+            Attribute ///< The path is an attribute.
+
+        } pathType; ///< Type of path.
     };
 
   protected:
@@ -128,9 +143,36 @@ class XMLLoader {
     /**
      * @brief       Parse "sel" atttribute.
      *
+     * @param[in]   sel     Value of attribute "sel".
+     *
      * @return      Parse result.
      */
     SelInfo parseSel(const QString &sel);
+
+    /**
+     * @brief       Get elements by sel.
+     *
+     * @param[in]   sel     Parsed value of attribute "sel".
+     *
+     * @return      Elements.
+     */
+    ::std::list<QDomElement> getElementBySel(SelInfo &sel);
+
+    /**
+     * @brief       Get elements by sel.
+     *
+     * @param[in]   sel     Parsed value of attribute "sel".
+     * @param[in]   element Element to search.
+     * @param[in]   iter    Iterator of the path.
+     * @param[in]   end     End iterator of the path.
+     *
+     * @return      Elements.
+     */
+    ::std::list<QDomElement>
+        getElementBySel(SelInfo &                                       sel,
+                        QDomElement &                                   element,
+                        const ::std::vector<SelPathNodeInfo>::iterator &iter,
+                        const ::std::vector<SelPathNodeInfo>::iterator &end);
 };
 
 #include <game_data/xml_loader/xml_element_loader.h>

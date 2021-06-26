@@ -109,6 +109,8 @@ void XMLLoader::clearData()
  */
 bool XMLLoader::parse()
 {
+    qDebug() << "================================";
+    qDebug() << m_doc.toString().toStdString().c_str();
     return true;
 }
 
@@ -127,21 +129,57 @@ bool XMLLoader::loadDiff(QDomElement &source, QDomElement &dest)
          diffElement = diffElement.nextSiblingElement()) {
         // Parse "sel" attribute.
         if (! diffElement.hasAttribute("sel")) {
-            qWarning() << "Missing attrbute \"sel\".";
+            qWarning() << "Line: " << diffElement.lineNumber()
+                       << ", column: " << diffElement.columnNumber() << " : "
+                       << "Missing attrbute \"sel\".";
             continue;
         }
         SelInfo sel = this->parseSel(diffElement.attribute("sel"));
         if (sel.path.size() == 0) {
-            qWarning() << "Illegal value of attrbute \"sel\".";
+            qWarning() << "Line: " << diffElement.lineNumber()
+                       << ", column: " << diffElement.columnNumber() << " : "
+                       << "Illegal value of attrbute \"sel\".";
             continue;
         }
 
+        // Get element by sel.
+        ::std::list<QDomElement> destElement = this->getElementBySel(sel);
+
         // Parse operation.
         if (diffElement.tagName() == "add") {
+            if (sel.pathType == SelInfo::PathType::Attribute) {
+                qWarning() << "Line: " << diffElement.lineNumber()
+                           << ", column: " << diffElement.columnNumber()
+                           << " : "
+                           << "Attribute does not support \"add\" operation.";
+                continue;
+            }
+
+            if (diffElement.hasAttribute("type")) {
+                // Add an attribute.
+                QString attrType = diffElement.attribute("type");
+                if (attrType[0] != '@') {
+                    qWarning()
+                        << "Line: " << diffElement.lineNumber()
+                        << ", column: " << diffElement.columnNumber() << " : "
+                        << "Illegal value of attribute \"type\".";
+                    continue;
+                }
+                attrType = attrType.replace("@", "");
+
+                for (auto &element : destElement) {
+                    element.setAttribute(attrType, diffElement.text());
+                }
+            }
+
         } else if (diffElement.tagName() == "replace") {
+            // TODO:
         } else if (diffElement.tagName() == "remove") {
+            // TODO:
         } else {
-            qWarning() << QString("Unknow element \"%1\" in \"diff\" element.")
+            qWarning() << "Line: " << diffElement.lineNumber()
+                       << ", column: " << diffElement.columnNumber() << " : "
+                       << QString("Unknow element \"%1\" in \"diff\" element.")
                               .arg(diffElement.tagName())
                               .toStdString()
                               .c_str();
@@ -176,24 +214,113 @@ XMLLoader::SelInfo XMLLoader::parseSel(const QString &sel)
         return ret;
     }
 
-    ::std::vector<QString> path;
-    while (pathSplitted.size() > 1) {
-        path.push_back(::std::move(pathSplitted.front()));
+    ::std::vector<SelPathNodeInfo> path;
+    ret.pathType = SelInfo::PathType::Element;
+    while (! pathSplitted.empty()) {
+        // Parse attribute.
+        do {
+            // Element wit attribute.
+            QRegExp elementWithAttrExpr(
+                "([a-zA-Z]\\w*)\\[@([a-zA-Z]\\w*)=['\"](.*)['\"]\\]");
+            int pos = elementWithAttrExpr.indexIn(pathSplitted.front());
+            if (pos == 0
+                && elementWithAttrExpr.matchedLength()
+                       == pathSplitted.front().size()) {
+                path.push_back({elementWithAttrExpr.cap(1),
+                                ::std::pair<QString, QString>(
+                                    elementWithAttrExpr.cap(2),
+                                    elementWithAttrExpr.cap(3))});
+                break;
+            }
+
+            // Attribute.
+            QRegExp attrExpr("@([a-zA-Z]\\w*)");
+            pos = attrExpr.indexIn(pathSplitted.front());
+            if (pos == 0
+                && attrExpr.matchedLength() == pathSplitted.front().size()) {
+                if (pathSplitted.size() != 1) {
+                    return ret;
+                }
+
+                path.push_back({attrExpr.cap(1), ::std::nullopt});
+                ret.pathType = SelInfo::PathType::Attribute;
+                break;
+            }
+
+            // Element.
+            path.push_back({pathSplitted.front(), ::std::nullopt});
+            ret.pathType = SelInfo::PathType::Element;
+
+        } while (false);
         pathSplitted.pop_front();
     }
 
-    // Parse attribute.
-    QRegExp expr("([a-zA-Z]\\w*)\\[@([a-zA-Z]\\w*)=['\"](.*)['\"]\\]");
-    int     pos = expr.indexIn(pathSplitted.front());
-    if (pos == 0 && expr.matchedLength() == pathSplitted.front().size()) {
-        ret.attributes[expr.cap(2)] = expr.cap(3);
-        path.push_back(expr.cap(1));
-
-    } else {
-        path.push_back(::std::move(pathSplitted.front()));
-        pathSplitted.pop_front();
-    }
     ret.path = ::std::move(path);
+
+    return ret;
+}
+
+/**
+ * @brief       Get element by sel.
+ */
+::std::list<QDomElement> XMLLoader::getElementBySel(XMLLoader::SelInfo &sel)
+{
+    QDomElement element = m_doc.documentElement();
+
+    // Check root.
+    auto iter = sel.path.begin();
+
+    if (iter->name != element.tagName()) {
+        return {};
+    }
+
+    // Search.
+    auto end = sel.path.end();
+    if (sel.pathType == SelInfo::PathType::Attribute) {
+        --end;
+    }
+
+    if (iter == end) {
+        return {element};
+    }
+
+    return this->getElementBySel(sel, element, ++iter, end);
+}
+
+/**
+ * @brief       Get elements by sel.
+ */
+::std::list<QDomElement> XMLLoader::getElementBySel(
+    SelInfo &                                       sel,
+    QDomElement &                                   element,
+    const ::std::vector<SelPathNodeInfo>::iterator &iter,
+    const ::std::vector<SelPathNodeInfo>::iterator &end)
+{
+    ::std::list<QDomElement> ret;
+    auto                     nextIter = iter;
+    ++nextIter;
+
+    for (auto childElement = element.firstChildElement(iter->name);
+         ! childElement.isNull();
+         childElement = childElement.nextSiblingElement(iter->name)) {
+        if (iter->attribute.has_value()) {
+            auto &attribute = iter->attribute.value();
+            if (! childElement.hasAttribute(attribute.first)) {
+                continue;
+            }
+
+            if (childElement.attribute(attribute.first) != attribute.second) {
+                continue;
+            }
+        }
+
+        if (nextIter == end) {
+            ret.push_back(childElement);
+        } else {
+            ret.splice(ret.end(),
+                       this->getElementBySel(sel, childElement, nextIter, end));
+        }
+    }
 
     return ret;
 }

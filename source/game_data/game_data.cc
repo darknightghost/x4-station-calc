@@ -63,10 +63,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
                         "  </bar>"
                         "</root>",
                         info);
-        loader.loadPatch(
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?><diff><remove "
-            "sel=\"root/bar/foo[@a='1']\"/></diff>",
-            info);
+        loader.loadPatch("<?xml version=\"1.0\" encoding=\"utf-8\"?><diff><add "
+                         "sel=\"root/bar\" type=\"@cat\">3</add></diff>",
+                         info);
         loader.parse();
 
         // Load text

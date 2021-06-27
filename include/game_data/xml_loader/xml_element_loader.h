@@ -219,7 +219,7 @@ class XMLLoader::XMLElementLoader :
      *
      * @param[in]	onElementText	    Callback.
      */
-    void setOnElelemtText(ElementTextCallback onElementText);
+    void setOnElementText(ElementTextCallback onElementText);
 
     /**
      * @brief		On element text callback.

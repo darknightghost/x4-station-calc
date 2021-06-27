@@ -101,7 +101,7 @@ bool XMLLoader::XMLElementLoader::onStopElement()
 /**
  * @brief		Set on element text callback.
  */
-void XMLLoader::XMLElementLoader::setOnElelemtText(
+void XMLLoader::XMLElementLoader::setOnElementText(
     ElementTextCallback onElementText)
 {
     m_onElementText = ::std::move(onElementText);

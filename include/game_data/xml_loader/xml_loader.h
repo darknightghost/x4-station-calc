@@ -170,7 +170,7 @@ class XMLLoader {
      */
     ::std::list<QDomElement>
         getElementBySel(SelInfo &                                       sel,
-                        QDomElement &                                   element,
+                        const QDomElement &                             element,
                         const ::std::vector<SelPathNodeInfo>::iterator &iter,
                         const ::std::vector<SelPathNodeInfo>::iterator &end);
 
@@ -183,8 +183,20 @@ class XMLLoader {
      *                          inserted after the last child.
      */
     void copyChildNodes(QDomNode        dest,
-                        const QDomNode &src,
+                        const QDomNode &source,
                         const QDomNode &before = QDomElement());
+
+    /**
+     * @brief	    Parse XML element.
+     *
+     * @param[in]   elementLoader       XML element loader.
+     * @param[in]   element             Element to load.
+     *
+     * @return		Returns \c true if the whole file has been parsed,
+     *				otherwise returns \c false.
+     */
+    bool parseElement(XMLElementLoader * elementLoader,
+                      const QDomElement &element);
 };
 
 #include <game_data/xml_loader/xml_element_loader.h>

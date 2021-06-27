@@ -44,7 +44,7 @@ class NewFactoryWizardSetRaceWidget : public NewFactoryWizardCentralWidget {
      * @brief           Constructor.
      *
      * @param[in,out]   workforceInfo           Workforce information.
-     * @param[,out]     orderOfProductionMethod Order of production method.
+     * @param[out]      orderOfProductionMethod Order of production method.
      * @param[in]       wizard                  Wizard widget.
      */
     NewFactoryWizardSetRaceWidget(

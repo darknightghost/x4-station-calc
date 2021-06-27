@@ -109,9 +109,13 @@ void XMLLoader::clearData()
  */
 bool XMLLoader::parse()
 {
-    qDebug() << "================================";
-    qDebug() << m_doc.toString().toStdString().c_str();
-    return true;
+    XMLElementLoader *loader  = m_rootElementLoader.get();
+    QDomElement       element = m_doc.documentElement();
+    if (loader == nullptr || loader->name() != element.tagName()) {
+        return true;
+    }
+
+    return this->parseElement(loader, element);
 }
 
 /**
@@ -171,11 +175,6 @@ bool XMLLoader::loadDiff(QDomElement &source, QDomElement &dest)
                     element.setAttribute(attrType, diffElement.text());
                 }
             } else {
-                /*
-                 *     <xsd:enumeration value="before"/>
-      <xsd:enumeration value="after"/>
-      <xsd:enumeration value="prepend"/>
-      */
                 QString attrPos = "end";
                 if (diffElement.hasAttribute("pos")) {
                     // Add an attribute.
@@ -207,18 +206,147 @@ bool XMLLoader::loadDiff(QDomElement &source, QDomElement &dest)
                     }
 
                 } else {
+                    qWarning()
+                        << "Line: " << diffElement.lineNumber()
+                        << ", column: " << diffElement.columnNumber() << " : "
+                        << "Illegal value of attribute \"pos\".";
                 }
-                qWarning() << "Line: " << diffElement.lineNumber()
-                           << ", column: " << diffElement.columnNumber()
-                           << " : "
-                           << "Illegal value of attribute \"pos\".";
-                continue;
             }
 
         } else if (diffElement.tagName() == "replace") {
-            // TODO:
+            switch (sel.pathType) {
+                case SelInfo::PathType::Element: {
+                    for (QDomElement element : destElements) {
+                        QDomNode parent = element.parentNode();
+                        this->copyChildNodes(parent, diffElement,
+                                             element.nextSiblingElement());
+                        parent.removeChild(element);
+                    }
+                } break;
+
+                case SelInfo::PathType::Attribute: {
+                    for (QDomElement element : destElements) {
+                        element.setAttribute(sel.path.back().name,
+                                             diffElement.text());
+                    }
+                } break;
+            }
+
         } else if (diffElement.tagName() == "remove") {
-            // TODO:
+            switch (sel.pathType) {
+                case SelInfo::PathType::Element: {
+                    if (diffElement.hasAttribute("ws")) {
+                        QString attrWs = diffElement.attribute("ws");
+                        if (attrWs == "before") {
+                            for (QDomElement element : destElements) {
+                                // Scan witespace to remove.
+                                ::std::vector<QDomText> nodeToRemove;
+                                for (QDomNode node = element.previousSibling();
+                                     ! node.isNull();
+                                     node = node.previousSibling()) {
+                                    QDomText textNode = node.toText();
+                                    if (textNode.isNull()
+                                        || textNode.data()
+                                                   .replace(" ", "")
+                                                   .replace("\t", "")
+                                                   .replace("\r", "")
+                                                   .replace("\n", "")
+                                               != "") {
+                                        break;
+                                    }
+                                    nodeToRemove.push_back(textNode);
+                                }
+
+                                // Remove.
+                                for (auto &node : nodeToRemove) {
+                                    element.parentNode().removeChild(node);
+                                }
+                            }
+                        } else if (attrWs == "after") {
+                            for (QDomElement element : destElements) {
+                                // Scan witespace to remove.
+                                ::std::vector<QDomText> nodeToRemove;
+                                for (QDomNode node = element.nextSibling();
+                                     ! node.isNull();
+                                     node = node.nextSibling()) {
+                                    QDomText textNode = node.toText();
+                                    if (textNode.isNull()
+                                        || textNode.data()
+                                                   .replace(" ", "")
+                                                   .replace("\t", "")
+                                                   .replace("\r", "")
+                                                   .replace("\n", "")
+                                               != "") {
+                                        break;
+                                    }
+                                    nodeToRemove.push_back(textNode);
+                                }
+
+                                // Remove.
+                                for (auto &node : nodeToRemove) {
+                                    element.parentNode().removeChild(node);
+                                }
+                            }
+                        } else if (attrWs == "both") {
+                            for (QDomElement element : destElements) {
+                                // Scan witespace to remove.
+                                ::std::vector<QDomText> nodeToRemove;
+                                for (QDomNode node = element.previousSibling();
+                                     ! node.isNull();
+                                     node = node.previousSibling()) {
+                                    QDomText textNode = node.toText();
+                                    if (textNode.isNull()
+                                        || textNode.data()
+                                                   .replace(" ", "")
+                                                   .replace("\t", "")
+                                                   .replace("\r", "")
+                                                   .replace("\n", "")
+                                               != "") {
+                                        break;
+                                    }
+                                    nodeToRemove.push_back(textNode);
+                                }
+                                for (QDomNode node = element.nextSibling();
+                                     ! node.isNull();
+                                     node = node.nextSibling()) {
+                                    QDomText textNode = node.toText();
+                                    if (textNode.isNull()
+                                        || textNode.data()
+                                                   .replace(" ", "")
+                                                   .replace("\t", "")
+                                                   .replace("\r", "")
+                                                   .replace("\n", "")
+                                               != "") {
+                                        break;
+                                    }
+                                    nodeToRemove.push_back(textNode);
+                                }
+
+                                // Remove.
+                                for (auto &node : nodeToRemove) {
+                                    element.parentNode().removeChild(node);
+                                }
+                            }
+                        } else {
+                            qWarning()
+                                << "Line: " << diffElement.lineNumber()
+                                << ", column: " << diffElement.columnNumber()
+                                << " : "
+                                << "Illegal value of attribute \"ws\".";
+                        }
+                    }
+                    for (QDomElement element : destElements) {
+                        element.parentNode().removeChild(element);
+                    }
+                } break;
+
+                case SelInfo::PathType::Attribute: {
+                    for (QDomElement element : destElements) {
+                        element.removeAttribute(sel.path.back().name);
+                    }
+
+                } break;
+            }
         } else {
             qWarning() << "Line: " << diffElement.lineNumber()
                        << ", column: " << diffElement.columnNumber() << " : "
@@ -310,24 +438,13 @@ XMLLoader::SelInfo XMLLoader::parseSel(const QString &sel)
 {
     QDomElement element = m_doc.documentElement();
 
-    // Check root.
-    auto iter = sel.path.begin();
-
-    if (iter->name != element.tagName()) {
-        return {};
-    }
-
     // Search.
     auto end = sel.path.end();
     if (sel.pathType == SelInfo::PathType::Attribute) {
         --end;
     }
 
-    if (iter == end) {
-        return {element};
-    }
-
-    return this->getElementBySel(sel, element, ++iter, end);
+    return this->getElementBySel(sel, element, sel.path.begin(), end);
 }
 
 /**
@@ -335,63 +452,72 @@ XMLLoader::SelInfo XMLLoader::parseSel(const QString &sel)
  */
 ::std::list<QDomElement> XMLLoader::getElementBySel(
     SelInfo &                                       sel,
-    QDomElement &                                   element,
+    const QDomElement &                             element,
     const ::std::vector<SelPathNodeInfo>::iterator &iter,
     const ::std::vector<SelPathNodeInfo>::iterator &end)
 {
     ::std::list<QDomElement> ret;
     auto                     nextIter = iter;
     ++nextIter;
-    QString name;
 
-    if (iter->name != "*") {
-        name = iter->name;
-    }
-
-    for (auto childElement = element.firstChildElement(name);
-         ! childElement.isNull();
-         childElement = childElement.nextSiblingElement(name)) {
-        // Check attributes.
-        if (iter->attribute.has_value()) {
-            auto &attribute = iter->attribute.value();
-            if (! childElement.hasAttribute(attribute.first)) {
-                continue;
-            }
-
-            if (childElement.attribute(attribute.first) != attribute.second) {
-                continue;
-            }
-        }
-
-        // Skip ".".
-        bool skip = false;
-        while (nextIter != end && nextIter->name == ".") {
-            if (nextIter->attribute.has_value()) {
-                auto &attribute = nextIter->attribute.value();
-                if (! childElement.hasAttribute(attribute.first)) {
-                    skip = true;
+    do {
+        if (iter->name == element.tagName() || iter->name == "*") {
+            // Name matched.
+            // Check attributes.
+            if (iter->attribute.has_value()) {
+                auto &attribute = iter->attribute.value();
+                if (! element.hasAttribute(attribute.first)) {
                     break;
                 }
 
-                if (childElement.attribute(attribute.first)
-                    != attribute.second) {
-                    skip = true;
+                if (element.attribute(attribute.first) != attribute.second) {
                     break;
                 }
             }
-            ++nextIter;
-        }
-        if (skip) {
-            continue;
-        }
 
-        if (nextIter == end) {
-            ret.push_back(childElement);
-        } else {
-            ret.splice(ret.end(),
-                       this->getElementBySel(sel, childElement, nextIter, end));
+            // Skip ".".
+            bool skip = false;
+            while (nextIter != end && nextIter->name == ".") {
+                if (nextIter->attribute.has_value()) {
+                    auto &attribute = nextIter->attribute.value();
+                    if (! element.hasAttribute(attribute.first)) {
+                        skip = true;
+                        break;
+                    }
+
+                    if (element.attribute(attribute.first)
+                        != attribute.second) {
+                        skip = true;
+                        break;
+                    }
+                }
+                ++nextIter;
+            }
+            if (skip) {
+                break;
+            }
+
+            if (nextIter == end) {
+                // Append current element to the list.
+                ret.push_back(element);
+            } else {
+                // Search child.
+                bool searchCurrentIter = iter->name == "*" ? true : false;
+                for (auto childElement = element.firstChildElement();
+                     ! childElement.isNull();
+                     childElement = childElement.nextSiblingElement()) {
+                    ret.splice(ret.end(),
+                               this->getElementBySel(sel, childElement,
+                                                     nextIter, end));
+                    if (searchCurrentIter) {
+                        ret.splice(ret.end(),
+                                   this->getElementBySel(sel, childElement,
+                                                         iter, end));
+                    }
+                }
+            }
         }
-    }
+    } while (0);
 
     return ret;
 }
@@ -400,10 +526,10 @@ XMLLoader::SelInfo XMLLoader::parseSel(const QString &sel)
  * @brief       Copy child nodes.
  */
 void XMLLoader::copyChildNodes(QDomNode        dest,
-                               const QDomNode &src,
+                               const QDomNode &source,
                                const QDomNode &before)
 {
-    for (QDomNode child = src.firstChild(); ! child.isNull();
+    for (QDomNode child = source.firstChild(); ! child.isNull();
          child          = child.nextSiblingElement()) {
         QDomNode newNode = child.cloneNode();
         if (before.isNull()) {
@@ -413,4 +539,55 @@ void XMLLoader::copyChildNodes(QDomNode        dest,
             dest.insertBefore(newNode, before);
         }
     }
+}
+
+/**
+ * @brief	    Parse XML element.
+ */
+bool XMLLoader::parseElement(XMLElementLoader * elementLoader,
+                             const QDomElement &element)
+{
+    // Get attributes.
+    ::std::map<QString, QString> attributes;
+    QDomNamedNodeMap             elementAttributes = element.attributes();
+    for (int i = 0; i < elementAttributes.size(); ++i) {
+        QDomNode item               = elementAttributes.item(i);
+        attributes[item.nodeName()] = item.nodeValue();
+    }
+
+    // Start element.
+    if (! elementLoader->onStartElement(attributes)) {
+        return false;
+    }
+
+    // Attributes.
+    if (! elementLoader->parseAttributes(attributes)) {
+        return false;
+    }
+
+    // Text.
+    QString text = element.text();
+    if (text != "") {
+        if (! elementLoader->onElementText(text)) {
+            return false;
+        }
+    }
+
+    // Children.
+    for (QDomElement child = element.firstChildElement(); ! child.isNull();
+         child             = child.nextSiblingElement()) {
+        auto iter = elementLoader->children().find(child.tagName());
+        if (iter != elementLoader->children().end()) {
+            if (! this->parseElement(iter->second.get(), child)) {
+                return false;
+            }
+        }
+    }
+
+    // Stop element.
+    if (! elementLoader->onStopElement()) {
+        return false;
+    }
+
+    return true;
 }

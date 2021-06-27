@@ -173,6 +173,18 @@ class XMLLoader {
                         QDomElement &                                   element,
                         const ::std::vector<SelPathNodeInfo>::iterator &iter,
                         const ::std::vector<SelPathNodeInfo>::iterator &end);
+
+    /**
+     * @brief       Copy child nodes.
+     *
+     * @param[out]  dest        Destination.
+     * @param[in]   source      Source.
+     * @param[in]   before      Insert before this node, if null, new nodes are
+     *                          inserted after the last child.
+     */
+    void copyChildNodes(QDomNode        dest,
+                        const QDomNode &src,
+                        const QDomNode &before = QDomElement());
 };
 
 #include <game_data/xml_loader/xml_element_loader.h>

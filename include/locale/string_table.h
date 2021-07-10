@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/bimap.hpp>
+
 #include <QtCore/QCollator>
 #include <QtCore/QLocale>
 #include <QtCore/QMap>
@@ -27,7 +29,7 @@ class StringTable : public QObject, public ISingleton<StringTable> {
         _languageTable; ///< Convert qt language to language string.
     static QMap<QString, QLocale>
         _qtLanguageTable; ///< Convert language string to qt language.
-    static QMap<QString, uint32_t>
+    static ::boost::bimap<QString, uint32_t>
         _languageIDTable; ///< Convert language string to ID.
 
   protected:
@@ -103,6 +105,25 @@ class StringTable : public QObject, public ISingleton<StringTable> {
      * @brief Destructor.
      */
     virtual ~StringTable();
+
+  public:
+    /**
+     * @brief       Get language name by language ID.
+     *
+     * @param[in]   id          Language ID.
+     *
+     * @return      Language name.
+     */
+    static QString getLanugageByID(uint32_t id);
+
+    /**
+     * @brief       Get language ID by language name.
+     *
+     * @param[in]   language    Language name.
+     *
+     * @return      Language ID.
+     */
+    static uint32_t getIDByLanguage(const QString &language);
 
   private:
     /**

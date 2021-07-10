@@ -29,6 +29,12 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
   private:
     SIGNLETON_OBJECT(GameData, SplashWidget *)
 
+  public:
+    /**
+     * @brief       Game modules.
+     */
+    struct GameModules {};
+
   private:
     QString                           m_gamePath;   ///< Game path.
     ::std::shared_ptr<GameVFS>        m_vfs;        ///< Game VFS

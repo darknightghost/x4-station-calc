@@ -8,6 +8,7 @@
 #include <QtCore/QReadLocker>
 #include <QtCore/QWriteLocker>
 
+#include <common.h>
 #include <config.h>
 #include <locale/string_table.h>
 
@@ -40,17 +41,19 @@ QMap<QString, QLocale> StringTable::_qtLanguageTable(
      {"ko_KR", QLocale(QLocale::Language::Korean)},
      {"ja_JP", QLocale(QLocale::Language::Japanese)}});
 
-QMap<QString, uint32_t> StringTable::_languageIDTable({{"zh_CN", 86},
-                                                       {"zh_TW", 88},
-                                                       {"en_US", 44},
-                                                       {"de_DE", 49},
-                                                       {"fr_FR", 33},
-                                                       {"it_IT", 39},
-                                                       {"pt_PT", 55},
-                                                       {"es_ES", 34},
-                                                       {"ru_RU", 7},
-                                                       {"ko_KR", 82},
-                                                       {"ja_JP", 81}});
+//::boost::bimaps::bimap<QString, uint32_t> StringTable::_languageIDTable;
+::boost::bimaps::bimap<QString, uint32_t> StringTable::_languageIDTable
+    = makeBimap<QString, uint32_t>({{"zh_CN", 86},
+                                    {"zh_TW", 88},
+                                    {"en_US", 44},
+                                    {"de_DE", 49},
+                                    {"fr_FR", 33},
+                                    {"it_IT", 39},
+                                    {"pt_PT", 55},
+                                    {"es_ES", 34},
+                                    {"ru_RU", 7},
+                                    {"ko_KR", 82},
+                                    {"ja_JP", 81}});
 
 /**
  * @brief   Constructor.
@@ -62,7 +65,7 @@ StringTable::StringTable() :
     m_language
         = Config::instance()->getString("/language", this->systemLanguage());
     Config::instance()->setString("/language", m_language);
-    m_languageID = _languageIDTable[m_language];
+    m_languageID = _languageIDTable.left.find(m_language)->second;
     qDebug() << "Language : " << m_language << ".";
     this->updateLocale();
 
@@ -192,13 +195,12 @@ void StringTable::setLanguage(const QString &language)
         }
 
         // Search language
-        auto iter = _languageIDTable.find(language);
-        if (iter == _languageIDTable.end()) {
+        auto iter = _languageIDTable.left.find(language);
+        if (iter == _languageIDTable.left.end()) {
             return;
         }
-
         m_language   = language;
-        m_languageID = *iter;
+        m_languageID = iter->second;
         Config::instance()->setString("/language", m_language);
     }
     this->updateLocale();
@@ -218,6 +220,32 @@ QCollator StringTable::collator()
  * @brief Destructor.
  */
 StringTable::~StringTable() {}
+
+/**
+ * @brief       Get language name by language ID.
+ */
+QString StringTable::getLanugageByID(uint32_t id)
+{
+    auto iter = StringTable::_languageIDTable.right.find(id);
+    if (iter == StringTable::_languageIDTable.right.end()) {
+        return "en_US";
+    } else {
+        return iter->second;
+    }
+}
+
+/**
+ * @brief       Get language ID by language name.
+ */
+uint32_t StringTable::getIDByLanguage(const QString &language)
+{
+    auto iter = StringTable::_languageIDTable.left.find(language);
+    if (iter == StringTable::_languageIDTable.left.end()) {
+        return 44;
+    } else {
+        return iter->second;
+    }
+}
 
 /**
  * @brief	Get system locale.

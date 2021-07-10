@@ -2,6 +2,23 @@
 
 #include <utility>
 
+#include <boost/bimap.hpp>
+
+/**
+ * @brief       Make a bimap.
+ *
+ * @param[in]   values      Values.
+ *
+ * @return      Bimap.
+ */
+template<typename Type1, typename Type2>
+constexpr inline ::boost::bimap<Type1, Type2> makeBimap(
+    ::std::initializer_list<typename ::boost::bimap<Type1, Type2>::value_type>
+        values)
+{
+    return ::boost::bimap<Type1, Type2>(values.begin(), values.end());
+};
+
 /**
  * @brief   Range.
  *

@@ -159,24 +159,15 @@ else ()
 endif ()
 
 # Dependencies
-find_package (PythonInterp REQUIRED 3)
+find_package (PythonInterp 
+    REQUIRED        3)
 
-find_package (OpenSSL REQUIRED COMPONENTS SSL Crypto)
+find_package (OpenSSL   1.1.1   REQUIRED
+    COMPONENTS      SSL Crypto)
 include_directories ("${OPENSSL_INCLUDE_DIR}")
-if ("${OPENSSL_VERSION}" VERSION_LESS "1.1.1")
-    message (FATAL_ERROR "The version of OpenSSL must be greater than 1.1.1.")
 
-endif ()
-
-find_package (Qt5Core REQUIRED)
-find_package (Qt5Widgets REQUIRED)
-find_package (Qt5Network REQUIRED)
-find_package (Qt5Xml REQUIRED)
-
-if ("${Qt5Core_VERSION}" VERSION_LESS "5.14.1")
-    message (FATAL_ERROR "The version of Qt5 must be greater than 5.14.1.")
-
-endif ()
+find_package (Qt5       5.14.1  REQUIRED
+    COMPONENTS  Core Widgets Network Xml)
 
 find_package (Doxygen)
 
@@ -184,6 +175,14 @@ if (NOT DOXYGEN_EXECUTABLE)
     message (STATUS "Doxygen is not found. Code document will not be generated.")
     
 endif()
+
+find_package(Boost      1.35.0  REQUIRED 
+    COMPONENTS container 
+)
+
+include_directories (${Boost_INCLUDE_DIR})
+link_directories( ${Boost_LIBRARY_DIR})
+ 
 
 # Sources
 file (GLOB_RECURSE HEADERS
@@ -241,6 +240,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Network
     Qt5::Xml
+    ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${OPENSSL_SSL_LIBRARY}
     ${OPENSSL_CRYPTO_LIBRARY}

@@ -122,23 +122,21 @@ class XMLLoader {
      * @brief	    Load diff.
      *
      * @param[in]	source      Source root element.
-     * @param[in]	dest`       Destination root element.
      *
      * @return		On success, the method returns \c true, otherwise returns
      *              \c false.
      */
-    bool loadDiff(QDomElement &source, QDomElement &dest);
+    bool loadDiff(QDomElement &source);
 
     /**
      * @brief	    Merge patch.
      *
      * @param[in]	source      Source root element.
-     * @param[in]	dest`       Destination root element.
      *
      * @return		On success, the method returns \c true, otherwise returns
      *              \c false.
      */
-    bool mergePatch(QDomElement &source, QDomElement &dest);
+    bool mergePatch(QDomElement &source);
 
     /**
      * @brief       Parse "sel" atttribute.

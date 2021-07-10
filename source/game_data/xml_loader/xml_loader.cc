@@ -80,11 +80,11 @@ bool XMLLoader::loadPatch(const QString &xmlText, ErrorInfo &err)
     QDomElement dataRoot  = m_doc.documentElement();
     if (patchRoot.tagName() == "diff") {
         // Diff mode.
-        return this->loadDiff(patchRoot, dataRoot);
+        return this->loadDiff(patchRoot);
 
     } else if (patchRoot.tagName() == dataRoot.tagName()) {
         // Merge.
-        return this->mergePatch(patchRoot, dataRoot);
+        return this->mergePatch(patchRoot);
 
     } else {
         // Ignore
@@ -126,7 +126,7 @@ XMLLoader::~XMLLoader() {}
 /**
  * @brief	    Load diff.
  */
-bool XMLLoader::loadDiff(QDomElement &source, QDomElement &dest)
+bool XMLLoader::loadDiff(QDomElement &source)
 {
     for (QDomElement diffElement = source.firstChildElement();
          ! diffElement.isNull();
@@ -363,8 +363,9 @@ bool XMLLoader::loadDiff(QDomElement &source, QDomElement &dest)
 /**
  * @brief	    Merge patch.
  */
-bool XMLLoader::mergePatch(QDomElement &source, QDomElement &dest)
+bool XMLLoader::mergePatch(QDomElement &source)
 {
+    QDomElement dest = m_doc.documentElement();
     for (QDomElement child = source.firstChildElement(); ! child.isNull();
          child             = child.nextSiblingElement()) {
         dest.appendChild(child);

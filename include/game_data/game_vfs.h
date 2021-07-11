@@ -115,6 +115,7 @@ class GameVFS : private IInitialized {
 
   private:
     QString                          m_gamePath; ///< Game path.
+    QString                          m_userPath; ///< User path.
     ::std::shared_ptr<DatFileEntery> m_datEntry; ///< Enteries.
     ::std::weak_ptr<GameVFS>         m_this;     ///< This reference.
 
@@ -123,21 +124,42 @@ class GameVFS : private IInitialized {
      * @brief		Constructor.
      *
      * @param[in]	gamePath		Path of game.
+     * @param[in]	userPath		Path of user data.
      * @param[in]	info			Cat files info.
+     * @param[in]	userInfo	    User cat files info.
      * @param[in]	setTextFunc		Callback to set text.
      * @param[in]	errFunc			Callback to show error.
      */
     GameVFS(const QString &                        gamePath,
+            const QString &                        userPath,
             const QMap<QString, CatFileInfo> &     info,
+            const QMap<QString, CatFileInfo> &     userInfo,
             ::std::function<void(const QString &)> setTextFunc,
             ::std::function<void(const QString &)> errFunc);
+
+    /**
+     * @brief		Load dat file.
+     *
+     * @param[in]	baseDir		    Base directory.
+     * @param[in]	info			Cat files info.
+     * @param[in]	setTextFunc		Callback to set text.
+     * @param[in]	errFunc			Callback to show error.
+     *
+     * @return      Result.
+     */
+    bool loadDat(const QString &                        baseDir,
+                 const QMap<QString, CatFileInfo> &     info,
+                 ::std::function<void(const QString &)> setTextFunc,
+                 ::std::function<void(const QString &)> errFunc);
 
   public:
     /**
      * @brief		Create a VFS object.
      *
      * @param[in]	gamePath		Path of game.
+     * @param[in]	userPath		Path of user data.
      * @param[in]	info			Cat files info.
+     * @param[in]	userInfo	    User cat files info.
      * @param[in]	setTextFunc		Callback to set text.
      * @param[in]	errFunc			Callback to show error.
      *
@@ -146,7 +168,9 @@ class GameVFS : private IInitialized {
      */
     static ::std::shared_ptr<GameVFS>
         create(const QString &                        gamePath,
+               const QString &                        userPath,
                const QMap<QString, CatFileInfo> &     info,
+               const QMap<QString, CatFileInfo> &     userInfo,
                ::std::function<void(const QString &)> setTextFunc,
                ::std::function<void(const QString &)> errFunc);
 
@@ -156,7 +180,7 @@ class GameVFS : private IInitialized {
      * @param[in]	path		Path of file.
      *
      * @return		On success, a \c FileReader object is returned.
-     *Otherwise returns nullptr.
+     *              Otherwise returns nullptr.
      */
     ::std::shared_ptr<FileReader> open(const QString &path);
 

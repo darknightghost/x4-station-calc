@@ -15,6 +15,7 @@
 #include <ui/select_steam_id_dialog.h>
 
 #define USER_GAME_DIR "EgoSoft/X4"
+#define CONTENT_XML   "content.xml"
 
 /**
  * @brief		Constructor.
@@ -35,15 +36,15 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
                 return;
             }
         }
-        this->scanUserPaths(splash);
 
-        // TODO
-        return;
+        // Scan user mods.
+        QMap<QString, GameVFS::CatFileInfo> userCatFiles;
+        this->scanUserPaths(splash, userCatFiles);
 
         // Load vfs
         splash->setText(STR("STR_LOADING_VFS"));
         ::std::shared_ptr<GameVFS> vfs = GameVFS::create(
-            m_gamePath, catFiles,
+            m_gamePath, m_userPath, catFiles, userCatFiles,
             [&](const QString &s) -> void {
                 splash->setText(STR("STR_LOADING_VFS") + "\n" + s);
             },
@@ -218,8 +219,10 @@ bool GameData::checkGamePath(const QString &                      path,
     catFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
     QRegExp extCatFilter("ext_\\d+\\.cat");
     extCatFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QRegExp datFilter("\\w+\\.dat");
+    QRegExp datFilter("\\d+\\.dat");
     datFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp extDatFilter("ext_\\d+\\.dat");
+    extDatFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
 
     // Main
     for (auto &f :
@@ -266,7 +269,7 @@ bool GameData::checkGamePath(const QString &                      path,
                                 catsFound[key] = GameVFS::CatFileInfo();
                             }
                             catsFound[key].cat = filename;
-                        } else if (datFilter.exactMatch(modFile.fileName())
+                        } else if (extDatFilter.exactMatch(modFile.fileName())
                                    && ! modFile.isDir()) {
                             QString filename = QString("extensions/%1/%2")
                                                    .arg(modEntry.fileName())
@@ -393,7 +396,8 @@ bool GameData::askGamePath()
 /**
  * @brief       Scan user paths.
  */
-void GameData::scanUserPaths(SplashWidget *splashWidget)
+void GameData::scanUserPaths(SplashWidget *                       splashWidget,
+                             QMap<QString, GameVFS::CatFileInfo> &catFiles)
 {
 #if defined(OS_WINDOWS)
     QStringList scanDirs = QStandardPaths::standardLocations(
@@ -438,7 +442,10 @@ void GameData::scanUserPaths(SplashWidget *splashWidget)
     }
 
     // Select
-    if (scanResult.size() == 1) {
+    if (scanResult.size() <= 0) {
+        return;
+
+    } else if (scanResult.size() == 1) {
         Config::instance()->setString("/steamID3", scanResult.begin().key());
         m_userPath = scanResult.begin().value();
         qDebug() << "Directory " << m_userPath << "selected.";
@@ -453,6 +460,110 @@ void GameData::scanUserPaths(SplashWidget *splashWidget)
         m_userPath = scanResult[id];
         qDebug() << "Directory " << m_userPath << "selected.";
     }
+
+    // Scan cat/dat files.
+    QMap<QString, GameVFS::CatFileInfo> catsFound;
+
+    QRegExp extCatFilter("ext_\\d+\\.cat");
+    extCatFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QRegExp extDatFilter("ext_\\d+\\.dat");
+    extDatFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    QDir dir(m_userPath);
+    if (dir.exists("extensions")) {
+        // Extensions
+        QDir extensionsDir(dir.absoluteFilePath("extensions"));
+        for (auto &modEntry : extensionsDir.entryInfoList(
+                 QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+            if (modEntry.isDir() && modEntry.fileName() != "."
+                && modEntry.fileName() != "..") {
+                QDir modDir(modEntry.absoluteFilePath());
+                for (auto &modFile : modDir.entryInfoList(
+                         QDir::Filter::NoFilter, QDir::SortFlag::Name)) {
+                    if (extCatFilter.exactMatch(modFile.fileName())
+                        && ! modFile.isDir()) {
+                        QString filename = QString("extensions/%1/%2")
+                                               .arg(modEntry.fileName())
+                                               .arg(modFile.fileName());
+                        qDebug() << "Found cat file file :" << filename << ".";
+                        QString key  = filename.left(filename.size() - 4);
+                        auto    iter = catsFound.find(key);
+                        if (iter == catsFound.end()) {
+                            catsFound[key] = GameVFS::CatFileInfo();
+                        }
+                        catsFound[key].cat = filename;
+                    } else if (extDatFilter.exactMatch(modFile.fileName())
+                               && ! modFile.isDir()) {
+                        QString filename = QString("extensions/%1/%2")
+                                               .arg(modEntry.fileName())
+                                               .arg(modFile.fileName());
+                        qDebug() << "Found dat file file :" << filename << ".";
+                        QString key  = filename.left(filename.size() - 4);
+                        auto    iter = catsFound.find(key);
+                        if (iter == catsFound.end()) {
+                            catsFound[key] = GameVFS::CatFileInfo();
+                        }
+                        catsFound[key].dat = filename;
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto &key : catsFound.keys()) {
+        if (catsFound[key].cat == "" || catsFound[key].dat == "") {
+            catsFound.remove(key);
+        }
+    }
+
+    catFiles = ::std::move(catsFound);
+}
+
+/**
+ * @brief       Get the blacklist of mods.
+ */
+QSet<QString> GameData::getModBlacklist()
+{
+    // Open content.xml.
+    QDir dir(m_userPath);
+
+    ::std::shared_ptr<GameVFS::FileReader> contentFile
+        = m_vfs->open(QString("/%1").arg(CONTENT_XML));
+    if (contentFile == nullptr) {
+        return {};
+    }
+
+    // Load content.xml.
+    XMLLoader            loader;
+    XMLLoader::ErrorInfo info;
+    if (! loader.loadData(contentFile->readAll(), info)) {
+        qWarning() << "Failed to parse" << contentFile->path()
+                   << "Line :" << info.errorLine
+                   << ", col :" << info.errorColumn << ": " << info.errorMsg
+                   << ".";
+        return {};
+    }
+
+    // Parse.
+    QSet<QString> ret;
+    loader.elementLoader("/content/extension")
+        ->setOnStartElement(
+            [&](XMLLoader &, XMLLoader::XMLElementLoader &,
+                const ::std::map<QString, QString> &attributes) -> bool {
+                auto iterID      = attributes.find("id");
+                auto iterEnabled = attributes.find("enabled");
+                if (iterID != attributes.end()
+                    && iterEnabled != attributes.end()) {
+                    if (iterEnabled->second == "false") {
+                        ret.insert(iterID->second);
+                        qDebug() << "Mod" << iterID->second << "is disabled.";
+                    }
+                }
+                return true;
+            });
+
+    loader.parse();
+
+    return ret;
 }
 
 /**
@@ -461,6 +572,7 @@ void GameData::scanUserPaths(SplashWidget *splashWidget)
 void GameData::scanGameModules()
 {
     m_gameModules.clear();
+    QSet<QString> blacklist = this->getModBlacklist();
 
     // Main program.
     // Game version.

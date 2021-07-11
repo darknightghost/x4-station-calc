@@ -173,8 +173,17 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
      * @brief       Scan user paths.
      *
      * @param[in]	splashWidget		Splash widget.
+     * @param[out]	catFiles	        Cat files found.
      */
-    void scanUserPaths(SplashWidget *splashWidget);
+    void scanUserPaths(SplashWidget *                       splashWidget,
+                       QMap<QString, GameVFS::CatFileInfo> &catFiles);
+
+    /**
+     * @brief       Get the blacklist of mods.
+     *
+     * @return      Blacklist.
+     */
+    QSet<QString> getModBlacklist();
 
     /**
      * @brief       Scan game modules.

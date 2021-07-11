@@ -27,7 +27,12 @@ XMLLoader::XMLElementLoader *XMLLoader::elementLoader(const QString &key)
     if (m_rootElementLoader == nullptr) {
         m_rootElementLoader = XMLElementLoader::create(
             path.front(), this, nullptr, nullptr, nullptr, nullptr, {});
+    } else {
+        if (m_rootElementLoader->name() != path.front()) {
+            return nullptr;
+        }
     }
+    path.pop_front();
 
     Q_ASSERT(m_rootElementLoader != nullptr);
 

@@ -18,13 +18,34 @@
  * @brief		Constructor.
  */
 GameVFS::GameVFS(const QString &                        gamePath,
+                 const QString &                        userPath,
                  const QMap<QString, CatFileInfo> &     info,
+                 const QMap<QString, CatFileInfo> &     userInfo,
                  ::std::function<void(const QString &)> setTextFunc,
                  ::std::function<void(const QString &)> errFunc) :
     m_gamePath(gamePath),
-    m_datEntry(new DatFileEntery("/"))
+    m_userPath(userPath), m_datEntry(new DatFileEntery("/"))
 {
-    QDir dir(gamePath);
+    if (! this->loadDat(gamePath, info, setTextFunc, errFunc)) {
+        return;
+    }
+
+    if (! this->loadDat(userPath, userInfo, setTextFunc, errFunc)) {
+        return;
+    }
+
+    this->setInitialized();
+}
+
+/**
+ * @brief		Load dat file.
+ */
+bool GameVFS::loadDat(const QString &                        baseDir,
+                      const QMap<QString, CatFileInfo> &     info,
+                      ::std::function<void(const QString &)> setTextFunc,
+                      ::std::function<void(const QString &)> errFunc)
+{
+    QDir dir(baseDir);
 
     // Load cat/dat files.
     for (auto &catDatInfo : info) {
@@ -34,7 +55,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
             qDebug() << "Failed to open file :" << catFile.fileName() << ".";
             errFunc(STR("STR_FAILED_OPEN_FILE").arg(catFile.fileName()));
 
-            return;
+            return false;
         }
 
         quint64 printTm = 0;
@@ -46,7 +67,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                            | QIODevice::OpenModeFlag::ExistingOnly)) {
             qDebug() << "Failed to open file :" << datFile.fileName() << ".";
             errFunc(STR("STR_FAILED_OPEN_FILE").arg(datFile.fileName()));
-            return;
+            return false;
         }
 
         setTextFunc(STR("STR_LOADING_CAT_DAT_FILE")
@@ -69,7 +90,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
             if (splittedLine.size() != 4) {
                 qDebug() << "Broken cat file :" << catFile.fileName();
                 errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
-                return;
+                return false;
             }
 
             quint64 size   = splittedLine[1].toULongLong();
@@ -79,7 +100,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
             if ((qint64)(datFile.size()) < (qint64)size + (qint64)offset) {
                 qDebug() << "Broken dat file :" << datFile.fileName();
                 errFunc(STR("STR_FILE_BROKEN").arg(datFile.fileName()));
-                return;
+                return false;
             }
 
             // Append file
@@ -119,7 +140,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                 if (! entry->isDirectory) {
                     qDebug() << "Broken cat file :" << catFile.fileName();
                     errFunc(STR("STR_FILE_BROKEN").arg(catFile.fileName()));
-                    return;
+                    return false;
                 }
             }
 
@@ -151,7 +172,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
                         .arg(datFile.size()));
     }
 
-    this->setInitialized();
+    return true;
 }
 
 /**
@@ -159,12 +180,14 @@ GameVFS::GameVFS(const QString &                        gamePath,
  */
 ::std::shared_ptr<GameVFS>
     GameVFS::create(const QString &                        gamePath,
+                    const QString &                        userPath,
                     const QMap<QString, CatFileInfo> &     info,
+                    const QMap<QString, CatFileInfo> &     userInfo,
                     ::std::function<void(const QString &)> setTextFunc,
                     ::std::function<void(const QString &)> errFunc)
 {
     ::std::shared_ptr<GameVFS> ret(
-        new GameVFS(gamePath, info, setTextFunc, errFunc));
+        new GameVFS(gamePath, userPath, info, userInfo, setTextFunc, errFunc));
     if (ret->initialized()) {
         ret->m_this = ret;
         return ret;
@@ -178,17 +201,28 @@ GameVFS::GameVFS(const QString &                        gamePath,
  */
 ::std::shared_ptr<GameVFS::FileReader> GameVFS::open(const QString &path)
 {
-    QDir dir(m_gamePath);
+    QDir gameDir(m_gamePath);
+    QDir userDir(m_userPath);
 
     // Try to open file
     {
         ::std::unique_ptr<QFile> file;
         if (path.front() == '/') {
-            file = ::std::unique_ptr<QFile>(
-                new QFile(dir.absoluteFilePath("." + path)));
+            if (userDir.exists("." + path)) {
+                file = ::std::unique_ptr<QFile>(
+                    new QFile(userDir.absoluteFilePath("." + path)));
+            } else {
+                file = ::std::unique_ptr<QFile>(
+                    new QFile(gameDir.absoluteFilePath("." + path)));
+            }
         } else {
-            file = ::std::unique_ptr<QFile>(
-                new QFile(dir.absoluteFilePath(path)));
+            if (userDir.exists(path)) {
+                file = ::std::unique_ptr<QFile>(
+                    new QFile(userDir.absoluteFilePath(path)));
+            } else {
+                file = ::std::unique_ptr<QFile>(
+                    new QFile(gameDir.absoluteFilePath(path)));
+            }
         }
         if (file->open(QIODevice::OpenModeFlag::ReadOnly
                        | QIODevice::OpenModeFlag::ExistingOnly)) {
@@ -229,8 +263,7 @@ GameVFS::GameVFS(const QString &                        gamePath,
     }
 
     // Open dat file
-    ::std::unique_ptr<QFile> file(
-        new QFile(dir.absoluteFilePath(entry->fileInfo.datName)));
+    ::std::unique_ptr<QFile> file(new QFile(entry->fileInfo.datName));
     if (file->open(QIODevice::OpenModeFlag::ReadOnly
                    | QIODevice::OpenModeFlag::ExistingOnly)) {
         QMutexLocker locker(&(entry->lock));
@@ -269,13 +302,19 @@ GameVFS::GameVFS(const QString &                        gamePath,
 ::std::shared_ptr<GameVFS::DirReader> GameVFS::openDir(const QString &path)
 {
     bool exists = false;
-    QDir root(m_gamePath);
+    QDir gameRoot(m_gamePath);
+    QDir userRoot(m_userPath);
 
     // Search filesystem
     {
-        QDir dir(root.absoluteFilePath(path));
-        if (dir.exists()) {
-            exists = true;
+        if (path.front() == '/') {
+            if (gameRoot.exists("." + path) || userRoot.exists("." + path)) {
+                exists = true;
+            }
+        } else {
+            if (gameRoot.exists(path) || userRoot.exists(path)) {
+                exists = true;
+            }
         }
     }
 
@@ -611,8 +650,9 @@ GameVFS::DirReader::DirReader(const QString &                  path,
     m_path(path.split('/', Qt::SplitBehaviorFlags::SkipEmptyParts)),
     m_name(m_path.back()), m_vfs(vfs), m_enteries(new QVector<DirEntry>)
 {
-    QDir rootDir(m_vfs->m_gamePath);
-    QDir dir(rootDir.absoluteFilePath(QString(".") + this->path()));
+    QDir gameRoot(m_vfs->m_gamePath);
+    QDir userRoot(m_vfs->m_userPath);
+    QDir dir(gameRoot.absoluteFilePath(QString(".") + this->path()));
     if (dir.exists()) {
         for (auto &info : dir.entryInfoList()) {
             m_enteries->append(
@@ -620,6 +660,15 @@ GameVFS::DirReader::DirReader(const QString &                  path,
                  (info.isDir() ? EntryType::Directory : EntryType::File)});
         }
     }
+    dir = QDir(userRoot.absoluteFilePath(QString(".") + this->path()));
+    if (dir.exists()) {
+        for (auto &info : dir.entryInfoList()) {
+            m_enteries->append(
+                {info.fileName(),
+                 (info.isDir() ? EntryType::Directory : EntryType::File)});
+        }
+    }
+
     if (entry != nullptr) {
         for (auto &datEntry : entry->children) {
             m_enteries->append(

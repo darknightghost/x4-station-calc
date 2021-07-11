@@ -2,6 +2,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
+#include <QtCore/QStandardPaths>
 #include <QtCore/QThread>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -11,6 +12,9 @@
 #include <game_data/game_texts.h>
 #include <game_data/xml_loader/xml_loader.h>
 #include <locale/string_table.h>
+#include <ui/select_steam_id_dialog.h>
+
+#define USER_GAME_DIR "EgoSoft/X4"
 
 /**
  * @brief		Constructor.
@@ -31,6 +35,10 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
                 return;
             }
         }
+        this->scanUserPaths(splash);
+
+        // TODO
+        return;
 
         // Load vfs
         splash->setText(STR("STR_LOADING_VFS"));
@@ -48,6 +56,15 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_vfs = vfs;
+
+        // Load game modules.
+        splash->setText(STR("STR_SCAN_GAME_MODULES"));
+        this->scanGameModules();
+        this->sortGameModules();
+
+        // TODO
+        return;
 
         // Load text
         ::std::shared_ptr<GameTexts> texts
@@ -63,6 +80,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_texts = texts;
 
         // Load game macros
         ::std::shared_ptr<GameMacros> macros
@@ -78,6 +96,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_macros = macros;
 
         // Load game components
         ::std::shared_ptr<GameComponents> components
@@ -93,6 +112,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_components = components;
 
         // Load game races
         ::std::shared_ptr<GameRaces> races
@@ -108,6 +128,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_races = races;
 
         // Load game wares
         ::std::shared_ptr<GameWares> wares
@@ -123,6 +144,7 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
+        m_wares = wares;
 
         // Load station modules
         ::std::shared_ptr<GameStationModules> stationModules
@@ -139,14 +161,6 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             Config::instance()->setString("/gamePath", "");
             continue;
         }
-
-        // Set value
-        m_vfs            = vfs;
-        m_texts          = texts;
-        m_macros         = macros;
-        m_components     = components;
-        m_races          = races;
-        m_wares          = wares;
         m_stationModules = stationModules;
 
         break;
@@ -375,3 +389,98 @@ bool GameData::askGamePath()
 {
     return m_stationModules;
 }
+
+/**
+ * @brief       Scan user paths.
+ */
+void GameData::scanUserPaths(SplashWidget *splashWidget)
+{
+#if defined(OS_WINDOWS)
+    QStringList scanDirs = QStandardPaths::standardLocations(
+        QStandardPaths::StandardLocation::DocumentsLocation);
+#else
+    QStringList scanDirs = QStandardPaths::standardLocations(
+        QStandardPaths::StandardLocation::ConfigLocation);
+#endif
+
+    QMap<QString, QString> scanResult;
+
+    // Scan directories.
+    QRegExp nameExp("^\\d+$");
+    for (QString &scanPath : scanDirs) {
+        // Check path.
+        QDir scanDir(scanPath);
+        if (! scanDir.exists(USER_GAME_DIR)) {
+            continue;
+        }
+
+        QString   userGameDirPath = scanDir.absoluteFilePath(USER_GAME_DIR);
+        QFileInfo userGameDirInfo(userGameDirPath);
+        if (! userGameDirInfo.isDir()) {
+            continue;
+        }
+        QDir userGameDir(userGameDirPath);
+
+        // Scan.
+        for (auto &info : userGameDir.entryInfoList(QDir::Filter::Dirs)) {
+            if (! nameExp.exactMatch(info.fileName())) {
+                continue;
+            }
+            QDir dir = info.absoluteDir();
+            dir.cd(info.fileName());
+            if (! dir.exists("content.xml")) {
+                continue;
+            }
+            scanResult[info.fileName()] = dir.canonicalPath();
+            qDebug() << "Directory " << dir.canonicalPath() << "found.";
+            break;
+        }
+    }
+
+    // Select
+    if (scanResult.size() == 1) {
+        Config::instance()->setString("/steamID3", scanResult.begin().key());
+        m_userPath = scanResult.begin().value();
+        qDebug() << "Directory " << m_userPath << "selected.";
+
+    } else if (scanResult.size() > 1) {
+        QString id = splashWidget->callFunc(
+            ::std::function<QString()>(([&]() -> QString {
+                return SelectSteamIDDialog::selectSteamIDs(scanResult.keys());
+            })));
+
+        Config::instance()->setString("/steamID3", id);
+        m_userPath = scanResult[id];
+        qDebug() << "Directory " << m_userPath << "selected.";
+    }
+}
+
+/**
+ * @brief       Scan game modules.
+ */
+void GameData::scanGameModules()
+{
+    m_gameModules.clear();
+
+    // Main program.
+    // Game version.
+    auto    versionFile = m_vfs->open("/version.dat");
+    QString versionStr  = versionFile->readAll();
+    versionStr          = versionStr.replace(QRegExp("\\s"), "");
+    ::std::shared_ptr<GameModule> module = ::std::shared_ptr<GameModule>(
+        new GameModule({"",
+                        {{"en_US", "X4 Foundations"}},
+                        {{"en_US", "X4 Foundations"}},
+                        {{"en_US", "Egosoft GmbH"}},
+                        (uint32_t)(versionStr.toUInt()),
+                        {},
+                        ""}));
+    m_gameModules[""] = module;
+
+    // Scan modules.
+}
+
+/**
+ * @brief       Sort game modules.
+ */
+void GameData::sortGameModules() {}

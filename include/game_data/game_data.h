@@ -5,6 +5,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QSet>
 #include <QtCore/QVector>
 
 #include <game_data/game_components.h>
@@ -33,10 +34,19 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
     /**
      * @brief       Game modules.
      */
-    struct GameModules {};
+    struct GameModule {
+        QString                id;           ///< Module ID.
+        QMap<QString, QString> name;         ///< Module name.
+        QMap<QString, QString> description;  ///< Module description.
+        QMap<QString, QString> author;       ///< Module author.
+        uint32_t               version;      ///< Version.
+        QSet<QString>          dependencies; ///< Dependencies.
+        QString                path;         ///< Module path.
+    };
 
   private:
     QString                           m_gamePath;   ///< Game path.
+    QString                           m_userPath;   ///< User path.
     ::std::shared_ptr<GameVFS>        m_vfs;        ///< Game VFS
     ::std::shared_ptr<GameTexts>      m_texts;      ///< Game texts.
     ::std::shared_ptr<GameMacros>     m_macros;     ///< Game macros.
@@ -45,6 +55,10 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
     ::std::shared_ptr<GameWares>      m_wares;      ///< Game wares
     ::std::shared_ptr<GameStationModules>
         m_stationModules; ///< Station modules.
+
+    QMap<QString, ::std::shared_ptr<GameModule>>
+                     m_gameModules;     ///< Game modules.
+    QVector<QString> m_moduleLoadOrder; ///< Load order of modules.
 
   protected:
     /**
@@ -155,9 +169,20 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
      */
     bool askGamePath();
 
-  signals:
     /**
-     * @brief	Game data reloaded.
+     * @brief       Scan user paths.
+     *
+     * @param[in]	splashWidget		Splash widget.
      */
-    void dataReloaded();
+    void scanUserPaths(SplashWidget *splashWidget);
+
+    /**
+     * @brief       Scan game modules.
+     */
+    void scanGameModules();
+
+    /**
+     * @brief       Sort game modules.
+     */
+    void sortGameModules();
 };

@@ -12,10 +12,10 @@
  */
 LicenseDialog::LicenseDialog() : QDialog(nullptr)
 {
-    /// Layout
+    // Layout
     m_layout = new QVBoxLayout();
 
-    /// Text
+    // Text
     m_txtLicense = new QTextEdit();
     m_txtLicense->setReadOnly(true);
     QString templateCode;
@@ -31,18 +31,18 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
     m_txtLicense->verticalScrollBar()->setValue(0);
     m_layout->addWidget(m_txtLicense);
 
-    /// Buttons
-    /// Laoyout
+    // Buttons
+    // Laoyout
     m_layoutButton = new QHBoxLayout();
 
-    /// Button agree
+    // Button agree
     m_layoutButton->addStretch();
     m_btnAgree = new QPushButton(STR("STR_BTN_AGREE"));
     this->connect(m_btnAgree, &QPushButton::clicked, this,
                   &LicenseDialog::accept);
     m_layoutButton->addWidget(m_btnAgree);
 
-    /// Button disagree
+    // Button disagree
     m_layoutButton->addStretch();
     m_btnDisagree = new QPushButton(STR("STR_BTN_DISAGREE"));
     this->connect(m_btnDisagree, &QPushButton::clicked, this,
@@ -55,7 +55,7 @@ LicenseDialog::LicenseDialog() : QDialog(nullptr)
     this->setLayout(m_layout);
     this->setWindowTitle(STR("STR_TITLE_LICENSE"));
 
-    /// Window size and position.
+    // Window size and position.
     m_layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
     QDesktopWidget *desktop = QApplication::desktop();
     QSize           sz      = m_layout->sizeHint();

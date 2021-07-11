@@ -141,7 +141,7 @@ class GameVFS : private IInitialized {
      * @param[in]	setTextFunc		Callback to set text.
      * @param[in]	errFunc			Callback to show error.
      *
-     * @return		On success, a nmew object is returned. Otherwise returns
+     * @return		On success, a new object is returned. Otherwise returns
      *				nullptr.
      */
     static ::std::shared_ptr<GameVFS>

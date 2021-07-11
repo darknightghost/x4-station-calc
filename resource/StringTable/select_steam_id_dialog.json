@@ -1,0 +1,12 @@
+{ 
+	"STR_TITLE_SELECT_STEAM_ID" : {
+		"zh_CN" : "选择你的Steam ID",
+		"zh_TW" : "選擇你的Steam ID",
+		"en_US" : "Select Your Steam ID"
+	},
+	"STR_STEAM_ID" : {
+		"zh_CN" : "Steam ID :",
+		"zh_TW" : "Steam ID :",
+		"en_US" : "Steam ID :"
+	}
+}

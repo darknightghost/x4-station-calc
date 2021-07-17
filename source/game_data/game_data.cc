@@ -710,7 +710,7 @@ void GameData::scanGameModules()
                             return true;
                         });
 
-                    // Parse date.
+                    // Parse data.
                     XMLLoader::ErrorInfo errInfo;
                     loader.loadData(contentFile->readAll(), errInfo);
                     if (loader.parse() && module->id != "") {

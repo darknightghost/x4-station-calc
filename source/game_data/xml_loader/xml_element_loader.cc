@@ -121,6 +121,15 @@ bool XMLLoader::XMLElementLoader::onElementText(const QString &text)
 }
 
 /**
+ * @brief		Set on attribute callback.
+ */
+void XMLLoader::XMLElementLoader::setOnAttribute(const QString &    attrName,
+                                                 AttrributeCallback onAttribute)
+{
+    m_onAttributes[attrName] = onAttribute;
+}
+
+/**
  * @brief       Get reference to attribute callbacks.
  */
 ::std::map<QString, XMLLoader::XMLElementLoader::AttrributeCallback> &

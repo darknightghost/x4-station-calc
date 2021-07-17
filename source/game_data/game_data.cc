@@ -590,9 +590,219 @@ void GameData::scanGameModules()
     m_gameModules[""] = module;
 
     // Scan modules.
+    auto extensionsDir = m_vfs->openDir("/extensions");
+    if (extensionsDir != nullptr) {
+        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
+             ++iter) {
+            if (iter->type == GameVFS::DirReader::EntryType::Directory) {
+                auto contentPath = QString("/extensions/%1/%2")
+                                       .arg(iter->name)
+                                       .arg(CONTENT_XML);
+                auto contentFile = m_vfs->open(contentPath);
+                if (contentFile != nullptr) {
+                    ::std::shared_ptr<GameModule> module
+                        = ::std::shared_ptr<GameModule>(new GameModule());
+                    module->path = QString("/extensions/%1").arg(iter->name);
+
+                    // Initialize loader.
+                    XMLLoader loader;
+                    auto      elementLoader = loader.elementLoader("/content");
+                    elementLoader->setOnStartElement(
+                        [&](XMLLoader &, XMLLoader::XMLElementLoader &,
+                            const ::std::map<QString, QString> &attributes)
+                            -> bool {
+                            // id.
+                            auto iter = attributes.find("id");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing id in file "
+                                           << contentPath << ".";
+                                return false;
+                            }
+                            module->id = iter->second;
+
+                            // name.
+                            iter = attributes.find("name");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing name in file "
+                                           << contentPath << ".";
+                                return false;
+                            }
+                            module->name["en_US"] = iter->second;
+
+                            // author.
+                            iter = attributes.find("author");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing author in file "
+                                           << contentPath << ".";
+                                return false;
+                            }
+                            module->author["en_US"] = iter->second;
+
+                            // version.
+                            iter = attributes.find("version");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing version in file "
+                                           << contentPath << ".";
+                                return false;
+                            }
+                            module->version = iter->second.toUInt();
+
+                            // description.
+                            iter = attributes.find("description");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing description in file "
+                                           << contentPath << ".";
+                                return false;
+                            }
+                            module->description["en_US"] = iter->second;
+
+                            return true;
+                        });
+
+                    elementLoader = loader.elementLoader("/content/text");
+                    elementLoader->setOnStartElement(
+                        [&](XMLLoader &, XMLLoader::XMLElementLoader &,
+                            const ::std::map<QString, QString> &attributes)
+                            -> bool {
+                            // launguage.
+                            auto iter = attributes.find("language");
+                            if (iter == attributes.end()) {
+                                qWarning() << "Missing language in file "
+                                           << contentPath << ".";
+                                return true;
+                            }
+                            QString language = StringTable::getLanugageByID(
+                                iter->second.toUInt());
+
+                            // name.
+                            iter = attributes.find("name");
+                            if (iter != attributes.end()) {
+                                module->name[language] = iter->second;
+                            }
+
+                            // author.
+                            iter = attributes.find("author");
+                            if (iter != attributes.end()) {
+                                module->author[language] = iter->second;
+                            }
+
+                            // description.
+                            iter = attributes.find("description");
+                            if (iter != attributes.end()) {
+                                module->description[language] = iter->second;
+                            }
+
+                            return true;
+                        });
+
+                    elementLoader = loader.elementLoader("/content/dependency");
+                    elementLoader->setOnStartElement(
+                        [&](XMLLoader &, XMLLoader::XMLElementLoader &,
+                            const ::std::map<QString, QString> &attributes)
+                            -> bool {
+                            // id.
+                            auto iter = attributes.find("id");
+                            if (iter == attributes.end()) {
+                                return true;
+                            }
+                            module->dependencies.insert(iter->second);
+
+                            return true;
+                        });
+
+                    // Parse date.
+                    XMLLoader::ErrorInfo errInfo;
+                    loader.loadData(contentFile->readAll(), errInfo);
+                    if (loader.parse() && module->id != "") {
+                        m_gameModules[module->id] = module;
+                        qDebug() << "Module loaded. {";
+                        qDebug() << "    id             =" << module->id << ",";
+                        qDebug() << "    name           = {";
+                        for (auto iter = module->name.begin();
+                             iter != module->name.end(); ++iter) {
+                            qDebug() << "        {" << iter.key() << ","
+                                     << iter.value() << "},";
+                        }
+                        qDebug() << "    },";
+                        qDebug() << "    author         = {";
+                        for (auto iter = module->author.begin();
+                             iter != module->author.end(); ++iter) {
+                            qDebug() << "        {" << iter.key() << ","
+                                     << iter.value() << "},";
+                        }
+                        qDebug() << "    },";
+                        qDebug() << "    description    = {";
+                        for (auto iter = module->description.begin();
+                             iter != module->description.end(); ++iter) {
+                            qDebug() << "        {" << iter.key() << ","
+                                     << iter.value() << "},";
+                        }
+                        qDebug() << "    },";
+                        qDebug() << "    path           ="
+                                 << module->path.toStdString().c_str() << ",";
+                        qDebug() << "}";
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
  * @brief       Sort game modules.
  */
-void GameData::sortGameModules() {}
+void GameData::sortGameModules()
+{
+    m_moduleLoadOrder = QVector<QString>({""});
+
+    // Get blacklist.
+    QSet<QString> blacklist = this->getModBlacklist();
+
+    // Scan modules to load.
+    QSet<QString> officialModulesToLoad;
+    QSet<QString> otherModulesToLoad;
+    for (auto &module : m_gameModules) {
+        if (module->id != "" && blacklist.find(module->id) == blacklist.end()) {
+            if (module->author["en_US"] == "Egosoft GmbH") {
+                officialModulesToLoad.insert(module->id);
+            } else {
+                otherModulesToLoad.insert(module->id);
+            }
+        }
+    }
+
+    // Get load order.
+    auto addToLoadList = [&](QSet<QString> &modules) -> void {
+        while (! modules.empty()) {
+            for (auto iter = modules.begin(); iter != modules.end();) {
+                auto currentIter = iter;
+                ++iter;
+                auto module  = m_gameModules[*currentIter];
+                bool cleared = true;
+                for (auto &dep : module->dependencies) {
+                    if (modules.find(dep) != modules.end()) {
+                        cleared = false;
+                        break;
+                    }
+                }
+                if (cleared) {
+                    m_moduleLoadOrder.push_back(module->id);
+                    modules.erase(currentIter);
+                }
+            }
+        }
+    };
+    addToLoadList(officialModulesToLoad);
+    addToLoadList(otherModulesToLoad);
+    qDebug() << "Load order of modules : {";
+    for (auto &id : m_moduleLoadOrder) {
+        auto           module   = m_gameModules[id];
+        const QString &language = StringTable::instance()->language();
+        auto           iter     = module->name.find(language);
+        if (iter == module->name.end()) {
+            iter = module->name.find("en_US");
+        }
+        qDebug() << "    {" << (module->id) << "," << (*iter) << "},";
+    }
+    qDebug() << "}";
+}

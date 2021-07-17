@@ -37,8 +37,8 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
     struct GameModule {
         QString                id;           ///< Module ID.
         QMap<QString, QString> name;         ///< Module name.
-        QMap<QString, QString> description;  ///< Module description.
         QMap<QString, QString> author;       ///< Module author.
+        QMap<QString, QString> description;  ///< Module description.
         uint32_t               version;      ///< Version.
         QSet<QString>          dependencies; ///< Dependencies.
         QString                path;         ///< Module path.

@@ -464,7 +464,7 @@ class GameVFS::DirReader {
     /**
      * @brief	Type of directory entery.
      */
-    enum EntryType {
+    enum class EntryType {
         File,     ///< Normal file.
         Directory ///< Directory.
     };

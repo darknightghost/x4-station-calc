@@ -232,6 +232,15 @@ class XMLLoader::XMLElementLoader :
     bool onElementText(const QString &text);
 
     /**
+     * @brief		Set on attribute callback.
+     *
+     * @param[in]	attrName	    Name of attribute.
+     * @param[in]	onAttribute	    Callback.
+     */
+    void setOnAttribute(const QString &    attrName,
+                        AttrributeCallback onAttribute);
+
+    /**
      * @brief       Get reference to attribute callbacks.
      *
      * @return      Reference.

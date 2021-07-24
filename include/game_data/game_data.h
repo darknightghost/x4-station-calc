@@ -98,6 +98,20 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
     virtual ~GameData();
 
   public:
+    /**
+     * @brief   Get game modules.
+     *
+     * @return  Game modules.
+     */
+    const QMap<QString, ::std::shared_ptr<GameModule>> &gameModules() const;
+
+    /**
+     * @brief   Get load order of modules.
+     *
+     * @return  Load order of modules.
+     */
+    const QVector<QString> &moduleLoadOrder() const;
+
     /*
      * @brief	Get game VFS.
      *

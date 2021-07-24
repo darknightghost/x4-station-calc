@@ -11,21 +11,21 @@
 #include <QtCore/QXmlStreamReader>
 
 #include <common.h>
+#include <game_data/xml_loader/xml_loader.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
+class GameData;
 
 /**
  * @brief	Texts in game.
  */
 class GameTexts :
     public ILoadFactoryFunc<GameTexts,
-                            ::std::shared_ptr<GameVFS>,
+                            GameData *,
                             ::std::function<void(const QString &)>> {
-    LOAD_FUNC(GameTexts,
-              ::std::shared_ptr<GameVFS>,
-              ::std::function<void(const QString &)>)
+    LOAD_FUNC(GameTexts, GameData *, ::std::function<void(const QString &)>)
   public:
     /**
      * @brief	Game text id pair.
@@ -103,10 +103,10 @@ class GameTexts :
     /**
      * @brief		Constructor.
      *
-     * @param[in]	vfs				Virtual filesystem of the game.
+     * @param[in]	gameData        Game data.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameTexts(::std::shared_ptr<GameVFS>             vfs,
+    GameTexts(GameData *                             gameData,
               ::std::function<void(const QString &)> setTextFunc);
 
   public:
@@ -157,6 +157,13 @@ class GameTexts :
      * @return		Parsed text.
      */
     QString parseEscape(const QString &s);
+
+    /**
+     * @brief       Create XML loader.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createXMLLoader();
 };
 
 #include <game_data/game_vfs.h>

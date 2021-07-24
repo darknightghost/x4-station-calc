@@ -64,12 +64,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         this->scanGameModules();
         this->sortGameModules();
 
-        // TODO
-        return;
-
         // Load text
         ::std::shared_ptr<GameTexts> texts
-            = GameTexts::load(vfs, [&](const QString &s) -> void {
+            = GameTexts::load(this, [&](const QString &s) -> void {
                   splash->setText(STR("STR_LOADING_TEXTS") + "\n" + s);
               });
 
@@ -82,6 +79,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
         m_texts = texts;
+
+        // TODO
+        return;
 
         // Load game macros
         ::std::shared_ptr<GameMacros> macros
@@ -198,6 +198,23 @@ bool GameData::setGamePath(const QString &path)
  * @brief Destructor.
  */
 GameData::~GameData() {}
+
+/**
+ * @brief   Get game modules.
+ */
+const QMap<QString, ::std::shared_ptr<GameData::GameModule>> &
+    GameData::gameModules() const
+{
+    return m_gameModules;
+}
+
+/**
+ * @brief   Get load order of modules.
+ */
+const QVector<QString> &GameData::moduleLoadOrder() const
+{
+    return m_moduleLoadOrder;
+}
 
 /**
  * @brief		Check path of game.
@@ -594,7 +611,8 @@ void GameData::scanGameModules()
     if (extensionsDir != nullptr) {
         for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
              ++iter) {
-            if (iter->type == GameVFS::DirReader::EntryType::Directory) {
+            if ((iter->type == GameVFS::DirReader::EntryType::Directory)
+                && (iter->name != "..") && (iter->name != ".")) {
                 auto contentPath = QString("/extensions/%1/%2")
                                        .arg(iter->name)
                                        .arg(CONTENT_XML);

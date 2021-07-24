@@ -88,7 +88,7 @@ constexpr inline bool betweenImpl(T value, T b1, T b2)
     T minBorder = min(b1, b2);
     T maxBorder = max(b1, b2);
 
-    return value >= minBorder && value <= minBorder;
+    return value >= minBorder && value <= maxBorder;
 }
 
 /**

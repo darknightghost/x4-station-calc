@@ -5,11 +5,16 @@ set (CMAKE_CXX_STANDARD 17)
 cmake_policy(SET CMP0054 NEW)
 
 # Project
-project (x4-station-calc)
+project (x4-station-calc C CXX)
 
 # Build type
 if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE "Debug")
+
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions ("-DDEBUG")
 
 endif ()
 

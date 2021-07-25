@@ -52,7 +52,7 @@ class GameStationModules :
         /**
          * @brief		Property type.
          */
-        enum Type {
+        enum class Type {
             MTurret,          ///< Has M turret.
             MShield,          ///< Has M shield.
             LTurret,          ///< Has L turret.
@@ -71,7 +71,7 @@ class GameStationModules :
             SupplyProduct,    ///< Supply product.
             Cargo,            ///< Has cargo.
         };
-        Type type; ///< Property type.
+        const Type type; ///< Property type.
 
         /**
          * @brief		Constructor.

@@ -73,7 +73,7 @@ NewFactoryWizard::NewFactoryWizard(QWidget *parent) :
          GameData::instance()->stationModules()->modules()) {
         if (stationModule->playerModule) {
             auto propertyIter = stationModule->properties.find(
-                GameStationModules::Property::SupplyProduct);
+                GameStationModules::Property::Type::SupplyProduct);
             if (propertyIter != stationModule->properties.end()) {
                 ::std::shared_ptr<GameStationModules::SupplyProduct> property
                     = ::std::static_pointer_cast<

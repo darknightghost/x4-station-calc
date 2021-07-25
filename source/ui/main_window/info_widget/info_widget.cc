@@ -540,6 +540,18 @@ void InfoWidget::updateModule(const QString &macro)
         ::std::shared_ptr<GameStationModules::SupplyProduct> property
             = ::std::static_pointer_cast<GameStationModules::SupplyProduct>(
                 *iter);
+
+        // Work effect.
+        long double workEffect   = 0.0;
+        auto        propertyIter = property->productionInfo->properties.find(
+            GameWares::ProductionInfoProperty::PropertyType::Effect);
+        if (propertyIter != property->productionInfo->properties.end()) {
+            ::std::shared_ptr<GameWares::Effect> effect
+                = ::std::static_pointer_cast<GameWares::Effect>(
+                    propertyIter.value());
+            workEffect = effect->product;
+        }
+
         QTreeWidgetItem *productsItem
             = new InfoItem(::std::unique_ptr<GenericString>(
                 new LocaleString("STR_INFO_PRODUCT")));
@@ -551,10 +563,9 @@ void InfoWidget::updateModule(const QString &macro)
                 QString("%1/h - %2/h")
                     .arg(::round((double)(property->productionInfo->amount)
                                  * 3600 / property->productionInfo->time))
-                    .arg(::round(
-                        (double)(property->productionInfo->amount) * 3600
-                        / property->productionInfo->time
-                        * (1.0 + property->productionInfo->workEffect))))),
+                    .arg(::round((double)(property->productionInfo->amount)
+                                 * 3600 / property->productionInfo->time
+                                 * (1.0 + workEffect))))),
             [this, id](int) -> void {
                 this->showWareInfo(id, true);
             });
@@ -575,10 +586,9 @@ void InfoWidget::updateModule(const QString &macro)
                     QString("%1/h - %2/h")
                         .arg(::round((double)(resource->amount) * 3600
                                      / property->productionInfo->time))
-                        .arg(::round(
-                            (double)(resource->amount) * 3600
-                            / property->productionInfo->time
-                            * (1.0 + property->productionInfo->workEffect))))),
+                        .arg(::round((double)(resource->amount) * 3600
+                                     / property->productionInfo->time
+                                     * (1.0 + workEffect))))),
 
                 [this, id](int) -> void {
                     this->showWareInfo(id, true);

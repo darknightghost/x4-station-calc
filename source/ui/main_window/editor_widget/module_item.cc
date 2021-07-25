@@ -267,7 +267,7 @@ int ModuleItemWidget::suggestedAmountToChange(qint64 productPerHourToChange)
             Habitation: {
             // Find property.
             auto iter = module->properties.find(
-                GameStationModules::Property::SupplyWorkforce);
+                GameStationModules::Property::Type::SupplyWorkforce);
             if (iter == module->properties.end()) {
                 return 0;
             }
@@ -287,7 +287,7 @@ int ModuleItemWidget::suggestedAmountToChange(qint64 productPerHourToChange)
             Production: {
             // Find property.
             auto iter = module->properties.find(
-                GameStationModules::Property::SupplyProduct);
+                GameStationModules::Property::Type::SupplyProduct);
             if (iter == module->properties.end()) {
                 return 0;
             }
@@ -295,11 +295,21 @@ int ModuleItemWidget::suggestedAmountToChange(qint64 productPerHourToChange)
                 = ::std::static_pointer_cast<GameStationModules::SupplyProduct>(
                     *iter);
 
+            // Work effect.
+            long double workEffect = 0.0;
+            auto propertyIter      = property->productionInfo->properties.find(
+                GameWares::ProductionInfoProperty::PropertyType::Effect);
+            if (propertyIter != property->productionInfo->properties.end()) {
+                ::std::shared_ptr<GameWares::Effect> effect
+                    = ::std::static_pointer_cast<GameWares::Effect>(
+                        propertyIter.value());
+                workEffect = effect->product;
+            }
+
             // Compute result.
             double amountPerHour
                 = static_cast<double>(property->productionInfo->amount) * 3600
-                  * (1 + property->productionInfo->workEffect)
-                  / property->productionInfo->time;
+                  * (1 + workEffect) / property->productionInfo->time;
 
             return static_cast<int>(
                 ::ceil(productPerHourToChange / amountPerHour));

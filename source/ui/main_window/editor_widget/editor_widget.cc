@@ -530,7 +530,7 @@ void EditorWidget::updateSuggestedAmounts(SummaryInfo &summary)
                     Production: {
                     // Search property.
                     auto iter = module->properties.find(
-                        GameStationModules::Property::SupplyProduct);
+                        GameStationModules::Property::Type::SupplyProduct);
                     if (iter == module->properties.end()) {
                         break;
                     }
@@ -826,6 +826,20 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                 productionInfo = supplyProfduct->productionInfo;
                             const QString &macro = productionInfo->id;
 
+                            // Work effect.
+                            long double workEffect = 0.0;
+                            auto propertyIter = productionInfo->properties.find(
+                                GameWares::ProductionInfoProperty::
+                                    PropertyType::Effect);
+                            if (propertyIter
+                                != productionInfo->properties.end()) {
+                                ::std::shared_ptr<GameWares::Effect> effect
+                                    = ::std::static_pointer_cast<
+                                        GameWares::Effect>(
+                                        propertyIter.value());
+                                workEffect = effect->product;
+                            }
+
                             // Product.
                             // Find/create ware.
                             auto iter = summary.products.find(macro);
@@ -836,7 +850,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                         / productionInfo->time,
                                     (long double)(productionInfo->amount) * 3600
                                         * saveModule->amount()
-                                        * (1.0 + productionInfo->workEffect)
+                                        * (1.0 + workEffect)
                                         / productionInfo->time);
                             } else {
                                 // Increase amount.
@@ -847,7 +861,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                         + iter->min(),
                                     (long double)(productionInfo->amount) * 3600
                                             * saveModule->amount()
-                                            * (1.0 + productionInfo->workEffect)
+                                            * (1.0 + workEffect)
                                             / productionInfo->time
                                         + iter->max());
                             }
@@ -880,6 +894,21 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                             for (auto resouce : productionInfo->resources) {
                                 const QString &macro = resouce->id;
 
+                                // Work effect.
+                                long double workEffect = 0.0;
+                                auto        propertyIter
+                                    = productionInfo->properties.find(
+                                        GameWares::ProductionInfoProperty::
+                                            PropertyType::Effect);
+                                if (propertyIter
+                                    != productionInfo->properties.end()) {
+                                    ::std::shared_ptr<GameWares::Effect> effect
+                                        = ::std::static_pointer_cast<
+                                            GameWares::Effect>(
+                                            propertyIter.value());
+                                    workEffect = effect->product;
+                                }
+
                                 // Find/create ware.
                                 auto iter = summary.resources.find(macro);
                                 if (iter == summary.resources.end()) {
@@ -890,8 +919,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                                 / productionInfo->time,
                                             (long double)(resouce->amount)
                                                 * 3600 * saveModule->amount()
-                                                * (1.0
-                                                   + productionInfo->workEffect)
+                                                * (1.0 + workEffect)
                                                 / productionInfo->time);
                                 } else {
                                     // Increase amount.
@@ -902,8 +930,7 @@ void EditorWidget::makeSummary(SummaryInfo &summary)
                                             + iter->min(),
                                         (long double)(resouce->amount) * 3600
                                                 * saveModule->amount()
-                                                * (1.0
-                                                   + productionInfo->workEffect)
+                                                * (1.0 + workEffect)
                                                 / productionInfo->time
                                             + iter->max());
                                 }

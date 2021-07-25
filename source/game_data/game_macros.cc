@@ -20,9 +20,9 @@ GameMacros::GameMacros(GameData *                             gameData,
 
     // Scan files to load.
     QMap<QString, QVector<QString>> xmlFiles
-        = gameData->scanModuleFiles("index/macros.xml");
+        = gameData->scanModuleFiles("index/macros\\.xml");
     if (xmlFiles.empty()) {
-        qWarning() << "Missing \"index/macros.xml\".";
+        qWarning() << "Missing \"index/macros\\.xml\".";
         return;
     }
 
@@ -71,9 +71,9 @@ GameMacros::GameMacros(GameData *                             gameData,
 /**
  * @brief	Get macro.
  */
-QString GameMacros::macro(const QString &id)
+QString GameMacros::macro(const QString &name)
 {
-    return m_macros[id];
+    return m_macros[name];
 }
 
 /**
@@ -110,6 +110,7 @@ GameMacros::~GameMacros() {}
         QString value = "/";
         value.append(iter->second);
         value.replace('\\', '/');
+        value.replace(QRegExp("/+"), "/");
         m_macros[name] = value;
         qDebug() << "Macro " << name << "=" << value << ".";
 

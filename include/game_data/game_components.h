@@ -13,17 +13,18 @@
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
-class GameVFS;
+class GameData;
+class XMLLoader;
 
 /**
  * @brief	Components in game.
  */
 class GameComponents :
     public ILoadFactoryFunc<GameComponents,
-                            ::std::shared_ptr<GameVFS>,
+                            GameData *,
                             ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameComponents,
-              ::std::shared_ptr<GameVFS>,
+              GameData *,
               ::std::function<void(const QString &)>);
 
   private:
@@ -33,10 +34,10 @@ class GameComponents :
     /**
      * @brief		Constructor.
      *
-     * @param[in]	vfs				Virtual filesystem of the game.
+     * @param[in]	gameData        Game data.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameComponents(::std::shared_ptr<GameVFS>             vfs,
+    GameComponents(GameData *                             gameData,
                    ::std::function<void(const QString &)> setTextFunc);
 
   public:
@@ -52,7 +53,13 @@ class GameComponents :
      */
     virtual ~GameComponents();
 
-  protected:
+  private:
+    /**
+     * @brief       Create XML loader.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createXMLLoader();
 };
 
 #include <game_data/game_vfs.h>

@@ -41,11 +41,13 @@ class GameMacros :
 
   public:
     /**
-     * @brief	Get macro.
+     * @brief	    Get macro.
      *
-     * @return	Value of macro.
+     * @param[in]   name        Name of the macro.
+     *
+     * @return	    Value of macro.
      */
-    QString macro(const QString &id);
+    QString macro(const QString &name);
 
     /**
      * @brief		Destructor.

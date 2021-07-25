@@ -112,12 +112,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
         m_components = components;
 
-        // TODO
-        return;
-
         // Load game races
         ::std::shared_ptr<GameRaces> races
-            = GameRaces::load(vfs, texts, [&](const QString &s) -> void {
+            = GameRaces::load(this, [&](const QString &s) -> void {
                   splash->setText(s);
               });
 
@@ -130,6 +127,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
         m_races = races;
+
+        // TODO
+        return;
 
         // Load game wares
         ::std::shared_ptr<GameWares> wares

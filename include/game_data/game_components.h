@@ -42,11 +42,13 @@ class GameComponents :
 
   public:
     /**
-     * @brief	Get component.
+     * @brief	    Get component.
      *
-     * @return	Value of component.
+     * @param[in]   name        Name of the macro.
+     *
+     * @return	    Value of component.
      */
-    QString component(const QString &id);
+    QString component(const QString &name);
 
     /**
      * @brief		Destructor.

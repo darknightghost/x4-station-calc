@@ -22,7 +22,7 @@ GameComponents::GameComponents(
     QMap<QString, QVector<QString>> xmlFiles
         = gameData->scanModuleFiles("index/components\\.xml");
     if (xmlFiles.empty()) {
-        qWarning() << "Missing \"index/components\\.xml\".";
+        qWarning() << "Missing \"index/components.xml\".";
         return;
     }
 
@@ -73,9 +73,9 @@ GameComponents::GameComponents(
 /**
  * @brief	Get component.
  */
-QString GameComponents::component(const QString &id)
+QString GameComponents::component(const QString &name)
 {
-    return m_components[id];
+    return m_components[name];
 }
 
 /**

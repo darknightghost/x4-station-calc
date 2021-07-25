@@ -22,7 +22,7 @@ GameMacros::GameMacros(GameData *                             gameData,
     QMap<QString, QVector<QString>> xmlFiles
         = gameData->scanModuleFiles("index/macros\\.xml");
     if (xmlFiles.empty()) {
-        qWarning() << "Missing \"index/macros\\.xml\".";
+        qWarning() << "Missing \"index/macros.xml\".";
         return;
     }
 

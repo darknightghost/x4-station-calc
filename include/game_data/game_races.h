@@ -15,21 +15,17 @@
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
-class GameVFS;
 class GameData;
+class GameText;
 
 /**
  * @brief	Races in game.
  */
 class GameRaces :
     public ILoadFactoryFunc<GameRaces,
-                            ::std::shared_ptr<GameVFS>,
-                            ::std::shared_ptr<GameTexts>,
+                            GameData *,
                             ::std::function<void(const QString &)>> {
-    LOAD_FUNC(GameRaces,
-              ::std::shared_ptr<GameVFS>,
-              ::std::shared_ptr<GameTexts>,
-              ::std::function<void(const QString &)>);
+    LOAD_FUNC(GameRaces, GameData *, ::std::function<void(const QString &)>);
 
   public:
     /**
@@ -42,19 +38,17 @@ class GameRaces :
     };
 
   private:
-    QMap<QString, Race>  m_races;      ///< Macros
-    static QSet<QString> _playerRaces; ///< Player races.
+    QMap<QString, Race> m_races;       ///< Macros
+    QSet<QString>       m_playerRaces; ///< Player races.
 
   protected:
     /**
      * @brief		Constructor.
      *
-     * @param[in]	vfs				Virtual filesystem of the game.
-     * @param[in]	texts			Game texts.
+     * @param[in]	gameData        Game data.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameRaces(::std::shared_ptr<GameVFS>             vfs,
-              ::std::shared_ptr<GameTexts>           texts,
+    GameRaces(GameData *                             gameData,
               ::std::function<void(const QString &)> setTextFunc);
 
   public:
@@ -70,7 +64,14 @@ class GameRaces :
      *
      * @return	Player races.
      */
-    static const QSet<QString> &playerRaces();
+    const QSet<QString> &playerRaces();
+
+    /**
+     * @brief	    Add player races.
+     *
+     * @param[in]	id      Race ID.
+     */
+    void addPlayerRace(const QString &id);
 
     /**
      * @brief		Destructor.
@@ -78,4 +79,12 @@ class GameRaces :
     virtual ~GameRaces();
 
   private:
+    /**
+     * @brief       Create XML loader.
+     *
+     * @param[in]	gameData        Game data.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createXMLLoader(GameData *gameData);
 };

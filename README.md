@@ -5,6 +5,7 @@
 #### Build requirements
 
 * Qt5(5.14.1 or above. Environment variables `QT` and `Path` must be setted on windows)
+* Boost(1.35.0 or above)
 * OpenSSL(1.1.1 or above)
 * cmake
 * gcc/mingw/visual studio
@@ -28,6 +29,8 @@
 1. Arch Linux
     1. Qt5
         1. `sudo pacman -S qt5`
+    1. Boost
+        1. `sudo pacman -S boost-libs`
     1. OpenSSL
         1. `sudo pacman -S openssl`
     1. cmake
@@ -41,6 +44,8 @@
         1. Set the path of `gcc_64` in your qt5 installalion path to environment variable `QT`.
         1. Restart your computer.
         1. Replace the 3rd command in the build commands to `cmake -DCMAKE_PREFIX_PATH=${QT} -DCMAKE_BUILD_TYPE=Release ..`.
+    1. Boost
+        1. `sudo apt-get install libboost1.67-all-dev`(You should replace 1.67 to the version you can found via `apt search libboost*-dev`).
     1. OpenSSL
         1. `sudo apt-get install libssl-dev`
     1. cmake

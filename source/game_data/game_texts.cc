@@ -7,6 +7,7 @@
 #include <common.h>
 #include <game_data/game_data.h>
 #include <game_data/game_texts.h>
+#include <game_data/xml_loader/xml_loader.h>
 #include <locale/string_table.h>
 
 /**
@@ -21,30 +22,8 @@ GameTexts::GameTexts(GameData *                             gameData,
     auto loadOrder   = gameData->moduleLoadOrder();
 
     // Scan files to load.
-    QRegExp nameFilter("\\d+-L\\d+\\.xml");
-    nameFilter.setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-    QMap<QString, QVector<QString>> xmlFiles;
-
-    for (const QString &id : loadOrder) {
-        auto moduleInfo = gameModules[id];
-        // Search directory.
-        ::std::shared_ptr<::GameVFS::DirReader> dir
-            = vfs->openDir(QString("%1/t").arg(moduleInfo->path));
-        if (dir != nullptr) {
-            for (auto iter = dir->begin(); iter != dir->end(); ++iter) {
-                if (iter->type == ::GameVFS::DirReader::EntryType::File
-                    && nameFilter.exactMatch(iter->name)) {
-                    QString lwrName  = iter->name.toLower();
-                    auto    pathIter = xmlFiles.find(lwrName);
-                    if (pathIter == xmlFiles.end()) {
-                        xmlFiles[lwrName] = {};
-                        pathIter          = xmlFiles.find(iter->name);
-                    }
-                    pathIter->push_back(dir->absPath(iter->name));
-                }
-            }
-        }
-    }
+    QMap<QString, QVector<QString>> xmlFiles
+        = gameData->scanModuleFiles("t/\\d+-L\\d+\\.xml");
 
     // Load.
     QMutex                taskLock;
@@ -90,7 +69,9 @@ GameTexts::GameTexts(GameData *                             gameData,
                                   .arg(*fileIter)
                                   .arg(errInfo.errorLine)
                                   .arg(errInfo.errorColumn)
-                                  .arg(errInfo.errorMsg);
+                                  .arg(errInfo.errorMsg)
+                                  .toStdString()
+                                  .c_str();
                 ++finishedCount;
                 continue;
             }
@@ -104,7 +85,9 @@ GameTexts::GameTexts(GameData *                             gameData,
                                .arg(*fileIter)
                                .arg(errInfo.errorLine)
                                .arg(errInfo.errorColumn)
-                               .arg(errInfo.errorMsg);
+                               .arg(errInfo.errorMsg)
+                               .toStdString()
+                               .c_str();
                     continue;
                 }
             }
@@ -113,7 +96,9 @@ GameTexts::GameTexts(GameData *                             gameData,
             qDebug() << "Parsing file" << currentTask.key() << ".";
             if (! loader->parse()) {
                 qWarning() << QString("Failed to parse file \"%1\".")
-                                  .arg(currentTask.key());
+                                  .arg(currentTask.key())
+                                  .toStdString()
+                                  .c_str();
             }
             ++finishedCount;
         }

@@ -4,63 +4,66 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
+#include <game_data/game_data.h>
 #include <game_data/game_macros.h>
+#include <game_data/xml_loader/xml_loader.h>
 #include <locale/string_table.h>
 
 /**
  * @brief		Constructor.
  */
-GameMacros::GameMacros(::std::shared_ptr<GameVFS>             vfs,
+GameMacros::GameMacros(GameData *                             gameData,
                        ::std::function<void(const QString &)> setTextFunc)
 {
     setTextFunc(STR("STR_LOADING_MACROS"));
     qDebug() << "Loading macros...";
 
-    // Open file.
-    ::std::shared_ptr<GameVFS::FileReader> file
-        = vfs->open("/index/macros.xml");
-    if (file == nullptr) {
+    // Scan files to load.
+    QMap<QString, QVector<QString>> xmlFiles
+        = gameData->scanModuleFiles("index/macros.xml");
+    if (xmlFiles.empty()) {
+        qWarning() << "Missing \"index/macros.xml\".";
         return;
     }
-    QByteArray       data = file->readAll();
-    QXmlStreamReader reader(data);
 
-    /*
-    // Parse file
-    auto context = XMLLoader::Context::create();
-    context->setOnStartElement(
-        ::std::bind(&GameMacros::onStartElementInRoot, this,
-                    ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4));
-    XMLLoader loader;
-    loader.parse(reader, ::std::move(context));
-
-    // Parse extension files
-    ::std::shared_ptr<::GameVFS::DirReader> extensionsDir
-        = vfs->openDir("/extensions");
-    if (extensionsDir != nullptr) {
-        for (auto iter = extensionsDir->begin(); iter != extensionsDir->end();
-             ++iter) {
-            if (iter->type == ::GameVFS::DirReader::EntryType::Directory) {
-                file = vfs->open(
-                    QString("/extensions/%1/index/macros.xml").arg(iter->name));
-                if (file == nullptr) {
-                    continue;
-                }
-                data = file->readAll();
-                QXmlStreamReader waresReader(data);
-
-                // Parse ware file
-                context = XMLLoader::Context::create();
-                context->setOnStartElement(::std::bind(
-                    &GameMacros::onStartElementInRoot, this,
-                    ::std::placeholders::_1, ::std::placeholders::_2,
-                    ::std::placeholders::_3, ::std::placeholders::_4));
-                loader.parse(waresReader, ::std::move(context));
-            }
+    auto                 xmlLoader = this->createXMLLoader();
+    XMLLoader::ErrorInfo errorInfo;
+    auto                 iter = xmlFiles.begin()->begin();
+    qDebug() << "Loading data file" << (*iter) << ".";
+    if (! xmlLoader->loadData(gameData->vfs()->open(*iter)->readAll(),
+                              errorInfo)) {
+        qWarning() << QString(
+                          "Failed to load file \"%1\", line: %2, col: %3 : %4.")
+                          .arg(*iter)
+                          .arg(errorInfo.errorLine)
+                          .arg(errorInfo.errorColumn)
+                          .arg(errorInfo.errorMsg)
+                          .toStdString()
+                          .c_str();
+        return;
+    }
+    for (++iter; iter != xmlFiles.begin()->end(); ++iter) {
+        qDebug() << "Loading patch file" << (*iter) << ".";
+        if (! xmlLoader->loadPatch(gameData->vfs()->open(*iter)->readAll(),
+                                   errorInfo)) {
+            qWarning()
+                << QString(
+                       "Failed to patch file \"%1\", line: %2, col: %3 : %4.")
+                       .arg(*iter)
+                       .arg(errorInfo.errorLine)
+                       .arg(errorInfo.errorColumn)
+                       .arg(errorInfo.errorMsg)
+                       .toStdString()
+                       .c_str();
         }
     }
-    */
+    if (! xmlLoader->parse()) {
+        qWarning() << QString("Failed to parse file \"%1\".")
+                          .arg(xmlFiles.begin().key())
+                          .toStdString()
+                          .c_str();
+        return;
+    }
 
     this->setInitialized();
 }
@@ -77,3 +80,41 @@ QString GameMacros::macro(const QString &id)
  * @brief		Destructor.
  */
 GameMacros::~GameMacros() {}
+
+/**
+ * @brief       Create XML loader.
+ */
+::std::unique_ptr<XMLLoader> GameMacros::createXMLLoader()
+{
+    ::std::unique_ptr<XMLLoader> ret(new XMLLoader);
+
+    // /index/entry
+    XMLLoader::XMLElementLoader *elementLoader
+        = ret->elementLoader("/index/entry");
+    elementLoader->setOnStartElement([this](XMLLoader &,
+                                            XMLLoader::XMLElementLoader &,
+                                            const ::std::map<QString, QString>
+                                                &attributes) -> bool {
+        auto iter = attributes.find("name");
+        if (iter == attributes.end()) {
+            qWarning()
+                << "Missing attribute \"name\" in element \"/index/entry\".";
+        }
+        QString name = iter->second;
+
+        iter = attributes.find("value");
+        if (iter == attributes.end()) {
+            qWarning()
+                << "Missing attribute \"value\" in element \"/index/entry\".";
+        }
+        QString value = "/";
+        value.append(iter->second);
+        value.replace('\\', '/');
+        m_macros[name] = value;
+        qDebug() << "Macro " << name << "=" << value << ".";
+
+        return true;
+    });
+
+    return ret;
+}

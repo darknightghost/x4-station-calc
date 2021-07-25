@@ -5,6 +5,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QRegExp>
 #include <QtCore/QSet>
 #include <QtCore/QVector>
 
@@ -111,6 +112,17 @@ class GameData : public QObject, public ISingleton<GameData, SplashWidget *> {
      * @return  Load order of modules.
      */
     const QVector<QString> &moduleLoadOrder() const;
+
+    /**
+     * @brief       Scan files in module.
+     *
+     * @param[in]   relpathExp      Regular expression of the relative path of
+     *                              files in modules.
+     *
+     * @return      File found.
+     */
+    QMap<QString, QVector<QString>>
+        scanModuleFiles(const QString &relpathExp) const;
 
     /*
      * @brief	Get game VFS.

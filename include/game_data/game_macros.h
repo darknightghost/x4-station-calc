@@ -14,17 +14,17 @@
 #include <locale/string_table.h>
 
 class GameVFS;
+class GameData;
+class XMLLoader;
 
 /**
  * @brief	Macros in game.
  */
 class GameMacros :
     public ILoadFactoryFunc<GameMacros,
-                            ::std::shared_ptr<GameVFS>,
+                            GameData *,
                             ::std::function<void(const QString &)>> {
-    LOAD_FUNC(GameMacros,
-              ::std::shared_ptr<GameVFS>,
-              ::std::function<void(const QString &)>);
+    LOAD_FUNC(GameMacros, GameData *, ::std::function<void(const QString &)>);
 
   private:
     QMap<QString, QString> m_macros; ///< Macros
@@ -33,10 +33,10 @@ class GameMacros :
     /**
      * @brief		Constructor.
      *
-     * @param[in]	vfs				Virtual filesystem of the game.
+     * @param[in]	gameData        Game data.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameMacros(::std::shared_ptr<GameVFS>             vfs,
+    GameMacros(GameData *                             gameData,
                ::std::function<void(const QString &)> setTextFunc);
 
   public:
@@ -52,7 +52,11 @@ class GameMacros :
      */
     virtual ~GameMacros();
 
-  protected:
+  private:
+    /**
+     * @brief       Create XML loader.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createXMLLoader();
 };
-
-#include <game_data/game_vfs.h>

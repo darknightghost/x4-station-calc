@@ -648,7 +648,8 @@ GameVFS::DirReader::DirReader(const QString &                  path,
                               ::std::shared_ptr<DatFileEntery> entry,
                               ::std::shared_ptr<GameVFS>       vfs) :
     m_path(path.split('/', Qt::SplitBehaviorFlags::SkipEmptyParts)),
-    m_name(m_path.back()), m_vfs(vfs), m_enteries(new QVector<DirEntry>)
+    m_name(m_path.empty() ? "" : m_path.back()), m_vfs(vfs),
+    m_enteries(new QVector<DirEntry>)
 {
     QDir gameRoot(m_vfs->m_gamePath);
     QDir userRoot(m_vfs->m_userPath);

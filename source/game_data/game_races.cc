@@ -4,6 +4,7 @@
 #include <QtCore/QRegExp>
 
 #include <common.h>
+#include <game_data/game_data.h>
 #include <game_data/game_races.h>
 #include <locale/string_table.h>
 

@@ -80,12 +80,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
         m_texts = texts;
 
-        // TODO
-        return;
-
         // Load game macros
         ::std::shared_ptr<GameMacros> macros
-            = GameMacros::load(vfs, [&](const QString &s) -> void {
+            = GameMacros::load(this, [&](const QString &s) -> void {
                   splash->setText(s);
               });
 
@@ -98,6 +95,9 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
             continue;
         }
         m_macros = macros;
+
+        // TODO
+        return;
 
         // Load game components
         ::std::shared_ptr<GameComponents> components
@@ -214,6 +214,89 @@ const QMap<QString, ::std::shared_ptr<GameData::GameModule>> &
 const QVector<QString> &GameData::moduleLoadOrder() const
 {
     return m_moduleLoadOrder;
+}
+
+/**
+ * @brief       Scan files in module.
+ */
+QMap<QString, QVector<QString>>
+    GameData::scanModuleFiles(const QString &relpathExp) const
+{
+    // Split regular expression.
+    QVector<QRegExp> expressions;
+    {
+        QString exp;
+        bool    escapeFlag = false;
+        for (auto &c : relpathExp) {
+            if (c == '/' && ! escapeFlag) {
+                expressions.push_back(
+                    QRegExp(exp, Qt::CaseSensitivity::CaseInsensitive));
+                exp = "";
+            } else {
+                exp.push_back(c);
+                if (c == '\\' && ! escapeFlag) {
+                    escapeFlag = true;
+                } else {
+                    escapeFlag = false;
+                }
+            }
+        }
+        expressions.push_back(
+            QRegExp(exp, Qt::CaseSensitivity::CaseInsensitive));
+    }
+    if (expressions.size() == 0) {
+        return {};
+    }
+
+    // Match.
+    QMap<QString, QVector<QString>> ret;
+    ::std::function<void(QVector<QRegExp> &, QVector<QRegExp>::iterator,
+                         ::std::shared_ptr<GameVFS::DirReader>)>
+        searchFunc([&](QVector<QRegExp> &                    expressions,
+                       QVector<QRegExp>::iterator            expIter,
+                       ::std::shared_ptr<GameVFS::DirReader> dir) -> void {
+            auto nextExpIter = expIter;
+            ++nextExpIter;
+            if (nextExpIter == expressions.end()) {
+                // Search file.
+                for (auto fileIter = dir->begin(); fileIter != dir->end();
+                     ++fileIter) {
+                    if (fileIter->type == ::GameVFS::DirReader::EntryType::File
+                        && expIter->exactMatch(fileIter->name)) {
+                        QString lwrName    = fileIter->name.toLower();
+                        auto    resultIter = ret.find(lwrName);
+                        if (resultIter == ret.end()) {
+                            ret[lwrName] = {};
+                            resultIter   = ret.find(fileIter->name);
+                        }
+                        resultIter->push_back(dir->absPath(fileIter->name));
+                    }
+                }
+
+            } else {
+                // Search directory.
+                for (auto fileIter = dir->begin(); fileIter != dir->end();
+                     ++fileIter) {
+                    if (fileIter->type
+                            == ::GameVFS::DirReader::EntryType::Directory
+                        && expIter->exactMatch(fileIter->name)) {
+                        auto nextDir
+                            = m_vfs->openDir(dir->absPath(fileIter->name));
+                        searchFunc(expressions, nextExpIter, nextDir);
+                    }
+                }
+            }
+        });
+
+    for (const QString &id : m_moduleLoadOrder) {
+        auto moduleInfo = m_gameModules[id];
+
+        // Search directory.
+        auto dir = m_vfs->openDir(moduleInfo->path);
+        searchFunc(expressions, expressions.begin(), dir);
+    }
+
+    return ret;
 }
 
 /**
@@ -603,7 +686,7 @@ void GameData::scanGameModules()
                         {{"en_US", "Egosoft GmbH"}},
                         (uint32_t)(versionStr.toUInt()),
                         {},
-                        ""}));
+                        "/"}));
     m_gameModules[""] = module;
 
     // Scan modules.

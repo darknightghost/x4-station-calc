@@ -14,22 +14,16 @@
 #include <QtCore/QXmlStreamReader>
 
 #include <common.h>
+#include <game_data/game_wares.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
-#include <game_data/game_vfs.h>
-
-#include <game_data/game_components.h>
-#include <game_data/game_macros.h>
-#include <game_data/game_races.h>
-#include <game_data/game_texts.h>
-#include <game_data/game_wares.h>
-
 class GameVFS;
-
+class GameData;
 class GameMacros;
 class GameTexts;
 class GameWares;
+class GameComponents;
 
 /**
  * @brief	Station modules in game.

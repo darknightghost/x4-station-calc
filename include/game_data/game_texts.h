@@ -11,12 +11,12 @@
 #include <QtCore/QXmlStreamReader>
 
 #include <common.h>
-#include <game_data/xml_loader/xml_loader.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
 class GameData;
+class XMLLoader;
 
 /**
  * @brief	Texts in game.
@@ -165,5 +165,3 @@ class GameTexts :
      */
     ::std::unique_ptr<XMLLoader> createXMLLoader();
 };
-
-#include <game_data/game_vfs.h>

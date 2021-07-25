@@ -16,6 +16,7 @@
 #include <locale/string_table.h>
 
 class GameVFS;
+class GameData;
 
 /**
  * @brief	Races in game.
@@ -78,5 +79,3 @@ class GameRaces :
 
   private:
 };
-
-#include <game_data/game_vfs.h>

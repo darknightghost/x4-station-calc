@@ -13,12 +13,11 @@
 
 #include <common.h>
 #include <game_data/game_texts.h>
-#include <game_data/game_vfs.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
 class GameVFS;
-class GameTexts;
+class GameData;
 
 /**
  * @brief	Wares in game.

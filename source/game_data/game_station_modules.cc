@@ -4,6 +4,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QSet>
 
+#include <game_data/game_data.h>
 #include <game_data/game_station_modules.h>
 
 QMap<QString, GameStationModules::StationModule::StationModuleClass>

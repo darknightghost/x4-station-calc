@@ -153,6 +153,10 @@ class GameWares :
     };
 
   private:
+    static QMap<QString, TransportType>
+        _transportTypeMap; ///< Transport type map.
+
+  private:
     QMap<QString, ::std::shared_ptr<WareGroup>> m_wareGroups; ///< Ware groups.
     QMap<QString, ::std::shared_ptr<Ware>>      m_wares;      ///< Wares.
     QAtomicInt m_unknowWareIndex;      ///< Unknow ware index.

@@ -5,6 +5,19 @@
 #include <game_data/game_wares.h>
 #include <game_data/xml_loader/xml_loader.h>
 
+// Transport type map.
+QMap<QString, GameWares::TransportType> GameWares::_transportTypeMap
+    = {{"container", TransportType::Container},
+       {"liquid", TransportType::Liquid},
+       {"solid", TransportType::Solid},
+       {"inventory", TransportType::Inventory},
+       {"equipment", TransportType::Equipment},
+       {"workunit", TransportType::WorkUnit},
+       {"research", TransportType::Research},
+       {"passenger", TransportType::Passenger},
+       {"ship", TransportType::Ship},
+       {"software", TransportType::Software}};
+
 /**
  * @brief		Constructor.
  */
@@ -288,38 +301,12 @@ GameWares::~GameWares() {}
             return true;
         }
         TransportType transType;
-        if (iter->second == "container") {
-            transType = TransportType::Container;
-
-        } else if (iter->second == "liquid") {
-            transType = TransportType::Liquid;
-
-        } else if (iter->second == "solid") {
-            transType = TransportType::Solid;
-
-        } else if (iter->second == "inventory") {
-            transType = TransportType::Inventory;
-
-        } else if (iter->second == "equipment") {
-            transType = TransportType::Equipment;
-
-        } else if (iter->second == "workunit") {
-            transType = TransportType::WorkUnit;
-
-        } else if (iter->second == "research") {
-            transType = TransportType::Research;
-
-        } else if (iter->second == "passenger") {
-            transType = TransportType::Passenger;
-
-        } else if (iter->second == "ship") {
-            transType = TransportType::Ship;
-
-        } else if (iter->second == "software") {
-            transType = TransportType::Software;
+        auto          transTypeIter = _transportTypeMap.find(iter->second);
+        if (transTypeIter == _transportTypeMap.end()) {
+            transType = TransportType::Unknow;
 
         } else {
-            transType = TransportType::Unknow;
+            transType = transTypeIter.value();
         }
 
         // Volume.

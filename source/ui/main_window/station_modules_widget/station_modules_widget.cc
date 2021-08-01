@@ -577,7 +577,7 @@ void StationModulesWidget::onAddToStationClicked()
                   m_itemConnect)) {
             StationModulesTreeWidgetItem *moduleItem
                 = (StationModulesTreeWidgetItem *)item;
-            macros.push_back((moduleItem->module()->id));
+            macros.push_back((moduleItem->module()->macro));
         }
     }
     if (! macros.empty()) {
@@ -596,7 +596,7 @@ void StationModulesWidget::onItemClicked(QTreeWidgetItem *item)
     } else {
         StationModulesTreeWidgetItem *moduleItem
             = (StationModulesTreeWidgetItem *)item;
-        qDebug() << moduleItem->module()->id << "clicked.";
-        emit this->stationModuleClicked(moduleItem->module()->id, false);
+        qDebug() << moduleItem->module()->macro << "clicked.";
+        emit this->stationModuleClicked(moduleItem->module()->macro, false);
     }
 }

@@ -42,7 +42,8 @@ class GameStationModules :
      * @brief	Informations of station module groups.
      */
     struct StationModuleGroup {
-        QString macro; ///< Macro of the module group.
+        GameTexts::IDPair name;   ///< Group name.
+        QSet<QString>     macros; ///< Macros of the module group.
     };
 
     /**
@@ -104,7 +105,7 @@ class GameStationModules :
             Storage           ///< Storage.
         };
 
-        QString            id;              ///< ID of the module.
+        QString            macro;           ///< Macro of the module.
         QString            group;           ///< Group of the module.
         QString            component;       ///< Component of the module.
         GameTexts::IDPair  name;            ///< Module name.

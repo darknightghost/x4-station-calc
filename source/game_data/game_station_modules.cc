@@ -193,8 +193,8 @@ GameStationModules::~GameStationModules() {}
     XMLLoader::XMLElementLoader *elementLoader
         = ret->elementLoader("/groups/group");
     elementLoader->setOnStartElement(
-        [](XMLLoader &xmlLoader, XMLLoader::XMLElementLoader &,
-           const ::std::map<QString, QString> &attributes) -> bool {
+        [this](XMLLoader &xmlLoader, XMLLoader::XMLElementLoader &,
+               const ::std::map<QString, QString> &attributes) -> bool {
             // Get name.
             auto attrIter = attributes.find("name");
             if (attrIter == attributes.end()) {
@@ -203,7 +203,19 @@ GameStationModules::~GameStationModules() {}
                 return false;
             }
 
-            xmlLoader.values()["name"] = QString(attrIter->second);
+            QString                               name = attrIter->second;
+            ::std::shared_ptr<StationModuleGroup> moduleGroup;
+            auto groupIter = m_moduleGroups.find(name);
+            if (groupIter == m_moduleGroups.end()) {
+                moduleGroup = ::std::shared_ptr<StationModuleGroup>(
+                    new StationModuleGroup({name, {attrIter->second}}));
+                m_moduleGroups[name] = moduleGroup;
+
+            } else {
+                moduleGroup = groupIter.value();
+            }
+
+            xmlLoader.values()["moduleGroup"] = moduleGroup;
 
             return true;
         });
@@ -211,9 +223,11 @@ GameStationModules::~GameStationModules() {}
     // /groups/group/select
     elementLoader = ret->elementLoader("/groups/group/select");
     elementLoader->setOnStartElement(
-        [this](XMLLoader &xmlLoader, XMLLoader::XMLElementLoader &,
-               const ::std::map<QString, QString> &attributes) -> bool {
-            QString name = ::std::any_cast<QString>(xmlLoader.values()["name"]);
+        [](XMLLoader &xmlLoader, XMLLoader::XMLElementLoader &,
+           const ::std::map<QString, QString> &attributes) -> bool {
+            ::std::shared_ptr<StationModuleGroup> moduleGroup
+                = ::std::any_cast<::std::shared_ptr<StationModuleGroup>>(
+                    xmlLoader.values()["moduleGroup"]);
 
             // Get macro.
             auto attrIter = attributes.find("macro");
@@ -223,8 +237,7 @@ GameStationModules::~GameStationModules() {}
                 return false;
             }
 
-            m_moduleGroups[name] = ::std::shared_ptr<StationModuleGroup>(
-                new StationModuleGroup({attrIter->second}));
+            moduleGroup->macros.insert(attrIter->second);
 
             return true;
         });
@@ -254,7 +267,7 @@ GameStationModules::~GameStationModules() {}
                 return false;
             }
 
-            QString id = attrIter->second;
+            xmlLoader.values()["id"] = attrIter->second;
 
             // Get group.
             attrIter = attributes.find("group");
@@ -264,50 +277,41 @@ GameStationModules::~GameStationModules() {}
                 return false;
             }
 
-            QString group = attrIter->second;
+            xmlLoader.values()["group"] = attrIter->second;
 
+            return true;
+        });
+
+    elementLoader->setOnStopElement([this, gameData](
+                                        XMLLoader &xmlLoader,
+                                        XMLLoader::XMLElementLoader &) -> bool {
+        QString id    = ::std::any_cast<QString>(xmlLoader.values()["id"]);
+        QString group = ::std::any_cast<QString>(xmlLoader.values()["group"]);
+        QSet<QString> races
+            = ::std::any_cast<QSet<QString>>(xmlLoader.values()["races"]);
+
+        for (auto &macro : m_moduleGroups[group]->macros) {
             ::std::shared_ptr<StationModule> module(new StationModule);
 
             // Initialize properties.
-            module->id              = id;
+            module->macro           = macro;
             module->group           = group;
             module->playerModule    = false;
             module->hull            = 0;
             module->explosiondamage = 0;
+            module->races           = races;
 
-            xmlLoader.values()["module"] = module;
-
-            return true;
-        });
-    elementLoader->setOnStopElement(
-        [this, gameData](XMLLoader &xmlLoader,
-                         XMLLoader::XMLElementLoader &) -> bool {
-            if (xmlLoader.values().find("module") != xmlLoader.values().end()) {
-                ::std::shared_ptr<StationModule> module
-                    = ::std::any_cast<::std::shared_ptr<StationModule>>(
-                        xmlLoader.values()["module"]);
-
-                // Load macro.
-                this->loadMacro(m_moduleGroups[module->group]->macro, module,
-                                gameData);
-                xmlLoader.values().erase("module");
-            }
-            return true;
-        });
+            // Load macro.
+            this->loadMacro(macro, module, gameData);
+        }
+        return true;
+    });
 
     // /modules/module/category
     elementLoader = ret->elementLoader("/modules/module/category");
     elementLoader->setOnStartElement(
         [](XMLLoader &xmlLoader, XMLLoader::XMLElementLoader &,
            const ::std::map<QString, QString> &attributes) -> bool {
-            if (xmlLoader.values().find("module") == xmlLoader.values().end()) {
-                return true;
-            }
-
-            ::std::shared_ptr<StationModule> module
-                = ::std::any_cast<::std::shared_ptr<StationModule>>(
-                    xmlLoader.values()["module"]);
-
             // Get race.
             auto attrIter = attributes.find("race");
             if (attrIter == attributes.end()) {
@@ -316,14 +320,17 @@ GameStationModules::~GameStationModules() {}
                 return false;
             }
 
-            QStringList races
+            QStringList racesList
                 = QString(attrIter->second)
                       .replace("[", "")
                       .replace("]", "")
                       .split(",", Qt::SplitBehaviorFlags::SkipEmptyParts);
-            for (auto &race : races) {
-                module->races.insert(race.replace(" ", ""));
+            QSet<QString> races;
+            for (auto &race : racesList) {
+                races.insert(race.replace(" ", ""));
             }
+
+            xmlLoader.values()["races"] = races;
 
             return true;
         });
@@ -462,13 +469,13 @@ void GameStationModules::loadMacro(const QString &                  macro,
             ::std::shared_ptr<GameTexts> gameTexts = gameData->texts();
 
             // Add module.
-            m_modulesIndex[module->id] = module;
+            m_modulesIndex[module->macro] = module;
             m_modules.push_back(module);
 
             // Print information
             qDebug() << "module :{";
             qDebug() << "    "
-                     << "id              :" << module->id;
+                     << "id              :" << module->macro;
             qDebug() << "    "
                      << "component       :" << module->component;
             qDebug() << "    "

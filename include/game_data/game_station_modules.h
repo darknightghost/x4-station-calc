@@ -15,6 +15,7 @@
 
 #include <common.h>
 #include <game_data/game_wares.h>
+#include <game_data/xml_loader/xml_loader.h>
 #include <interfaces/i_load_factory_func.h>
 #include <locale/string_table.h>
 
@@ -30,21 +31,20 @@ class GameComponents;
  */
 class GameStationModules :
     public ILoadFactoryFunc<GameStationModules,
-                            ::std::shared_ptr<GameVFS>,
-                            ::std::shared_ptr<GameMacros>,
-                            ::std::shared_ptr<GameTexts>,
-                            ::std::shared_ptr<GameWares>,
-                            ::std::shared_ptr<GameComponents>,
+                            GameData *,
                             ::std::function<void(const QString &)>> {
     LOAD_FUNC(GameStationModules,
-              ::std::shared_ptr<GameVFS>,
-              ::std::shared_ptr<GameMacros>,
-              ::std::shared_ptr<GameTexts>,
-              ::std::shared_ptr<GameWares>,
-              ::std::shared_ptr<GameComponents>,
+              GameData *,
               ::std::function<void(const QString &)>);
 
   public:
+    /**
+     * @brief	Informations of station module groups.
+     */
+    struct StationModuleGroup {
+        QString macro; ///< Macro of the module group.
+    };
+
     /**
      * @brief	Station module property.
      */
@@ -104,13 +104,13 @@ class GameStationModules :
             Storage           ///< Storage.
         };
 
-        QString            macro;           ///< Macro of the module.
+        QString            id;              ///< ID of the module.
+        QString            group;           ///< Group of the module.
         QString            component;       ///< Component of the module.
         GameTexts::IDPair  name;            ///< Module name.
         StationModuleClass moduleClass;     ///< Class of station module.
         bool               playerModule;    ///< Player can build or not.
         GameTexts::IDPair  description;     ///< Module desctiption.
-        bool               racialLimited;   ///< The module is racial limited.
         QSet<QString>      races;           ///< Module race.
         quint32            hull;            ///< Hull.
         quint32            explosiondamage; ///< Explosion damage.
@@ -430,6 +430,8 @@ class GameStationModules :
 
   private:
     QVector<::std::shared_ptr<StationModule>> m_modules; ///< Station modules.
+    QMap<QString, ::std::shared_ptr<StationModuleGroup>>
+        m_moduleGroups; ///< Station module groups.
     QMap<QString, ::std::shared_ptr<StationModule>>
         m_modulesIndex; ///< Station modules index.
     QMap<QString, QVector<::std::shared_ptr<StationModule>>>
@@ -441,18 +443,10 @@ class GameStationModules :
     /**
      * @brief		Constructor.
      *
-     * @param[in]	vfs				Virtual filesystem of the game.
-     * @param[in]	macros			Game macros.
-     * @param[in]	texts			Game texts.
-     * @param[in]	wares			Game wares.
-     * @param[in]	components		Game components.
+     * @param[in]	gameData        Game data.
      * @param[in]	setTextFunc		Callback to set text.
      */
-    GameStationModules(::std::shared_ptr<GameVFS>             vfs,
-                       ::std::shared_ptr<GameMacros>          macros,
-                       ::std::shared_ptr<GameTexts>           texts,
-                       ::std::shared_ptr<GameWares>           wares,
-                       ::std::shared_ptr<GameComponents>      components,
+    GameStationModules(GameData *                             gameData,
                        ::std::function<void(const QString &)> setTextFunc);
 
   public:
@@ -476,4 +470,89 @@ class GameStationModules :
     virtual ~GameStationModules();
 
   private:
+    /**
+     * @brief       Create XML loader of module groups.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createModuleGroupsXMLLoader();
+
+    /**
+     * @brief       Create XML loader of module groups.
+     *
+     * @param[in]	gameData        Game data.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createModulesXMLLoader(GameData *gameData);
+
+    /**
+     * @brief		Load macro.
+     *
+     * @param[in]	macro		Macro to load.
+     * @param[in]	module      Station module.
+     * @param[in]	gameData    Game data.
+     */
+    void loadMacro(const QString &                  macro,
+                   ::std::shared_ptr<StationModule> module,
+                   GameData *                       gameData);
+
+    /**
+     * @brief       Create XML loader of macros.
+     *
+     * @param[in]	module      Station module.
+     * @param[in]	gameData        Game data.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader>
+        createMacroXMLLoader(::std::shared_ptr<StationModule> module,
+                             GameData *                       gameData);
+
+    /**
+     * @brief		Load component.
+     *
+     * @param[in]	component	Component to load.
+     * @param[in]	module		Station module.
+     * @param[in]	macroLoader XML loader of macro.
+     * @param[in]	gameData    Game data.
+     */
+    void loadComponent(const QString &                  component,
+                       ::std::shared_ptr<StationModule> module,
+                       XMLLoader &                      macroLoader,
+                       GameData *                       gameData);
+    /**
+     * @brief       Create XML loader of components.
+     *
+     * @param[in]	module		Station module.
+     * @param[in]	macroLoader XML loader of macro.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader>
+        createComponentXMLLoader(::std::shared_ptr<StationModule> module,
+                                 XMLLoader &                      macroLoader);
+
+    /**
+     * @brief		Load macro in connections of module macro.
+     *
+     * @param[in]	macro		Maro to load.
+     * @param[in]	module		Station module.
+     * @param[in]	gameData    Game data.
+     */
+    void loadConnectionMacro(const QString &                  macro,
+                             ::std::shared_ptr<StationModule> module,
+                             GameData *                       gameData);
+
+    /**
+     * @brief       Create XML loader of connection macros.
+     *
+     * @param[in]	module		Station module.
+     * @param[in]	gameData        Game data.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader>
+        createConnectionMacroXMLLoader(::std::shared_ptr<StationModule> module,
+                                       GameData *gameData);
 };

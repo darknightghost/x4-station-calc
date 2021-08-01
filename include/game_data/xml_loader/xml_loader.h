@@ -78,6 +78,18 @@ class XMLLoader {
     XMLElementLoader *elementLoader(const QString &key);
 
     /**
+     * @brief       Get element loader, create if not exists.
+     *
+     * @param[in]   src         Source to copy.
+     * @param[in]   destKey     Destination key.
+     *
+     * @return      Pointer to the element loader, the ownership of the element
+     *              loader belongs to XML loader.
+     */
+    XMLElementLoader *copyElementLoader(const XMLLoader::XMLElementLoader *src,
+                                        const QString &destKey);
+
+    /**
      * @brief	    Load XML data.
      *
      * @param[in]	xmlText         XML text.
@@ -98,6 +110,13 @@ class XMLLoader {
      *				otherwise returns \c false.
      */
     bool loadPatch(const QString &xmlText, ErrorInfo &err);
+
+    /**
+     * @brief       Get date.
+     *
+     * @return      Data.
+     */
+    const QDomDocument &data() const;
 
     /**
      * @brief       Clear all data.

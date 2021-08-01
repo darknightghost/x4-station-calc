@@ -49,71 +49,35 @@ class GameWares :
     };
 
     /**
-     * @brief	Production info property.
+     * @brief	Type of work effect.
      */
-    struct ProductionInfoProperty {
-        /**
-         * @brief		Property type.
-         */
-        enum class PropertyType {
-            Effect // Effect.
-        };
-        const PropertyType propertyType; ///< Property type.
-
-        /**
-         * @brief		Constructor.
-         *
-         * @param[in]	propertyType	Property type.
-         */
-        ProductionInfoProperty(PropertyType propertyType) :
-            propertyType(propertyType)
-        {}
-
-        /**
-         * @brief		Desctructor.
-         */
-        virtual ~ProductionInfoProperty() {};
+    enum class WorkEffectType {
+        Efficiency, ///< Efficiency.
+        Work,       ///< Work.
+        Unknow      ///< Unknow.
     };
+    Q_ENUM(WorkEffectType);
 
     /**
      * @brief     Effect.
      */
-    struct Effect : public ProductionInfoProperty {
-        enum class Type {
-            Efficiency, ///< Efficiency.
-            Work,       ///< Work.
-            Unknow      ///< Unknow.
-        };
-        const Type type;    ///< Type.
-        double     product; ///< Product efficiency.
-        /**
-         * @brief		Constructor.
-         */
-        Effect(Type type, double product) :
-            ProductionInfoProperty(
-                ProductionInfoProperty::PropertyType::Effect),
-            type(type), product(product)
-        {}
-
-        /**
-         * @brief		Destructor.
-         */
-        virtual ~Effect() {}
+    struct WorkEffect {
+        using Type = WorkEffectType;
+        Type   type;    ///< Type.
+        double product; ///< Product efficiency.
     };
 
     /**
      * @brief	Production information.
      */
     struct ProductionInfo {
-        QString name;   ///< Name.
-        QString id;     ///< Ware ID.
-        quint32 time;   ///< Time per round(s).
-        quint32 amount; ///< Amount per round.
-        QString method; ///< Method.
-        QMap<ProductionInfoProperty::PropertyType,
-             ::std::shared_ptr<ProductionInfoProperty>>
-                                                   properties; ///< Properties.
-        QMap<QString, ::std::shared_ptr<Resource>> resources;  ///< Resource.
+        QString    name;       ///< Name.
+        QString    id;         ///< Ware ID.
+        quint32    time;       ///< Time per round(s).
+        quint32    amount;     ///< Amount per round.
+        QString    method;     ///< Method.
+        WorkEffect workEffect; ///< Work effect.
+        QMap<QString, ::std::shared_ptr<Resource>> resources; ///< Resource.
     };
 
     /**
@@ -152,8 +116,8 @@ class GameWares :
             productionInfos; ///< Production informations.
     };
 
-  private:
-    static QMap<QString, TransportType>
+  public:
+    static const QMap<QString, TransportType>
         _transportTypeMap; ///< Transport type map.
 
   private:

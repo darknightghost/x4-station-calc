@@ -23,6 +23,10 @@ XMLLoader::XMLElementLoader *XMLLoader::elementLoader(const QString &key)
 {
     QStringList path = key.split("/", Qt::SkipEmptyParts);
 
+    if (path.size() == 0) {
+        return nullptr;
+    }
+
     // Check root node.
     if (m_rootElementLoader == nullptr) {
         m_rootElementLoader = XMLElementLoader::create(
@@ -60,6 +64,78 @@ XMLLoader::XMLElementLoader *XMLLoader::elementLoader(const QString &key)
 }
 
 /**
+ * @brief       Get element loader, create if not exists.
+ */
+XMLLoader::XMLElementLoader *
+    XMLLoader::copyElementLoader(const XMLLoader::XMLElementLoader *src,
+                                 const QString &                    destKey)
+{
+    QStringList path = destKey.split("/", Qt::SkipEmptyParts);
+
+    if (path.size() == 0) {
+        return nullptr;
+    }
+
+    if (path.size() == 1) {
+        // Copy to root.
+        ::std::unique_ptr<XMLLoader::XMLElementLoader> newRoot = src->clone();
+        if (newRoot == nullptr) {
+            return nullptr;
+        }
+        newRoot->setLoader(this);
+        newRoot->setName(path[0]);
+        m_rootElementLoader = ::std::move(newRoot);
+        return m_rootElementLoader.get();
+    }
+
+    // Check root node.
+    if (m_rootElementLoader == nullptr) {
+        m_rootElementLoader = XMLElementLoader::create(
+            path.front(), this, nullptr, nullptr, nullptr, nullptr, {});
+    } else {
+        if (m_rootElementLoader->name() != path.front()) {
+            return nullptr;
+        }
+    }
+    path.pop_front();
+
+    Q_ASSERT(m_rootElementLoader != nullptr);
+
+    // Other nodes.
+    XMLElementLoader *elementLoader = m_rootElementLoader.get();
+    while (path.size() > 1) {
+        auto iter = elementLoader->children().find(path.front());
+        if (iter == elementLoader->children().end()) {
+            // Create new element loader.
+            auto newElementLoader
+                = XMLElementLoader::create(path.front(), this, elementLoader,
+                                           nullptr, nullptr, nullptr, {});
+            Q_ASSERT(newElementLoader != nullptr);
+            auto nextElementLoader = newElementLoader.get();
+            elementLoader->children()[path.front()]
+                = ::std::move(newElementLoader);
+            elementLoader = nextElementLoader;
+        } else {
+            elementLoader = iter->second.get();
+        }
+        path.pop_front();
+    }
+
+    // Clone.
+    ::std::unique_ptr<XMLLoader::XMLElementLoader> retElement = src->clone();
+    if (retElement == nullptr) {
+        return nullptr;
+    }
+    XMLLoader::XMLElementLoader *ret = retElement.get();
+    retElement->setLoader(this);
+    retElement->setName(path[0]);
+    retElement->m_parent = elementLoader;
+
+    elementLoader->children()[path[0]] = ::std::move(retElement);
+    return ret;
+}
+
+/**
  * @brief	    Load XML data.
  */
 bool XMLLoader::loadData(const QString &xmlText, ErrorInfo &err)
@@ -85,10 +161,12 @@ bool XMLLoader::loadPatch(const QString &xmlText, ErrorInfo &err)
     QDomElement dataRoot  = m_doc.documentElement();
     if (patchRoot.tagName() == "diff") {
         // Diff mode.
+        qDebug() << "Loading diff...";
         return this->loadDiff(patchRoot);
 
     } else if (patchRoot.tagName() == dataRoot.tagName()) {
         // Merge.
+        qDebug() << "Merging patch...";
         return this->mergePatch(patchRoot);
 
     } else {
@@ -99,6 +177,16 @@ bool XMLLoader::loadPatch(const QString &xmlText, ErrorInfo &err)
 
         return false;
     }
+}
+
+/**
+ * @brief       Get date.
+ *
+ * @return      Data.
+ */
+const QDomDocument &XMLLoader::data() const
+{
+    return m_doc;
 }
 
 /**
@@ -371,9 +459,10 @@ bool XMLLoader::loadDiff(QDomElement &source)
 bool XMLLoader::mergePatch(QDomElement &source)
 {
     QDomElement dest = m_doc.documentElement();
-    for (QDomElement child = source.firstChildElement(); ! child.isNull();
-         child             = child.nextSiblingElement()) {
+    for (QDomElement child = source.firstChildElement(); ! child.isNull();) {
+        QDomElement nextChild = child.nextSiblingElement();
         dest.appendChild(child);
+        child = nextChild;
     }
     return true;
 }

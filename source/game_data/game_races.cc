@@ -20,6 +20,7 @@ GameRaces::GameRaces(GameData *                             gameData,
     setTextFunc(STR("STR_LOADING_RACES"));
     qDebug() << "Loading races...";
 
+    // Races
     // Scan files to load.
     QMap<QString, QVector<QString>> xmlFiles
         = gameData->scanModuleFiles("libraries/races\\.xml");
@@ -66,6 +67,53 @@ GameRaces::GameRaces(GameData *                             gameData,
                           .c_str();
         return;
     }
+
+    // Player races
+    // Scan files to load.
+    xmlFiles = gameData->scanModuleFiles("libraries/factions\\.xml");
+    if (xmlFiles.empty()) {
+        qWarning() << "Missing \"libraries/factions.xml\".";
+        return;
+    }
+
+    xmlLoader = this->createFactionsXMLLoader();
+    iter      = xmlFiles.begin()->begin();
+    qDebug() << "Loading data file" << (*iter) << ".";
+    if (! xmlLoader->loadData(gameData->vfs()->open(*iter)->readAll(),
+                              errorInfo)) {
+        qWarning() << QString(
+                          "Failed to load file \"%1\", line: %2, col: %3 : %4.")
+                          .arg(*iter)
+                          .arg(errorInfo.errorLine)
+                          .arg(errorInfo.errorColumn)
+                          .arg(errorInfo.errorMsg)
+                          .toStdString()
+                          .c_str();
+        return;
+    }
+    for (++iter; iter != xmlFiles.begin()->end(); ++iter) {
+        qDebug() << "Loading patch file" << (*iter) << ".";
+        if (! xmlLoader->loadPatch(gameData->vfs()->open(*iter)->readAll(),
+                                   errorInfo)) {
+            qWarning()
+                << QString(
+                       "Failed to patch file \"%1\", line: %2, col: %3 : %4.")
+                       .arg(*iter)
+                       .arg(errorInfo.errorLine)
+                       .arg(errorInfo.errorColumn)
+                       .arg(errorInfo.errorMsg)
+                       .toStdString()
+                       .c_str();
+        }
+    }
+    if (! xmlLoader->parse()) {
+        qWarning() << QString("Failed to parse file \"%1\".")
+                          .arg(xmlFiles.begin().key())
+                          .toStdString()
+                          .c_str();
+        return;
+    }
+    qDebug() << "Player races:" << m_playerRaces << ".";
 
     this->setInitialized();
 }
@@ -123,6 +171,7 @@ GameRaces::~GameRaces() {}
         if (iter == attributes.end()) {
             qWarning()
                 << "Missing attribute \"id\" in element \"/index/entry\".";
+            return true;
         }
         QString id = iter->second;
 
@@ -131,6 +180,7 @@ GameRaces::~GameRaces() {}
         if (iter == attributes.end()) {
             qWarning()
                 << "Missing attribute \"name\" in element \"/index/entry\".";
+            return true;
         }
         QString name = iter->second;
 
@@ -139,6 +189,7 @@ GameRaces::~GameRaces() {}
         if (iter == attributes.end()) {
             qWarning() << "Missing attribute \"description\" in element "
                           "\"/index/entry\".";
+            return true;
         }
         QString description = iter->second;
 
@@ -160,6 +211,41 @@ GameRaces::~GameRaces() {}
 
         return true;
     });
+
+    return ret;
+}
+
+/**
+ * @brief       Create XML loader of factions.xml.
+ */
+::std::unique_ptr<XMLLoader> GameRaces::createFactionsXMLLoader()
+{
+    ::std::unique_ptr<XMLLoader> ret(new XMLLoader);
+
+    // /factions/faction
+    XMLLoader::XMLElementLoader *elementLoader
+        = ret->elementLoader("/factions/faction");
+    elementLoader->setOnStartElement(
+        [this](XMLLoader &, XMLLoader::XMLElementLoader &,
+               const ::std::map<QString, QString> &attributes) -> bool {
+            // Policefaction.
+            auto iter = attributes.find("policefaction");
+            if (iter == attributes.end()) {
+                return true;
+            }
+
+            // Primaryrace.
+            iter = attributes.find("primaryrace");
+            if (iter == attributes.end()) {
+                qWarning() << "Missing attribute \"primaryrace\" in element "
+                              "\"/factions/faction\".";
+                return true;
+            }
+
+            m_playerRaces.insert(iter->second);
+
+            return true;
+        });
 
     return ret;
 }

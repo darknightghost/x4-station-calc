@@ -103,8 +103,6 @@ int main(int argc, char *argv[])
         return ret;
     }
 
-    return 0;
-
     // Show main window.
     MainWindow mainWindow;
     mainWindow.show();

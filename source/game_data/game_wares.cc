@@ -6,7 +6,7 @@
 #include <game_data/xml_loader/xml_loader.h>
 
 // Transport type map.
-QMap<QString, GameWares::TransportType> GameWares::_transportTypeMap
+const QMap<QString, GameWares::TransportType> GameWares::_transportTypeMap
     = {{"container", TransportType::Container},
        {"liquid", TransportType::Liquid},
        {"solid", TransportType::Solid},
@@ -373,34 +373,8 @@ GameWares::~GameWares() {}
             qDebug() << "        time      :" << info->time;
             qDebug() << "        method    :" << info->method;
             qDebug() << "        amount    :" << info->amount;
-            for (auto &property : info->properties) {
-                switch (property->propertyType) {
-                    case ProductionInfoProperty::PropertyType::Effect: {
-                        ::std::shared_ptr<Effect> effect
-                            = ::std::static_pointer_cast<Effect>(property);
-                        switch (effect->type) {
-                            case Effect::Type::Efficiency:
-                                qDebug() << "        effectType:"
-                                         << "Efficiency";
-                                break;
-
-                            case Effect::Type::Work:
-                                qDebug() << "        effectType:"
-                                         << "Work";
-                                break;
-
-                            default:
-                                qDebug() << "        effectType:"
-                                         << "Unknow";
-                                break;
-                        };
-                        qDebug() << "        effectProduct:" << effect->product;
-                    } break;
-
-                    default:
-                        break;
-                }
-            }
+            qDebug() << "        effectType:" << info->workEffect.type;
+            qDebug() << "        effectProduct:" << info->workEffect.product;
             qDebug() << "        resource  :{";
             for (auto &res : info->resources) {
                 qDebug() << "            {" << res->id << ", " << res->amount
@@ -588,15 +562,15 @@ GameWares::~GameWares() {}
                               "\"/wares/ware/production/effects/effect\".";
                 return true;
             }
-            Effect::Type type;
+            WorkEffect::Type type;
             if (iter->second == "efficiency") {
-                type = Effect::Type::Efficiency;
+                type = WorkEffect::Type::Efficiency;
 
             } else if (iter->second == "work") {
-                type = Effect::Type::Work;
+                type = WorkEffect::Type::Work;
 
             } else {
-                type = Effect::Type::Unknow;
+                type = WorkEffect::Type::Unknow;
             }
 
             // Product.
@@ -608,9 +582,8 @@ GameWares::~GameWares() {}
             }
             double product = iter->second.toDouble();
 
-            productionInfo
-                ->properties[ProductionInfoProperty::PropertyType::Effect]
-                = ::std::shared_ptr<Effect>(new Effect(type, product));
+            productionInfo->workEffect.type    = type;
+            productionInfo->workEffect.product = product;
 
             return true;
         });

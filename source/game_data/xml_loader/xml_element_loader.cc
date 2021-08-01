@@ -20,6 +20,28 @@ XMLLoader::XMLElementLoader::XMLElementLoader(
 }
 
 /**
+ * @brief		Copy constructor.
+ */
+XMLLoader::XMLElementLoader::XMLElementLoader(const XMLElementLoader &src) :
+    m_name(src.m_name), m_loader(nullptr), m_parent(nullptr),
+    m_onStartElement(src.m_onStartElement),
+    m_onStopElement(src.m_onStopElement), m_onElementText(src.m_onElementText),
+    m_onAttributes(src.m_onAttributes)
+{
+    for (auto &pair : m_children) {
+        auto clonedChild = pair.second->clone();
+        if (clonedChild == nullptr) {
+            return;
+        }
+
+        clonedChild->m_parent  = this;
+        m_children[pair.first] = ::std::move(clonedChild);
+    }
+
+    this->setInitialized();
+}
+
+/**
  * @brief   Get element name.
  */
 const QString &XMLLoader::XMLElementLoader::name() const
@@ -28,7 +50,7 @@ const QString &XMLLoader::XMLElementLoader::name() const
 }
 
 /**
- * @brief   Get xML loader.
+ * @brief   Get XML loader.
  */
 XMLLoader *XMLLoader::XMLElementLoader::loader()
 {
@@ -180,3 +202,24 @@ bool XMLLoader::XMLElementLoader::parseAttributes(
  * @brief		Destructor.
  */
 XMLLoader::XMLElementLoader::~XMLElementLoader() {}
+
+/**
+ * @brief       Set element name.
+ */
+void XMLLoader::XMLElementLoader::setName(const QString &name)
+{
+    m_name = name;
+}
+
+/**
+ * @brief   Set XML loader.
+ *
+ */
+void XMLLoader::XMLElementLoader::setLoader(XMLLoader *loader)
+{
+    m_loader = loader;
+
+    for (auto &pair : m_children) {
+        pair.second->setLoader(loader);
+    }
+}

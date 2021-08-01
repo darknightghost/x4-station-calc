@@ -2,6 +2,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
+#include <QtCore/QSet>
 #include <QtCore/QStandardPaths>
 #include <QtCore/QThread>
 #include <QtWidgets/QFileDialog>
@@ -144,15 +145,11 @@ GameData::GameData(SplashWidget *splash) : QObject(nullptr)
         }
         m_wares = wares;
 
-        // TODO
-        return;
-
         // Load station modules
         ::std::shared_ptr<GameStationModules> stationModules
-            = GameStationModules::load(vfs, macros, texts, wares, components,
-                                       [&](const QString &s) -> void {
-                                           splash->setText(s);
-                                       });
+            = GameStationModules::load(this, [&](const QString &s) -> void {
+                  splash->setText(s);
+              });
 
         if (stationModules == nullptr) {
             splash->callFunc(::std::function<void()>([&]() -> void {
@@ -251,9 +248,10 @@ QMap<QString, QVector<QString>>
     // Match.
     QMap<QString, QVector<QString>> ret;
     ::std::function<void(QVector<QRegExp> &, QVector<QRegExp>::iterator,
+                         QSet<QString> &,
                          ::std::shared_ptr<GameVFS::DirReader>)>
-        searchFunc([&](QVector<QRegExp> &                    expressions,
-                       QVector<QRegExp>::iterator            expIter,
+        searchFunc([&](QVector<QRegExp> &         expressions,
+                       QVector<QRegExp>::iterator expIter, QSet<QString> &found,
                        ::std::shared_ptr<GameVFS::DirReader> dir) -> void {
             auto nextExpIter = expIter;
             ++nextExpIter;
@@ -269,7 +267,11 @@ QMap<QString, QVector<QString>>
                             ret[lwrName] = {};
                             resultIter   = ret.find(fileIter->name);
                         }
-                        resultIter->push_back(dir->absPath(fileIter->name));
+                        QString path = dir->absPath(fileIter->name);
+                        if (! found.contains(path)) {
+                            found.insert(path);
+                            resultIter->push_back(path);
+                        }
                     }
                 }
 
@@ -282,7 +284,7 @@ QMap<QString, QVector<QString>>
                         && expIter->exactMatch(fileIter->name)) {
                         auto nextDir
                             = m_vfs->openDir(dir->absPath(fileIter->name));
-                        searchFunc(expressions, nextExpIter, nextDir);
+                        searchFunc(expressions, nextExpIter, found, nextDir);
                     }
                 }
             }
@@ -292,8 +294,9 @@ QMap<QString, QVector<QString>>
         auto moduleInfo = m_gameModules[id];
 
         // Search directory.
-        auto dir = m_vfs->openDir(moduleInfo->path);
-        searchFunc(expressions, expressions.begin(), dir);
+        auto          dir = m_vfs->openDir(moduleInfo->path);
+        QSet<QString> found;
+        searchFunc(expressions, expressions.begin(), found, dir);
     }
 
     return ret;

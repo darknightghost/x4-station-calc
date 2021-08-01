@@ -7,6 +7,7 @@
 #include <QtCore/QString>
 
 #include <game_data/xml_loader/xml_loader.h>
+#include <interfaces/i_clone_factory_func_unique.h>
 #include <interfaces/i_create_factory_func_unique.h>
 
 /**
@@ -27,7 +28,8 @@ class XMLLoader::XMLElementLoader :
                    ::std::function<bool(XMLLoader &,
                                         XMLElementLoader &,
                                         const QString &,
-                                        const QString &)>>> {
+                                        const QString &)>>>,
+    public ICloneFactoryFuncUnique<XMLLoader::XMLElementLoader> {
     CREATE_UNIQUE_FUNC(
         XMLLoader::XMLElementLoader,
         QString,
@@ -43,6 +45,7 @@ class XMLLoader::XMLElementLoader :
                                         XMLElementLoader &,
                                         const QString &,
                                         const QString &)>>);
+    CLONE_FUNC_UNIQUE(XMLLoader::XMLElementLoader);
 
   public:
     /**
@@ -131,9 +134,15 @@ class XMLLoader::XMLElementLoader :
                      ElementTextCallback  onElementText  = nullptr,
                      ::std::map<QString, AttrributeCallback> onAttributes = {});
 
+    /**
+     * @brief		Copy constructor.
+     *
+     * @param[in]   src     Source to copy.
+     */
+    XMLElementLoader(const XMLElementLoader &src);
+
     // Delete constructors
-    XMLElementLoader(const XMLElementLoader &) = delete;
-    XMLElementLoader(XMLElementLoader &&)      = delete;
+    XMLElementLoader(XMLElementLoader &&) = delete;
 
   public:
     using ICreateFactoryFuncUnique<
@@ -160,7 +169,7 @@ class XMLLoader::XMLElementLoader :
     const QString &name() const;
 
     /**
-     * @brief   Get xML loader.
+     * @brief   Get XML loader.
      *
      * @return  XML loader.
      */
@@ -272,4 +281,22 @@ class XMLLoader::XMLElementLoader :
      * @brief		Destructor.
      */
     virtual ~XMLElementLoader();
+
+  protected:
+    friend XMLElementLoader *
+        XMLLoader::copyElementLoader(const XMLLoader::XMLElementLoader *,
+                                     const QString &);
+    /**
+     * @brief       Set element name.
+     *
+     * @param[in]   name    Element name.
+     */
+    void setName(const QString &name);
+
+    /**
+     * @brief       Set XML loader.
+     *
+     * @param[in]   loader      XML loader.
+     */
+    void setLoader(XMLLoader *loader);
 };

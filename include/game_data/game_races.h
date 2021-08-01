@@ -87,4 +87,11 @@ class GameRaces :
      * @return      XML loader.
      */
     ::std::unique_ptr<XMLLoader> createXMLLoader(GameData *gameData);
+
+    /**
+     * @brief       Create XML loader of factions.xml.
+     *
+     * @return      XML loader.
+     */
+    ::std::unique_ptr<XMLLoader> createFactionsXMLLoader();
 };

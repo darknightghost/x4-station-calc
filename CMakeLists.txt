@@ -131,6 +131,7 @@ if (MSVC)
         message (FATAL_ERROR "Unsupported Platform: ${CMAKE_SYSTEM_PROCESSOR}")
 
     endif ()
+    add_compile_options ("/WX")
 
     # Output directory.
     set (MSVC_CONFIG_TYPE ${CMAKE_BUILD_TYPE})
@@ -155,6 +156,7 @@ if (MSVC)
 
     endif ()
 else ()
+    add_compile_options ("-Werror")
     if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g")

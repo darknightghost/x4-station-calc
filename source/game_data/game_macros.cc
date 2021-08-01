@@ -57,6 +57,7 @@ GameMacros::GameMacros(GameData *                             gameData,
                        .c_str();
         }
     }
+
     if (! xmlLoader->parse()) {
         qWarning() << QString("Failed to parse file \"%1\".")
                           .arg(xmlFiles.begin().key())

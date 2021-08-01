@@ -10,12 +10,12 @@
  * @tparam	T		Type of the class implements this interface.
  */
 template<class T>
-class ICloneFactoryFunc : virtual protected IInitialized {
+class ICloneFactoryFuncUnique : virtual protected IInitialized {
   public:
     /**
      * @brief	Constructor.
      */
-    ICloneFactoryFunc() : IInitialized() {}
+    ICloneFactoryFuncUnique() : IInitialized() {}
 
     /**
      * @brief		Clone object.
@@ -23,21 +23,21 @@ class ICloneFactoryFunc : virtual protected IInitialized {
      * @return		On success, a new object is reutnred. Otherwise returns
      *				nullptr.
      */
-    virtual ::std::shared_ptr<T> clone() const;
+    virtual ::std::unique_ptr<T> clone() const;
 
     /**
      * @brief	Destructor..
      */
-    virtual ~ICloneFactoryFunc() {}
+    virtual ~ICloneFactoryFuncUnique() {}
 };
 
 /**
  * @brief		Clone object.
  */
 template<class T>
-::std::shared_ptr<T> ICloneFactoryFunc<T>::clone() const
+::std::unique_ptr<T> ICloneFactoryFuncUnique<T>::clone() const
 {
-    ::std::shared_ptr<T> ret(new T(*(const T *)this));
+    ::std::unique_ptr<T> ret(new T(*(const T *)this));
 
     if (ret == nullptr || ! ret->initialized()) {
         return nullptr;
@@ -46,4 +46,4 @@ template<class T>
     }
 }
 
-#define CLONE_FUNC(T) friend class ICloneFactoryFunc<T>;
+#define CLONE_FUNC_UNIQUE(T) friend class ICloneFactoryFuncUnique<T>;

@@ -250,7 +250,7 @@ QMap<QString, QVector<QString>>
     ::std::function<void(QVector<QRegExp> &, QVector<QRegExp>::iterator,
                          QSet<QString> &,
                          ::std::shared_ptr<GameVFS::DirReader>)>
-        searchFunc([&](QVector<QRegExp> &         expressions,
+        searchFunc = [&](QVector<QRegExp> &         expressions,
                        QVector<QRegExp>::iterator expIter, QSet<QString> &found,
                        ::std::shared_ptr<GameVFS::DirReader> dir) -> void {
             auto nextExpIter = expIter;
@@ -288,7 +288,7 @@ QMap<QString, QVector<QString>>
                     }
                 }
             }
-        });
+        };
 
     for (const QString &id : m_moduleLoadOrder) {
         auto moduleInfo = m_gameModules[id];

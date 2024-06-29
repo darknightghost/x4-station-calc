@@ -1,0 +1,13 @@
+#pragma once
+
+#include <string>
+
+
+#define @DEBUG_MACRO@
+
+namespace x4StationCalc {
+    constexpr int majorVersion = @MAJOR_VERSION@;
+    constexpr int minorVersion = @MINOR_VERSION@;
+    constexpr int patchVersion = @PATCH_VERSION@;
+    constexpr ::std::string version = "@VERSION@";
+}
